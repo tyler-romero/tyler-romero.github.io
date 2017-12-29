@@ -11,41 +11,32 @@
 # Where things are
 source:          .
 destination:     ./_site
-collections_dir: .
 plugins_dir:     _plugins
 layouts_dir:     _layouts
 data_dir:        _data
 includes_dir:    _includes
-collections:
-  posts:
-    output:   true
 
 # Site settings
 # These are used to personalize your new site. If you look in the HTML files,
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Tyler Romero's Site
+title: The Carrot and the Stick
+author: Tyler Romero
 email: tromero1@stanford.edu
 description: >- # this means to ignore newlines until "baseurl:"
   This is my site for publishing things that I think are interesting.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
+
+twitter_username: null
 github_username:  tyler-romero
+
+# Minima date format
+minima:
+  date_format: "%b %-d, %Y"
 
 # Build settings
 markdown: kramdown
-future: true
-jailed: false
 theme: minima
-gfm_quirks: paragraph_end
-plugins:
-  - jekyll-feed
-
-# Exclude from processing.
-# The following items will not be processed, by default. Create a custom list
-# to override the default setting.
 exclude:
   - Gemfile
   - Gemfile.lock
@@ -54,5 +45,3 @@ exclude:
   - vendor/cache/
   - vendor/gems/
   - vendor/ruby/
-  - jekyll.sh
-  - serve.sh
