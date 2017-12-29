@@ -1,7 +1,7 @@
 ---
-title: "Tyler Romero's Resume"
+title: "Resume"
 layout: default
 permalink: /resume
 ---
 
-<iframe src="{{ site.url }}/assets/resume.pdf" width="100%" height="100%"></iframe>
+<iframe src="{{ site.url }}/assets/resume.pdf" style="width:718px; height:750px;" frameborder="0"></iframe>
