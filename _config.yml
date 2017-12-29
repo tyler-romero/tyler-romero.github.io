@@ -38,7 +38,7 @@ github_username:  tyler-romero
 markdown: kramdown
 future: true
 jailed: false
-theme: jekyll-theme-primer
+theme: minima
 gfm_quirks: paragraph_end
 plugins:
   - jekyll-feed

@@ -11,8 +11,8 @@ source "https://rubygems.org"
 gem "jekyll", "~> 3.6.2"
 
 # Theme
-# gem "minima", "~> 2.0"
-gem "jekyll-theme-primer"
+gem "minima", "~> 2.0"
+# gem "jekyll-theme-primer"
 
 # If you want to use GitHub Pages, remove the "gem "jekyll"" above and
 # uncomment the line below. To upgrade, run `bundle update github-pages`.
