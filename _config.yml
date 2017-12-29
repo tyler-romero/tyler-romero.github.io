@@ -36,11 +36,9 @@ github_username:  tyler-romero
 
 # Build settings
 markdown: kramdown
-  imput: GFM
-  hard_wrap: false
 future: true
 jailed: false
-theme: minima
+theme: jekyll-theme-primer
 gfm_quirks: paragraph_end
 plugins:
   - jekyll-feed
