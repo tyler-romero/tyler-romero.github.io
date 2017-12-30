@@ -47,4 +47,5 @@ exclude:
   - vendor/ruby/
   - jekyll.sh
   - serve.sh
-  
+  - README.md
+

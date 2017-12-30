@@ -3,7 +3,6 @@ layout: post
 title: The Big List of AI Demos
 date: 2017-02-22
 categories: writing
-author: "Tyler Romero"
 ---
 
 This is my curated list of **interesting** and **non-technical** artificial intelligence demos. I do not attempt to explain any of the concepts, but hopefully these demos help shine some light on the some of the *abilities* of Artificial Intelligence.

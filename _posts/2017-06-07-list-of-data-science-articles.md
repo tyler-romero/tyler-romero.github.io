@@ -3,7 +3,6 @@ layout: post
 title: The Big List of Cool Data Science and ML Articles
 date: 2017-06-07
 categories: writing
-author: "Tyler Romero"
 ---
 
 

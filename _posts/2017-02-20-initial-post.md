@@ -3,7 +3,6 @@ layout: post
 title: Roadmap For My Blog
 date: 2017-02-20
 categories: writing
-author: "Tyler Romero"
 ---
 
 Hi, I'm **Tyler Romero**, and I am a Computer Scientist. I am currently working towards a Masters in Computer Science with a focus on **Artificial Intelligence** at Stanford. Welcome to my *blog* (I dislike that word, but it has no good synonym).
