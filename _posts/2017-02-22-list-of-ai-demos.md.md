@@ -36,3 +36,12 @@ This demo shows how **recurrent neural networks** and **natural language process
 
 [Pac-Man with Reinforcement Learning](https://gym.openai.com/evaluations/eval_kpL9bSsS4GXsYb9HuEfew)  
 This pac-man agent was trained to become better at pack man using **reinforcement learning** in conjunction with a **neural network**. The short demonstration of the agent in action shows that it plays near an expert human level.
+
+### Smorgasboard
+[Andrew Ng: Artificial Intelligence is the New Electricity](https://www.youtube.com/watch?v=21EiKfQYZXc)
+
+> "Anything a typical human can do with less than one second of though we can probably now or soon automate with A.I." -- Andrew Ng (2017)
+
+[Kevin Slavin: How Algorithms Shape Our World (TED Talk)](https://www.ted.com/talks/kevin_slavin_how_algorithms_shape_our_world)
+
+> “The question of whether a computer can think is no more interesting than the question of whether a submarine can swim.” -- Edsger W. Dijkstra

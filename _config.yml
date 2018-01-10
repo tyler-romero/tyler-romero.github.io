@@ -21,11 +21,12 @@ includes_dir:    _includes
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: The Carrot and the Stick
+title: Feature Presentation
 author: Tyler Romero
 email: tromero1@stanford.edu
-description: >- # this means to ignore newlines until "baseurl:"
-  This is my site for publishing things that I think are interesting.
+description: >- # this means to ignore newlines
+  Things I find interesting.
+  
 
 twitter_username: null
 github_username:  tyler-romero
