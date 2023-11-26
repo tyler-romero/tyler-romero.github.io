@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "eleventy"
-},
+    "build": "npx @11ty/eleventy"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
