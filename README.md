@@ -1,1 +1,0 @@
-My personal site, [Feature Presentation](https://tyler-romero.github.io).
