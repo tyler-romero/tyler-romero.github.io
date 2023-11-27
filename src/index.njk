@@ -1,0 +1,13 @@
+---
+layout: layout.njk
+title: The Best Eleventy Demo TM
+---
+
+<h1>Hi</h1>
+<p>Test.</p>
+
+<ul>
+{% for p in collections.post %}
+  <li><a href="{{ p.url }}">{{ p.data.title }}</a></li>
+{% endfor %}
+</ul>
