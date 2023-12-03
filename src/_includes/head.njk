@@ -1,0 +1,27 @@
+<!-- Required meta tags -->
+{% set metaTitle = page.title or meta.title %}
+{% set metaDescription = page.subtitle or meta.subtitle %}
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title>{{ metaTitle | markdownInline | striptags }}</title>
+<meta name="description" content="{{ metaDescription | markdownInline | striptags }}">
+<link type="application/atom+xml" rel="alternate" href="{{ meta.url }}/feed.xml" title="{{ meta.title }}">
+
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff" />
+
+{% if attachments %}{{ attachments | linkToHead | safe }}{% endif %}
+{% if libraries %}{{ libraries | linkToHead | safe }}{% endif %}
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+
+<link rel="stylesheet" href="/assets/modifiedtufte.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">

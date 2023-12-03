@@ -9,6 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@tufte-markdown/parser": "^2.0.1"
+  },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1"
   }

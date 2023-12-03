@@ -1,13 +1,15 @@
 ---
 layout: layout.njk
-title: The Best Eleventy Demo TM
+title: Tyler Romero's Technical Blog
+subtitle: Explorations in Software Development and Design
 ---
-
-<h1>Hi</h1>
-<p>Test.</p>
 
 <ul>
 {% for p in collections.post %}
-  <li><a href="{{ p.url }}">{{ p.data.title }}</a></li>
+  <li>
+    <a href="{{ p.url }}">{{ p.data.title }}</a>
+    <small>{{ p.data.date.toDateString() }}</small>
+    <p>{{ p.data.excerpt }}</p>
+  </li>
 {% endfor %}
 </ul>

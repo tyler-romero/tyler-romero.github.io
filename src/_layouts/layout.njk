@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include "head.njk" %}
+  </head>
+  <header>
+    <nav class="group">
+      <a href="/" class="{% if page.url == '/' %}active{% endif %}">trome</a>
+      <a href="/about/" class="{% if page.url == '/about/' %}active{% endif %}">about</a>
+    </nav>
+  </header>
+  <body>
+    <article>
+      <h1>{{ title | markdownInline | safe }}</h1>
+      {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
+      {% if date %}<p class="date">{{ date.toDateString() }}</p>{% endif %}
+      {{ content | safe }}
+    </article>
+    <footer>
+      {% include "footer.njk" %}
+    </footer>
+  </body>
+</html>
