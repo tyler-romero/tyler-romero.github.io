@@ -3,7 +3,6 @@ const tufteMdWrapper = require('./util/tufteMdWrapper')
 module.exports = function(eleventyConfig) {
     // Copy `src/assets` to `_site/assets`
     eleventyConfig.addPassthroughCopy("src/assets");
-    // eleventyConfig.addPassthroughCopy("src/admin");
 
     // Asset Watch Targets
 	eleventyConfig.addWatchTarget('./src/assets')

@@ -1,13 +1,21 @@
 ---
 layout: layout.njk
 title: Tyler Romero's Technical Blog
-subtitle: Explorations in Software Development and Design
+subtitle: Explorations in Machine Learning
 ---
 
+<section>
+  <p>
+    Hi, this is Tyler Romero. I am an Applied Researcher and ML Engineer for <a href="https://www.groundlight.ai/">Groundlight</a>, a startup focusing
+    on multimodal question-answering. These are my notes on Machine Learning and related topics.
+  </p>
+</section>
+
 <ul>
-{% for p in collections.post %}
+{% for p in collections.post | reverse %}
   <li>
     <a href="{{ p.url }}">{{ p.data.title }}</a>
+    &nbsp
     <small>{{ p.data.date.toDateString() }}</small>
     <p>{{ p.data.excerpt }}</p>
   </li>
