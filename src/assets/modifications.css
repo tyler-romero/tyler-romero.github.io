@@ -1,0 +1,45 @@
+html {
+    font-size: 12px;
+}
+
+body {
+    background-color: #fcfcf5;
+}
+
+
+
+
+
+/* Active link styles */
+a {
+    color: #875053 ;
+}
+a:link,
+a:visited {
+    color: #875053;
+}
+nav a,
+nav a:link,
+nav a:visited {
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #568259;
+    padding-top: 2rem;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-right: 2rem;
+    vertical-align: baseline;
+    font-weight: bold;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+
+/* For KaTeX */
+div.math {
+    width: 55%;
+}
