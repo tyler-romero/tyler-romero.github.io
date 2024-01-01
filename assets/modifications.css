@@ -1,0 +1,59 @@
+/* Personal Modifications to tufte.css */
+
+html {
+    font-size: 14px;
+}
+
+body {
+    background-color: #fcfcf5;
+}
+
+h1 {
+    margin-top: 1rem;
+    font-size: 2.6rem;
+}
+
+
+/* Active link styles */
+a {
+    color: #875053 ;
+}
+a:link,
+a:visited {
+    color: #875053;
+}
+nav a,
+nav a:link,
+nav a:visited {
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #568259;
+    padding-top: 2rem;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-right: 2rem;
+    vertical-align: baseline;
+    font-weight: bold;
+}
+
+div.math {  /* For KaTeX */
+    width: 55%;
+}
+
+.no-underline {
+    text-decoration: none;
+}
+
+.profile-picture {
+    border-radius: 5%;
+    width: 70%;
+}
+
+/* .topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-right: auto;
+    width: 87.5%;
+} */

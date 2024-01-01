@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<title>undefined</title>
+
+<meta name="description" content="undefined">
+<link rel="icon" type="image/png" href="/assets/brain-icon.png">
+<link type="application/atom+xml" rel="alternate" href="/feed.xml" title="">
+
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/tufte-css/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff" />
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+    onload="renderMathInElement(document.body);"></script>
+
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
+<link rel="stylesheet" href="/assets/tufte.css">
+<link rel="stylesheet" href="/assets/modifications.css">
+  </head>
+  <header>
+    <nav class="topbar">
+      <div class="right-aligned-links">
+      <a href="/" class="no-tufte-underline" style="color: #246eb9; margin-right: 3%;">Tyler Romero</a>
+      <a href="/" class="no-tufte-underline">posts</a>
+      <a href="/about/" class="no-tufte-underline">about</a>
+    </nav>
+  </header>
+  <body>
+    <article>
+      <h1>Under Construction!
+</h1>
+      <p class="subtitle">Just in case you needed a few extra markdown patterns to remember.
+</p>
+      <p class="date">Sat Dec 30 2023</p>
+      <section><p>In addition to basic markdown features like <em>emphasis,</em> <strong>strong text,</strong>
+<a href="http://example.com">links</a>, and <code>inline code</code>, the tufte-markdown parser pays special
+attention to figures and footnotes. The official
+<a href="https://edwardtufte.github.io/tufte-css/">Tufte-CSS site</a> explains the more advanced
+features in detail, but we’re trying to poke and prod things a bit to eliminate some of
+the manual HTML entry that’s still necessary.</p></section>
+<section><h2 id="sidenotes-and-marginalia">Sidenotes and Marginalia</h2><p>Here’s where things really get exciting. Markdown footnotes<label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-less-than-a-href" class="margin-toggle" /><span class="sidenote"><a href="https://www.markdownguide.org/extended-syntax#footnotes">Footnotes</a> weren’t
+actually part of the original markdown spec, but they’ve become a popular bolt-on.</span> are a convenient way to
+move digressions and asides out of the primary flow of a document, but shoving them to
+the bottom of a long page is no good, either. In his books, Tufte instead uses
+sidenotes, which keep the asides as close as possible to the related text without
+breaking the flow.</p><p>During a heated yak-shaving conversation about enhancements to our site,<label for="sd-karen-and-ethan-are" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-karen-and-ethan-are" class="margin-toggle" /><span class="sidenote">Karen and Ethan are my partners in crime at <a href="https://autogram.is">Autogram</a>, a
+freshly-minted strategic consultancy for companies with complicated content needs.
+If "establishing a consistent domain vocabulary and grammar to streamline design
+system iteration for complex high-variance content" sounds thrilling to you, hire
+us.</span>
+<a href="https://karenmcgrane.com">Karen McGrane</a> pointed
+<a href="https://ethanmarcotte.com">Ethan Marcotte</a> and I to an excellent post by Koos
+Looijesteijn outlining
+<a href="https://www.kooslooijesteijn.net/blog/semantic-sidenotes"><em>his</em> approach to sidenotes</a>.
+That in turn led to Gwern Branwen’s impressive
+<a href="https://www.gwern.net/Sidenotes">evaluation of damn near every sidenote implementation on the web</a>.
+And that, in turn, led me to tufte-markdown, which is how we got into this mess.</p><p>A few specific formats are supported, with different results: <code>[^foonote-id]</code> markers in
+a paragraph are paired with <code>[^footnote]: Footnote text</code> below the paragraph in which
+they appear; they get numbered automatically.<label for="sd-for-example-this" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-for-example-this" class="margin-toggle" /><span class="sidenote">For example, this little guy.</span> For a <em>margin note,</em> with no
+accompanying number, just add a goofy symbol before the footnote text like so:</p><pre><code>[^footnote]: {-} This text will appear in the margin without a number.
+</code></pre><p>Completely inlined sidenotes — ones without explicit markers in the rest of the text —
+can be done like so:</p><pre><code>[^ {-} A little fussy, but not bad once you get used to it.]
+</code></pre></section>
+<section><h2 id="latex">LaTeX</h2><p>Here is a different format displayed equation: <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>e</mi><mrow><mi>i</mi><mi>π</mi></mrow></msup><mo>+</mo><mn>1</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">e^{i\pi} + 1 = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.907994em;vertical-align:-0.08333em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.824664em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight" style="margin-right:0.03588em;">π</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">0</span></span></span></span></span></p><p>And here is a different format displayed equation:</p><div class="math"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mo>∫</mo><mrow><mo>−</mo><mi mathvariant="normal">∞</mi></mrow><mi mathvariant="normal">∞</mi></msubsup><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>x</mi><mn>2</mn></msup></mrow></msup><mi>d</mi><mi>x</mi><mo>=</mo><msqrt><mi>π</mi></msqrt></mrow><annotation encoding="application/x-tex">\int_{-\infty}^\infty e^{-x^2} dx=\sqrt{\pi}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.384573em;vertical-align:-0.970281em;"></span><span class="mop"><span class="mop op-symbol large-op" style="margin-right:0.44445em;position:relative;top:-0.0011249999999999316em;">∫</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.414292em;"><span style="top:-1.7880500000000001em;margin-left:-0.44445em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight">∞</span></span></span></span><span style="top:-3.8129000000000004em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">∞</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.970281em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:1.0369199999999998em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">−</span><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913142857142857em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mord mathdefault">d</span><span class="mord mathdefault">x</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.04em;vertical-align:-0.190845em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8491550000000001em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord" style="padding-left:0.833em;"><span class="mord mathdefault" style="margin-right:0.03588em;">π</span></span></span><span style="top:-2.809155em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail" style="min-width:0.853em;height:1.08em;"><svg width="400em" height="1.08em" view-box="0 0 400000 1080" preserve-aspect-ratio="xMinYMin slice"><path d="M95,702c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,
+-10,-9.5,-14c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54c44.2,-33.3,65.8,
+-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10s173,378,173,378c0.7,0,
+35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429c69,-144,104.5,-217.7,106.5,
+-221c5.3,-9.3,12,-14,20,-14H400000v40H845.2724s-225.272,467,-225.272,467
+s-235,486,-235,486c-2.7,4.7,-9,7,-19,7c-6,0,-10,-1,-12,-3s-194,-422,-194,-422
+s-65,47,-65,47z M834 80H400000v40H845z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.190845em;"><span></span></span></span></span></span></span></span></span></span></div></section>
+<section><h2 id="blockquotes-and-epigraphs">Blockquotes and Epigraphs</h2><p>Blockquotes are handled as one would expect:</p><p><label for="md-dietrich-as-monica" class="margin-toggle ">&#8853;</label><input type="checkbox" id="md-dietrich-as-monica" class="margin-toggle" /><span class="marginnote">Dietrich as Monica Teasdale in <em>No Highway in the Sky</em> (1951). Not really.</span></p><blockquote>
+<p>I love quotations because it is a joy to find thoughts one might have, beautifully
+expressed with much authority by someone recognized wiser than oneself. —Marlene
+Dietrich</p>
+</blockquote><p>Epigraphs, however, are a slightly different treatment common in Tufte’s chapter
+openings. They provide a bit of extra styling for the attribution line.</p><div class="epigraph"><blockquote>
+<p>To appreciate and use correctly a valuable maxim requires a genius, a vital
+appropriating exercise of mind, closely allied to that which first created it.</p>
+</blockquote></div><p><label for="md-we-ll-see-what-we" class="margin-toggle ">&#8853;</label><input type="checkbox" id="md-we-ll-see-what-we" class="margin-toggle" /><span class="marginnote">We’ll see what we can do later; automatically detecting a double-dash on the
+last line of a blockquote seems like a convenient enough shortcut, and it’s used by
+<a href="https://www.npmjs.com/package/@gerhobbelt/markdown-it-attribution">markdown-it-attribution</a>.</span>The downside is that Epigraphs require hand-coded HTML:
+<code>&#x3C;div class="epigraph"></code> wrapping the blockquote itself, and a <code>&#x3C;footer></code> tag wrapping
+the attribution inside the quoted text.</p></section>
+<section><h2 id="images-and-figures">Images and Figures</h2><p>Standard markdown image treatments do what you’d expect. Wrapping them in extra divs or
+figures adds special behavior, though, which can be neat.</p><p><img src="https://i0.wp.com/digital-photography-school.com/wp-content/uploads/2017/08/Dingle-.jpg?w=750&#x26;ssl=1" alt="Who wants some alt text? This dude."></p><p>Combining an inline sidenote and an image produces a pretty fancy
+image-with-caption-in-the-margins effect, though it’s not <em>semantically correct</em>, and I
+want to keep fussing with it until I get that fixed.</p><p><label for="md-from-edward-tufte" class="margin-toggle ">&#8853;</label><input type="checkbox" id="md-from-edward-tufte" class="margin-toggle" /><span class="marginnote">From Edward Tufte, <em>Visual Display of Quantitative Information</em>, page 92.</span>
+<img src="https://i0.wp.com/digital-photography-school.com/wp-content/uploads/2017/08/Dingle-.jpg?w=750&#x26;ssl=1" alt="Another thrilling random image, here."></p><p>Finally, full-width figures are possible by wrapping an image in the
+<code>&#x3C;figure class="fullwidth"></code> tag. Which brings us back to the whole "why not map that to
+some sensible markdown patterns" issue again, but we’ll revisit it sometime later.</p><figure class="fullwidth"><img src="https://i0.wp.com/digital-photography-school.com/wp-content/uploads/2017/08/Dingle-.jpg?w=750&#x26;ssl=1" alt="At long last, another image with alt text."></figure></section>
+<section><h2 id="the-boring-bits">The Boring Bits</h2><p>Things like HTML lists and tables aren’t quite as thrilling, but here you go.</p><ol>
+<li>An ordered list</li>
+<li>Often full of numbered items</li>
+<li>Unless they’re not, in which case you need…</li>
+</ol><ul>
+<li>An unordered list</li>
+<li>Theoretically orderless</li>
+<li>But often read in ordered</li>
+</ul><p>Even tables are possible, though it’s a monstrous idea no one should ever really subject
+themselves to. In the future I’d like to support shortcodes that pipe in an attached
+<code>.csv</code> file instead; seems a bit more humane.</p><table>
+<thead>
+<tr>
+<th>Column 1</th>
+<th>Column 2</th>
+<th>Column 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cell Contents</td>
+<td>More Stuff</td>
+<td>And Again</td>
+</tr>
+<tr>
+<td>Cell Contents</td>
+<td>More Stuff</td>
+<td>And Again</td>
+</tr>
+</tbody>
+</table><p>And there are code blocks.</p><pre><code class="language-python">def fn():
+    print("hello world")
+</code></pre></section>
+<section><h2 id="last-thoughts">Last thoughts</h2><p>Long term, it’s entirely possible that I’ll end up pulling out <code>tufte-markdown</code> and
+leaning on a heavily customized version of Eleventy’s standard <code>markdown-it</code> parser;
+it’s a little easier to extend IMO, and would allow me to leverage work others have done
+on stuff like cleaner <code>figure</code> and <code>blockquote</code> attribution, etc. The big hurdle is
+duplicating <code>tufte-markdown</code>'s very specific way of using <code>H2</code> tags to open new
+<code>&#x3C;section></code> blocks, automatically chunking a long article into meaningful sections with
+HTML ids generated from the text in the header. It’s handy!</p><p>Overloading Markdown’s semi-standard handling of image title attributes<label for="sd-like-so-less-than" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-like-so-less-than" class="margin-toggle" /><span class="sidenote">Like so: <code>![Image Alt](image.jpg Title Text)</code></span>, and
+using the title text to generate figure captions, feels like it could improve things
+quite a bit. Not sure how well that will mesh with formatted and linked captions, alas.</p><p>Finally, given how much Tufte’s work leans on data visualizations, it’d be nice to
+integrate a simple chart generation library, possibly wiring it up to the
+external-csv-file trick I’m dreaming of for the tables. We’ll see.</p></section>
+
+    </article>
+    <footer>
+      <footer>
+  <hr class="slender">
+  <p class="social-links">
+    <a href="/"><span class="fas fa-home"></span></a>
+    &nbsp
+    <a href="https://twitter.com/tyleraromero"><span class="fab fa-twitter-square"></span></a>
+    <a href="https://github.com/tyler-romero"><span class="fab fa-github-square"></span></a>
+    <a href="https://linkedin.com/in/tylerromero"><span class="fab fa-linkedin"></span></a>
+  </p>
+  <p class="copyright" style="font-size: 1.0em;">&copy; 2023 Tyler Romero</p>
+</footer>
+    </footer>
+  </body>
+</html>
