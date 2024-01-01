@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include "head.njk" %}
+  </head>
+  <header>
+    <nav class="topbar">
+      <div class="right-aligned-links">
+      <a href="/" class="no-tufte-underline" style="color: #246eb9; margin-right: 3%;">Tyler Romero</a>
+      <a href="/" class="no-tufte-underline">{% if page.url == '/' %}[posts]{% else %}posts{% endif %}</a>
+      <a href="/about/" class="no-tufte-underline">{% if page.url == '/about/' %}[about]{% else %}about{% endif %}</a>
+    </nav>
+  </header>
+  <body>
+    <article>
+      <h1>{{ title | markdownInline | safe }}</h1>
+      {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
+      {% if date %}<p class="date">{{ date.toDateString() }}</p>{% endif %}
+      {{ content | safe }}
+    </article>
+    <footer>
+      {% include "footer.njk" %}
+    </footer>
+  </body>
+</html>

@@ -1,6 +1,21 @@
+const tufteMdWrapper = require('./util/tufteMdWrapper')
+
 module.exports = function(eleventyConfig) {
-    // Copy `src/style.css` to `_site/style.css`
-    eleventyConfig.addPassthroughCopy("src/style.css");
+    // Copy `src/assets` to `_site/assets`
+    eleventyConfig.addPassthroughCopy("src/assets");
+
+    // Asset Watch Targets
+	eleventyConfig.addWatchTarget('./src/assets')
+
+    /* Markdown Configuration */
+	let options = {
+		react: false,
+    };
+
+	// Markdown
+	eleventyConfig.setLibrary("md", tufteMdWrapper)
+    eleventyConfig.addFilter("markdown", tufteMdWrapper.render)
+    eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline)
 
     // Set custom directories for input, output, includes, and data
     return {
@@ -9,7 +24,7 @@ module.exports = function(eleventyConfig) {
         dir: {
             input: "src",
             includes: "_includes",
-            data: "_data",
+            layouts: '_layouts',
             output: "_site"
         }
     };
