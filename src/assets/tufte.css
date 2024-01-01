@@ -41,7 +41,7 @@
 
 /* Tufte CSS styles */
 html {
-    font-size: 15px;
+    font-size: 14px;
 }
 
 body {
@@ -50,7 +50,7 @@ body {
     margin-right: auto;
     padding-left: 8%;
     font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
-    background-color: #fffff8;
+    background-color: #fcfcf5;
     color: #111;
     max-width: 1400px;
     counter-reset: sidenote-counter;
@@ -68,9 +68,9 @@ body {
 
 h1 {
     font-weight: 400;
-    margin-top: 4rem;
+    margin-top: 1rem;
     margin-bottom: 1.5rem;
-    font-size: 3.2rem;
+    font-size: 2.6rem;
     line-height: 1;
 }
 
@@ -167,6 +167,10 @@ div.epigraph > blockquote > footer > cite {
 }
 /* end chapter epigraphs styles */
 
+div.math {  /* For KaTeX */
+    width: 55%;
+}
+
 blockquote {
     font-size: 1.4rem;
 }
@@ -232,7 +236,7 @@ figure.fullwidth figcaption {
 /* Links: replicate underline that clears descenders */
 a:link,
 a:visited {
-    color: inherit;
+    color: #875053;
 }
 
 .no-tufte-underline:link {
@@ -487,4 +491,28 @@ label.margin-toggle:not(.sidenote-number) {
     img {
         width: 100%;
     }
+}
+
+/* Custom Classes */
+
+.profile-picture {
+    border-radius: 5%;
+    width: 70%;
+}
+
+
+nav a,
+nav a:link,
+nav a:visited {  /* top block */
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #568259;
+    padding-top: 2rem;
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-right: 2rem;
+    vertical-align: baseline;
+    font-weight: bold;
 }
