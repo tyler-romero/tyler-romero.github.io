@@ -4,8 +4,10 @@
     {% include "head.njk" %}
   </head>
   <header>
-    <nav class="group">
-      <a href="/" class="no-tufte-underline">{% if page.url == '/' %}[trome]{% else %}trome{% endif %}</a>
+    <nav class="topbar">
+      <div class="right-aligned-links">
+      <a href="/" class="no-tufte-underline" style="color: #246eb9; margin-right: 3%;">Tyler Romero</a>
+      <a href="/" class="no-tufte-underline">{% if page.url == '/' %}[posts]{% else %}posts{% endif %}</a>
       <a href="/about/" class="no-tufte-underline">{% if page.url == '/about/' %}[about]{% else %}about{% endif %}</a>
     </nav>
   </header>

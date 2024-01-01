@@ -1,13 +1,17 @@
+/* Personal Modifications to tufte.css */
+
 html {
-    font-size: 12px;
+    font-size: 14px;
 }
 
 body {
     background-color: #fcfcf5;
 }
 
-
-
+h1 {
+    margin-top: 1rem;
+    font-size: 2.6rem;
+}
 
 
 /* Active link styles */
@@ -34,12 +38,22 @@ nav a:visited {
     font-weight: bold;
 }
 
+div.math {  /* For KaTeX */
+    width: 55%;
+}
+
 .no-underline {
     text-decoration: none;
 }
 
-
-/* For KaTeX */
-div.math {
-    width: 55%;
+.profile-picture {
+    border-radius: 5%;
+    width: 70%;
 }
+
+/* .topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-right: auto;
+    width: 87.5%;
+} */
