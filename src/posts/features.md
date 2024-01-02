@@ -1,8 +1,7 @@
 ---
-layout: layout.njk
 title: Under Construction!
 subtitle: Just in case you needed a few extra markdown patterns to remember.
-date: 2023-12-30
+date: 2023-12-30T00:00:00-08:00
 tags: post
 ---
 

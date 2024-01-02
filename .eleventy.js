@@ -17,6 +17,7 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addFilter("markdown", tufteMdWrapper.render)
     eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline)
 
+
     // Set custom directories for input, output, includes, and data
     return {
         // When a passthrough file is modified, rebuild the pages:
@@ -24,8 +25,9 @@ module.exports = function(eleventyConfig) {
         dir: {
             input: "src",
             includes: "_includes",
-            layouts: '_layouts',
-            output: "_site"
+            layouts: "_layouts",
+            data: "_data",
+            output: "_site",
         }
     };
 };
