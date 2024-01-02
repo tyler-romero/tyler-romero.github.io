@@ -4,8 +4,9 @@ module.exports = function(eleventyConfig) {
     // Copy `src/assets` to `_site/assets`
     eleventyConfig.addPassthroughCopy("src/assets");
 
-    // Copy `CNAME` to the root of the output folder
+    // Copy some more files to `_site`
     eleventyConfig.addPassthroughCopy("src/CNAME");
+    eleventyConfig.addPassthroughCopy("src/robots.txt");
 
 
     // Asset Watch Targets
