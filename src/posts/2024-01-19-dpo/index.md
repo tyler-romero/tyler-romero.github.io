@@ -1,7 +1,7 @@
 ---
 title: Direct Preference Optimization explained without any RLHF
 subtitle: How the LLM sausage gets made
-date: 2024-01-19T00:00:00-08:00
+date: 2024-02-27T00:00:00-08:00
 tags: post
 ---
 With my first blog post, I want to cover a great paper that was published just a month ago: [Direct Preference Optimization by Rafailov et. al.](https://arxiv.org/abs/2305.18290)
@@ -61,22 +61,24 @@ $$
 ### The probability of a completion
 It is time to introduce a new probabiltiy function: $\pi(y|x)$. In RL notation, $\pi$ indicates a policy - and policies are optimized to maximize reward. In this setting, our "policy" function's output is literally the output of our LLM. Specifically, $\pi_\theta(y|x)$ is the probability of the completion y based on an LLM with parameters $\theta$ given that we start with prompt x.
 
-What do we mean by "the probability of the completion y"? Our LLM is an auto-regressive text generator, and, upon each auto-regressive step, it computes a probability value for every token in its vocabulary.
+What do we mean by "the probability of the completion y"? Our LLM is an auto-regressive text generator, and, upon each auto-regressive step, it computes a probability value for every word[^token] in its vocabulary.
+
+[^token]: In practice, modern LLMs operate on tokens, not words. For our purposes, the difference doesn't really matter. You can learn more by playing with an [online tokenizer demo](https://platform.openai.com/tokenizer) or digging through Karparthy's [minbpe](https://github.com/karpathy/minbpe) repo.
 
 ![Next Word Prediction Graphic](/assets/img/next-word-prediction.png)
-So - proceeding in order through every token in completion y - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every token in y! So we can compute the joint probability of the sequence of tokens as the product of the individual probabilities of observing each token along the way[^logprobs]:
-<!-- TODO: rework graphic to predict words instead of tokens, and add explainer about tokens -->
+So - proceeding in order through every word in completion y - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every word in y! So we can compute the joint probability of the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
+
 $$
 \pi_\theta(y|x)=\prod_{t=0}^{|y|}p_{LLM_\theta}(y_t|x,y_{0:t})
 $$
 
 [^logprobs]: In practice, multiplying probabilities can result in numerical underflow. It is common to instead work with logprobs: $\prod_i p_i=e^{\sum_i log p_i}$. Since every term in the summation of logprobs increases the magnitude of its output, underflow is avoided. OpenAI has a nice [guide to using token logprobs](https://cookbook.openai.com/examples/using_logprobs) returned by an LLM.
 
-Another way to think about it is that there is a tree of possible completions and we are compuing the probability of tracing one specific path from the root (prompt) to a leaf (stop-token).
+Another way to think about it is that there is a tree of possible completions and we are computing the probability of tracing one specific path from the root (prompt) to a leaf (stop-token).
 
 ![Probability of Sequence Graphic](/assets/img/sequence-prediction.png)
 
-When traning, we know the entire text completion ahead of time, so, by applying a causal mask we can can calculate all of the the individual next-token probabilities (and thus $\pi_\theta(y|x)$) in a single forward-pass through our LLM.
+When traning, we know the entire text completion ahead of time, so, by applying a causal mask we can can calculate all of the the individual next-word probabilities (and thus $\pi_\theta(y|x)$) in a single forward-pass through our LLM.
 
 ### Optimizing our LLM based on preferences
 Ok, so now that we've got our framework in place. Lets remind ourselves of our goal: to improve the outputs of our LLM. Stated another way, we want the completion (y) our LLM provides for a prompt (x) to generate a large reward $r_\theta(x, y)$. With this in mind, we can formulate an optimization problem where we want to find the parameters of our LLM ($\theta$) that maximize our expected reward for prompts similar to those we see in practice.[^expectation2]
@@ -85,7 +87,6 @@ $$
 $$
 
 [^expectation2]: {-} $\mathbb{E}_{x\sim \mathcal{D},y\sim \pi_\theta(y|x)}[r(x, y)]$ is just a formal way of saying "the expected reward attained by completions generated/sampled from our model ($y\sim \pi_\theta(y|x)$) based on prompts sampled from our dataset ($x\sim \mathcal{D}$)".
-
 
 This is a bit too simplistic, however. In practice, we are starting with the parameters of our fine-tuned base model, and we have some belief that our fine-tuned base model is pretty good, so we don't want the outputs of our model to change too much unless they really do improve the reward. With that in mind, we amend our optimization problem to include a constraint[^kldiv] to help enforce this belief.
 $$
@@ -153,16 +154,6 @@ $$
 =-\mathbb{E}\left[\frac{\sigma(r_\theta(x, y_1) - r_\theta(x, y_2))}{\sigma(r_\theta(x, y_1) - r_\theta(x, y_2))}\nabla_\theta(r_\theta(x, y_1) - r_\theta(x, y_2))\right]
 $$
 <!-- TODO: finish gradient section -->
-
-
-## ML Engineering Considerations
-When tuning an LLM using DPO, for every prompt $x$ and completion $y$ in our preference dataset, we need to compute the probabilities of each token in our vocabulary at every index corresponding to the completion. In fact, not only do we need to do this for the LLM we are tuning, we need to do this for our reference LLM as well! Naively, this means that we need to be able to store two LLMs in GPU memory, and we would need to run two expensive forward passes and one expensive backwards pass for every batch of training data.
-
-<!-- TODO: cut this section? It doesnt really make anything more compute efficient  -->
-
-How can we avoid this in order to make our training process more memory and compute efficient? One solution that comes to mind is to use LoRA[^lora], a popular parameter-efficient fine-tuning method. If we choose to use LoRA to tune our LLM, we can keep the DOP reference model in memory as the LoRA base model. Then we merely need to add a tiny fraction of new parameters in the form or a tunable LoRA adapter in order to represent our to-be-tuned model. We can then choose to run
-
-[^lora]: Huggingface has [a nice quick overview of LoRA](https://huggingface.co/docs/peft/main/en/conceptual_guides/adapter).
 
 ## Experiments with DPO
 TODO
