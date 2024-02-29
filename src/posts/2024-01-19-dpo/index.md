@@ -37,12 +37,12 @@ This is the Bradley-Terry Model, which is a probability model for the outcome of
 [^star]: This is the reason for the "star" in $p^*$: to indicate that we are modeling the true underlying distribution of human preferences.
 
 <!-- TODO: explain where the term "reward" comes from -->
-If we choose to parameterize the score as $s=e^r$ (which is a common choice), where $r$ is a "reward", then our model starts to look pretty nice - a simple difference in reward values passed through the sigmoid function[^sigmoid].
+If we choose to parameterize the score as $s=e^r$ (which is a common choice), where $r$ is a "reward", then our model starts to look pretty nice - a simple difference in reward values passed through the logistic function[^logistic].
 $$
 p^*(i \succ j) = \frac{s_i}{s_i + s_j} = \frac{e^{r_i}}{e^{r_i} + e^{r_j}} = \frac{1}{1+e^{-(r_i-r_j)}} = \sigma(r_i - r_j)
 $$
 
-[^sigmoid]: ![Sigmoid Function](/assets/img/sigmoid_fn_transparent.jpg)
+[^logistic]: The logistic function is an S-shaped (or sigmoid) function commonly denoted using $\sigma(x)$. ![Sigmoid Function](/assets/img/sigmoid.png)
 
 Now, we want to take this model of our data and leverage it to improve our LLM. In order to slot our LLM into this, we need to parameterize the reward using our LLM. We will call this reward $r_\theta(x, y)$, which just means that the reward is a function of the context/prompt ($x$) and the completion/answer ($y$) while being determined by the parameters of the LLM ($\theta$).
 
@@ -156,7 +156,9 @@ $$
 <!-- TODO: finish gradient section -->
 
 ## Experiments with DPO
-TODO
+In controlled sentiment generation, x is a prefix of a movie review from the IMDb dataset [22], and the policy must generate y with positive sentiment. In order to perform a controlled evaluation, for this experiment we generate preference pairs over generations using a pre-trained sentiment classifier, where p(positive | x, yw) > p(positive | x, yl). For SFT, we fine-tune GPT-2-large until convergence on reviews from the train split of the IMDB dataset (further details in App C.1).
+
+Methods. In addition to DPO, we evaluate several existing approaches to training language models to adhere to human preferences. Most simply, we explore zero-shot prompting with GPT-J [43] in the summarization task and 2-shot prompting with Pythia-2.8B [3] in the dialogue task. In addition, we evaluate the SFT model as well as Preferred-FT, which is a model fine-tuned with supervised learning on the chosen completion yw from either the SFT model (in controlled sentiment and summarization) or a generic LM (in single-turn dialogue). Another pseudo-supervised method is Unlikelihood [44], which simply optimizes the policy to maximize the probability assigned to yw and minimize the probability assigned to yl ; we use an optional coefficient α ∈ [0, 1] on the ‘unlikelihood’ term. We also consider PPO [37] using a reward function learned from the preference data and PPO-GT, which is an oracle that learns from the ground truth reward function available in the controlled sentiment setting. In our sentiment experiments, we use two implementations of PPO-GT, one of-the-shelf version [42] as well as a modified version that normalizes rewards and further tunes hyperparameters to improve performance (we also use these modifications when running ‘normal’ PPO with learned rewards). Finally, we consider the Best of N baseline, sampling N responses from the SFT model (or Preferred-FT in dialogue) and returning the highest-scoring response according to a reward function learned from the preference dataset. This high-performing method decouples the quality of the reward model from the PPO optimization, but is computationally imp
 
 # References
 
