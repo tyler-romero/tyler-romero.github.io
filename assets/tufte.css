@@ -41,7 +41,31 @@
 
 /* Tufte CSS styles */
 html {
-    font-size: 14px;
+    font-size: 10px;
+}
+/* Thanks siboehm */
+@media screen and (min-width: 800px) {
+    html {
+        font-size:11px
+    }
+}
+
+@media screen and (min-width: 900px) {
+    html {
+        font-size:12px
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    html {
+        font-size:13px
+    }
+}
+
+@media screen and (min-width: 1100px) {
+    html {
+        font-size:14px
+    }
 }
 
 body {
@@ -246,13 +270,13 @@ a:visited {
 
 a:link, .tufte-underline, .hover-tufte-underline:hover {
     text-decoration: none;
-    background: -webkit-linear-gradient(#fffff8, #fffff8), -webkit-linear-gradient(#fffff8, #fffff8), -webkit-linear-gradient(currentColor, currentColor);
-    background: linear-gradient(#fffff8, #fffff8), linear-gradient(#fffff8, #fffff8), linear-gradient(currentColor, currentColor);
+    background: -webkit-linear-gradient(#fcfcf5, #fcfcf5), -webkit-linear-gradient(#fcfcf5, #fcfcf5), -webkit-linear-gradient(currentColor, currentColor);
+    background: linear-gradient(#fcfcf5, #fcfcf5), linear-gradient(#fcfcf5, #fcfcf5), linear-gradient(currentColor, currentColor);
     -webkit-background-size: 0.05em 1px, 0.05em 1px, 1px 1px;
     -moz-background-size: 0.05em 1px, 0.05em 1px, 1px 1px;
     background-size: 0.05em 1px, 0.05em 1px, 1px 1px;
     background-repeat: no-repeat, no-repeat, repeat-x;
-    text-shadow: 0.03em 0 #fffff8, -0.03em 0 #fffff8, 0 0.03em #fffff8, 0 -0.03em #fffff8, 0.06em 0 #fffff8, -0.06em 0 #fffff8, 0.09em 0 #fffff8, -0.09em 0 #fffff8, 0.12em 0 #fffff8, -0.12em 0 #fffff8, 0.15em 0 #fffff8, -0.15em 0 #fffff8;
+    text-shadow: 0.03em 0 #fcfcf5, -0.03em 0 #fcfcf5, 0 0.03em #fcfcf5, 0 -0.03em #fcfcf5, 0.06em 0 #fcfcf5, -0.06em 0 #fcfcf5, 0.09em 0 #fcfcf5, -0.09em 0 #fcfcf5, 0.12em 0 #fcfcf5, -0.12em 0 #fcfcf5, 0.15em 0 #fcfcf5, -0.15em 0 #fcfcf5;
     background-position: 0% 93%, 100% 93%, 0% 93%;
 }
 
