@@ -1,8 +1,8 @@
 ---
 title: Under Construction!
-subtitle: Just in case you needed a few extra markdown patterns to remember.
+subtitle: Markdown Patterns
 date: 2023-12-30T00:00:00-08:00
-tags: post
+tags: just-for-reference
 ---
 
 In addition to basic markdown features like _emphasis,_ **strong text,**

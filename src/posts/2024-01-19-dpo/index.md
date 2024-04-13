@@ -1,5 +1,5 @@
 ---
-title: Direct Preference Optimization explained in depth
+title: (WIP) Direct Preference Optimization explained in depth
 subtitle: Simpler preference-tuning without reinforcement learning
 date: 2024-04-13T00:00:00-08:00
 tags: post
