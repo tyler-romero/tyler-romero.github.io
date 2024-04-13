@@ -1,8 +1,8 @@
 ---
 title: Under Construction!
-subtitle: Just in case you needed a few extra markdown patterns to remember.
+subtitle: Markdown Patterns
 date: 2023-12-30T00:00:00-08:00
-tags: post
+tags: just-for-reference
 ---
 
 In addition to basic markdown features like _emphasis,_ **strong text,**
@@ -119,7 +119,7 @@ Finally, full-width figures are possible by wrapping an image in the
 some sensible markdown patterns" issue again, but we'll revisit it sometime later.
 
 <figure class="fullwidth">
-![At long last, another image with alt text.](https://i0.wp.com/digital-photography-school.com/wp-content/uploads/2017/08/Dingle-.jpg?w=750&ssl=1)
+![At long last, another image with alt text.](https://edwardtufte.github.io/tufte-css/img/napoleons-march.png)
 </figure>
 
 ## The Boring Bits
