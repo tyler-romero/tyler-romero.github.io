@@ -13,5 +13,7 @@ My academic background includes a master's in computer science and machine learn
 
 [^intern]: I made a few contributions to Bloomberg's [Asset and Investment Management](https://www.bloomberg.com/professional/product/asset-and-investment-manager/) function and wrote Microsoft [a data retrieval package for R](https://learn.microsoft.com/en-us/sql/machine-learning/r/ref-r-olapr) that is still supported 8 years later.
 
+You can reach me via a [LinkedIn](https://www.linkedin.com/in/tylerromero/) message.
+
 ## Recommendations
 * [sibohem](https://siboehm.com/): An excellent ML engineering blog, and a large part of the inspiration for this blog. I especially recommend the posts about optimizing [multidimensional matrix multiplication on CPU](https://siboehm.com/articles/22/Fast-MMM-on-CPU) and [pipeline parallelism for distributed training](https://siboehm.com/articles/22/pipeline-parallel-training).
