@@ -4,13 +4,13 @@ subtitle: Simpler preference-tuning without reinforcement learning
 date: 2024-04-13T00:00:00-08:00
 tags: post
 ---
-With my first blog post, I want to cover a great paper that was published last year: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) by Rafailov et. al.
+With my first blog post, I want to cover an excellent paper that was published last year: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) by Rafailov et. al.
 
-Commonly refered to as DPO, this method of preference-tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post I will explain DPO from first principles; readers are not expected to have an understanding of RLHF.
+Commonly refered to as DPO, this method of preference-tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post I will explain DPO from first principles; readers do not need an understanding of RLHF.
 
 # Training, tuning, and aligning LLMs
 
-In order to contextualize DPO, and preference-tuning in general, let's review the modern process for creating a language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
+In order to contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
 
 1. **Pre-train a base model** on internet-scale data. Given a snippet of text, this model is trained to predict the immediate next word. This conceptually simple task scales up extremely well, and allows LLMs to encode a huge amount of knowledge from their training data. Examples of base models include [GPT-3](https://arxiv.org/abs/2005.14165), [Llama](https://research.facebook.com/publications/llama-open-and-efficient-foundation-language-models/) (and [Llama 2](https://ai.meta.com/resources/models-and-libraries/llama/)), and [Mistral](https://mistral.ai/news/announcing-mistral-7b/).
 
@@ -19,13 +19,12 @@ In order to contextualize DPO, and preference-tuning in general, let's review th
 3. Finally, we **fine-tune the model in accordance with human preferences**. Human preferences are powerful because they are so easily and cheaply *expressed*. Think of how easy it is compare two movies and pick a favorite. Yet how difficult it would be to make a film that embodies the qualities that drive you to visit a theater. Similarly, it is challenging to describe exactly how we want our model to behave (as we attempt to do in step 2), but given examples of model behavior it is straightforward to indicate a preference for a specific type of behavior. For a while, this sort of preference-tuning was done using RLHF. Recently, RLHF has been somewhat surplanted by DPO due to the relative simplicity of the latter. LLMs that have been tuned using human preferences include [Llama 2 Chat](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf), [ChatGPT-4](https://cdn.openai.com/papers/gpt-4-system-card.pdf), [Claude 3 Opus](https://www.anthropic.com/news/claude-3-family), and [Gemini Ultra](https://blog.google/technology/ai/google-gemini-ai/#availability).
 
 # Tuning LLMs on preference data
-<!-- explain why preferences are a great source of demonstration data -->
 
 It is hard and time consuming work to create high-quality demonstrations of the behavior we want our LLM to mimic. And it would be expensive to hire labelers to help us create such data. However, once we have a model that is "good enough" at demonstrating desired behavior, we can shift into high-gear. Given a prompt, we can [sample two different responses from our LLM](https://huggingface.co/blog/how-to-generate#sampling) by setting `temperature > 0` and thus injecting a small amount of randomness into which words the LLM selects. Now, it is cheap and easy to have a labeler express a preference for one of the two completions.
 
 While using ChatGPT or Gemini, you may have noticed that you will occasionally be asked to choose between two similar answers from which to continue your conversation. This preference is recorded and used to improve the model in a future round of preference-tuning. Similarly, [Chatbot Arena](https://chat.lmsys.org/) collects preference data for the purpose of computing Elo scores to compare LLMs:
 
-![LMSys Chatbot Arena](/assets/img/chatbot-arena.png)
+![LMSys Chatbot Arena, head-to-head comparison tool for instruction-tuned LLMs](/assets/img/chatbot-arena.png)
 
 There are many publicly available preference datasets, such as LMSys' [Chatbot Arena Conversations dataset](https://huggingface.co/datasets/lmsys/chatbot_arena_conversations), OpenAI's [WebGPT Comparisons datataset](https://huggingface.co/datasets/openai/webgpt_comparisons?row=1), and Anthropic's [Helpfulness-Harmlessness RLHF dataset](https://huggingface.co/datasets/Anthropic/hh-rlhf) (explicit/offensive content warning).
 
@@ -33,7 +32,7 @@ Formally, these datasets can be expressed as follows:
 $$
 \mathcal{D}=\{x^{(i)},y_w^{(i)},y_l^{(i)}\}_{i=1}^N
 $$
-Where $x$ is the context/prompt, $y_w$ is the preferred completion, and $y_l$ is the less desireable completion.
+Where $x$ is the context/prompt, $y_w$ is the preferred completion, and $y_l$ is the less desirable completion.
 
 ## The Bradley-Terry Model
 So what do we do with all this preference data? We want to leverage it to modify our LLM to output responses that better conform to the preferences. To begin, let us explore a simple probability model:
@@ -41,7 +40,7 @@ $$
 p^*(i \succ j) = \frac{s_i}{s_i + s_j}
 $$
 
-This is the Bradley-Terry model, which is a model for the outcome of pairwise comparisons. In plain english it says "we model the true[^star] probability that outcome i is preferred to outcome j as the score of i over the combined scores of i and j".
+This is the Bradley-Terry model, which is a model for the outcome of pairwise comparisons. In plain English it says "we model the true[^star] probability that outcome $i$ is preferred to outcome $j$ as the score of $i$ over the combined scores of $i$ and $j$".
 
 [^star]: This is the reason for the "star" in $p^*$: to indicate that we are modeling the true underlying distribution of human preferences. Likewise, shortly we will see $r^*$, which indicates the true underlying reward function that grades our completions, and $\pi^*$, which indicates the optimal policy we want our LLM to mimic.
 
@@ -49,7 +48,7 @@ Readers may be familiar with the Bradley-Terry model from the context of Elo sco
 
 [^elo]: Under the Elo rating system, the probability of player $i$ beating player $j$ is given by $p(i \succ j) = \frac{1}{1 + 10^{(R_j-R_i)/400}} = \frac{s_i}{s_i + s_j}$ where $R$ indicates a player's rating and $s = 10^{R/400}$.
 
-It is common to choose to parameterize the score as $s=e^r$, where $r$ stands for reward. The term "reward" is lent from the world of reinforcement learning, where greater rewards are received for more desireable series of actions - similar to acheiving a higher score for performing better in a video game.
+It is common to choose to parameterize the score as $s=e^r$, where $r$ stands for reward. The term "reward" is borrowed from the world of reinforcement learning, where greater rewards are received for more desirable series of actions - similar to acheiving a higher score for performing better in a video game.
 
 Under this parameterization, our model starts to look pretty nice - a simple difference in reward values passed through the logistic function[^logistic].
 $$
@@ -62,14 +61,12 @@ $$
 ## Applying the Bradley-Terry Model to LLMs
 Now, we want to take the Bradley-Terry model and leverage it alongside a dataset of preferences in order to improve our LLM's generated outputs.
 
-In our preference dataset ($\mathcal{D}$), we have two comparisons and we want to model the probability of one completion being preferred over the other. In a sense, each completion elicits some reward based on its quality, and our ultimate goal will be to nudge our LLM to produce competions that are of higher quality. Therefore, we will parameterize the reward using our LLM. We will call this reward $r^*(x, y)$, which just means that the reward is a function of the context/prompt ($x$) and the completion ($y$).
+In our preference dataset ($\mathcal{D}$), we have two comparisons and we want to model the probability of one completion being preferred over the other. In a sense, each completion elicits some reward based on its quality, and our ultimate goal will be to nudge our LLM to produce completions that are of higher quality. Therefore, we will parameterize the reward using our LLM. We will call this reward $r^*(x, y)$, which just means that the reward is a function of the context/prompt ($x$) and the completion ($y$).
 
 So after adapting our preference model to use our parameterized reward function, we have:
 $$
 p^*(y_1 \succ y_2 | x) = \sigma(r^*(x, y_1) - r^*(x, y_2))
 $$
-
-<!-- TODO: actual intuitive example of the BT model? -->
 
 But talking in terms of optimal solutions and rewards does us no good, since we do not have access to the optimal reward function. In practice, it is common to learn a reward model $r_\phi(x, y)$ that mimics the optimal reward function. We can estimate the parameters $\phi$ of this reward model by framing this as a binary classification problem where our objective is to minimize the following [negative log-likelihood loss](https://pytorch.org/docs/stable/generated/torch.nn.NLLLoss.html) function on our preference dataset $\mathcal{D}$:[^expectation1]
 $$
@@ -80,19 +77,16 @@ $$
 
 Under the RLHF framework, we could leverage this learned reward model in a reinforcement learning setting to optimize an LLM to output completions that achieve high rewards. However, DPO takes a different tack - instead of the two-stage RLHF process, DPO reparameterizes the Bradley-Terry model so that we can use a similar loss function to directly to optimize the parameters of our LLM such that it produces outputs that are preferred by human observers.
 
-# Language Models as
-<!-- TODO: Clean up this section to amke it less stunted -->
-In order to understand the derivation of DPO and the clever reparameterization it uses, we need to introduce some more notation and contextualize it in the context of LLMs.
 
 ## The probability of a completion
-It is time to introduce a new probability function: $\pi(y|x)$. In RL notation, $\pi$ indicates a policy - and policies are optimized to maximize reward. In this setting, our policy function's output is literally the output of our LLM. Specifically, $\pi_\theta(y|x)$ is the probability of the completion $y$ based on an LLM with parameters $\theta$ given that we start with prompt $x$.
+At this point, the idea of optimizing LLMs based on preferences or rewards may feel fairly abstract. So we're going to take a moment to introduce a new probability function, $\pi(y|x)$, that represents the literal output of our LLM. In RL notation, $\pi$ indicates a policy (i.e. a strategy), and policies are optimized to maximize reward. Specifically, $\pi_\theta(y|x)$ is the probability of generating the completion $y$ based on an LLM with parameters $\theta$ given that we start with prompt $x$.
 
-What do we mean by "the probability of the completion $y$"? Our LLM is an auto-regressive text generator, and, upon each auto-regressive step, it computes a probability value for every word[^token] in its vocabulary.
+What do we mean by "the probability of generating the completion $y$"? Our LLM is an auto-regressive text generator, and, upon each auto-regressive step, it computes a probability value for every word[^token] in its vocabulary.
 
 [^token]: In practice, modern LLMs operate on tokens, not words. For our purposes, the difference doesn't really matter. You can learn more by playing with an [online tokenizer demo](https://platform.openai.com/tokenizer) or digging through Karparthy's [minbpe](https://github.com/karpathy/minbpe) repo.
 
 ![Next Word Prediction Graphic](/assets/img/next-word-prediction.png)
-So - proceeding in order through every word in completion $y$ - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every word in $y$! So we can compute the joint probability of the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
+So - proceeding in order through every word in completion $y$ - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every word in $y$! So we can compute the joint probability of generating the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
 
 $$
 \pi_\theta(y|x)=\prod_{t=0}^{|y|}p_{LLM_\theta}(y_t|x,y_{0:t})
@@ -139,7 +133,7 @@ $$
 ...= \min_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\left[\mathbb{E}_{y\sim \pi_\theta(y|x)}\left[log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}}\right] - logZ(x)\right] \\[10pt]
 = \min_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\left[\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right) - logZ(x)\right]
 $$
-And we have nearly arrived! Since $Z(x)$ does not depend on $\pi_\theta$, we can just ignore it for the purpose of deriving the optimal solution. We can now rely on the property of the KL divergence mentioned above: it is minimized at zero if and only if the two distributions are identical. So the optimal solution (denoted as $\pi^*$) for all $x \in \mathcal{D}$ to our optimization problem is:
+And we have nearly arrived! Since $Z(x)$ does not depend on $\pi_\theta$, we can just ignore it for the purpose of deriving the optimal solution. We can now rely on the property of the KL divergence mentioned above: it is minimized at zero if, and only if, the two distributions are identical. So, the optimal solution (denoted as $\pi^*$) for all $x \in \mathcal{D}$ to our optimization problem is:
 $$
 \pi^*(y|x)=\pi_\theta(y|x)=\frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}
 $$
@@ -172,54 +166,23 @@ $$
 
 Recall that above we optimized a negative log-likelihood loss in order to estimate the parameters of a reward model that was then used downstream by RLHF to estimate the parameters of a policy model. But now we are directly optimizing the parameters of our LLM *policy* model based on human preferences! Thus, Direct Preference Optimization.
 
-## PyTorch implementation of DPO
-The DPO paper provides a PyTorch implementation of DPO loss in appendix B. I've reproduced it here, with some non-functional changes that I believe add some clarity.
-```python
-import torch.nn.functional as F
-
-
-def dpo_loss(pi_logprobs, ref_logprobs, ywin_idxs, ylose_idxs, beta):
-    """
-    pi_logprobs: policy model completion logprobs. Shape: (batch_size,)
-    ref_logprobs: reference model completion logprobs. Shape: (batch_size,)
-    ywin_idxs: preferred completion indices in [0, batch_size-1]. Shape: (pairs_in_batch,)
-    ylose_idxs: dispreferred completion indices in [0, batch_size-1]. Shape: (pairs_in_batch,)
-    beta: temperature controlling strength of KL-divergence penalty
-
-    Each pair of (yw_idxs[i], yl_idxs[i]) represents the
-    indices of a single preference pair.
-    """
-
-    pi_ywin_logprobs, pi_ylose_logprobs = pi_logprobs[ywin_idxs], pi_logprobs[ylose_idxs]
-    ref_ywin_logprobs, ref_ylose_logprobs = ref_logprobs[ywin_idxs], ref_logprobs[ylose_idxs]
-
-    # subtraction of logprobs is equivalent to log(division of probs)
-    pi_logratios = pi_ywin_logprobs - pi_ylose_logprobs
-    ref_logratios = ref_ywin_logprobs - ref_ylose_logprobs
-
-    losses = -F.logsigmoid(beta * (pi_logratios - ref_logratios))
-    rewards = beta * (pi_logprobs - ref_logprobs).detach()
-    return losses, rewards
-```
-Also see implementations of DPO loss by [Eric Mitchell](https://github.com/eric-mitchell/direct-preference-optimization/blob/main/trainers.py) and [HuggingFace](https://github.com/huggingface/trl/blob/main/trl/trainer/dpo_trainer.py).
-
 ## Properties and Caveats of DPO
 One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RHLF and of DPO are the same.
 
 This is an important equivalance result, however, in practice:
-1) the Bradley-Terry model does not perfectly fit the preference data.[^cycle]
-2) the reward function learned by RLHF is not the optimal reward function.
-3) gradient descent on a highly non-convex loss landscape - such as that of a LLM - doesn't find the global optimizer.
+1) the Bradley-Terry model often does not perfectly fit the preference data.[^cycle]
+2) the reward function learned by RLHF will not be the optimal reward function.
+3) gradient descent on a highly non-convex loss landscape - such as that of a LLM - does not find the global optimizer.
 
 [^cycle]: For example, a preference cycle would cause the Bradley-Terry model to fail to perfectly fit the data. The Bradley-Terry model assumes transitive preferences. For example, if $A \succ B$ and $B \succ C$ then it expects that $A \succ C$. But if instead $C \succ A$, then there is a cycle and transitivity is broken.
 
-Another weakness of DPO is that it is prone to overfitting due to a lack of regularisation. [Azar et al.](https://arxiv.org/abs/2310.12036) provide a compelling example[^notation]:
+Another weakness of DPO is that it is prone to overfitting due to a lack of regularization. [Azar et al.](https://arxiv.org/abs/2310.12036) provide a compelling example[^notation]:
 
 [^notation]: The original notation of the quote has been adjusted slightly to match the rest of this post.
 
-> Consider the simple example where we have two actions $y_w$ and $y_l$ such that $p^*(y_w \succ y_l)=1$, i.e., $y_w$ is always preferred to $y_l$. Then the Bradley-Terry model would require that $(r(y_w)-r(y_l))\rightarrow+\infty$ to [be satisfied]. If we plug this into the optimal policy then we would get that $\frac{\pi^*(y_l)}{\pi^*(y_w)}=0$ (i.e. $\pi^*(y_l)=0$) ... Thus the strength of the KL-regularisation becomes weaker and weaker the more deterministic the preferences.
+> Consider the simple example where we have two actions $y_1$ and $y_2$ such that $p^*(y_1 \succ y_2)=1$, i.e., $y_1$ is always preferred to $y_2$. Then the Bradley-Terry model would require that $(r(y_1)-r(y_2))\rightarrow+\infty$ to \[be satisfied]. If we plug this into the optimal policy then we would get that $\frac{\pi^*(y_2)}{\pi^*(y_1)}=0$ (i.e. $\pi^*(y_2)=0$) ... Thus the strength of the KL-regularization becomes weaker and weaker the more deterministic the preferences.
 
-They also point out that, in practice, we have a finite amount of preference data. Therefore, we are likely to emperically estimate $\hat{p}(y_w \succ y_l)=1$ simply because we've only seen a small number of comparisons between $y$ and $y'$. And therefore the emperical optimal policy would push $\pi(y_l)=0$ regardless of the regularisation term that is attempting to keep the policy similar to our reference policy.
+They also point out that, in practice, we have a finite amount of preference data. Therefore, we are likely to emperically estimate $\hat{p}(y_1 \succ y_2)=1$ simply because we've only seen a small number of comparisons between $y$ and $y'$. And therefore the emperical optimal policy would push $\pi(y_2)=0$ regardless of the regularization term that is attempting to keep the policy similar to our reference policy.
 
 Despite these shortcomings, DPO is a highly effective tool; at the time of writing, many of the most successful and performant open-source LLMs were instruction-tuned using DPO.
 
