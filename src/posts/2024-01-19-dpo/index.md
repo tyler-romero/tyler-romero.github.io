@@ -5,6 +5,7 @@ date: 2024-04-13T00:00:00-08:00
 tags: post
 ---
 With my first blog post, I want to cover an excellent paper that was published last year: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) by Rafailov et al.
+
 Commonly referred to as DPO, this method of preference-tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF.
 
 # Training, tuning, and aligning LLMs
