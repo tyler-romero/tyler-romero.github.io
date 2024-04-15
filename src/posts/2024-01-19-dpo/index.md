@@ -4,7 +4,7 @@ subtitle: Simpler preference-tuning without reinforcement learning
 date: 2024-04-13T00:00:00-08:00
 tags: post
 ---
-With my first blog post, I want to cover an excellent paper that was published last year: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) by Rafailov et. al.
+With my first blog post, I want to cover an excellent paper that was published last year: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) by Rafailov et al.
 
 Commonly refered to as DPO, this method of preference-tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post I will explain DPO from first principles; readers do not need an understanding of RLHF.
 
@@ -16,7 +16,7 @@ In order to contextualize DPO, and preference-tuning in general, let's review th
 
 2. Take a pre-trained base model and **fine-tune it on a task-specific dataset**. For example, if you are trying to create a helpful dialog model like ChatGPT, you would want to tune your model on a dataset of conversational dialog, so that your model's outputs sound more like parts of a conversation and less like a Wikipedia page. In this stage, we still use the next word prediction task, and the fine-tuning procedure updates our model to make predictions that more closely align with the high-quality task-specific examples we are feeding it. Examples of fine-tuned models in this stage are [Alpaca](https://crfm.stanford.edu/2023/03/13/alpaca.html), [Vicuna](https://lmsys.org/blog/2023-03-30-vicuna/) and [Mistral-Instruct](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1).
 
-3. Finally, we **fine-tune the model in accordance with human preferences**. Human preferences are powerful because they are so easily and cheaply *expressed*. Think of how easy it is compare two movies and pick a favorite. Yet how difficult it would be to make a film that embodies the qualities that drive you to visit a theater. Similarly, it is challenging to describe exactly how we want our model to behave (as we attempt to do in step 2), but given examples of model behavior it is straightforward to indicate a preference for a specific type of behavior. For a while, this sort of preference-tuning was done using RLHF. Recently, RLHF has been somewhat surplanted by DPO due to the relative simplicity of the latter. LLMs that have been tuned using human preferences include [Llama 2 Chat](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf), [ChatGPT-4](https://cdn.openai.com/papers/gpt-4-system-card.pdf), [Claude 3 Opus](https://www.anthropic.com/news/claude-3-family), and [Gemini Ultra](https://blog.google/technology/ai/google-gemini-ai/#availability).
+3. Finally, we **fine-tune the model in accordance with human preferences**. Human preferences are powerful because they are so easily and cheaply *expressed*. Think of how easy it is compare two movies and pick a favorite. Yet how difficult it would be to make a film that embodies the qualities that drive you to visit a theater. Similarly, it is challenging to describe exactly how we want our model to behave (as we attempt to do in step 2), but given examples of model behavior it is straightforward to indicate a preference for a specific type of behavior. For a while, this sort of preference-tuning was done using RLHF. Recently, RLHF has been somewhat supplanted by DPO due to the relative simplicity of the latter. LLMs that have been tuned using human preferences include [Llama 2 Chat](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf), [ChatGPT-4](https://cdn.openai.com/papers/gpt-4-system-card.pdf), [Claude 3 Opus](https://www.anthropic.com/news/claude-3-family), and [Gemini Ultra](https://blog.google/technology/ai/google-gemini-ai/#availability).
 
 # Tuning LLMs on preference data
 
@@ -79,7 +79,7 @@ Under the RLHF framework, we could leverage this learned reward model in a reinf
 
 
 ## The probability of a completion
-At this point, the idea of optimizing LLMs based on preferences or rewards may feel fairly abstract. So we're going to take a moment to introduce a new probability function, $\pi(y|x)$, that represents the literal output of our LLM. In RL notation, $\pi$ indicates a policy (i.e. a strategy), and policies are optimized to maximize reward. Specifically, $\pi_\theta(y|x)$ is the probability of generating the completion $y$ based on an LLM with parameters $\theta$ given that we start with prompt $x$.
+At this point, the idea of optimizing LLMs based on preferences or rewards may feel fairly abstract. So we're going to take a moment to introduce a new probability function, $\pi(y|x)$, that represents the literal output of our LLM. In reinforcement learning notation, $\pi$ indicates a policy (i.e. a strategy), and policies are optimized to maximize reward. Specifically, $\pi_\theta(y|x)$ is the probability of generating the completion $y$ based on an LLM with parameters $\theta$ given that we start with prompt $x$.
 
 What do we mean by "the probability of generating the completion $y$"? Our LLM is an auto-regressive text generator, and, upon each auto-regressive step, it computes a probability value for every word[^token] in its vocabulary.
 
@@ -169,7 +169,7 @@ Recall that above we optimized a negative log-likelihood loss in order to estima
 ## Properties and Caveats of DPO
 One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RHLF and of DPO are the same.
 
-This is an important equivalance result, however, in practice:
+This is an important equivalance result; however, in practice:
 1) the Bradley-Terry model often does not perfectly fit the preference data.[^cycle]
 2) the reward function learned by RLHF will not be the optimal reward function.
 3) gradient descent on a highly non-convex loss landscape - such as that of a LLM - does not find the global optimizer.
