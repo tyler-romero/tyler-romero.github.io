@@ -9,7 +9,7 @@ In the recent past, I worked on large-scale recommender systems at Twitter, wher
 
 [^twitter]: [And some of my work at Twitter is now open-source!](https://github.com/twitter/the-algorithm-ml/tree/main/projects/home/recap) Although the git-blame has been sanitized.
 
-My academic background includes a master's in computer science and machine learning from Stanford, with a bachelor's in computer engineering from Texas A&M. As an undergraduate, I performed research on novel implementations of parallel algorithms written in C / [Cilk](https://cilk.mit.edu/programming/) and interned as a Software Engineer at Bloomberg and Microsoft.[^intern]
+My academic background includes a Master's in computer science and machine learning from Stanford, with a Bachelor's in computer engineering from Texas A&M. As an undergraduate, I performed research on novel implementations of parallel algorithms written in C / [Cilk](https://cilk.mit.edu/programming/) and interned as a Software Engineer at Bloomberg and Microsoft.[^intern]
 
 [^intern]: I made a few contributions to Bloomberg's [Asset and Investment Management](https://www.bloomberg.com/professional/product/asset-and-investment-manager/) function and wrote Microsoft [a data retrieval package for R](https://learn.microsoft.com/en-us/sql/machine-learning/r/ref-r-olapr) that is still supported 8 years later.
 
