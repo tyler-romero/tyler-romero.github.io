@@ -9,6 +9,7 @@ With my first blog post, I want to cover an excellent paper that was published l
 Commonly referred to as DPO, this method of preference-tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF.
 
 # Training, tuning, and aligning LLMs
+<!-- TODO: lifecycle graphic -->
 In order to contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
 
 1. **Pre-train a base model** on internet-scale data. Given a snippet of text, this model is trained to predict the immediate next word. This conceptually simple task scales up extremely well and allows LLMs to encode a huge amount of knowledge from their training data. Examples of base models include [GPT-3](https://arxiv.org/abs/2005.14165), [Llama](https://research.facebook.com/publications/llama-open-and-efficient-foundation-language-models/) (and [Llama 2](https://ai.meta.com/resources/models-and-libraries/llama/)), and [Mistral](https://mistral.ai/news/announcing-mistral-7b/).
@@ -19,7 +20,9 @@ In order to contextualize DPO, and preference-tuning in general, let's review th
 
 # Tuning LLMs on preference data
 
-It is hard and time-consuming work to create high-quality demonstrations of the behavior we want our LLM to mimic. And it would be expensive to hire labelers to help us create such data. However, once we have a model that is "good enough" at demonstrating desired behavior, we can shift into high gear. Given a prompt, we can [sample two different responses from our LLM](https://huggingface.co/blog/how-to-generate#sampling) by setting `temperature > 0` and thus injecting a small amount of randomness into which words the LLM selects. Now, it is cheap and easy to have a labeler express a preference for one of the two completions.
+It is hard and time-consuming work to create high-quality demonstrations of the behavior we want our LLM to mimic. And it would be expensive to hire labelers to help us create such data. However, once we have a model that is "good enough" at demonstrating desired behavior, we can shift into high gear. Given a prompt, we can [sample two different responses from our LLM](https://huggingface.co/blog/how-to-generate#sampling) by injecting a small amount of randomness[^temperature]. Now, it is cheap and easy to have a labeler express a preference for one of the two completions.
+
+[^temperature]: This is typically done by generating text with a `temperature` that is greater than zero. [Here](https://lukesalamone.github.io/posts/what-is-temperature/) is a lovely little demo that explains how temperature affects model outputs visually.
 
 While using ChatGPT or Gemini, you may have noticed that you will occasionally be asked to choose between two similar answers from which to continue your conversation. This preference is recorded and used to improve the model in a future round of preference-tuning. Similarly, [Chatbot Arena](https://chat.lmsys.org/) collects preference data for the purpose of computing Elo scores to compare LLMs:
 
@@ -43,13 +46,13 @@ This is the Bradley-Terry model, which is a model for the outcome of pairwise co
 
 [^star]: This is the reason for the "star" in $p^*$: to indicate that we are modeling the true underlying distribution of human preferences. Likewise, shortly we will see $r^*$, which indicates the true underlying reward function that grades our completions, and $\pi^*$, which indicates the optimal policy we want our LLM to mimic.
 
-Readers may be familiar with the Bradley-Terry model from the context of Elo scores, which are popular in [chess](https://www.chess.com/terms/elo-rating-chess) and [other](https://liquipedia.net/starcraft/Elo_rating#Detailed_Explanation) [competitive](https://www.goratings.org/en/) [games](https://lmsys.org/blog/2023-12-07-leaderboard/). The Bradley-Terry model is a generalization of the Elo rating system[^elo].
+Readers may be familiar with the Bradley-Terry model from the context of Elo scores, which are popular in [chess](https://www.chess.com/terms/elo-rating-chess) and [other](https://liquipedia.net/starcraft/Elo_rating#Detailed_Explanation) [competitive](https://www.goratings.org/en/) [games](https://lmsys.org/blog/2023-12-07-leaderboard/). The Bradley-Terry model is a generalization of the Elo rating system, where the probability of player A beating player B is given by $p(A \succ B) = \frac{1}{1 + 10^{(R_B-R_A)/400}} = \frac{s_A}{s_A + s_B}$. Here $R$ indicates a player's rating[^elo] and $s = 10^{R/400}$.
 
-[^elo]: Under the Elo rating system, the probability of player $i$ beating player $j$ is given by $p(i \succ j) = \frac{1}{1 + 10^{(R_j-R_i)/400}} = \frac{s_i}{s_i + s_j}$ where $R$ indicates a player's rating and $s = 10^{R/400}$.
+[^elo]: So if player A's Elo rating is 2000 and player B's is 1600 then player A is expected to be 10 times more likely to win than player B, because $p(A \succ B)=\frac{1}{1 + 10^{(1600-2000)/400}}=10/11$.
 
-It is common to choose to parameterize the score as $s=e^r$, where $r$ stands for reward. The term "reward" is borrowed from the world of reinforcement learning, where greater rewards are received for a more desirable series of actions - similar to achieving a higher score for performing better in a video game.
+Under the Bradley-Terry model, is common to choose to parameterize the score as $s=e^r$, where $r$ stands for reward. The term "reward" is borrowed from the world of reinforcement learning, where greater rewards are received for a more desirable series of actions - similar to achieving a higher score for performing better in a video game.
 
-Under this parameterization, our model starts to look pretty nice - a simple difference in reward values passed through the logistic function[^logistic].
+With this parameterization, our model starts to look pretty nice - a simple difference in reward values passed through the logistic function[^logistic].
 $$
 p^*(i \succ j) = \frac{s_i}{s_i + s_j} = \frac{e^{r^*_i}}{e^{r^*_i} + e^{r^*_j}} = \frac{1}{1+e^{-(r^*_i-r^*_j)}} = \sigma(r^*_i - r^*_j)
 $$
@@ -85,7 +88,7 @@ What do we mean by "the probability of generating the completion $y$"? Our LLM i
 [^token]: In practice, modern LLMs operate on tokens, not words. For our purposes, the difference doesn't really matter. You can learn more by playing with an [online tokenizer demo](https://platform.openai.com/tokenizer) or digging through Karparthy's [minbpe](https://github.com/karpathy/minbpe) repo.
 
 ![Next Word Prediction Graphic](/assets/img/next-word-prediction.png)
-So - proceeding in order through every word in completion $y$ - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every word in $y$! So we can compute the joint probability of generating the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
+So - proceeding in order through every word in completion $y$ - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every word in the completion! So we can compute the joint probability of generating the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
 
 $$
 \pi_\theta(y|x)=\prod_{t=0}^{|y|}p_{LLM_\theta}(y_t|x,y_{0:t})
@@ -122,7 +125,7 @@ Now, we want to derive the optimal solution to this optimization problem. The de
 
 $$
 \max_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D},y\sim \pi_\theta(y|x)}[r(x, y)] - \beta\mathbb{D}_{KL}\left[\pi_\theta(y|x) \ \Vert \ \pi_{ref}(y|x)\right] \\[10pt]
-=\max_{\\pi_\theta}\mathbb{E}_{x\sim \mathcal{D},y\sim \pi_\theta(y|x)}[r(x, y)] - \beta\mathbb{E}_{y\sim \pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \\[10pt]
+=\max_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D},y\sim \pi_\theta(y|x)}[r(x, y)] - \beta\mathbb{E}_{y\sim \pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \\[10pt]
 = \max_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\mathbb{E}_{y\sim \pi_\theta(y|x)}\left[r(x,y) - \beta\log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)}\right] \\[10pt]
 = \min_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\mathbb{E}_{y\sim \pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\pi_{ref}(y|x)} - \frac{1}{\beta}r(x,y)\right] \\[10pt]
 = \min_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\mathbb{E}_{y\sim \pi_\theta(y|x)}\left[\log\frac{\pi_\theta(y|x)}{\frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}} - \log Z(x)\right] = ...
@@ -164,6 +167,8 @@ $$
 $$
 
 Recall that above we optimized a negative log-likelihood loss to estimate the parameters of a reward model that was then used downstream by RLHF to estimate the parameters of a policy model. But now we are directly optimizing the parameters of our LLM *policy* model based on human preferences! Thus, Direct Preference Optimization.
+
+<!-- TODO: discuss why DPO is more convenient than RLFH -->
 
 ## Properties and Caveats of DPO
 One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RHLF and DPO is the same.
