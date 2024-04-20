@@ -10,7 +10,6 @@ With my first blog post, I want to cover an excellent paper that was published l
 Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF.
 
 # Training, tuning, and aligning LLMs
-
 To contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
 
 1. **Pre-train a base model** on internet-scale data. Given a snippet of text, this model is trained to predict the immediate next word. This conceptually simple task scales up extremely well and allows LLMs to encode a huge amount of knowledge from their training data. Examples of base models include [GPT-3](https://arxiv.org/abs/2005.14165), [Llama](https://research.facebook.com/publications/llama-open-and-efficient-foundation-language-models/) (and [Llama 2](https://ai.meta.com/resources/models-and-libraries/llama/)), and [Mistral](https://mistral.ai/news/announcing-mistral-7b/).
