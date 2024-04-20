@@ -3,7 +3,6 @@ layout: layout.njk
 title: Tyler Romero's Technical Blog
 subtitle: Explorations in Machine Learning
 ---
-
 <section>
   <p>
     Welcome to my blog! I'm Tyler, an Applied Researcher and ML Engineer. These are my notes on Machine Learning and related topics.
@@ -15,8 +14,8 @@ subtitle: Explorations in Machine Learning
   <li>
     <a href="{{ p.url }}">{{ p.data.title }}</a>
     &nbsp
-    <small>{{ p.data.date.toDateString() }}</small>
-    <p>{{ p.data.excerpt }}</p>
+    <small>{{ p.data.date | postDate }}</small>
+    <p style="margin-top: 0;"><small>{{ p.data.blurb }}</small></p>
   </li>
 {% endfor %}
 </ul>

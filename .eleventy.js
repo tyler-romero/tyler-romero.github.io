@@ -1,4 +1,5 @@
 const tufteMdWrapper = require('./util/tufteMdWrapper')
+const { DateTime } = require("luxon");
 
 module.exports = function(eleventyConfig) {
     // Copy `src/assets` to `_site/assets`
@@ -22,6 +23,11 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addFilter("markdown", tufteMdWrapper.render)
     eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline)
 
+    // Date stuff
+    eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`);  // useful for copyright
+    eleventyConfig.addFilter("postDate", (dateObj) => {
+        return DateTime.fromJSDate(dateObj).toFormat('MMMM yyyy');
+    });
 
     // Set custom directories for input, output, includes, and data
     return {
