@@ -1,15 +1,16 @@
 ---
-title: (WIP) Direct Preference Optimization explained in depth
+title: Direct Preference Optimization Explained In-depth
 subtitle: Simpler preference-tuning without reinforcement learning
 date: 2024-04-13T00:00:00-08:00
+blurb: Covering DPO, a recently-proposed alternative to RLHF for preference tuning.
 tags: post
 ---
 With my first blog post, I want to cover an excellent paper that was published last year: [Direct Preference Optimization: Your Language Model is Secretly a Reward Model](https://arxiv.org/abs/2305.18290) by Rafailov et al.
 
-Commonly referred to as DPO, this method of preference-tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF.
+Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF.
 
 # Training, tuning, and aligning LLMs
-<!-- TODO: lifecycle graphic -->
+
 To contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
 
 1. **Pre-train a base model** on internet-scale data. Given a snippet of text, this model is trained to predict the immediate next word. This conceptually simple task scales up extremely well and allows LLMs to encode a huge amount of knowledge from their training data. Examples of base models include [GPT-3](https://arxiv.org/abs/2005.14165), [Llama](https://research.facebook.com/publications/llama-open-and-efficient-foundation-language-models/) (and [Llama 2](https://ai.meta.com/resources/models-and-libraries/llama/)), and [Mistral](https://mistral.ai/news/announcing-mistral-7b/).
@@ -167,8 +168,6 @@ $$
 $$
 
 Recall that above we optimized a negative log-likelihood loss to estimate the parameters of a reward model that was then used downstream by RLHF to estimate the parameters of a policy model. But now we are directly optimizing the parameters of our LLM *policy* model based on human preferences! Thus, Direct Preference Optimization.
-
-<!-- TODO: discuss why DPO is more convenient than RLFH -->
 
 ## Properties and Caveats of DPO
 One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RHLF and DPO is the same.

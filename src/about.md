@@ -3,7 +3,7 @@ layout: layout.njk
 title: About
 ---
 
-<p>Hi, I'm Tyler Romero.<label for="1" class="margin-toggle sidenote-number"></label><input type="checkbox" id="1" class="margin-toggle" /><span class="sidenote"><img src="/assets/img/headshop_cropped.jpg" alt="me" class="profile-picture" /></span> I am an Applied Researcher and ML Engineer for <a href="https://www.groundlight.ai/">Groundlight</a>, a startup focusing on multimodal question-answering for industrial applications.
+<p>Hi, I'm Tyler Romero.<span class="marginnote"><img src="/assets/img/headshop_cropped.jpg" alt="me" class="profile-picture" /></span> I am an Applied Researcher and ML Engineer for <a href="https://www.groundlight.ai/">Groundlight</a>, a startup focusing on multimodal question-answering for industrial applications.
 
 In the recent past, I worked on large-scale recommender systems at Twitter, where I built all of the ML and ran the A/B tests behind the experimentally-successful yet sadly short-lived [downvote button](https://techcrunch.com/2021/07/21/twitter-tests-reddit-style-upvote-and-downvote-buttons/). I also researched, trained, and shipped architecture improvements for ranking Twitter's home timeline and conversation reply trees.[^twitter] Before Twitter, I worked as an applied scientist building out greenfield ML projects at Microsoft.
 
