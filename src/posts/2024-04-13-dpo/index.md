@@ -10,7 +10,7 @@ Commonly referred to as DPO, this method of preference-tuning is an alternative 
 
 # Training, tuning, and aligning LLMs
 <!-- TODO: lifecycle graphic -->
-In order to contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
+To contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
 
 1. **Pre-train a base model** on internet-scale data. Given a snippet of text, this model is trained to predict the immediate next word. This conceptually simple task scales up extremely well and allows LLMs to encode a huge amount of knowledge from their training data. Examples of base models include [GPT-3](https://arxiv.org/abs/2005.14165), [Llama](https://research.facebook.com/publications/llama-open-and-efficient-foundation-language-models/) (and [Llama 2](https://ai.meta.com/resources/models-and-libraries/llama/)), and [Mistral](https://mistral.ai/news/announcing-mistral-7b/).
 
@@ -28,7 +28,7 @@ While using ChatGPT or Gemini, you may have noticed that you will occasionally b
 
 ![LMSys Chatbot Arena, a head-to-head comparison tool for instruction-tuned LLMs](/assets/img/chatbot-arena.png)
 
-There are many publicly available preference datasets, such as LMSys' [Chatbot Arena Conversations dataset](https://huggingface.co/datasets/lmsys/chatbot_arena_conversations), OpenAI's [WebGPT Comparisons datataset](https://huggingface.co/datasets/openai/webgpt_comparisons?row=1), and Anthropic's [Helpfulness-Harmlessness RLHF dataset](https://huggingface.co/datasets/Anthropic/hh-rlhf) (explicit/offensive content warning).
+There are many publicly available preference datasets, such as LMSys' [Chatbot Arena Conversations dataset](https://huggingface.co/datasets/lmsys/chatbot_arena_conversations), OpenAI's [WebGPT Comparisons dataset](https://huggingface.co/datasets/openai/webgpt_comparisons?row=1), and Anthropic's [Helpfulness-Harmlessness RLHF dataset](https://huggingface.co/datasets/Anthropic/hh-rlhf) (explicit/offensive content warning).
 
 Formally, these datasets can be expressed as follows:
 $$
@@ -77,7 +77,7 @@ $$
 
 [^expectation1]: {-} $\mathbb{E}_{(x,y_1,y_2)\sim \mathcal{D}}[f(x,y_w,y_l)]$ is just a formal way of saying "the expected value of function $f$ on data points sampled from our preference dataset".
 
-Under the RLHF framework, we could leverage this learned reward model in a reinforcement learning setting to optimize an LLM to output completions that achieve high rewards. However, DPO takes a different tack - instead of the two-stage RLHF process, DPO reparameterizes the Bradley-Terry model so that we can use a similar loss function to directly to optimize the parameters of our LLM such that it produces outputs that are preferred by human observers.
+Under the RLHF framework, we could leverage this learned reward model in a reinforcement learning setting to optimize an LLM to output completions that achieve high rewards. However, DPO takes a different tack - instead of the two-stage RLHF process, DPO reparameterizes the Bradley-Terry model so that we can use a similar loss function to directly optimize the parameters of our LLM such that it produces outputs that are preferred by human observers.
 
 
 ## The probability of a completion
@@ -100,7 +100,7 @@ Another way to think about it is that there is a tree of possible completions an
 
 ![Probability of Sequence Graphic](/assets/img/sequence-prediction.png)
 
-When training, we know the entire text completion ahead of time, so, by applying a causal attention mask, we can calculate all of the the individual next-word probabilities (and thus $\pi_\theta(y|x)$) via a single forward-pass through our LLM.
+When training, we know the entire text completion ahead of time, so, by applying a causal attention mask, we can calculate all of the the individual next-word probabilities (and thus $\pi_\theta(y|x)$) via a single forward pass through our LLM.
 
 # Optimizing our LLM based on preferences
 Ok, so now that we've got our framework in place. Let us remind ourselves of our goal: to improve the outputs of our LLM. Stated another way, we want the completion (y) our LLM provides for a prompt (x) to generate a large reward $r(x, y)$. With this in mind, we can formulate an optimization problem where we want to find the parameters of our LLM ($\theta$) that maximize our expected reward for prompts similar to those we see in practice.[^expectation2]
@@ -196,8 +196,7 @@ I highly recommend reading the [DPO paper](https://arxiv.org/abs/2305.18290). In
 And if you're interested in learning more about preference-tuning in general, here are additional resources that provide a deeper dive into the topic:
 * [OpenAI's post on aligning language models to follow human instructions](https://openai.com/research/instruction-following) (and the [InstructGPT paper](https://arxiv.org/abs/2203.02155))
 * [HuggingFace's post on fine-tuning Llama2 with DPO](https://huggingface.co/blog/dpo-trl)
-* [Direct Nash Optimization](https://arxiv.org/abs/2404.03715), a recently proposed approach which avoids using the Bradley-Terry model altogether, since the Bradley-Terry model fails to express complex intransitive or cyclic preference relations.
-
+* [Direct Nash Optimization](https://arxiv.org/abs/2404.03715), a recently proposed approach, avoids using the Bradley-Terry model altogether since the Bradley-Terry model fails to express complex intransitive or cyclic preference relations.
 
 # References
 
