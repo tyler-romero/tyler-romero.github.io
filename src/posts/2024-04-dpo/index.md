@@ -154,7 +154,7 @@ $$
 = \min_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\left[\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right) - logZ(x)\right]
 $$
 
-And we have nearly arrived! Since $Z(x)$ does not depend on $\pi_\theta$, we can just ignore it for the purpose of deriving the optimal solution. We can now use Gibb's inequality as mentioned above: $\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right)$ is minimized at zero if, and only if, the two distributions on either side of $\Vert$ are identical. So, the optimal solution (denoted as $\pi^*$) to our optimization problem for all $x \in \mathcal{D}$ is:
+And we have nearly arrived! Since $Z(x)$ does not depend on $\pi_\theta$, we can just ignore it when deriving the optimal solution. We can now use Gibb's inequality as mentioned above: $\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right)$ is minimized at zero if, and only if, the two distributions on either side of $\Vert$ are identical. So, the optimal solution (denoted as $\pi^*$) to our optimization problem for all $x \in \mathcal{D}$ is:
 
 $$
 \pi^*(y|x)=\pi_\theta(y|x)=\frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}
@@ -198,7 +198,7 @@ To be explicit about the benefits of DPO over RLHF:
 
 1. We avoid the need to train a reward model to estimate human preferences.
 2. We avoid needing to perform any type of reinforcement learning, which is notoriously difficult and requires a lot of tribal knowledge to get right.
-3. We can directly optimize our LLM on human prefereces using supervised learning, which is a much more straightforward and well-understood process.
+3. We can directly optimize our LLM on human preferences using supervised learning, which is a much more straightforward and well-understood process.
 
 The avoidance of reinforcement learning is particularly important. DPO has made preference-tuning a much more accessible process for practitioners who may not have the time, resources, or expertise to navigate the complexities of reinforcement learning.
 
