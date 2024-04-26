@@ -1,5 +1,6 @@
-const tufteMdWrapper = require('./util/tufteMdWrapper')
+const CleanCSS = require("clean-css");
 const { DateTime } = require("luxon");
+const tufteMdWrapper = require('./util/tufteMdWrapper');
 
 module.exports = function(eleventyConfig) {
     // Copy `src/assets` to `_site/assets`
@@ -28,6 +29,11 @@ module.exports = function(eleventyConfig) {
     eleventyConfig.addFilter("postDate", (dateObj) => {
         return DateTime.fromJSDate(dateObj).toFormat('MMMM yyyy');
     });
+
+    // CSS Minification
+    eleventyConfig.addFilter("cssmin", function (code) {
+		return new CleanCSS({}).minify(code).styles;
+	});
 
     // Set custom directories for input, output, includes, and data
     return {
