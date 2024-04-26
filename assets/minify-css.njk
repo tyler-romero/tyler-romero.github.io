@@ -1,0 +1,8 @@
+---
+eleventyComputed:
+  permalink: "/assets/tufte.min.css"
+  eleventyExcludeFromCollections: true
+---
+
+{% set css %}{% include "./tufte.css" %}{% endset %}
+{{ css | cssmin | safe }}
