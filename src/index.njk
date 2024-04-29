@@ -18,8 +18,7 @@ layout: layout.njk
   <li>
     <a href="{{ p.url }}">{{ p.data.title }}</a>
     &nbsp
-    <small>{{ p.data.date | postDate }}</small>
-    <p style="margin-top: 0;"><small>{{ p.data.blurb }}</small></p>
+    <p style="margin-top: 0;"><small><em>{{ p.data.date | postDate }}</em> - {{ p.data.blurb }}</small></p>
   </li>
 {% endfor %}
 </ul>
