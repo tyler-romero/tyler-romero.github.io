@@ -216,12 +216,12 @@ section > table {
     width: 55%;
 }
 
-/* 50 + 5 == 55, to be the same width as paragraph */
+/* 51.5 + 3.5 == 55, to be the same width as paragraph */
 section > dl,
 section > ol,
 section > ul {
-    width: 50%;
-    -webkit-padding-start: 5%;
+    width: 51.5%;
+    -webkit-padding-start: 3.5%;
 }
 
 dt:not(:first-child),
@@ -260,7 +260,7 @@ figure.fullwidth figcaption {
 /* Links: replicate underline that clears descenders */
 a:link,
 a:visited {
-    color: #875053;
+    color: #568259;  /* #875053; */
 }
 
 .no-tufte-underline:link {
@@ -521,7 +521,7 @@ label.margin-toggle:not(.sidenote-number) {
 
 .profile-picture {
     border-radius: 5%;
-    width: 95%;
+    width: 97.5%;
 }
 
 
