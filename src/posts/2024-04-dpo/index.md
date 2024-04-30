@@ -10,7 +10,7 @@ With my first blog post, I want to cover an excellent paper that was published l
 
 Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF. However, fair warning that there will be some math involved - mostly probability, algebra, and optimization - but I will do my best to explain everything clearly.
 
-# Training, tuning, and aligning LLMs
+## Training, tuning, and aligning LLMs
 
 To contextualize DPO, and preference-tuning in general, let's review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:
 
@@ -24,7 +24,7 @@ The [Gemini whitepaper](https://arxiv.org/abs/2312.11805) provides a nice visual
 
 ![LLM Training Stages](/assets/img/llm-training-stages.png)
 
-# Tuning LLMs on preference data
+## Tuning LLMs on preference data
 
 It is hard and time-consuming work to create high-quality demonstrations of the behavior we want our LLM to mimic. And it would be expensive to hire labelers to help us create such data. However, once we have a model that is "good enough" at demonstrating desired behavior, we can shift into high gear. Given a prompt, we can [sample two different responses from our LLM](https://huggingface.co/blog/how-to-generate#sampling) by injecting a small amount of randomness[^temperature]. Now, it is cheap and easy to have a labeler express a preference for one of the two completions.
 
@@ -44,7 +44,7 @@ $$
 
 Where $x$ is the context/prompt, $y_w$ is the preferred completion, and $y_l$ is the less desirable completion.
 
-## The Bradley-Terry Model
+### The Bradley-Terry Model
 
 So what do we do with all this preference data? We want to leverage it to modify our LLM to output responses that better conform to the preferences. To begin, let us explore a simple probability model:
 
@@ -70,7 +70,7 @@ $$
 
 [^logistic]: The logistic function is an S-shaped (or sigmoid) function commonly denoted using $\sigma(x)$. It frequently appears when working with probabilities because it can "squash" values in $\mathbb{R}$ (the set of all real numbers) into $(0, 1)$ (the set of probabilities values, excluding exactly 0 or 1). ![Sigmoid Function](/assets/img/sigmoid.png)
 
-## Applying the Bradley-Terry Model to LLMs
+### Applying the Bradley-Terry Model to LLMs
 
 Now, we want to take the Bradley-Terry model and leverage it alongside a dataset of preferences in order to improve our LLM's generated outputs.
 
@@ -92,7 +92,7 @@ $$
 
 Under the RLHF framework, we could leverage this learned reward model in a reinforcement learning setting to optimize an LLM to output completions that achieve high rewards. However, DPO takes a different tack - instead of the two-stage RLHF process, DPO reparameterizes the Bradley-Terry model so that we can use a similar loss function to directly optimize the parameters of our LLM such that it produces outputs that are preferred by human observers.
 
-## The probability of a completion
+### The probability of a completion
 
 At this point, the idea of optimizing LLMs based on preferences or rewards may feel fairly abstract. So we're going to take a moment to introduce a new probability function, $\pi(y|x)$, that represents the literal output of our LLM. In reinforcement learning notation, $\pi$ indicates a policy (i.e. a strategy), and policies are optimized to maximize reward. Specifically, $\pi_\theta(y|x)$ is the probability of generating the completion $y$ based on an LLM with parameters $\theta$ given that we start with prompt $x$.
 
@@ -115,7 +115,7 @@ Another way to think about it is that there is a tree of possible completions an
 
 When training, we know the entire text completion ahead of time, so, by applying a causal attention mask, we can calculate all of the the individual next-word probabilities (and thus $\pi_\theta(y|x)$) via a single forward pass through our LLM.
 
-# Optimizing our LLM based on preferences
+## Optimizing our LLM based on preferences
 
 Ok, so now that we've got our framework in place. Let us remind ourselves of our goal: to improve the outputs of our LLM. Stated another way, we want the completion (y) our LLM provides for a prompt (x) to generate a large reward $r(x, y)$. With this in mind, we can formulate an optimization problem where we want to find the parameters of our LLM ($\theta$) that maximize our expected reward for prompts similar to those we see in practice.[^expectation2]
 
@@ -160,7 +160,7 @@ $$
 \pi^*(y|x)=\pi_\theta(y|x)=\frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}
 $$
 
-## Direct Preference Optimization
+### Direct Preference Optimization
 
 So we know the optimal solution to our optimization problem, but can we access it? No. The term $Z(x)=\sum_y\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}$ is intractable - computing it requires summing over every possible string of words.
 
@@ -202,7 +202,7 @@ To be explicit about the benefits of DPO over RLHF:
 
 The avoidance of reinforcement learning is particularly important. DPO has made preference-tuning a much more accessible process for practitioners who may not have the time, resources, or expertise to navigate the complexities of reinforcement learning.
 
-## Properties and Caveats of DPO
+### Properties and Caveats of DPO
 
 One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RHLF and DPO is the same.
 
@@ -224,7 +224,7 @@ They also point out that, in practice, we have a finite amount of preference dat
 
 Despite these shortcomings, DPO is a highly effective tool; at the time of writing, many of the most successful and performant open-source LLMs were instruction-tuned using DPO.
 
-# Interested in learning more?
+## Interested in learning more?
 
 I highly recommend reading the [DPO paper](https://arxiv.org/abs/2305.18290). In this post, we've done a deep dive into the derivation of the DPO objective, but the paper covers other points of interest, such as experimental results and additional theoretical properties.
 
@@ -234,7 +234,7 @@ And if you're interested in learning more about preference-tuning in general, he
 - [HuggingFace's post on fine-tuning Llama2 with DPO](https://huggingface.co/blog/dpo-trl)
 - [Direct Nash Optimization](https://arxiv.org/abs/2404.03715), a recently proposed approach, avoids using the Bradley-Terry model altogether since the Bradley-Terry model fails to express complex intransitive or cyclic preference relations.
 
-# References
+## References
 
 [1] Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., & Finn, C. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model. arXiv. https://arxiv.org/abs/2305.18290.
 
