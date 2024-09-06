@@ -1,3 +1,5 @@
+.PHONY: help serve build format
+
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  serve       to run the site locally (with auto-reload)"
@@ -8,3 +10,6 @@ serve:
 
 build:
 	@npx @11ty/eleventy
+
+format:
+	npx prettier --write "src/**/*.{njk,html,css,js}"

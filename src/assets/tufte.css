@@ -491,6 +491,10 @@ label.margin-toggle:not(.sidenote-number) {
         display: none;
     }
 
+    .desktop-only {
+        display: none;
+    }
+
     .margin-toggle:checked + .sidenote,
     .margin-toggle:checked + .marginnote {
         display: block;
