@@ -12,4 +12,7 @@ build:
 	@npx @11ty/eleventy
 
 format:
-	npx prettier --write "src/**/*.{njk,html,css,js}"
+	# TODO: format for njk files
+	@npx prettier --write "src/**/*.{html,css,js}"
+	@npx prettier --write "util/tufteMdWrapper.js"
+	@npx prettier --write ".eleventy.js"
