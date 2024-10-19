@@ -110,7 +110,7 @@ modified_html = (
 )
 
 # Save the HTML to a file
-with open("../../src/_includes/sinusoidal_visualization.html", "w") as f:
+with open("../../src/_includes/sinusoidal-visualization.html", "w") as f:
     f.write(modified_html)
 
-print("HTML file 'sinusoidal_visualization.html' has been created.")
+print("HTML file 'sinusoidal-visualization.html' has been created.")
