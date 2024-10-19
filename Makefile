@@ -12,7 +12,10 @@ build:
 	@npx @11ty/eleventy
 
 format:
-	# TODO: format for njk files
 	@npx prettier --write "src/**/*.{html,css,js}"
 	@npx prettier --write "util/tufteMdWrapper.js"
 	@npx prettier --write ".eleventy.js"
+	@find src -name "*.njk" -print0 | xargs -0 djlint --reformat
+
+clean:
+	rm -rf _site

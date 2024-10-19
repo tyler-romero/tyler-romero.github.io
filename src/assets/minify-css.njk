@@ -4,5 +4,7 @@ eleventyComputed:
   eleventyExcludeFromCollections: true
 ---
 
-{% set css %}{% include "./tufte.css" %}{% endset %}
+{% set css %}
+    {% include "./tufte.css" %}
+{% endset %}
 {{ css | cssmin | safe }}

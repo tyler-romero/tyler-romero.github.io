@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% include "head.njk" %}
-  </head>
-  <header>
-    <nav class="topbar">
-      <div class="right-aligned-links">
-      <a href="/" class="no-tufte-underline" style="color: #246eb9; margin-right: 3%;">Tyler Romero</a>
-      <a href="/#posts" class="no-tufte-underline">posts</a>
-      <span class="desktop-only">
-        <a href="/#projects" class="no-tufte-underline">projects</a>
-        <a href="/#reading-list" class="no-tufte-underline">reading list</a>
-      </span>
-    </nav>
-  </header>
-  <body>
-    <article>
-      <h1>{{ title | markdownInline | safe }}</h1>
-      {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
-      {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
-      {{ content | safe }}
-    </article>
-    <footer>
-      {% include "footer.njk" %}
-    </footer>
-  </body>
-</html>
+    <head>{% include "head.njk" %}</head>
+    <header>
+        <nav class="topbar">
+            <div class="right-aligned-links">
+                <a href="/"
+                   class="no-tufte-underline"
+                   style="color: #246eb9;
+                          margin-right: 3%">Tyler Romero</a>
+                <a href="/#posts" class="no-tufte-underline">posts</a>
+                <span class="desktop-only">
+                    <a href="/#projects" class="no-tufte-underline">projects</a>
+                    <a href="/#reading-list" class="no-tufte-underline">reading list</a>
+                </span>
+            </nav>
+        </header>
+        <body>
+            <article>
+                <h1>{{ title | markdownInline | safe }}</h1>
+                {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
+                {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
+                {{ content | safe }}
+            </article>
+            <footer>
+                {% include "footer.njk" %}
+            </footer>
+        </body>
+    </html>
