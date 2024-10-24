@@ -27,14 +27,17 @@ fig.add_trace(
         x=x_sin,
         y=initial_pos_embedding[: dim // 2],
         name="Sin",
-        line=dict(color="blue"),
+        line=dict(color="#228be6"),
     ),
     row=1,
     col=1,
 )
 fig.add_trace(
     go.Scatter(
-        x=x_cos, y=initial_pos_embedding[dim // 2 :], name="Cos", line=dict(color="red")
+        x=x_cos,
+        y=initial_pos_embedding[dim // 2 :],
+        name="Cos",
+        line=dict(color="#fa5252"),
     ),
     row=1,
     col=2,

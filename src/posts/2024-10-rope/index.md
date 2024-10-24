@@ -1,7 +1,7 @@
 ---
-title: Diving into the math behind Rotary Position Embedding (RoPE) for LLMs and ViTs
+title: The math behind Rotary Position Embedding (RoPE) for LLMs and ViTs
 subtitle: Imbuing modern LLMs with position information.
-date: 2024-08-01T00:00:00-08:00
+date: 2024-10-20T00:00:00-08:00
 blurb: Covering how modern LLMs are imbued with position information.
 tags: post
 ---
@@ -66,4 +66,34 @@ Since Shaw et al., many works have explored alternative ways to incorporate rela
 <!-- TODO: expand upon clipping long range dependencies and storing large numbers of embeddings -->
 
 ## Enter RoPE
-Rotary Positional Embedding (RoPE) was introduced in Su et al. as a novel way to encode relative position information in transformers.
+Rotary Positional Embedding (RoPE) was introduced in [Su et al.](https://arxiv.org/pdf/2104.09864) as a novel way to encode relative position information in transformers. Developed by Jianlin Su in a series of blog posts before being formally published, RoPE is a has been shown to outperform both absolute and relative position encodings in many settings.
+
+Recall the self-attention mechanism:
+<!-- TODO: fix rendering of sqrt symbol -->
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
+
+$QK^T$ is a matrix multiplication where each element is a dot product between a query vector $q$ (row of $Q$) and a key vector $k$ (column of $K^T$). The dot product measures the similarity between the query and key vectors, and the softmax normalizes these similarities to obtain attention weights.
+
+Also recall the geometric definition of the dot product:
+$$
+\mathbf{q} \cdot \mathbf{k} = \|\mathbf{q}\| \|\mathbf{k}\| \cos(\theta_{qk})
+$$
+where $\theta_{qk}$ is the angle between the query and key vectors.
+
+
+For our purposes, the main takeaway from this geometric interpretation is that the dot product is the same regardless of whether the query and key vectors are rotated by some angle $\phi$. This property is known as rotational equivariance[^dot-product].
+
+[^dot-product]: Rotating $q$ and $k$ by $ϕ$ does not change their dot product. ![Dot Product Geometric Interpretation](/assets/img/dot-product-geometric.png)
+
+RoPE rotates the query and key vectors before computing the dot product, where the degree of rotation is determined by the *absolute* position of the query and key. Because the dot product is invariant to rotation, the model can learn to attend by relative positions without needing to explicitly model the relative distance between tokens. Stated another way, the relative position information is encoded in the relative degree of rotation of the query and key vectors.
+
+<!-- TODO: correct this, make it flow logically -->
+We can write this as follows. For key and query vectors $k$ and $q$ at positions $m$ and $n$, respectively, the rotated query and key vectors are given by:
+
+$$
+\begin{equation}
+\langle f_q(x_m, m), f_k(x_n, n) \rangle = g(x_m, x_n, m - n).
+\end{equation}
+$$
