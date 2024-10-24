@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head><!-- Required meta tags -->
+    <head>
+        <!-- Required meta tags -->
 
 
 <meta charset="utf-8" />
@@ -10,7 +11,9 @@
 <meta name="author" content="Tyler Romero" />
 <meta name="description"
       content="Simpler preference-tuning without reinforcement learning" />
+<link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/assets/img/favicon.ico" type="image/ico" />
+<link rel="canonical" href="https://www.tylerromero.com/posts/2024-04-dpo/" />
 <link type="application/atom+xml"
       rel="alternate"
       href="https://www.tylerromero.com/feed.xml"
@@ -58,7 +61,32 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count"
         async
         src="//gc.zgo.at/count.js"></script>
-</head>
+
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Direct Preference Optimization Explained In-depth",
+            "description": "Simpler preference-tuning without reinforcement learning",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2024-04-13T08:00:00.000Z",
+            "dateModified": "2024-10-24T05:41:38.473Z",
+            "url": "https://www.tylerromero.com/posts/2024-04-dpo/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/posts/2024-04-dpo/"
+            },
+            "image": "https://www.tylerromero.com",
+            "keywords": "post, machine-learning, nlp, language-models, dpo, rlhf, ai-alignment",
+            "wordCount": "14778",
+            "articleBody": "With my first blog post, I want to cover an excellent paper that was published last year: Direct Preference Optimization: Your Language Model is Secretly a Reward Model by Rafailov et al. Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF. However, fair warning..."
+            }
+        </script>
+    </head>
     <header>
         <nav class="topbar">
             <div class="right-aligned-links">
@@ -71,16 +99,17 @@
                     <a href="/#projects" class="no-tufte-underline">projects</a>
                     <a href="/#reading-list" class="no-tufte-underline">reading list</a>
                 </span>
-            </nav>
-        </header>
-        <body>
-            <article>
-                <h1>Direct Preference Optimization Explained In-depth
+            </div>
+        </nav>
+    </header>
+    <body>
+        <article>
+            <h1>Direct Preference Optimization Explained In-depth
 </h1>
-                <p class="subtitle">Simpler preference-tuning without reinforcement learning
+            <p class="subtitle">Simpler preference-tuning without reinforcement learning
 </p>
-                <p class="date">April 2024</p>
-                <section><p>With my first blog post, I want to cover an excellent paper that was published last year: <a href="https://arxiv.org/abs/2305.18290">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</a> by Rafailov et al.</p><p>Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF. However, fair warning that there will be some math involved - mostly probability, algebra, and optimization - but I will do my best to explain everything clearly.</p></section>
+            <p class="date">April 2024</p>
+            <section><p>With my first blog post, I want to cover an excellent paper that was published last year: <a href="https://arxiv.org/abs/2305.18290">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</a> by Rafailov et al.</p><p>Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF. However, fair warning that there will be some math involved - mostly probability, algebra, and optimization - but I will do my best to explain everything clearly.</p></section>
 <section><h2 id="training-tuning-and-aligning-llms">Training, tuning, and aligning LLMs</h2><p>To contextualize DPO, and preference-tuning in general, let’s review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:</p><ol>
 <li>
 <p><strong>Pre-train a base model</strong> on internet-scale data. Given a snippet of text, this model is trained to predict the immediate next word. This conceptually simple task scales up extremely well and allows LLMs to encode a huge amount of knowledge from their training data. Examples of base models include <a href="https://arxiv.org/abs/2005.14165">GPT-3</a>, <a href="https://ai.meta.com/blog/meta-llama-3/">Llama3</a>, and <a href="https://mistral.ai/news/announcing-mistral-7b/">Mistral</a>.</p>
@@ -119,9 +148,9 @@ So - proceeding in order through every word in completion <span class="inlineMat
 </ul></section>
 <section><h2 id="references">References</h2><p>[1] Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., &#x26; Finn, C. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model. arXiv. <a href="https://arxiv.org/abs/2305.18290">https://arxiv.org/abs/2305.18290</a>.</p><p>[2] Bertrand, Q., Czarnecki, W. M., &#x26; Gidel, G. (2023). On the limitations of Elo: Real-world games are transitive, not additive. arXiv. <a href="https://arxiv.org/abs/2206.12301">https://arxiv.org/abs/2206.12301</a>.</p><p>[3] Azar, M. G., Rowland, M., Piot, B., Guo, D., Calandriello, D., Valko, M., &#x26; Munos, R. (2023). A General Theoretical Paradigm to Understand Learning from Human Preferences. arXiv. <a href="https://arxiv.org/abs/2310.12036">https://arxiv.org/abs/2310.12036</a>.</p><p>[4] Jitkrittum, W. (2013). Log-Sum-Exp Trick to Prevent Numerical Underflow. <a href="http://wittawat.com/posts/log-sum_exp_underflow.html">http://wittawat.com/posts/log-sum_exp_underflow.html</a></p><p>[5] Gemini Team (2024). Gemini: A Family of Highly Capable Multimodal Models. arXiv. <a href="https://arxiv.org/abs/2312.11805">https://arxiv.org/abs/2312.11805</a>.</p><p>[6] Andrychowicz, M., Raichuk, A., Stańczyk, P., Orsini, M., Girgin, S., Marinier, R., Hussenot, L., Geist, M., Pietquin, O., Michalski, M., Gelly, S., &#x26; Bachem, O. (2020). What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study. arXiv. <a href="https://arxiv.org/abs/2006.05990">https://arxiv.org/abs/2006.05990</a>.</p></section>
 
-            </article>
+        </article>
+        <footer>
             <footer>
-                <footer>
     <hr class="slender" />
     <p class="social-links">
         <a href="/"><span class="fas fa-home"></span></a>
@@ -134,6 +163,6 @@ So - proceeding in order through every word in completion <span class="inlineMat
     <p class="copyright" style="font-size: 1.0em;">&copy; 2024 Tyler Romero</p>
 </footer>
 
-            </footer>
-        </body>
-    </html>
+        </footer>
+    </body>
+</html>
