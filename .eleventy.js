@@ -10,6 +10,7 @@ module.exports = function (eleventyConfig) {
   // Copy some more files to `_site`
   eleventyConfig.addPassthroughCopy("src/CNAME");
   eleventyConfig.addPassthroughCopy("src/robots.txt");
+  eleventyConfig.addPassthroughCopy("src/manifest.json");
 
   // Asset Watch Targets
   eleventyConfig.addWatchTarget("./src/assets");
