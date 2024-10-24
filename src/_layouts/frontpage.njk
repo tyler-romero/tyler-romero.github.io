@@ -5,7 +5,8 @@
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
-            "@type": "BlogPosting",
+            "@type": "WebSite",
+            "name": "{{ site.title }}",
             "headline": "{{ title }}",
             "description": "{{ subtitle or site.subtitle }}",
             "author": {
@@ -13,7 +14,6 @@
                 "name": "{{ site.authorName }}",
                 "url": "{{ site.url }}"
             },
-            "datePublished": "{{ page.date.toISOString() }}",
             "dateModified": "{{ page.inputPath | lastModifiedDate }}",
             "url": "{{ site.url }}{{ page.url }}",
             "mainEntityOfPage": {
@@ -21,9 +21,7 @@
                 "@id": "{{ site.url }}{{ page.url }}"
             },
             "image": "{{ site.url }}{{ featured_image }}",
-            "keywords": "{{ tags | join(', ') }}",
-            "wordCount": "{{ content | wordCount }}",
-            "articleBody": "{{ content | replace('<p>', '') | replace('</p>', ' ') | striptags | truncate(500) | escape }}"
+            "keywords": "{{ tags | join(', ') }}"
             }
         </script>
     </head>
@@ -39,18 +37,15 @@
                     <a href="/#projects" class="no-tufte-underline">projects</a>
                     <a href="/#reading-list" class="no-tufte-underline">reading list</a>
                 </span>
-            </div>
-        </nav>
-    </header>
-    <body>
-        <article>
-            <h1>{{ title | markdownInline | safe }}</h1>
-            {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
-            {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
-            {{ content | safe }}
-        </article>
-        <footer>
-            {% include "footer.njk" %}
-        </footer>
-    </body>
-</html>
+            </nav>
+        </header>
+        <body>
+            <article>
+                {# NOTE: no title in this layout#}
+                {{ content | safe }}
+            </article>
+            <footer>
+                {% include "footer.njk" %}
+            </footer>
+        </body>
+    </html>

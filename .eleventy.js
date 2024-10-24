@@ -1,6 +1,7 @@
 const CleanCSS = require("clean-css");
 const { DateTime } = require("luxon");
 const tufteMdWrapper = require("./util/tufteMdWrapper");
+const fs = require("fs");
 
 module.exports = function (eleventyConfig) {
   // Copy `src/assets` to `_site/assets`
@@ -9,6 +10,7 @@ module.exports = function (eleventyConfig) {
   // Copy some more files to `_site`
   eleventyConfig.addPassthroughCopy("src/CNAME");
   eleventyConfig.addPassthroughCopy("src/robots.txt");
+  eleventyConfig.addPassthroughCopy("src/manifest.json");
 
   // Asset Watch Targets
   eleventyConfig.addWatchTarget("./src/assets");
@@ -27,6 +29,19 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`); // useful for copyright
   eleventyConfig.addFilter("postDate", (dateObj) => {
     return DateTime.fromJSDate(dateObj).toFormat("MMMM yyyy");
+  });
+  eleventyConfig.addFilter("lastModifiedDate", function (filepath) {
+    const stat = fs.statSync(filepath);
+    return stat.mtime.toISOString();
+  });
+
+  // Add wordCount filter
+  eleventyConfig.addFilter("wordCount", function (content) {
+    if (typeof content !== "string") {
+      return 0;
+    }
+    const words = content.split(/\s+/);
+    return words.length;
   });
 
   // CSS Minification
