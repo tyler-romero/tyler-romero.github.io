@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>{% include "head.njk" %}</head>
+    <head>
+        {% include "head.njk" %}
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "{{ site.title }}",
+            "headline": "{{ title }}",
+            "description": "{{ subtitle or site.subtitle }}",
+            "author": {
+                "@type": "Person",
+                "name": "{{ site.authorName }}",
+                "url": "{{ site.url }}"
+            },
+            "dateModified": "{{ page.inputPath | lastModifiedDate }}",
+            "url": "{{ site.url }}{{ page.url }}",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "{{ site.url }}{{ page.url }}"
+            },
+            "image": "{{ site.url }}{{ featured_image }}",
+            "keywords": "{{ tags | join(', ') }}",
+            }
+        </script>
+    </head>
     <header>
         <nav class="topbar">
             <div class="right-aligned-links">

@@ -624,3 +624,40 @@ nav a:visited {
   vertical-align: baseline;
   font-weight: bold;
 }
+<<<<<<< Updated upstream
+=======
+
+/* Plotly Viz */
+.visualization-wrapper {
+  width: 55%;
+  max-width: 55%;
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  margin-top: 1.4rem;
+  margin-bottom: 1.4rem;
+  padding: 0;
+  background-color: transparent;
+  border: none;
+  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD",
+    "Book Antiqua", Georgia, serif;
+}
+
+.visualization-caption {
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  margin-top: 0.5rem;
+  color: #111;
+  text-align: left;
+}
+
+@media (max-width: 760px) {
+  .visualization-wrapper {
+    width: 100%;
+  }
+
+  .visualization-wrapper .plotly-graph-div {
+    height: 300px !important;
+  }
+}
+>>>>>>> Stashed changes

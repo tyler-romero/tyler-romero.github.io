@@ -1,7 +1,7 @@
 {
-    "title": "Tyler's Technical Blog",
+    "title": "Hi, I'm Tyler Romero",
     "description": "Notes on Machine Learning and related topics.",
     "authorName": "Tyler Romero",
     "url": "https://www.tylerromero.com",
-    "favicon": "/assets/img/favicon.ico"
+    "favicon": "/favicon.ico"
 }
