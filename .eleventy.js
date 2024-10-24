@@ -35,8 +35,8 @@ module.exports = function (eleventyConfig) {
   });
 
   // Add wordCount filter
-  eleventyConfig.addFilter("wordCount", function(content) {
-    if (typeof content !== 'string') {
+  eleventyConfig.addFilter("wordCount", function (content) {
+    if (typeof content !== "string") {
       return 0;
     }
     const words = content.split(/\s+/);
