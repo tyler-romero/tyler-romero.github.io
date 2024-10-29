@@ -57,7 +57,7 @@ Relative position encodings were introduced in [Self-Attention with Relative Pos
 | Transformer (base) | Relative Position Representations    |    **26.8**    |    **38.7**    |
 | Transformer (big)  | Absolute Position Representations    |    27.9    |    41.2    |
 | Transformer (big)  | Relative Position Representations    |    **29.2**    |    **41.5**    |
-<span style="font-size: small;">**Table 1:** Experimental results from Shaw et al. for English-to-German and English-to-French transation tasks.</span>
+<span style="font-size: small;">**Table 1:** Experimental results from Shaw et al. for English-to-German and English-to-French translation tasks.</span>
 
 Relative position encodings have been shown to outperform absolute position encodings in many settings, as shown in Table 1. However, they come with their own set of challenges, such as the need for additional parameters.
 <!-- TODO: expand upon clipping long range dependencies and storing large numbers of embeddings -->
