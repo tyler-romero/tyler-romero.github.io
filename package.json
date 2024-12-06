@@ -4,8 +4,8 @@
   "description": "Personal website and blog.",
   "main": "index.js",
   "scripts": {
-    "start": "npx @11ty/eleventy --config=config/.eleventy.js --serve",
-    "build": "npx @11ty/eleventy --config=config/.eleventy.js",
+    "build": "npx @11ty/eleventy",
+    "serve": "npx @11ty/eleventy --serve",
     "clean": "rm -rf _site"
   },
   "author": "Tyler Romero",
