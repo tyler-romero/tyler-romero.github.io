@@ -1,18 +1,19 @@
 {
   "name": "tyler-romero.github.io",
   "version": "1.0.0",
-  "description": "",
+  "description": "Personal website and blog.",
   "main": "index.js",
   "scripts": {
-    "build": "npx @11ty/eleventy"
+    "start": "npx @11ty/eleventy --config=config/.eleventy.js --serve",
+    "build": "npx @11ty/eleventy --config=config/.eleventy.js",
+    "clean": "rm -rf _site"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Tyler Romero",
   "license": "ISC",
   "dependencies": {
     "@tufte-markdown/parser": "^2.0.1",
     "clean-css": "^5.3.3",
-    "node": "^20.10.0"
+    "node": "^21.6.1"
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
