@@ -1,0 +1,7 @@
+{
+  "values": [
+    { "char": "T", "entropy": 0.8 },
+    { "char": "h", "entropy": 0.3 },
+    { "char": "e", "entropy": 0.2 }
+  ]
+}

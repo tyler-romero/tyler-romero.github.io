@@ -1,7 +1,4 @@
-import {
-  EleventyHtmlBasePlugin,
-  InputPathToUrlTransformPlugin,
-} from "@11ty/eleventy";
+import { EleventyHtmlBasePlugin, InputPathToUrlTransformPlugin } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import CleanCSS from "clean-css";
@@ -43,6 +40,31 @@ export default function (eleventyConfig) {
     }
     const words = content.split(/\s+/);
     return words.length;
+  });
+
+  // Entropy Visualization
+  eleventyConfig.addShortcode("entropyViz", function (data) {
+    const id = `entropy-viz-${Math.random().toString(36).slice(2, 11)}`;
+    console.log("Entropy viz shortcode called with data:", data);
+
+    if (!data) {
+      console.warn("No data provided to entropyViz shortcode");
+      return `<div class="error">No entropy data available</div>`;
+    }
+
+    if (!Array.isArray(data)) {
+      console.warn("Data is not an array:", typeof data);
+      return `<div class="error">Invalid entropy data format</div>`;
+    }
+
+    return `
+        <div
+          id="${id}"
+          class="entropy-viz"
+          data-entropy-viz
+          data-entropy-data='${JSON.stringify(data)}'
+        ></div>
+      `;
   });
 
   // CSS Minification

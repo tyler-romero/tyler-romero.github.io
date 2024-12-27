@@ -1,0 +1,41 @@
+.entropy-viz {
+  width: 55%;
+  margin: 1.4rem 0;
+  background: #fffff0;
+  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+}
+
+.entropy-viz svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+/* Bar styling */
+.entropy-viz .bar {
+  transition: opacity 0.2s;
+  fill: #568259;
+}
+
+.entropy-viz .bar:hover {
+  opacity: 0.8;
+}
+
+/* Axis styling */
+.entropy-viz .axis path,
+.entropy-viz .axis line {
+  stroke: #111;
+  shape-rendering: crispEdges;
+}
+
+.entropy-viz .axis text {
+  font-family: et-book-roman-old-style;
+  font-size: 1.1rem;
+  fill: #111;
+}
+
+@media (max-width: 760px) {
+  .entropy-viz {
+    width: 100%;
+  }
+}
