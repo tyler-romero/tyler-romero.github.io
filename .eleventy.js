@@ -1,3 +1,4 @@
+import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import CleanCSS from "clean-css";
 import { DateTime } from "luxon";
 import fs from "node:fs";
