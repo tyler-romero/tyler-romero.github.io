@@ -1,8 +1,8 @@
 ---
 title: An Extension to BADGE Active Learning for Variable-Sized Batches
-subtitle: BADGE (and other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data
+subtitle: BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data
 date: 2025-01-05T00:00:00-08:00
-blurb: BADGE, an empirically effective active learning method, can be extended to support variable-sized batches (where the next batch size is unknown a priori) while preserving its benefits.
+blurb: We show how BADGE's batch selection strategy can be adapted to handle flexible batch sizes without compromising its ability to select diverse, informative samples - enabling more practical active learning workflows.
 tags: ["post", "machine-learning", "active-learning", "BADGE", "batch-active-learning", "k-means++", "MNIST", "multidimensional-scaling", "uncertainty-sampling"]
 ---
 
