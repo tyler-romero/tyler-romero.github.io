@@ -49,11 +49,10 @@ export default function (eleventyConfig) {
   eleventyConfig.addPlugin(eleventyImageTransformPlugin, {
     extensions: "html",
     formats: ["webp", "jpeg"],
-    widths: [200, 400, 800],
+    widths: ["auto"],
     defaultAttributes: {
       loading: "lazy",
       decoding: "async",
-      sizes: "100vw",
     },
   });
 

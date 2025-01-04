@@ -383,6 +383,7 @@ a:link::-moz-selection {
 /* Sidenotes, margin notes, figures, captions */
 img {
   max-width: 100%;
+  height: auto; /* maintain aspect ratio */
 }
 
 .sidenote,
