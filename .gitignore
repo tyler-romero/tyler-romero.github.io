@@ -1,5 +1,6 @@
 # artifacts
 _site/
+.cache/
 
 # macos
 .DS_Store

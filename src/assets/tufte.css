@@ -383,6 +383,13 @@ a:link::-moz-selection {
 /* Sidenotes, margin notes, figures, captions */
 img {
   max-width: 100%;
+  height: auto; /* maintain aspect ratio */
+}
+
+img.responsive-image {
+  max-width: 100%;  /* This image will expand to 100% of the container width available */
+  height: auto;   /* This image will maintain its aspect ratio */
+  width: auto;  /* This image will expand to 100% of the container width available */
 }
 
 .sidenote,

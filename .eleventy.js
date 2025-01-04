@@ -1,3 +1,4 @@
+import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import CleanCSS from "clean-css";
 import { DateTime } from "luxon";
 import fs from "node:fs";
@@ -44,16 +45,30 @@ export default function (eleventyConfig) {
     return new CleanCSS({}).minify(code).styles;
   });
 
-  // Set custom directories for input, output, includes, and data
+  // Image Shortcode And Optimizations
+  eleventyConfig.addPlugin(eleventyImageTransformPlugin, {
+    extensions: "html",
+    formats: ["webp", "auto"], // "auto" means use the original format
+    sharpOptions: {
+      animated: true, // Enable animated GIF and WebP support
+    },
+    widths: [300, 600, 900, "auto"], // mobile, tablet, desktop viewport widths, and original size
+    defaultAttributes: {
+      loading: "lazy",
+      decoding: "async",
+      sizes: "(max-width: 900px) 100vw, 900px",
+      class: "responsive-image",
+    },
+    urlPath: "/assets/img/",
+    outputDir: "_site/assets/img/",
+  });
+
   return {
     // When a passthrough file is modified, rebuild the pages:
     passthroughFileCopy: true,
     dir: {
       input: "src",
-      includes: "_includes",
       layouts: "_layouts",
-      data: "_data",
-      output: "_site",
     },
   };
 }
