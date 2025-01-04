@@ -1,4 +1,5 @@
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
+import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import CleanCSS from "clean-css";
 import { DateTime } from "luxon";
 import fs from "node:fs";
@@ -43,6 +44,26 @@ export default function (eleventyConfig) {
   // CSS Minification
   eleventyConfig.addFilter("cssmin", function (code) {
     return new CleanCSS({}).minify(code).styles;
+  });
+
+  // RSS Feed
+  eleventyConfig.addPlugin(feedPlugin, {
+    type: "atom",
+    outputPath: "/feed.xml",
+    collection: {
+      name: "post",
+      limit: 10, // 0 for no limit
+    },
+    metadata: {
+      language: "en",
+      title: "Tyler's Technical Blog",
+      subtitle: "Notes on Machine Learning and related topics.",
+      base: "https://tylerromero.com/",
+      author: {
+        name: "Tyler Romero",
+        email: "tyler.alexander.romero@gmail.com",
+      },
+    },
   });
 
   // Image Shortcode And Optimizations
