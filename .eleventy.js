@@ -1,4 +1,7 @@
-import { EleventyHtmlBasePlugin, InputPathToUrlTransformPlugin } from "@11ty/eleventy";
+import {
+  EleventyHtmlBasePlugin,
+  InputPathToUrlTransformPlugin,
+} from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import CleanCSS from "clean-css";
