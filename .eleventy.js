@@ -1,9 +1,9 @@
-const CleanCSS = require("clean-css");
-const { DateTime } = require("luxon");
-const tufteMdWrapper = require("./util/tufteMdWrapper");
-const fs = require("fs");
+import CleanCSS from "clean-css";
+import { DateTime } from "luxon";
+import fs from "node:fs";
+import { tufteMdWrapper } from "./util/tufteMdWrapper.js";
 
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // Copy `src/assets` to `_site/assets`
   eleventyConfig.addPassthroughCopy("src/assets");
 
@@ -61,4 +61,4 @@ module.exports = function (eleventyConfig) {
       output: "_site",
     },
   };
-};
+}
