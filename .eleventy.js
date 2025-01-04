@@ -45,18 +45,24 @@ export default function (eleventyConfig) {
     return new CleanCSS({}).minify(code).styles;
   });
 
-  // Image Shortcode and Optimizations
+  // Image Shortcode And Optimizations
   eleventyConfig.addPlugin(eleventyImageTransformPlugin, {
     extensions: "html",
-    formats: ["webp", "jpeg"],
-    widths: ["auto"],
+    formats: ["webp", "auto"], // "auto" means use the original format
+    sharpOptions: {
+      animated: true, // Enable animated GIF and WebP support
+    },
+    widths: [300, 600, 900, "auto"], // mobile, tablet, desktop viewport widths, and original size
     defaultAttributes: {
       loading: "lazy",
       decoding: "async",
+      sizes: "(max-width: 900px) 100vw, 900px",
+      class: "responsive-image",
     },
+    urlPath: "/assets/img/",
+    outputDir: "_site/assets/img/",
   });
 
-  // Set custom directories for input, output, includes, and data
   return {
     // When a passthrough file is modified, rebuild the pages:
     passthroughFileCopy: true,
