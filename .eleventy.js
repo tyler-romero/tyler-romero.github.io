@@ -1,10 +1,9 @@
-const CleanCSS = require("clean-css");
-const { DateTime } = require("luxon");
-const tufteMdWrapper = require("./util/tufteMdWrapper");
-const fs = require("fs");
-const { eleventyImageTransformPlugin } = require("@11ty/eleventy-img");
+import CleanCSS from "clean-css";
+import { DateTime } from "luxon";
+import fs from "node:fs";
+import { tufteMdWrapper } from "./util/tufteMdWrapper.js";
 
-module.exports = function (eleventyConfig) {
+export default function (eleventyConfig) {
   // Copy `src/assets` to `_site/assets`
   eleventyConfig.addPassthroughCopy("src/assets");
 
@@ -17,11 +16,6 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addWatchTarget("./src/assets");
 
   /* Markdown Configuration */
-  let options = {
-    react: false,
-  };
-
-  // Markdown
   eleventyConfig.setLibrary("md", tufteMdWrapper);
   eleventyConfig.addFilter("markdown", tufteMdWrapper.render);
   eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline);
@@ -71,4 +65,4 @@ module.exports = function (eleventyConfig) {
       layouts: "_layouts",
     },
   };
-};
+}

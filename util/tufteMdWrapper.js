@@ -1,7 +1,8 @@
-const configureParser = require("@tufte-markdown/parser");
+import configureParser from "@tufte-markdown/parser";
+
 const parse = configureParser({ react: false });
 
-module.exports = {
+export const tufteMdWrapper = {
   render: function (text, wrap = true) {
     let tmp = parse(text);
     if (wrap && tmp.indexOf("<section>") == -1) {
