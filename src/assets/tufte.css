@@ -386,10 +386,11 @@ img {
   height: auto; /* maintain aspect ratio */
 }
 
-img.responsive-image {
-  max-width: 100%;  /* This image will expand to 100% of the container width available */
-  height: auto;   /* This image will maintain its aspect ratio */
-  width: auto;  /* This image will expand to 100% of the container width available */
+img.responsive-image,
+video {
+  max-width: 100%;
+  height: auto;
+  width: auto;
 }
 
 .sidenote,
@@ -603,7 +604,8 @@ label.margin-toggle:not(.sidenote-number) {
     width: 85%;
   }
 
-  img {
+  img,
+  video {
     width: 100%;
   }
 }
