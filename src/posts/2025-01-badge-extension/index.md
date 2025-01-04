@@ -268,7 +268,7 @@ found the visualizations and code snippets fun and helpful in understanding the 
 
 ## References
 
-[1] Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., & Agarwal, A. (2020). BADGE: Batch Active learning by Diverse Gradient Embeddings. *International Conference on Learning Representations*. [https://arxiv.org/abs/1910.11945](https://arxiv.org/abs/1910.11945)
+[1] Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., & Agarwal, A. (2020). Deep Batch Active Learning by Diverse, Uncertain Gradient Lower Bounds.  [https://arxiv.org/abs/1906.03671](https://arxiv.org/abs/1906.03671)
 
 [2] LeCun, Y., Cortes, C., & Burges, C. J. C. (1998). The MNIST Database of Handwritten Digits. [http://yann.lecun.com/exdb/mnist/](http://yann.lecun.com/exdb/mnist/)
 
@@ -278,6 +278,6 @@ found the visualizations and code snippets fun and helpful in understanding the 
 
 [5] Kirsch, A., van Amersfoort, J., & Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. *Advances in Neural Information Processing Systems*. [https://arxiv.org/abs/1906.08158](https://arxiv.org/abs/1906.08158)
 
-[6] Motta, D. (2023). MDS and LMDS implementation. *GitHub Repository*. [https://github.com/danilomotta/LMDS](https://github.com/danilomotta/LMDS)
+[6] Motta, D. (2019). MDS and LMDS implementation. *GitHub Repository*. [https://github.com/danilomotta/LMDS](https://github.com/danilomotta/LMDS)
 
-[7] De Moriarty, A. (2023). fast_pytorch_kmeans. *GitHub Repository*. [https://github.com/DeMoriarty/fast_pytorch_kmeans](https://github.com/DeMoriarty/fast_pytorch_kmeans)
+[7] De Moriarty, A. (2024). fast_pytorch_kmeans. *GitHub Repository*. [https://github.com/DeMoriarty/fast_pytorch_kmeans](https://github.com/DeMoriarty/fast_pytorch_kmeans)
