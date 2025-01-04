@@ -11,12 +11,13 @@
   "author": "Tyler Romero",
   "license": "ISC",
   "dependencies": {
+    "@11ty/eleventy-img": "^5.0.0",
     "@tufte-markdown/parser": "^2.0.1",
     "clean-css": "^5.3.3",
     "node": "^21.6.1"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy": "^3.0.0",
     "prettier": "^3.3.3"
   }
 }

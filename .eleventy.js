@@ -2,6 +2,7 @@ const CleanCSS = require("clean-css");
 const { DateTime } = require("luxon");
 const tufteMdWrapper = require("./util/tufteMdWrapper");
 const fs = require("fs");
+const { eleventyImageTransformPlugin } = require("@11ty/eleventy-img");
 
 module.exports = function (eleventyConfig) {
   // Copy `src/assets` to `_site/assets`
@@ -49,16 +50,25 @@ module.exports = function (eleventyConfig) {
     return new CleanCSS({}).minify(code).styles;
   });
 
+  // Image Shortcode and Optimizations
+  eleventyConfig.addPlugin(eleventyImageTransformPlugin, {
+    extensions: "html",
+    formats: ["webp", "jpeg"],
+    widths: [200, 400, 800],
+    defaultAttributes: {
+      loading: "lazy",
+      decoding: "async",
+      sizes: "100vw",
+    },
+  });
+
   // Set custom directories for input, output, includes, and data
   return {
     // When a passthrough file is modified, rebuild the pages:
     passthroughFileCopy: true,
     dir: {
       input: "src",
-      includes: "_includes",
       layouts: "_layouts",
-      data: "_data",
-      output: "_site",
     },
   };
 };
