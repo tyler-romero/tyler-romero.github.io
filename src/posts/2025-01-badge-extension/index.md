@@ -6,7 +6,7 @@ blurb: BADGE, an empirically effective active learning method, can be extended t
 tags: ["post", "machine-learning", "active-learning", "BADGE"]
 ---
 
-[Batch Active learning by Diverse Gradient Embeddings (BADGE)](https://arxiv.org/abs/1906.03671) is a simple and effective active learning method for neural networks that has been shown to outperform other active learning approaches in a variety of settings. Published in 2019 by Ash et al., BADGE is still commonly used today due to its simplicity and empirical effectiveness.
+[Batch Active learning by Diverse Gradient Embeddings (BADGE)](https://arxiv.org/abs/1906.03671) is a simple and effective batch-based [active learning](https://en.wikipedia.org/wiki/Active_learning_(machine_learning)) method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.
 
 BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.[^uncertainty] This helps the model learn efficiently by focusing on challenging examples while maintaining good coverage of the dataset distribution.
 
@@ -18,7 +18,7 @@ One limitation of BADGE is that it requires the user to specify the batch size i
 
 ## BADGE Overview
 
-Before we dive into the extension, let's briefly review how BADGE works. BADGE is a batch active learning method that selects a batch of data points that are diverse and high-magnitude in the gradients they may induce once labeled. The algorithm proceeds as follows:
+Before we dive into the extension, let's review how BADGE works. BADGE is a batch active learning method that selects a batch of data points that are diverse and high-magnitude in the gradients they may induce once labeled. The algorithm proceeds as follows:
 
 ### 1. Compute Gradient Embeddings
 First, we compute the gradients of the loss with respect to the final layer of the neural network. These gradients capture both the model's uncertainty (magnitude) and the data's semantic content (direction).
@@ -26,7 +26,7 @@ The first issue that arises is that - since our overall goal is to solicit label
 In order to compute the gradients, we need to "hallucinate" labels for the unlabeled data points. This is typically done by using the current model to predict the expected label for each data point.[^hallucinate]
 The expected label is then used to compute the gradient.
 
-[^hallucinate]: This approach of using the model's predicted label provides a lower bound on the true gradient magnitude.
+[^hallucinate]: This approach of using the model's predicted label provides a lower bound on the true gradient magnitude - since the model would view any other label as even more unexpected.
 
 BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network.
 
@@ -75,7 +75,9 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
 ```
 
 ### 2. Select Diverse and Informative Points
-Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using [k-means++ initialization](http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf), a clever and efficient greedy algorithm originally designed for seeding k-means clustering. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.
+Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using [k-means++ initialization](http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf), a greedy algorithm originally designed for seeding k-means clustering[^dpp]. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.
+
+[^dpp]: It's worth noting the connection between k-means++ and [Determinantal Point Processes (DPPs)](https://en.wikipedia.org/wiki/Determinantal_point_process). DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.
 
 The k-means++ algorithm proceeds as follows:
 1. Initialize the first point by selecting one uniformly at random from the unlabeled pool.
@@ -85,9 +87,7 @@ The k-means++ algorithm proceeds as follows:
 
 If a batch size of $k$ is specified, BADGE uses k-means++ to greedily select $k$ diverse points from the unlabeled pool based on their gradient embeddings.
 
-The strength of k-means++ lies in its ability to efficiently select a set of points that are well-spread out in the gradient embedding space. By probabilistically favoring points that are far from the already selected points, k-means++ encourages the selection of a diverse set of examples. This diversity is crucial for active learning because it ensures that the newly labeled data points cover a broader range of the data distribution, leading to more informative updates to the model. Furthermore, the tendency to select points far from existing selections implicitly favors points with higher magnitude embeddings, as these points are likely to reside in less densely populated regions of the embedding space.
-
-It's worth noting the connection between k-means++ and [Determinantal Point Processes (DPPs)](https://arxiv.org/abs/0909.3514). DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.
+The strength of k-means++ lies in its ability to efficiently select a set of points that are well-spread out in the gradient embedding space. By probabilistically favoring points that are far from the already selected points, k-means++ encourages the selection of a diverse set of examples. This diversity is crucial for active learning because it ensures that the newly labeled data points cover a broader range of the data distribution, leading to more informative updates to the model. Furthermore, the tendency to select points far from existing selections *implicitly favors points with higher magnitude embeddings*, as these points are likely to reside in less densely populated regions of the embedding space.
 
 Scikit-learn provides [an implementation](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.kmeans_plusplus.html) of the k-means++ centroid initialization algorithm, which can be readily adapted for BADGE.
 
@@ -108,14 +108,16 @@ The points are arranged by their underlying class labels and plotted below:
 
 ![Gradient embeddings of unlabeled MNIST digits](/assets/img/mds_gradient_embedding_viz.png)
 
-Notably the magnitudes of the gradient embeddings are not uniform across the classes, with examples from the `0` and `1` classes generally having greater magnitudes. This is expected, as the model
+Notably the magnitudes of the gradient embeddings are not uniform across the classes, with examples from the `0` and `1` classes generally having greater magnitudes[^density]. This is expected, as the model
 saw no examples of these classes during training, and is thus more uncertain about them. The plot visually demonstrates that the gradient embeddings effectively capture semantic information, as points from the same digit class tend to cluster together.
+
+[^density]: It is a bit hard to tell from the plot, but >90% the 15k data points are concentrated on in a tight cluster around (0, 0).
 
 We then use k-means++ to sample the next batch of data points to label. For a batch of size 10, the selected points are highlighted below:
 
 ![Gradient embeddings of the examples selected by BADGE to label](/assets/img/badge_selections_plotted.png)
 
-As expected, BADGE predominantly selects examples from the `0` and `1` classes - the classes absent from the training data and where the model shows the highest uncertainty. Within these classes, BADGE strategically chooses points with diverse gradient embeddings, ensuring the selected examples capture different aspects of these unfamiliar classes. Intuitively, this diversity should help the model develop a more comprehensive understanding of the previously unseen digits.
+As expected, BADGE predominantly selects examples from the `0` and `1` classes - the classes absent from the training data and where the model shows the highest uncertainty. Within these classes, BADGE strategically chooses points with diverse gradient embeddings, ensuring the selected examples capture different aspects of these unfamiliar classes (in contrast to uncertainty sampling, as we observed above). Intuitively, we hope this diversity will help the model develop a more comprehensive understanding of the previously unseen digits.
 
 ## Extending BADGE to Variable-Sized Batches
 While the standard BADGE algorithm is effective, its requirement for a fixed batch size can be limiting in real-world scenarios. Consider situations where labeling resources fluctuate, or where the optimal number of data points to label before retraining varies.
@@ -149,14 +151,12 @@ In [online learning](https://en.wikipedia.org/wiki/Online_machine_learning) scen
 Variable-sized batches are naturally suited for this setting. Instead of waiting for a fixed number of new labels to become available,
 the model can be updated as soon as a sufficient number of high-priority examples have been labeled. This allows the model to adapt
 more quickly to changes in the data distribution and leverage new information as it arrives, leading to potentially faster convergence
-and improved performance over time.
+and improved performance over time. More on this below.
 
 
 ### Generating a Prioritized Ordering
 
-To support variable-sized batches in BADGE, we introduce the concept of a priority ordering over the entire set of unlabeled data points.
-Instead of selecting a fixed batch size upfront, this ordering tells us which points would be most valuable to label first,
-second, third, and so on - allowing us to be flexible about how many points we ultimately select.
+As mentioned earlier, the key to supporting variable-sized batches in BADGE is to generate a priority ordering over the entire set of unlabeled data points.
 
 K-means++ provides an elegant way to generate this priority ordering, as it naturally selects diverse and informative points
 in a sequential manner before lumping them into a batch. By running k-means++ on the unlabeled pool and recording the order
@@ -229,7 +229,7 @@ it generates a complete ordering in just 20 seconds - compared to 15 minutes usi
 Additionally, since data labeling is time-consuming, we can optimize further by *extracting points from the ordering one at a time* (and only as-needed)
 rather than computing the entire ordering upfront. This lazy evaluation approach allows us to stop once we've labeled our desired
 number of points, avoiding unnecessary computation. It also allows us to add new (and potentially useful) data points to the pool
-of unlabeled data on-the-fly as those points become available! See [this code snippet](https://gist.github.com/tyler-romero/1aba44c529c64fb3c29026ec906bcd9c) for an example of how to lazily generate the ordering.
+of unlabeled data on-the-fly as those points become available! See [this (longer) code snippet](https://gist.github.com/tyler-romero/1aba44c529c64fb3c29026ec906bcd9c) for an example of how to lazily generate the ordering.
 
 ## Can Other Popular Batch Active Learning Methods Be Similarly Extended?
 Not all batch active learning methods can be extended to support variable-sized batches.
@@ -258,22 +258,20 @@ In short, greedy methods like BADGE naturally extend to variable batches, while 
 
 ## Wrapping Up
 Thanks for reading! Hopefully this post has provided you with a deeper understanding of the BADGE active learning method and how it can be extended to support variable-sized batches. I also hope you
-found the visualizations and code snippets helpful in understanding the concepts discussed. If you have any questions or feedback, feel free to [reach out](mailto:tyler.alexander.romero@gmail.com)!
+found the visualizations and code snippets fun and helpful in understanding the concepts discussed. If you have any questions or feedback, feel free to [reach out](mailto:tyler.alexander.romero@gmail.com)!
 
 ## References
 
-[1] Ash, J., Swersky, K., & Hinton, G. E. (2020). BADGE: Batch Active learning by Diverse Gradient Embeddings. *International Conference on Learning Representations*. [https://arxiv.org/abs/1910.11945](https://arxiv.org/abs/1910.11945)
+[1] Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., & Agarwal, A. (2020). BADGE: Batch Active learning by Diverse Gradient Embeddings. *International Conference on Learning Representations*. [https://arxiv.org/abs/1910.11945](https://arxiv.org/abs/1910.11945)
 
 [2] LeCun, Y., Cortes, C., & Burges, C. J. C. (1998). The MNIST Database of Handwritten Digits. [http://yann.lecun.com/exdb/mnist/](http://yann.lecun.com/exdb/mnist/)
 
-[3] Kruskal, J. B., & Wish, M. (1978). Multidimensional Scaling. *Sage Publications*. [https://doi.org/10.4135/9781412985130](https://doi.org/10.4135/9781412985130)
+[3] De Silva, V., & Tenenbaum, J. B. (2004). Sparse Multidimensional Scaling using Landmark Points. *Technical Report, Stanford University*. [https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf](https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf)
 
-[4] De Silva, V., & Tenenbaum, J. B. (2004). Sparse Multidimensional Scaling using Landmark Points. *Technical Report, Stanford University*. [https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf](https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf)
+[4] Sener, O., & Savarese, S. (2018). Active Learning for Convolutional Neural Networks: A Core-Set Approach. *International Conference on Learning Representations*. [https://arxiv.org/abs/1708.00489](https://arxiv.org/abs/1708.00489)
 
-[5] Sener, O., & Savarese, S. (2018). Active Learning for Convolutional Neural Networks: A Core-Set Approach. *International Conference on Learning Representations*. [https://arxiv.org/abs/1708.00489](https://arxiv.org/abs/1708.00489)
+[5] Kirsch, A., van Amersfoort, J., & Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. *Advances in Neural Information Processing Systems*. [https://arxiv.org/abs/1906.08158](https://arxiv.org/abs/1906.08158)
 
-[6] Kirsch, A., van Amersfoort, J., & Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. *Advances in Neural Information Processing Systems*. [https://arxiv.org/abs/1906.08158](https://arxiv.org/abs/1906.08158)
+[6] Motta, D. (2023). MDS and LMDS implementation. *GitHub Repository*. [https://github.com/danilomotta/LMDS](https://github.com/danilomotta/LMDS)
 
-[7] Motta, D. (2023). MDS and LMDS implementation. *GitHub Repository*. [https://github.com/danilomotta/LMDS](https://github.com/danilomotta/LMDS)
-
-[8] De Moriarty, A. (2023). fast_pytorch_kmeans. *GitHub Repository*. [https://github.com/DeMoriarty/fast_pytorch_kmeans](https://github.com/DeMoriarty/fast_pytorch_kmeans)
+[7] De Moriarty, A. (2023). fast_pytorch_kmeans. *GitHub Repository*. [https://github.com/DeMoriarty/fast_pytorch_kmeans](https://github.com/DeMoriarty/fast_pytorch_kmeans)
