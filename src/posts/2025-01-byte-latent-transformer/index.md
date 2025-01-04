@@ -1,7 +1,7 @@
 ---
 title: Byte Latent Transformer Explained
 subtitle: No more pesky tokens
-date: 2024-04-13T00:00:00-08:00
+date: 2025-01-07T00:00:00-08:00
 blurb: Covering DPO, a recently-proposed alternative to RLHF for preference tuning.
 tags: ["post", "machine-learning", "nlp", "language-models", "tokenization", "byte-latent-transformer"]
 ---
