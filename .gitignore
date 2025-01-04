@@ -6,3 +6,6 @@ _site/
 
 # node
 node_modules/
+
+# vscode
+.vscode/
