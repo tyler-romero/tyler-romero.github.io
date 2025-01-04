@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8" />
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<title>An Extension to BADGE Active Learning for Variable-Sized Batches</title>
+<meta name="author" content="Tyler Romero" />
+<meta name="description"
+      content="BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data" />
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico" />
+<link rel="canonical" href="https://www.tylerromero.com/posts/2025-01-badge-extension/" />
+<link type="application/atom+xml"
+      rel="alternate"
+      href="https://www.tylerromero.com/feed.xml"
+      title="Tyler&#39;s Technical Blog" />
+<link rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/assets/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff" />
+<link rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/assets/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff" />
+<link rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/assets/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff" />
+<link rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff" />
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
+      integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww"
+      crossorigin="anonymous" />
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"
+        integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd"
+        crossorigin="anonymous"></script>
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js"
+        integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk"
+        crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+<link rel="stylesheet" href="/assets/tufte.min.css" />
+<link rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count"
+        async
+        src="//gc.zgo.at/count.js"></script>
+
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "An Extension to BADGE Active Learning for Variable-Sized Batches",
+            "description": "BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2025-01-05T08:00:00.000Z",
+            "dateModified": "2025-01-04T01:58:37.137Z",
+            "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/posts/2025-01-badge-extension/"
+            },
+            "image": "https://www.tylerromero.com",
+            "keywords": "post, machine-learning, active-learning, BADGE, batch-active-learning, k-means++, MNIST, multidimensional-scaling, uncertainty-sampling",
+            "wordCount": "3712",
+            "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse,..."
+            }
+        </script>
+    </head>
+    <header>
+        <nav class="topbar">
+            <div class="right-aligned-links">
+                <a href="/"
+                   class="no-tufte-underline"
+                   style="color: #246eb9;
+                          margin-right: 3%">Tyler Romero</a>
+                <a href="/#posts" class="no-tufte-underline">posts</a>
+                <span class="desktop-only">
+                    <a href="/#projects" class="no-tufte-underline">projects</a>
+                    <a href="/#reading-list" class="no-tufte-underline">reading list</a>
+                </span>
+            </div>
+        </nav>
+    </header>
+    <body>
+        <article>
+            <h1>An Extension to BADGE Active Learning for Variable-Sized Batches
+</h1>
+            <p class="subtitle">BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data
+</p>
+            <p class="date">January 2025</p>
+            <section><p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p><p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-less-than-a-href" class="margin-toggle" /><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model’s uncertainty to select points for labeling.
+In a batch setting, this can degenerate into selecting points that are all very similar, leading to suboptimal performance. Take this example on MNIST, where uncertainty sampling selects eight similar-looking <code>1</code>s in a batch of nine:
+<img src="/assets/img/uncertainty_selected_digits.png" alt="Uncertainty sampling on MNIST"></span> This helps the model learn efficiently by focusing on challenging examples while maintaining good coverage of the dataset distribution.</p><p>One limitation of BADGE is that it requires the user to specify the batch size in advance. This can be a problem in practice, as the user may not know how many data points to label in each batch. In this post, I will show how BADGE can be extended to support variable-sized batches to enable applications where the next batch size is unknown a priori.</p></section>
+<section><h2 id="badge-overview">BADGE Overview</h2><p>Before we dive into the extension, let’s review how BADGE works. BADGE is a batch active learning method that selects a batch of data points that are diverse and high-magnitude in the gradients they may induce once labeled. The algorithm proceeds as follows:</p><h3 id="1-compute-gradient-embeddings">1. Compute Gradient Embeddings</h3><p>First, we compute the gradients of the loss with respect to the final layer of the neural network. These gradients capture both the model’s uncertainty (magnitude) and the data’s semantic content (direction).
+The first issue that arises is that - since our overall goal is to solicit labels for the most informative <em>unlabeled</em> data points - we don’t have access to the true labels for these data points.
+In order to compute the gradients, we need to “hallucinate” labels for the unlabeled data points. This is typically done by using the current model to predict the expected label for each data point.<label for="sd-this-approach-of" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-this-approach-of" class="margin-toggle" /><span class="sidenote">This approach of using the model’s predicted label provides a lower bound on the true gradient magnitude - since the model would view any other label as even more unexpected.</span>
+The expected label is then used to compute the gradient.</p><p>BADGE uses the gradient of the final linear layer’s weights, which can be computed efficiently without needing to backpropagate through the entire network.</p><p>Here is a reference implementation for computing the gradient embedding of a data point:</p><pre><code class="language-python">from torch import Tensor
+from torch.nn import functional as F
+
+@torch.no_grad()
+def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
+    """Compute gradient embedding for a single data point using BADGE.
+
+    Args:
+        model: A trained neural network model
+        data_point: Input tensor of shape [*feature_dims]
+
+    Returns:
+        Gradient embedding tensor of shape [hidden_dim * num_classes]
+    """
+    model.eval()
+    x = data_point.unsqueeze(0)  # add batch dimension
+
+    # Compute the output and final layer activations of the model
+    logits, final_acts = model(x)
+    probs = F.softmax(logits, dim=1)
+
+    # Use predicted class to simulate what gradient would be if this were the true label
+    hallucinated_class = logits.argmax(dim=1)
+    y_hat = F.one_hot(hallucinated_class, num_classes=logits.shape[1]).float()
+
+    # Compute gradient of cross entropy loss wrt final layer weights
+    # For cross entropy loss, this is simply (prediction - target)
+    loss_gradient = (probs - y_hat)  # [num_classes]
+
+    # Compute gradient embedding by outer product of:
+    # - final_acts: the last layer's activations (semantic information)
+    # - loss_gradient: the gradient of loss w.r.t. logits (uncertainty)
+    # This is equivalent to the gradient w.r.t the final layer weights
+    grad_embedding = torch.outer(
+        final_acts.squeeze(0),  # [hidden_size]
+        loss_gradient           # [num_classes]
+    ).flatten()  # [hidden_size * num_classes]
+
+    return grad_embedding
+</code></pre><h3 id="2-select-diverse-and-informative-points">2. Select Diverse and Informative Points</h3><p>Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using <a href="http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf">k-means++ initialization</a>, a greedy algorithm originally designed for seeding k-means clustering<label for="sd-it-s-worth-noting" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-it-s-worth-noting" class="margin-toggle" /><span class="sidenote">It’s worth noting the connection between k-means++ and <a href="https://en.wikipedia.org/wiki/Determinantal_point_process">Determinantal Point Processes (DPPs)</a>. DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.</span>. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.</p><p>The k-means++ algorithm proceeds as follows:</p><ol>
+<li>Initialize the first point by selecting one uniformly at random from the unlabeled pool.</li>
+<li>For each subsequent point to be selected, compute the squared Euclidean distance from each unlabeled point to the nearest point that has already been selected.</li>
+<li>Select the next point with a probability proportional to this squared distance. That is, a point <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span> is selected with probability <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mrow><msup><mi>d</mi><mn>2</mn></msup><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>S</mi><mo>)</mo></mrow><mrow><msub><mo>∑</mo><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>∈</mo><mi>U</mi></mrow></msub><msup><mi>d</mi><mn>2</mn></msup><mo>(</mo><msub><mi>x</mi><mi>j</mi></msub><mo separator="true">,</mo><mi>S</mi><mo>)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{d^2(x_i, S)}{\sum_{x_j \in U} d^2(x_j, S)}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.9335069999999999em;vertical-align:-0.824587em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.10892em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mop op-symbol small-op mtight" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16665428571428564em;"><span style="top:-2.1785614285714283em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3448em;margin-left:0em;margin-right:0.1em;"><span class="pstrut" style="height:2.65952em;"></span><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5091600000000001em;"><span></span></span></span></span></span></span><span class="mrel mtight">∈</span><span class="mord mathdefault mtight" style="margin-right:0.10903em;">U</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.6851242857142859em;"><span></span></span></span></span></span></span><span class="mspace mtight" style="margin-right:0.19516666666666668em;"></span><span class="mord mtight"><span class="mord mathdefault mtight">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7463142857142857em;"><span style="top:-2.786em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mclose mtight">)</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8913142857142857em;"><span style="top:-2.931em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.824587em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span>, where <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span></span></span></span></span> is the set of already-selected points, <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>U</mi></mrow><annotation encoding="application/x-tex">U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">U</span></span></span></span></span> is the set of unlabeled points, and <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>d</mi><mn>2</mn></msup><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo separator="true">,</mo><mi>S</mi><mo>)</mo><mo>=</mo><msub><mi>min</mi><mo>⁡</mo><mrow><msub><mi>x</mi><mi>j</mi></msub><mo>∈</mo><mi>S</mi></mrow></msub><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mi mathvariant="bold">g</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo><mo>−</mo><mi mathvariant="bold">g</mi><mo>(</mo><msub><mi>x</mi><mi>j</mi></msub><mo>)</mo><mi mathvariant="normal">∣</mi><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">d^2(x_i, S) = \min_{x_j \in S} ||\mathbf{g}(x_i) - \mathbf{g}(x_j)||^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathdefault">d</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">S</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1.0973199999999999em;vertical-align:-0.34731999999999996em;"></span><span class="mop"><span class="mop">min</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.32833100000000004em;"><span style="top:-2.5500000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span><span class="mrel mtight">∈</span><span class="mord mathdefault mtight" style="margin-right:0.05764em;">S</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.34731999999999996em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord">∣</span><span class="mord">∣</span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">g</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.1002159999999999em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">g</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord">∣</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span>, with <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="bold">g</mi><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">\mathbf{g}(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathbf" style="margin-right:0.01597em;">g</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span> being the gradient embedding of point <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>.</li>
+<li>Repeat steps 2 and 3 until the desired number of points have been selected.</li>
+</ol><p>If a batch size of <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span></span> is specified, BADGE uses k-means++ to greedily select <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span></span> diverse points from the unlabeled pool based on their gradient embeddings.</p><p>The strength of k-means++ lies in its ability to efficiently select a set of points that are well-spread out in the gradient embedding space. By probabilistically favoring points that are far from the already selected points, k-means++ encourages the selection of a diverse set of examples. This diversity is crucial for active learning because it ensures that the newly labeled data points cover a broader range of the data distribution, leading to more informative updates to the model. Furthermore, the tendency to select points far from existing selections <em>implicitly favors points with higher magnitude embeddings</em>, as these points are likely to reside in less densely populated regions of the embedding space.</p><p>Scikit-learn provides <a href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.kmeans_plusplus.html">an implementation</a> of the k-means++ centroid initialization algorithm, which can be readily adapted for BADGE.</p><h3 id="a-demonstration-with-mnist">A Demonstration with MNIST</h3><p>Here we demonstrate BADGE on the <a href="https://huggingface.co/datasets/ylecun/mnist">MNIST dataset</a>. We randomly sample half of the MNIST dataset as our training set, subsequently dropping all <code>0</code> and <code>1</code> class examples (in order to help illustrate BADGE collecting useful examples).
+We then train a simple convolutional neural network on this training set<label for="sd-the-confusion-matrix" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-the-confusion-matrix" class="margin-toggle" /><span class="sidenote">The confusion matrix shows that the model consistently misclassifies 0s and 1s, as expected since these classes were excluded from training.
+0s are most often misclassified as 6s and 1s as 4s.
+<img src="/assets/img/mnist_confusion_matrix.png" alt="Confusion matrix showing model predictions"></span> and use BADGE to select the next batch of data points to label from a large pool of unlabeled data points.</p><p>We compute gradient embeddings for a heldout set of 15,000 unlabeled points and use <a href="https://scikit-learn.org/stable/auto_examples/manifold/plot_compare_methods.html#multidimensional-scaling">Multidimensional Scaling (MDS)</a><label for="sd-multidimensional" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-multidimensional" class="margin-toggle" /><span class="sidenote">Multidimensional Scaling (MDS) is a technique used to visualize the similarity between data points in a lower-dimensional space. The property that makes it attractive
+for this task is that it tries to respect the distances between points in the original high-dimensional space. Technically, we use a variant called <a href="https://cannoodt.dev/2019/11/lmds-landmark-multi-dimensional-scaling/">Landmark MDS</a>, which
+is more scalable to large datasets.</span> to reduce the dimensionality of the embeddings to 2D for visualization.
+The points are arranged by their underlying class labels and plotted below:</p><p><img src="/assets/img/mds_gradient_embedding_viz.png" alt="Gradient embeddings of unlabeled MNIST digits"></p><p>Notably the magnitudes of the gradient embeddings are not uniform across the classes, with examples from the <code>0</code> and <code>1</code> classes generally having greater magnitudes<label for="sd-it-is-a-bit-hard-to" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-it-is-a-bit-hard-to" class="margin-toggle" /><span class="sidenote">It is a bit hard to tell from the plot, but >90% the 15k data points are concentrated on in a tight cluster around (0, 0).</span>. This is expected, as the model
+saw no examples of these classes during training, and is thus more uncertain about them. The plot visually demonstrates that the gradient embeddings effectively capture semantic information, as points from the same digit class tend to cluster together.</p><p>We then use k-means++ to sample the next batch of data points to label. For a batch of size 10, the selected points are highlighted below:</p><p><img src="/assets/img/badge_selections_plotted.png" alt="Gradient embeddings of the examples selected by BADGE to label"></p><p>As expected, BADGE predominantly selects examples from the <code>0</code> and <code>1</code> classes - the classes absent from the training data and where the model shows the highest uncertainty. Within these classes, BADGE strategically chooses points with diverse gradient embeddings, ensuring the selected examples capture different aspects of these unfamiliar classes (in contrast to uncertainty sampling, as we observed above). Intuitively, we hope this diversity will help the model develop a more comprehensive understanding of the previously unseen digits.</p></section>
+<section><h2 id="extending-badge-to-variable-sized-batches">Extending BADGE to Variable-Sized Batches</h2><p>While the standard BADGE algorithm is effective, its requirement for a fixed batch size can be limiting in real-world scenarios. Consider situations where labeling resources fluctuate, or where the optimal number of data points to label before retraining varies.
+In these cases, the inflexibility of a fixed batch size can lead to inefficient use of resources.
+To address this, we introduce the concept of a priority ordering over the entire set of unlabeled data points.
+Instead of selecting a fixed batch size upfront, this ordering tells us which points would be most valuable to label first,
+second, third, and so on - allowing us to be flexible about how many points we ultimately select.</p><h3 id="when-are-variable-sized-batches-helpful">When Are Variable-Sized Batches Helpful?</h3><p>Variable-sized batches are particularly valuable in real-world machine learning workflows where labeling resources need to be managed efficiently. Let’s explore a few practical scenarios:</p><h4 id="1-optimizing-labeler-productivity">1. <strong>Optimizing Labeler Productivity</strong></h4><p>Consider a team of full-time data labelers who need to maintain consistent productivity. In settings where model training and evaluation are relatively
+quick compared to labeling time, the number of examples needed before a model update can vary significantly—perhaps anywhere from 10 to 10,000 examples.
+Variable-sized batches allow us to keep labelers continuously engaged by adapting to these fluctuating requirements.</p><h4 id="2-dynamic-budget-management">2. <strong>Dynamic Budget Management</strong></h4><p>Organizations frequently need to adapt to changing resource constraints throughout a project’s lifecycle:</p><table>
+<thead>
+<tr>
+<th>Constraint Type</th>
+<th>Example Scenario</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Budget Changes</td>
+<td>Labeling budgets may be adjusted mid-project</td>
+</tr>
+<tr>
+<td>Service Limitations</td>
+<td>Third-party labeling services often use time- or cost-based constraints rather than fixed batch sizes</td>
+</tr>
+<tr>
+<td>Priority Shifts</td>
+<td>Project priorities may change, requiring resource reallocation</td>
+</tr>
+</tbody>
+</table><p>Variable-sized batches provide the flexibility to adapt to these changing constraints while maintaining the quality of selected examples.</p><h4 id="3-facilitating-online-learning">3. <strong>Facilitating Online Learning</strong></h4><p>In <a href="https://en.wikipedia.org/wiki/Online_machine_learning">online learning</a> scenarios, data arrives sequentially, and models need to be updated incrementally.
+Variable-sized batches are naturally suited for this setting. Instead of waiting for a fixed number of new labels to become available,
+the model can be updated as soon as a sufficient number of high-priority examples have been labeled. This allows the model to adapt
+more quickly to changes in the data distribution and leverage new information as it arrives, leading to potentially faster convergence
+and improved performance over time. More on this below.</p><h3 id="generating-a-prioritized-ordering">Generating a Prioritized Ordering</h3><p>As mentioned earlier, the key to supporting variable-sized batches in BADGE is to generate a priority ordering over the entire set of unlabeled data points.</p><p>K-means++ provides an elegant way to generate this priority ordering, as it naturally selects diverse and informative points
+in a sequential manner before lumping them into a batch. By running k-means++ on the unlabeled pool and recording the order
+of selection, we obtain a ranked list where earlier points are both more informative and well-distributed across the feature space.
+We can then work through this priority queue of points, stopping whenever we’ve reached our desired batch size. This approach also lends itself well to online active learning scenarios, where new unlabeled data points may become available over time. The priority ordering allows us to continuously select the most valuable points for labeling as they appear.</p><h3 id="demonstrating-on-mnist-continued-from-above">Demonstrating on MNIST (Continued from above)</h3><p>To demonstrate this extension, we use the same setup as before, but this time we run k-means++ on the entire pool of unlabeled data points to generate an ordering. We then select the next data point to label by following this ordering.</p><p>We visualize the ordering generated by k-means++ below:</p><p><img src="/assets/img/badge_selection_with_digits_transparent.gif" alt="BADGE selection proceeding in order"></p><h3 id="optimizing-computational-efficiency-of-k-means">Optimizing Computational Efficiency of K-means++</h3><p>The time complexity of k-means++ initialization is <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><mi>n</mi><mi>k</mi><mi>d</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">O(nkd)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span><span class="mord mathdefault">d</span><span class="mclose">)</span></span></span></span></span> where <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.43056em;vertical-align:0em;"></span><span class="mord mathdefault">n</span></span></span></span></span> is the number of data points, <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span></span> is the number of centroids to select,
+and <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">d</span></span></span></span></span> is the dimensionality of the data. The <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">d</span></span></span></span></span> factor comes from computing pairwise distances between points in <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault">d</span></span></span></span></span>-dimensional space.
+When we generate a complete ordering over the pool of unlabeled data points, we effectively run k-means++ <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span></span> times, where <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.69444em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.03148em;">k</span></span></span></span></span> is the size of the pool.
+This means that the overall time complexity of is <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mi>d</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n^2d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141079999999999em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord mathdefault">d</span><span class="mclose">)</span></span></span></span></span>, which can be expensive for large datasets or high-dimensional data.</p><p>There are several ways to optimize this process. The first we will explore is the use a GPU,
+combined with incrementally tracking minimum distances to avoid redundant computations:</p><pre><code class="language-python">import torch
+
+@torch.no_grad()
+def kmeans_pp_pytorch(data: torch.Tensor, k: int = -1) -> torch.Tensor:
+    """
+    K-means++ implementation with distance caching.
+    Leverages a GPU and only computes distances to the newest center each iteration.
+    """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    data = data.to(device)
+    n_samples = data.shape[0]
+    if k == -1:
+        k = n_samples
+
+    # Initialize output indices and distance cache
+    selected_indices = torch.zeros(k, dtype=torch.long, device=device)
+    min_squared_distances = torch.full((n_samples,), float('inf'), device=device)
+
+    # Pick first point randomly
+    selected_indices[0] = torch.randint(n_samples, (1,), device=device)
+
+    # Process remaining points
+    for i in range(1, k):
+        # Get the last selected center and compute squared distances to all points
+        last_center = data[selected_indices[i-1]].unsqueeze(0)
+        new_squared_distances = torch.cdist(data, last_center, p=2).square()[:, 0]
+
+        # Update minimum squared distances if new distances are smaller
+        min_squared_distances = torch.minimum(min_squared_distances, new_squared_distances)
+
+        # Sample next center with probability proportional to squared distance
+        probs = min_squared_distances / min_squared_distances.sum()
+        cumprobs = torch.cumsum(probs, dim=0)
+        r = torch.rand(1, device=device)
+        selected_indices[i] = torch.searchsorted(cumprobs, r)
+
+        # Set distance to zero for selected point to avoid reselection
+        min_squared_distances[selected_indices[i]] = 0
+
+    return selected_indices
+</code></pre><p>This GPU-accelerated implementation significantly improves performance. For a dataset of 15,000 embeddings with 2,560 dimensions,
+it generates a complete ordering in just 20 seconds - compared to 15 minutes using scikit-learn’s CPU implementation.</p><p>Additionally, since data labeling is time-consuming, we can optimize further by <em>extracting points from the ordering one at a time</em> (and only as-needed)
+rather than computing the entire ordering upfront. This lazy evaluation approach allows us to stop once we’ve labeled our desired
+number of points, avoiding unnecessary computation. It also allows us to add new (and potentially useful) data points to the pool
+of unlabeled data on-the-fly as those points become available! See <a href="https://gist.github.com/tyler-romero/1aba44c529c64fb3c29026ec906bcd9c">this (longer) code snippet</a> for an example of how to lazily generate the ordering.</p></section>
+<section><h2 id="can-other-popular-batch-active-learning-methods-be-similarly-extended">Can Other Popular Batch Active Learning Methods Be Similarly Extended?</h2><p>Not all batch active learning methods can be extended to support variable-sized batches.
+Let’s consider a two categories of batch active learning methods and discuss their potential for extension:</p><h3 id="coreset-and-other-greedy-selection-algorithms-">CORESET and other Greedy-Selection Algorithms ✅</h3><p><a href="https://arxiv.org/abs/1708.00489">CORESET</a> is a batch active learning method that selects diverse data points by maximizing the minimum distance to already selected points. Like BADGE, it can be extended to generate a priority ordering over the unlabeled pool.</p><p>The extension is straightforward: instead of stopping after selecting k points, run the standard greedy
+CORESET selection until all unlabeled points are ordered. Starting with an initial point (chosen randomly or as the furthest from existing labeled data),
+each iteration selects the point with the maximum minimum distance to all previously selected points.</p><p>This naturally prioritizes points that cover unexplored regions of the feature space - earlier points represent more crucial additions to the diverse subset.
+The ordering maintains CORESET’s goal of representative sampling while enabling variable batch sizes.</p><h3 id="batchbald-and-other-methods-that-require-a-global-view-">BatchBALD and Other Methods That Require a Global View ❌</h3><p>Unlike BADGE and CORESET, <a href="https://arxiv.org/abs/1906.08158">BatchBALD</a> doesn’t lend itself well to variable-sized batches. BatchBALD works by selecting points that
+maximize mutual information between selected and remaining points, using predictive entropy across the entire unlabeled pool.</p><p>The core issue is that BatchBALD’s mutual information calculation is inherently global - it depends on the full set of unlabeled data. This makes it difficult to generate a
+meaningful priority ordering, since selecting points one at a time would break the mutual information maximization that makes BatchBALD effective.</p><p>In short, greedy methods like BADGE naturally extend to variable batches, while global methods like BatchBALD would need major modifications to support this use case.</p></section>
+<section><h2 id="wrapping-up">Wrapping Up</h2><p>Thanks for reading! Hopefully this post has provided you with a deeper understanding of the BADGE active learning method and how it can be extended to support variable-sized batches. I also hope you
+found the visualizations and code snippets fun and helpful in understanding the concepts discussed. If you have any questions or feedback, feel free to <a href="mailto:tyler.alexander.romero@gmail.com">reach out</a>!</p></section>
+<section><h2 id="references">References</h2><p>[1] Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., &#x26; Agarwal, A. (2020). BADGE: Batch Active learning by Diverse Gradient Embeddings. <em>International Conference on Learning Representations</em>. <a href="https://arxiv.org/abs/1910.11945">https://arxiv.org/abs/1910.11945</a></p><p>[2] LeCun, Y., Cortes, C., &#x26; Burges, C. J. C. (1998). The MNIST Database of Handwritten Digits. <a href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a></p><p>[3] De Silva, V., &#x26; Tenenbaum, J. B. (2004). Sparse Multidimensional Scaling using Landmark Points. <em>Technical Report, Stanford University</em>. <a href="https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf">https://graphics.stanford.edu/courses/cs468–05-winter/Papers/Landmarks/Silva_landmarks5.pdf</a></p><p>[4] Sener, O., &#x26; Savarese, S. (2018). Active Learning for Convolutional Neural Networks: A Core-Set Approach. <em>International Conference on Learning Representations</em>. <a href="https://arxiv.org/abs/1708.00489">https://arxiv.org/abs/1708.00489</a></p><p>[5] Kirsch, A., van Amersfoort, J., &#x26; Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. <em>Advances in Neural Information Processing Systems</em>. <a href="https://arxiv.org/abs/1906.08158">https://arxiv.org/abs/1906.08158</a></p><p>[6] Motta, D. (2023). MDS and LMDS implementation. <em>GitHub Repository</em>. <a href="https://github.com/danilomotta/LMDS">https://github.com/danilomotta/LMDS</a></p><p>[7] De Moriarty, A. (2023). fast_pytorch_kmeans. <em>GitHub Repository</em>. <a href="https://github.com/DeMoriarty/fast_pytorch_kmeans">https://github.com/DeMoriarty/fast_pytorch_kmeans</a></p></section>
+
+        </article>
+        <footer>
+            <footer>
+    <hr class="slender" />
+    <p class="social-links">
+        <a href="/"><span class="fas fa-home"></span></a>
+        &nbsp
+        <a href="https://twitter.com/tyleraromero"><i class="fab fa-twitter-square"></i></a>
+        <a href="https://github.com/tyler-romero"><i class="fab fa-github-square"></i></a>
+        <a href="https://linkedin.com/in/tylerromero"><i class="fab fa-linkedin"></i></a>
+        <a href="mailto:tyler.alexander.romero+site@gmail.com"><i class="fas fa-envelope-square"></i></a>
+    </p>
+    <p class="copyright" style="font-size: 1.0em;">&copy; 2025 Tyler Romero</p>
+</footer>
+
+        </footer>
+    </body>
+</html>
