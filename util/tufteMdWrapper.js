@@ -1,4 +1,5 @@
 import configureParser from "@tufte-markdown/parser";
+
 const parse = configureParser({ react: false });
 
 export const tufteMdWrapper = {

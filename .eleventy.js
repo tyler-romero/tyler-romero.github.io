@@ -16,11 +16,6 @@ export default function (eleventyConfig) {
   eleventyConfig.addWatchTarget("./src/assets");
 
   /* Markdown Configuration */
-  let options = {
-    react: false,
-  };
-
-  // Markdown
   eleventyConfig.setLibrary("md", tufteMdWrapper);
   eleventyConfig.addFilter("markdown", tufteMdWrapper.render);
   eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline);
