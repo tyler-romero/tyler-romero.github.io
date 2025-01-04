@@ -1,3 +1,4 @@
+import { EleventyHtmlBasePlugin, InputPathToUrlTransformPlugin } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import CleanCSS from "clean-css";
@@ -83,6 +84,10 @@ export default function (eleventyConfig) {
     urlPath: "/assets/img/",
     outputDir: "_site/assets/img/",
   });
+
+  // Plugins
+  eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
+  eleventyConfig.addPlugin(InputPathToUrlTransformPlugin);
 
   return {
     // When a passthrough file is modified, rebuild the pages:
