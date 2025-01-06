@@ -38,7 +38,9 @@ from torch.nn import functional as F
 
 @torch.no_grad()
 def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
-    """Compute gradient embedding for a single data point using BADGE.
+    """
+    Compute gradient embedding by taking the gradient of cross-entropy loss
+    with respect to the final layer weights, using a hallucinated label.
 
     Args:
         model: A trained neural network model
@@ -111,7 +113,7 @@ The points are arranged by their underlying class labels and plotted below:
 Notably the magnitudes of the gradient embeddings are not uniform across the classes, with examples from the `0` and `1` classes generally having greater magnitudes[^density]. This is expected, as the model
 saw no examples of these classes during training, and is thus more uncertain about them. The plot visually demonstrates that the gradient embeddings effectively capture semantic information, as points from the same digit class tend to cluster together.
 
-[^density]: It is a bit hard to tell from the plot, but >90% the 15k data points are concentrated on in a tight cluster around (0, 0).
+[^density]: It is a bit hard to tell from the scatter plot, but >95% of the 15,000 plotted data points are concentrated on in a tight cluster around (0, 0).
 
 We then use k-means++ to sample the next batch of data points to label. For a batch of size 10, the selected points are highlighted below:
 
@@ -241,7 +243,7 @@ of unlabeled data on-the-fly as those points become available! See [this (longer
 Not all batch active learning methods can be extended to support variable-sized batches.
 Let's consider a two categories of batch active learning methods and discuss their potential for extension:
 
-### CORESET and other Greedy-Selection Algorithms ✅
+### ✅ CORESET and other Greedy-Selection Algorithms
 
 [CORESET](https://arxiv.org/abs/1708.00489) is a batch active learning method that selects diverse data points by maximizing the minimum distance to already selected points. Like BADGE, it can be extended to generate a priority ordering over the unlabeled pool.
 
@@ -252,7 +254,7 @@ each iteration selects the point with the maximum minimum distance to all previo
 This naturally prioritizes points that cover unexplored regions of the feature space - earlier points represent more crucial additions to the diverse subset.
 The ordering maintains CORESET's goal of representative sampling while enabling variable batch sizes.
 
-### BatchBALD and Other Methods That Require a Global View ❌
+### ❌ BatchBALD and Other Methods That Require a Global View
 
 Unlike BADGE and CORESET, [BatchBALD](https://arxiv.org/abs/1906.08158) doesn't lend itself well to variable-sized batches. BatchBALD works by selecting points that
 maximize mutual information between selected and remaining points, using predictive entropy across the entire unlabeled pool.
@@ -262,9 +264,8 @@ meaningful priority ordering, since selecting points one at a time would break t
 
 In short, greedy methods like BADGE naturally extend to variable batches, while global methods like BatchBALD would need major modifications to support this use case.
 
-## Wrapping Up
-Thanks for reading! Hopefully this post has provided you with a deeper understanding of the BADGE active learning method and how it can be extended to support variable-sized batches. I also hope you
-found the visualizations and code snippets fun and helpful in understanding the concepts discussed. If you have any questions or feedback, feel free to [reach out](mailto:tyler.alexander.romero@gmail.com)!
+## Thanks for Reading!
+If you're building something interesting with these methods or want to dive deeper into active learning, I'd love to [hear from you](mailto:tyler.alexander.romero@gmail.com)!
 
 ## References
 
