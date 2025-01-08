@@ -1,0 +1,30 @@
+---
+layout: frontpage
+tags: ["home-cooking"]
+---
+<section>
+    <h1>Home Cooking</h1>
+    <p>
+        <span class="marginnote">
+            <img src="/assets/img/chef-pic.jpeg"
+                 alt="me"
+                 class="profile-picture"
+                 style="max-width: 749px;
+                        height: auto" />
+        </span>I love cooking for fun. I keep an old fashioned recipe box filled with post cards of recipes I've enjoyed and enjoyed making...
+    </p>
+</section>
+<section>
+    <h2 id="posts">Recipe Box</h2>
+    <ul>
+        {% for p in collections.recipe | reverse %}
+            <li>
+                <a href="{{ p.url }}">{{ p.data.title }}</a>
+                &nbsp
+                <p style="margin-top: 0;">
+                    <small><em>{{ p.data.date | postDate }}</em> - {{ p.data.blurb }}</small>
+                </p>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
