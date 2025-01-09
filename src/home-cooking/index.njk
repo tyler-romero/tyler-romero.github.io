@@ -1,5 +1,5 @@
 ---
-layout: frontpage
+layout: frontpage.njk
 tags: ["home-cooking"]
 ---
 <section>
@@ -11,7 +11,12 @@ tags: ["home-cooking"]
                  class="profile-picture"
                  style="max-width: 749px;
                         height: auto" />
-        </span>I love cooking for fun. I keep an old fashioned recipe box filled with post cards of recipes I've enjoyed and enjoyed making...
+        </span>
+        I love cooking despite being a very middle of the road home cook. I find it to be relaxing and I like that I get to actually make something in the physical world.
+        I keep an old-school recipe box filled with note cards of recipes that I enjoyed making and that turned out well. So I thought
+        a good way to start this page would be to describe<label for="sd-recipe-box" class="margin-toggle sidenote-number"></label>
+        <input type="checkbox" id="sd-recipe-box" class="margin-toggle" />
+        <span class="sidenote">With attribution provided as appropriate.</span> those recipes here the next time I decide to make them.
     </p>
 </section>
 <section>
@@ -21,9 +26,7 @@ tags: ["home-cooking"]
             <li>
                 <a href="{{ p.url }}">{{ p.data.title }}</a>
                 &nbsp
-                <p style="margin-top: 0;">
-                    <small><em>{{ p.data.date | postDate }}</em> - {{ p.data.blurb }}</small>
-                </p>
+                <small>- {{ p.data.blurb }}</small>
             </li>
         {% endfor %}
     </ul>
