@@ -60,7 +60,7 @@ Readers may be familiar with the Bradley-Terry model from the context of Elo sco
 
 [^elo]: So if player A's Elo rating is 2000 and player B's is 1600 then player A is expected to be 10 times more likely to win than player B, because $p(A \succ B)=\frac{1}{1 + 10^{(1600-2000)/400}}=10/11$.
 
-Under the Bradley-Terry model, is common to choose to parameterize the score as $s=e^r$, where $r$ stands for reward. The term "reward" is borrowed from the world of reinforcement learning, where greater rewards are received for a more desirable series of actions - similar to achieving a higher score for performing better in a video game.
+Under the Bradley-Terry model, it is common to choose to parameterize the score as $s=e^r$, where $r$ stands for reward. The term "reward" is borrowed from the world of reinforcement learning, where greater rewards are received for a more desirable series of actions - similar to achieving a higher score for performing better in a video game.
 
 With this parameterization, our model starts to look pretty nice - a simple difference in reward values passed through the logistic function[^logistic].
 
