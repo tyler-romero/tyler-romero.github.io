@@ -1,0 +1,33 @@
+---
+layout: frontpage.njk
+tags: ["home-cooking"]
+---
+<section>
+    <h1>Home Cooking</h1>
+    <p>
+        <span class="marginnote">
+            <img src="/assets/img/chef-pic.jpeg"
+                 alt="me"
+                 class="profile-picture"
+                 style="max-width: 749px;
+                        height: auto" />
+        </span>
+        I love cooking despite being a very middle of the road home cook. I find it to be relaxing and I like that I get to actually make something in the physical world.
+        I keep an old-school recipe box filled with note cards of recipes that I enjoyed making and that turned out well. So I thought
+        a good way to start this page would be to describe<label for="sd-recipe-box" class="margin-toggle sidenote-number"></label>
+        <input type="checkbox" id="sd-recipe-box" class="margin-toggle" />
+        <span class="sidenote">With attribution provided as appropriate.</span> those recipes here the next time I decide to make them.
+    </p>
+</section>
+<section>
+    <h2 id="posts">Recipe Box</h2>
+    <ul>
+        {% for p in collections.recipe | reverse %}
+            <li>
+                <a href="{{ p.url }}">{{ p.data.title }}</a>
+                &nbsp
+                <small>- {{ p.data.blurb }}</small>
+            </li>
+        {% endfor %}
+    </ul>
+</section>
