@@ -1,9 +1,9 @@
 ---
 layout: frontpage.njk
-tags: ["home-cooking"]
+tags: ["home-cooking", "recipe-box"]
 ---
 <section>
-    <h1>Home Cooking</h1>
+    <h1>Recipe Box</h1>
     <p>
         <span class="marginnote">
             <img src="/assets/img/chef-pic.jpeg"
@@ -20,9 +20,9 @@ tags: ["home-cooking"]
     </p>
 </section>
 <section>
-    <h2 id="posts">Recipe Box</h2>
+    <h2 id="posts"></h2>
     <ul>
-        {% for p in collections.recipe | reverse %}
+        {% for p in collections.recipe | sort(attribute='date') | reverse %}
             <li>
                 <a href="{{ p.url }}">{{ p.data.title }}</a>
                 &nbsp
