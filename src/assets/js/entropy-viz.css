@@ -1,8 +1,14 @@
 .entropy-viz {
+  padding: 0;
+  border: 0;
   width: 55%;
-  margin: 1.4rem 0;
+  margin: 0 0 3em 0;
   background: #fffff0;
-  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  -webkit-margin-start: 0;
+  -webkit-margin-end: 0;
 }
 
 .entropy-viz svg {
