@@ -15,28 +15,20 @@ function initEntropyViz() {
       // Find the maximum entropy value
       const maxEntropy = Math.max(...data.map((d) => d.entropy)) + 0.1;
 
-      // Create slider container
-      const sliderContainer = document.createElement("div");
-      sliderContainer.style.marginBottom = "10px";
-      element.insertBefore(sliderContainer, element.firstChild);
-
-      // Create slider
-      const slider = document.createElement("input");
-      slider.type = "range";
-      slider.min = 0;
-      slider.max = maxEntropy; // Adjust max to match entropy range
-      slider.step = 0.01; // Add steps for finer control
-      slider.value = 1.0; // Set an initial value within the range
-      sliderContainer.appendChild(slider);
-      // access slider value with slider.value
+      // Create main container for SVG and slider
+      const mainContainer = document.createElement("div");
+      mainContainer.style.display = "flex";
+      mainContainer.style.flexDirection = "row";
+      mainContainer.style.alignItems = "flex-start";
+      element.appendChild(mainContainer);
 
       // Basic D3 visualization
-      const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+      const margin = { top: 20, right: 70, bottom: 30, left: 40 }; // Increased right margin for slider
       const width = 600 - margin.left - margin.right;
       const height = 400 - margin.top - margin.bottom;
 
       const svg = d3
-        .select(element)
+        .select(mainContainer)
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
@@ -45,7 +37,7 @@ function initEntropyViz() {
 
       // Create scales
       const x = d3
-        .scaleLinear() // Changed from scaleBand to scaleLinear
+        .scaleLinear()
         .domain([0, data.length - 1])
         .range([0, width]);
 
@@ -79,7 +71,7 @@ function initEntropyViz() {
       // Add the line
       const line = d3
         .line()
-        .x((d, i) => x(i)) // Use index for x position
+        .x((d, i) => x(i))
         .y((d) => y(d.entropy));
 
       svg
@@ -99,6 +91,28 @@ function initEntropyViz() {
         .attr("stroke", "#e01e37")
         .attr("stroke-width", 1)
         .style("stroke-dasharray", "5 5");
+
+      // Create slider container
+      const sliderContainer = document.createElement("div");
+      sliderContainer.style.marginLeft = "20px";
+      sliderContainer.style.height = `${height}px`;
+      sliderContainer.style.display = "flex";
+      sliderContainer.style.flexDirection = "column";
+      sliderContainer.style.justifyContent = "center";
+      mainContainer.appendChild(sliderContainer);
+
+      // Create slider
+      const slider = document.createElement("input");
+      slider.type = "range";
+      slider.min = 0;
+      slider.max = maxEntropy;
+      slider.step = 0.01;
+      slider.value = 1.0;
+      slider.style.width = `${height}px`;
+      slider.style.height = "20px";
+      slider.style.transformOrigin = "center center";
+      slider.style.transform = "rotate(-90deg)";
+      sliderContainer.appendChild(slider);
 
       // Function to update threshold line position
       const updateThresholdLine = () => {
