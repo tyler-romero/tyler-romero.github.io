@@ -77,14 +77,7 @@ BLT uses a small (100M parameter) byte-level language model with sliding-window 
 
 Using these per-byte entropy estimates and a chosen threshold, we can segment a byte sequence by ending patches whenever a byte's entropy exceeds the threshold.
 
-<!-- Debug: Print the data -->
-<!-- <pre>
-{{ entropy-values.values | json }}
-</pre> -->
-
-<!-- Debug: Start of entropy viz -->
 <div
   class="entropy-viz"
   data-entropy-viz
 ></div>
-<!-- Debug: End of entropy viz -->
