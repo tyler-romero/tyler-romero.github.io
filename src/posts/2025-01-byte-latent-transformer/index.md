@@ -77,7 +77,31 @@ BLT uses a small (100M parameter) byte-level language model with sliding-window 
 
 Using these per-byte entropy estimates and a chosen threshold, we can segment a byte sequence by ending patches whenever a byte's entropy exceeds the threshold.
 
+The following is a visualization of the entropy of each byte in a sequence of text. The entropy is calculated using a pre-trained character-level language model[^reformer]. Vertical grey lines indicate the beginning of patches. The threshold is set to 2.0 bits and can be adjusted with the slider.
+
+[^reformer]: The entropy model used in this visualization is a [Reformer](https://huggingface.co/google/reformer-enwik8) model trained on the [enwik8](https://huggingface.co/datasets/LTCB/enwik8) dataset, which is the first 100M bytes of an English Wikipedia dump from 2006. A Colab notebook that can be used to generate entropy estimates for any text is available [here](https://colab.research.google.com/drive/1btGHxpN8ljRATgsDOSQuKRhoZIdrCyr6?usp=sharing).
+
+<br>
+
 <div
   class="entropy-viz"
   data-entropy-viz
 ></div>
+
+<!-- TODO: discuss the incremental patching property of BLT and how BPE doesn't satisfy this. -->
+
+## Byte Latent Transformer
+BLT is composed of three components:
+1. Latent Global Transformer Model: a large global autoregressive language model that operates on patch representations.
+2. Local Encoder: a small local model that encodes sequences of bytes into patch representations. Note that this is separate from the entropy model used to determine patch boundaries.
+3. Local Decoder: a small local model that decodes patch representations back into sequences of bytes.
+
+### Latent Global Transformer Model
+The Latent Global Transformer is an autoregressive transformer model that maps a sequence of latent input patch representations into a sequence of output patch representations. A block-causal attention mask is used to restrict attention up to and including the current patch within the current document.
+
+Most of the FLOPs consumed by BLT during pre-training and inference are in the global transformer.
+
+### Local Encoder
+The Local Encoder Model is a lightweight transformer-based model whose purpose is to efficiently map a sequence of input bytes into expressive patch representations. Unlike a typical transformer, this local encoder model has a cross-attention layer after each transformer layer whose purpose is to pool byte representations into patch representations.
+
+TODO: keep describing the local encoder
