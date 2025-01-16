@@ -25,8 +25,8 @@ function initEntropyViz() {
       mainContainer.style.justifyContent = "flex-start"; // Align items to the start
       element.appendChild(mainContainer);
 
-      const width = 1000;
-      const height = 500;
+      const width = 800;
+      const height = 400;
 
       const svg = d3
         .select(mainContainer)
@@ -57,8 +57,7 @@ function initEntropyViz() {
             .ticks(data.length)
             .tickFormat((i) => data[Math.round(i)]?.char || "")
         );
-
-      xAxis.selectAll("text").style("font-size", "0.9rem");
+      xAxis.selectAll("text").style("font-family", "Consolas");
 
       // Add Y axis with both the axis line and label
       svg
@@ -109,15 +108,14 @@ function initEntropyViz() {
         .attr("y", 0) // Will be updated in updateThresholdLine
         .attr("dy", "0.35em") // Vertically center the text
         .style("font-size", "0.8rem")
+        .style("font-family", "Consolas")
         .style("fill", "#e01e37");
 
       // Create slider container
       const sliderContainer = document.createElement("div");
-      sliderContainer.style.height = "100%";
-      sliderContainer.style.display = "flex";
       sliderContainer.style.flexDirection = "column";
       sliderContainer.style.justifyContent = "center";
-      sliderContainer.style.position = "relative";
+      sliderContainer.style.width = "10px";
       mainContainer.appendChild(sliderContainer);
 
       // Create slider
@@ -127,10 +125,8 @@ function initEntropyViz() {
       slider.max = maxEntropy;
       slider.step = 0.01;
       slider.value = 2.0;
-      slider.style.width = "100%";
-      slider.style.height = "20px";
-      slider.style.transformOrigin = "center center";
-      slider.style.transform = "rotate(-90deg)";
+      slider.style.width = "175px";
+      slider.style.transform = "rotate(-90deg) translateY(-60px) translateX(10px)";
       sliderContainer.appendChild(slider);
 
       // Handle touch events to allow slider movement without scrolling
@@ -181,8 +177,8 @@ function initEntropyViz() {
             svg
               .append("line")
               .attr("class", "vertical-line")
-              .attr("x1", x(i))
-              .attr("x2", x(i))
+              .attr("x1", x(i) - (x(1) - x(0)) / 2) // Shift x position by half a tick
+              .attr("x2", x(i) - (x(1) - x(0)) / 2) // Shift x position by half a tick
               .attr("y1", y(0))
               .attr("y2", y(maxEntropy))
               .attr("stroke", "grey")

@@ -77,7 +77,7 @@ BLT uses a small (100M parameter) byte-level language model with sliding-window 
 
 Using these per-byte entropy estimates and a chosen threshold, we can segment a byte sequence by ending patches whenever a byte's entropy exceeds the threshold.
 
-The following is a visualization of the entropy of each byte in a sequence of text. The entropy is calculated using a pre-trained character-level language model[^reformer]. Vertical grey lines indicate the beginning of patches. The threshold is set to 2.0 bits and can be adjusted with the slider.
+The following is a visualization of the entropy of each byte in a sequence of text. The entropy is calculated using a pre-trained character-level language model[^reformer]. Vertical grey lines indicate the boundaries between patches. The threshold is set to 2.0 bits and can be adjusted with the slider.
 
 [^reformer]: The entropy model used in this visualization is a [Reformer](https://huggingface.co/google/reformer-enwik8) model trained on the [enwik8](https://huggingface.co/datasets/LTCB/enwik8) dataset, which is the first 100M bytes of an English Wikipedia dump from 2006. A Colab notebook that can be used to generate entropy estimates for any text is available [here](https://colab.research.google.com/drive/1btGHxpN8ljRATgsDOSQuKRhoZIdrCyr6?usp=sharing).
 
@@ -88,9 +88,24 @@ The following is a visualization of the entropy of each byte in a sequence of te
   data-entropy-viz
 ></div>
 
+The authors of BLT note that using entropy patching tends to yield progressively larger patches in structured content (e.g. multi choice tasks), which is highly predictable. So a heuristic is used: the entropy context is reset on each newline character.
+
+Additionally, an approximate monotonicity constraint is used instead of a hard threshold. That is, we start a new patch whenever the following constraint is met:
+$$
+H(x_t) - H(x_{t-1}) > \theta_r
+$$
+
+If $\theta_r$ is positive, this constraint means that entropy must increase by at least $\theta_r$ bits between bytes $t-1$ and $t$ in order to start a new patch at byte $t$.
+
+A direction for future work is to find a more principled patching strategy that is less dependent on heuristics.
+
+<!-- TODO: viz for this style of entropy patching>
+
 <!-- TODO: discuss the incremental patching property of BLT and how BPE doesn't satisfy this. -->
 
 ## Byte Latent Transformer
+Now that we have a way to group bytes into patches, we can discuss the Byte Latent Transformer (BLT) architecture.
+
 BLT is composed of three components:
 1. Latent Global Transformer Model: a large global autoregressive language model that operates on patch representations.
 2. Local Encoder: a small local model that encodes sequences of bytes into patch representations. Note that this is separate from the entropy model used to determine patch boundaries.
@@ -99,9 +114,20 @@ BLT is composed of three components:
 ### Latent Global Transformer Model
 The Latent Global Transformer is an autoregressive transformer model that maps a sequence of latent input patch representations into a sequence of output patch representations. A block-causal attention mask is used to restrict attention up to and including the current patch within the current document.
 
+This part of the model is essentially the same as a standard autoregressive transformer (e.g. `llama`), but with patches instead of tokens, and with no need for a vocabulary embedding layer as patch representations are fed directly into the model.
+
 Most of the FLOPs consumed by BLT during pre-training and inference are in the global transformer.
 
-### Local Encoder
+### Local Encoder Model
 The Local Encoder Model is a lightweight transformer-based model whose purpose is to efficiently map a sequence of input bytes into expressive patch representations. Unlike a typical transformer, this local encoder model has a cross-attention layer after each transformer layer whose purpose is to pool byte representations into patch representations.
 
-TODO: keep describing the local encoder
+![BLT Local Encoder](/assets/img/blt-local-encoder.png)
+
+Bytes are embedded using a 256 x hidden_size embedding table (because there are only $2^8=256$ different possible bytes).
+
+<!-- TODO: keep describing the local encoder -->
+
+
+### Local Decoder Model
+
+![BLT Local Decoder](/assets/img/blt-local-decoder.png)
