@@ -22,7 +22,7 @@ tags: ["home-cooking", "recipe-box"]
 <section>
     <h2 id="posts"></h2>
     <ul>
-        {% for p in collections.recipe | sort(attribute='date') | reverse %}
+        {% for p in collections.recipe | sort(attribute='date') %}
             <li>
                 <a href="{{ p.url }}">{{ p.data.title }}</a>
                 &nbsp

@@ -1,7 +1,4 @@
-import {
-  EleventyHtmlBasePlugin,
-  InputPathToUrlTransformPlugin,
-} from "@11ty/eleventy";
+import { EleventyHtmlBasePlugin, InputPathToUrlTransformPlugin } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import CleanCSS from "clean-css";
@@ -29,7 +26,12 @@ export default function (eleventyConfig) {
   // Date stuff
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`); // useful for copyright
   eleventyConfig.addFilter("postDate", (dateObj) => {
-    return DateTime.fromJSDate(dateObj).toFormat("MMMM yyyy");
+    if (typeof dateObj === "string") {
+      dateObj = DateTime.fromISO(dateObj);
+    } else {
+      dateObj = DateTime.fromJSDate(dateObj);
+    }
+    return dateObj.toFormat("MMMM d, yyyy");
   });
   eleventyConfig.addFilter("lastModifiedDate", function (filepath) {
     const stat = fs.statSync(filepath);
