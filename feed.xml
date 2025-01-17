@@ -4,12 +4,59 @@
   <subtitle>Notes on Machine Learning and related topics.</subtitle>
   <link href="https://tylerromero.com/feed.xml" rel="self" />
   <link href="https://tylerromero.com/" />
-  <updated>2025-01-05T08:00:00Z</updated>
+  <updated>2025-01-16T08:00:00Z</updated>
   <id>https://tylerromero.com/</id>
   <author>
     <name>Tyler Romero</name>
     <email>tyler.alexander.romero@gmail.com</email>
   </author>
+  <entry>
+    <title>NanoGPT Speedrun Living Worklog</title>
+    <link href="https://tylerromero.com/posts/nanogpt-speedrun-worklog/" />
+    <updated>2025-01-16T08:00:00Z</updated>
+    <id>https://tylerromero.com/posts/nanogpt-speedrun-worklog/</id>
+    <content type="html">&lt;section&gt;&lt;p&gt;I’ve seen &lt;a href=&quot;https://x.com/kellerjordan0/status/1859331370268623321&quot;&gt;some&lt;/a&gt; &lt;a href=&quot;https://x.com/kellerjordan0/status/1842300916864844014&quot;&gt;really&lt;/a&gt; &lt;a href=&quot;https://x.com/kellerjordan0/status/1876048851158880624&quot;&gt;awesome&lt;/a&gt; &lt;a href=&quot;https://x.com/hi_tysam/status/1879687807678959729&quot;&gt;GPT-2&lt;/a&gt; speedrun results from people like &lt;a href=&quot;https://x.com/kellerjordan0&quot;&gt;Keller Jordan&lt;/a&gt;, &lt;a href=&quot;https://x.com/hi_tysam&quot;&gt;Fern&lt;/a&gt;, &lt;a href=&quot;https://x.com/KoszarskyB&quot;&gt;Braden Koszarsky&lt;/a&gt;, and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware.&lt;/p&gt;&lt;p&gt;Technically, &lt;a href=&quot;https://x.com/kellerjordan0/status/1798863559243513937&quot;&gt;the NanoGPT speedrun&lt;/a&gt; is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an &lt;strong&gt;8xH100&lt;/strong&gt; machine. &lt;a href=&quot;https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history&quot;&gt;Keller Jordan maintains a leaderboard here&lt;/a&gt;. At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!).&lt;/p&gt;&lt;p&gt;I have access to &lt;strong&gt;2xRTX 4090 GPUs&lt;/strong&gt; and I want to see how fast I can train GPT-2 on them by following the same rules as the NanoGPT speedrun. If I see some success, I may try to transfer my methods to an 8xH100 node for comparison with the main leaderboard.&lt;/p&gt;&lt;p&gt;I’ll be documenting my progress here and updating this post as I go. Code can be found in &lt;a href=&quot;https://github.com/tyler-romero/nanogpt-speedrun&quot;&gt;this GitHub repo&lt;/a&gt;.&lt;/p&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2 id=&quot;progress-so-far&quot;&gt;Progress so far&lt;/h2&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&quot;left&quot;&gt;#&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Record time&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Training Tokens&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Description&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Date&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Commit&lt;/th&gt;
+&lt;th align=&quot;left&quot;&gt;Log&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&quot;left&quot;&gt;1&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;8.13 hours&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;6.44e+09&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;Initial baseline&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;2025–01–16&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;a href=&quot;https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08&quot;&gt;b3c32f8&lt;/a&gt;&lt;/td&gt;
+&lt;td align=&quot;left&quot;&gt;&lt;a href=&quot;https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt&quot;&gt;here&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;&lt;/section&gt;
+&lt;section&gt;&lt;h2 id=&quot;1-initial-setup-and-baseline&quot;&gt;1. Initial setup and baseline&lt;/h2&gt;&lt;p&gt;Part of the goal of this project is for me to learn as I go, so I am going to start at the beginning - with with Andrej Karpathy’s &lt;a href=&quot;https://github.com/karpathy/llm.c/blob/7b929300217ff1a974b63791a228928b39b26409/train_gpt2.py&quot;&gt;PyTorch GPT-2 trainer&lt;/a&gt; from &lt;a href=&quot;https://github.com/karpathy/llm.c&quot;&gt;llm.c&lt;/a&gt;. This is the script that Keller Jordan used for &lt;a href=&quot;https://github.com/KellerJordan/modded-nanogpt/tree/master?tab=readme-ov-file#modded-nanogpt&quot;&gt;his initial baseline&lt;/a&gt;. This trainer is very similar to the NanoGPT trainer with some minor modifications / simplifications (such as no dropout).&lt;/p&gt;&lt;p&gt;I have upstreamed some QOL improvements and basic tweaks to the training script from Keller’s fork, but have not changed any of the core training / modeling logic. Specifically:&lt;/p&gt;&lt;ol&gt;
+&lt;li&gt;Implemented gradient accumulation so that my 2x24GB GPUs simulate the training experience of a 8xH100 machine.&lt;/li&gt;
+&lt;li&gt;Increased learning rate to 0.0015 and halved the batch size (total batch size is 262144 - that is bs of &lt;code&gt;32/device * 2 devices * 1024 sequence length * 4 gradient accum steps&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Improved learning rate schedule (linear warmup then linear decay).&lt;/li&gt;
+&lt;li&gt;Removed all affine scale/bias parameters and switched to RMSNorm.&lt;/li&gt;
+&lt;li&gt;Padded the vocab size from 50257 to 50304 to make it a multiple of 128 (for better tensor core utilization).&lt;/li&gt;
+&lt;/ol&gt;&lt;p&gt;Additionally, I added &lt;code&gt;wandb&lt;/code&gt; logging for easy tracking of training progress - optimistically I may need to remove this one day as it slightly increases step time.&lt;/p&gt;&lt;p&gt;Commit with the initial setup is here: &lt;a href=&quot;https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt&quot;&gt;&lt;code&gt;b3c32f8&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;The baseline run time on my 2xRTX 4090 setup is &lt;strong&gt;8.13 hours&lt;/strong&gt;.&lt;/p&gt;&lt;!-- TODO: plot --&gt;&lt;!-- ## 2. Implementing major improvements from the 8xH100 leaderboard
+
+Waiting 8 hours for a result, so I&#39;m going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I&#39;ll start with the most impactful/easiest changes first:
+1. FlexAttention (30.2% speedup)
+2. Muon Optimizer (29% speedup)
+3. Architectural changes (31.8% speedup, then 24% speedup)
+4. Untied embeddings and lm_head (10% speedup)
+
+### 2.1 Muon Optimizer --&gt;&lt;/section&gt;
+</content>
+  </entry>
   <entry>
     <title>An Extension to BADGE Active Learning for Variable-Sized Batches</title>
     <link href="https://tylerromero.com/posts/2025-01-badge-extension/" />

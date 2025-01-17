@@ -40,7 +40,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2025-01-13T01:34:22.349Z",
+            "dateModified": "2025-01-17T02:13:08.136Z",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -72,7 +72,7 @@
 </h1>
             <p class="subtitle">BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data
 </p>
-            <p class="date">January 2025</p>
+            <p class="date">January 5, 2025</p>
             <section><p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p><p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-less-than-a-href" class="margin-toggle"><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model’s uncertainty to select points for labeling.
 In a batch setting, this can degenerate into selecting points that are all very similar, leading to suboptimal performance. Take this example on MNIST, where uncertainty sampling selects eight similar-looking <code>1</code>s in a batch of nine:
 <picture><source type="image/webp" srcset="/assets/img/liBFvhav3n-300.webp 300w, /assets/img/liBFvhav3n-600.webp 600w, /assets/img/liBFvhav3n-900.webp 900w, /assets/img/liBFvhav3n-1131.webp 1131w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/liBFvhav3n-300.png" alt="Uncertainty sampling on MNIST" width="1131" height="1161" srcset="/assets/img/liBFvhav3n-300.png 300w, /assets/img/liBFvhav3n-600.png 600w, /assets/img/liBFvhav3n-900.png 900w, /assets/img/liBFvhav3n-1131.png 1131w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> This helps the model learn efficiently by focusing on challenging examples while maintaining good coverage of the dataset distribution.</p><p>One limitation of BADGE is that it requires the user to specify the batch size in advance. This can be a problem in practice, as the user may not know how many data points to label in each batch. In this post, I will show how BADGE can be extended to support variable-sized batches to enable applications where the next batch size is unknown a priori.</p></section>
