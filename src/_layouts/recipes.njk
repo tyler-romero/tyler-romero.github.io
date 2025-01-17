@@ -42,7 +42,7 @@
         <article>
             <h1>{{ title | markdownInline | safe }}</h1>
             {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
-            {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
+            <p class="date">{{ page.inputPath | lastModifiedDate | postDate }}</p>
             {{ content | safe }}
         </article>
         <footer>
