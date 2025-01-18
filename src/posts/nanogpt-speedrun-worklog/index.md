@@ -1,14 +1,14 @@
 ---
 title: NanoGPT Speedrun Living Worklog
 subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
-date: 2025-01-16T00:00:00-08:00
+date: 2025-01-18T00:00:00-08:00
 blurb: How fast can I train GPT-2 on two RTX 4090 GPUs? This is a living worklog of my progress.
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog"]
 ---
 
 I've seen [some](https://x.com/kellerjordan0/status/1859331370268623321) [really](https://x.com/kellerjordan0/status/1842300916864844014) [awesome](https://x.com/kellerjordan0/status/1876048851158880624) [GPT-2](https://x.com/hi_tysam/status/1879687807678959729) speedrun results from people like [Keller Jordan](https://x.com/kellerjordan0), [Fern](https://x.com/hi_tysam), [Braden Koszarsky](https://x.com/KoszarskyB), and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware.
 
-Technically, [the NanoGPT speedrun](https://x.com/kellerjordan0/status/1798863559243513937) is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an **8xH100** machine. [Keller Jordan maintains a leaderboard here](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history). At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!).
+Technically, [the NanoGPT speedrun](https://x.com/kellerjordan0/status/1798863559243513937) is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. [Keller Jordan maintains a leaderboard here](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history). At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!).
 
 I have access to **2xRTX 4090 GPUs** and I want to see how fast I can train GPT-2 on them by following the same rules as the NanoGPT speedrun. If I see some success, I may try to transfer my methods to an 8xH100 node for comparison with the main leaderboard.
 
@@ -42,7 +42,7 @@ The baseline run time on my 2xRTX 4090 setup is **8.13 hours**.
 
 ## 2. Implementing major improvements from the 8xH100 leaderboard
 
-Waiting 8 hours for a result, so I'm going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I'll start with the most impactful/easiest changes first:
+Waiting 8 hours for a result is too slow for effective experimentation, so I'm going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I'll start with the most impactful/easiest changes first:
 1. Architectural changes (31.8% speedup, then 24% speedup)
 <!-- 2. Muon Optimizer (29% speedup) -->
 <!-- 3. Untied embeddings and lm_head (10% speedup) -->
