@@ -23,6 +23,9 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+<!-- BibTeX Support -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/pcooksey/bibtex-js@1.0.0/src/bibtex_js.min.js"></script>
+<!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -40,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-16T08:00:00.000Z",
-            "dateModified": "2025-01-17T02:13:08.136Z",
+            "dateModified": "2025-01-18T20:21:57.157Z",
             "url": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -48,7 +51,7 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, llm, gpt2, speedrun, nanogpt, worklog",
-            "wordCount": "513",
+            "wordCount": "1152",
             "articleBody": "I’ve seen some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 machine. Keller Jordan maintains a leaderboard here. At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!). I have access to 2xRTX 4090 GPUs..."
             }
         </script>
@@ -78,9 +81,10 @@
 <thead>
 <tr>
 <th align="left">#</th>
+<th align="left">Description</th>
 <th align="left">Record time</th>
 <th align="left">Training Tokens</th>
-<th align="left">Description</th>
+<th align="left">Tokens/Second</th>
 <th align="left">Date</th>
 <th align="left">Commit</th>
 <th align="left">Log</th>
@@ -88,13 +92,24 @@
 </thead>
 <tbody>
 <tr>
-<td align="left">1</td>
-<td align="left">8.13 hours</td>
-<td align="left">6.44e+09</td>
+<td align="left"><a href="#1-initial-setup-and-baseline">1</a></td>
 <td align="left">Initial baseline</td>
-<td align="left">2025–01–16</td>
+<td align="left">8.13 hours</td>
+<td align="left">6.44B</td>
+<td align="left">220.7k</td>
+<td align="left">2025/01/16</td>
 <td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08">b3c32f8</a></td>
 <td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt">here</a></td>
+</tr>
+<tr>
+<td align="left"><a href="#21-architectural-changes-and-training-tweaks">2.1</a></td>
+<td align="left">Architectural changes</td>
+<td align="left">7.51 hours</td>
+<td align="left">5.07B</td>
+<td align="left">187.7k</td>
+<td align="left">2025/01/18</td>
+<td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340">b7bb93f</a></td>
+<td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt">here</a></td>
 </tr>
 </tbody>
 </table></section>
@@ -104,15 +119,77 @@
 <li>Improved learning rate schedule (linear warmup then linear decay).</li>
 <li>Removed all affine scale/bias parameters and switched to RMSNorm.</li>
 <li>Padded the vocab size from 50257 to 50304 to make it a multiple of 128 (for better tensor core utilization).</li>
-</ol><p>Additionally, I added <code>wandb</code> logging for easy tracking of training progress - optimistically I may need to remove this one day as it slightly increases step time.</p><p>Commit with the initial setup is here: <a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt"><code>b3c32f8</code></a>.</p><p>The baseline run time on my 2xRTX 4090 setup is <strong>8.13 hours</strong>.</p><!-- TODO: plot --><!-- ## 2. Implementing major improvements from the 8xH100 leaderboard
-
-Waiting 8 hours for a result, so I'm going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I'll start with the most impactful/easiest changes first:
-1. FlexAttention (30.2% speedup)
-2. Muon Optimizer (29% speedup)
-3. Architectural changes (31.8% speedup, then 24% speedup)
-4. Untied embeddings and lm_head (10% speedup)
-
-### 2.1 Muon Optimizer --></section>
+<li>Using Pytorch 2.5.1 (the switch from 2.4 to 2.5 gave ~9% speedup on the 8xH100 leaderboard).</li>
+</ol><p>Additionally, I added <code>wandb</code> logging for easy tracking of training progress - optimistically I may need to remove this one day as it slightly increases step time.</p><p>Commit with the initial setup is here: <a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt"><code>b3c32f8</code></a>.</p><p>The baseline run time on my 2xRTX 4090 setup is <strong>8.13 hours</strong>.</p><!-- TODO: plot --></section>
+<section><h2 id="2-implementing-major-improvements-from-the-8xh100-leaderboard">2. Implementing major improvements from the 8xH100 leaderboard</h2><p>Waiting 8 hours for a result, so I’m going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I’ll start with the most impactful/easiest changes first:</p><ol>
+<li>
+<p>Architectural changes (31.8% speedup, then 24% speedup)</p>
+<!-- 2. Muon Optimizer (29% speedup) -->
+<!-- 3. Untied embeddings and lm_head (10% speedup) -->
+</li>
+</ol><h3 id="21-architectural-changes-and-training-tweaks">2.1 Architectural changes and training tweaks</h3><p>There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:</p><ol>
+<li><a href="https://arxiv.org/abs/2104.09864">RoPE (Rotary Positional Embeddings)</a>. There are <a href="https://www.jitx.io/posts/rope-embeddings">many</a> <a href="https://blog.eleuther.ai/rotary-embeddings/">good</a> explanations of RoPE out there so I won’t go into detail here.</li>
+<li><a href="https://arxiv.org/pdf/2109.08668">ReLU^2 Activation</a><label for="sd-relu-2-activation" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-relu-2-activation" class="margin-toggle"><span class="sidenote">ReLU^2 activation function. <picture><source type="image/webp" srcset="/assets/img/Zn-fTGuzYQ-300.webp 300w, /assets/img/Zn-fTGuzYQ-600.webp 600w, /assets/img/Zn-fTGuzYQ-900.webp 900w, /assets/img/Zn-fTGuzYQ-1920.webp 1920w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/Zn-fTGuzYQ-300.png" alt="Relu Activation plot" width="1920" height="1440" srcset="/assets/img/Zn-fTGuzYQ-300.png 300w, /assets/img/Zn-fTGuzYQ-600.png 600w, /assets/img/Zn-fTGuzYQ-900.png 900w, /assets/img/Zn-fTGuzYQ-1920.png 1920w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>. Many activations that are better than GeLU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.</li>
+<li>No gradient clipping. Gradient clipping can help stabilize training but it also slows down training. Since we are speed-running, we will remove gradient clipping. This also eliminates a hyperparameter that needs to be tuned.</li>
+<li><a href="https://arxiv.org/abs/2405.18392">Trapezoidal learning rate schedule</a>. While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been show to match the performance of cosine schedules.</li>
+</ol><p>In addition, learning rate and batch size have been tuned.</p><p>Once again, many of these changes are <a href="https://en.wikipedia.org/wiki/Downstream_(software_development)">downstreamed</a> from the <a href="https://github.com/KellerJordan/modded-nanogpt">modded-nanogpt</a> repository / 8xH100 speedrun. Its not efficient to reinvent the wheel, and I want to get training time down as fast as possible in the beginning.</p><p>After implementing these changes (commit <a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340"><code>b7bb93f</code></a>), the new run time is <strong>7.51 hours</strong>. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second increased, likely due to the larger batch size (more gradient accumulation steps which tends to translate to lower throughput) and the architectural changes, such as the inclusion of RoPE. Once I have a shorter run time, I will be able to tune more effectively and see if I can remove gradient accumulation.</p><p><picture><source type="image/webp" srcset="/assets/img/J9W8EvOzUU-300.webp 300w, /assets/img/J9W8EvOzUU-600.webp 600w, /assets/img/J9W8EvOzUU-900.webp 900w, /assets/img/J9W8EvOzUU-2562.webp 2562w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/J9W8EvOzUU-300.png" alt="Section 2.1 loss plot" width="2562" height="1612" srcset="/assets/img/J9W8EvOzUU-300.png 300w, /assets/img/J9W8EvOzUU-600.png 600w, /assets/img/J9W8EvOzUU-900.png 900w, /assets/img/J9W8EvOzUU-2562.png 2562w" sizes="(max-width: 900px) 100vw, 900px"></picture></p></section>
+<section><h2 id="references">References</h2><textarea id="bibtex_input" style="display:none;">
+@misc{modded_nanogpt_2024,
+  author       = {Keller Jordan and Jeremy Bernstein and Brendan Rappazzo and
+                  @fernbear.bsky.social and Boza Vlado and You Jiacheng and
+                  Franz Cesista and Braden Koszarsky and @Grad62304977},
+  title        = {modded-nanogpt: Speedrunning the NanoGPT baseline},
+  year         = {2024},
+  url          = {https://github.com/KellerJordan/modded-nanogpt},
+  note = {GitHub repository}
+}
+@software{hlb-gpt_2024,
+  author={Fern},
+  month={3},
+  year = {2024},
+  title={hlb-gpt},
+  url={https://github.com/tysam-code/hlb-gpt},
+  version = {0.4.0},
+  note = {GitHub repository}
+}
+@misc{su2023roformerenhancedtransformerrotary,
+      title={RoFormer: Enhanced Transformer with Rotary Position Embedding},
+      author={Jianlin Su and Yu Lu and Shengfeng Pan and Ahmed Murtadha and Bo Wen and Yunfeng Liu},
+      year={2023},
+      eprint={2104.09864},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2104.09864},
+}
+@misc{so2022primersearchingefficienttransformers,
+      title={Primer: Searching for Efficient Transformers for Language Modeling},
+      author={David R. So and Wojciech Mańke and Hanxiao Liu and Zihang Dai and Noam Shazeer and Quoc V. Le},
+      year={2022},
+      eprint={2109.08668},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2109.08668},
+}
+@misc{hagele2024scalinglawscomputeoptimaltraining,
+      title={Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations},
+      author={Alexander Hägele and Elie Bakouch and Atli Kosson and Loubna Ben Allal and Leandro Von Werra and Martin Jaggi},
+      year={2024},
+      eprint={2405.18392},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2405.18392},
+}
+@misc{hoffmann2022trainingcomputeoptimallargelanguage,
+      title={Training Compute-Optimal Large Language Models},
+      author={Jordan Hoffmann and Sebastian Borgeaud and Arthur Mensch and Elena Buchatskaya and Trevor Cai and Eliza Rutherford and Diego de Las Casas and Lisa Anne Hendricks and Johannes Welbl and Aidan Clark and Tom Hennigan and Eric Noland and Katie Millican and George van den Driessche and Bogdan Damoc and Aurelia Guy and Simon Osindero and Karen Simonyan and Erich Elsen and Jack W. Rae and Oriol Vinyals and Laurent Sifre},
+      year={2022},
+      eprint={2203.15556},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2203.15556},
+}
+</textarea>
+<div id="bibtex_display"></div></section>
 
         </article>
         <footer>
