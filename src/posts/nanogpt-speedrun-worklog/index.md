@@ -19,6 +19,7 @@ I'll be documenting my progress here and updating this post as I go. Code can be
 | :--------------------------------------------------- | :-------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | [1](#1-initial-setup-and-baseline)                   | Initial baseline      | 8.13 hours  | 6.44B           | 220.7k        | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
 | [2.1](#21-architectural-changes-and-training-tweaks) | Architectural changes | 7.51 hours  | 5.07B           | 187.7k        | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
+| [2.2](#22-muon-optimizer)                            | Muon Optimizer        | 4.53 hours  | 3.04B           | 186.7k        | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
 
 ## 1. Initial setup and baseline
 
@@ -43,9 +44,8 @@ The baseline run time on my 2xRTX 4090 setup is **8.13 hours**.
 ## 2. Implementing major improvements from the 8xH100 leaderboard
 
 Waiting 8 hours for a result is too slow for effective experimentation, so I'm going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I'll start with the most impactful/easiest changes first:
-1. Architectural changes (31.8% speedup, then 24% speedup)
-<!-- 2. Muon Optimizer (29% speedup) -->
-<!-- 3. Untied embeddings and lm_head (10% speedup) -->
+1. Architectural changes and training tweaks
+2. Muon Optimizer
 
 ### 2.1 Architectural changes and training tweaks
 There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:
@@ -64,7 +64,18 @@ After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-ro
 
 ![Section 2.1 loss plot](/assets/img/2p1_loss_plot.png)
 
+### 2.2 Muon Optimizer
+The [Muon Optimizer](https://kellerjordan.github.io/posts/muon/) is a new optimizer developed with and for the NanoGPT speedrun by Jordan et al. It is a variant of SGD with Momentum that applies a postprocessing step to the gradient updates to approximately orthogonalize each update matrix. Muon has [some](https://kellerjordan.github.io/posts/muon/#why-is-it-good-to-orthogonalize-the-update) [connections](https://x.com/leloykun/status/1846842883967692926) to approximate second-order optimizers[^steepest] like [Shampoo](https://arxiv.org/abs/1802.09568).
 
+[^steepest]: But are these approximate second-order methods actually second-order? [New research](https://arxiv.org/abs/2409.20325v1) suggests that methods like Shampoo and Adam can be viewed as variants of steepest descent under specific norms, and thus are actually first-order methods.
+
+I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put to gether [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers).
+
+Muon works on square matrices, so it is not a drop-in replacement for AdamW. However it can be used to optimize all of the hidden layers of our GPT-2 model. The output layer and the token embeddings will still be optimized with AdamW.
+
+Just like on the 8xH100 leaderboard, we observe a massive speedup when switching to Muon. The new run time is **4.53 hours**, requiring only 3.04B tokens. The tokens/second is also very similar to the previous run, which is a good sign that we are not losing throughput by switching optimizers.
+
+![Section 2.2 loss plot](/assets/img/2p2_loss_plot.png)
 
 
 ## References
@@ -122,6 +133,31 @@ After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-ro
       archivePrefix={arXiv},
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2203.15556},
+}
+@misc{jordan2024muon,
+  author       = {Keller Jordan and Yuchen Jin and Vlado Boza and Jiacheng You and
+                  Franz Cesista and Laker Newhouse and Jeremy Bernstein},
+  title        = {Muon: An optimizer for hidden layers in neural networks},
+  year         = {2024},
+  url          = {https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/}
+}
+@misc{gupta2018shampoopreconditionedstochastictensor,
+      title={Shampoo: Preconditioned Stochastic Tensor Optimization},
+      author={Vineet Gupta and Tomer Koren and Yoram Singer},
+      year={2018},
+      eprint={1802.09568},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1802.09568},
+}
+@misc{bernstein2024oldoptimizernewnorm,
+      title={Old Optimizer, New Norm: An Anthology},
+      author={Jeremy Bernstein and Laker Newhouse},
+      year={2024},
+      eprint={2409.20325},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2409.20325},
 }
 </textarea>
 <div id="bibtex_display"></div>
