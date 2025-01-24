@@ -43,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-18T08:00:00.000Z",
-            "dateModified": "2025-01-18T20:40:23.571Z",
+            "dateModified": "2025-01-24T05:24:45.004Z",
             "url": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -51,7 +51,7 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, llm, gpt2, speedrun, nanogpt, worklog",
-            "wordCount": "1158",
+            "wordCount": "1468",
             "articleBody": "I’ve seen some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!). I have access to 2xRTX 4090 GPUs and..."
             }
         </script>
@@ -111,6 +111,16 @@
 <td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340">b7bb93f</a></td>
 <td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt">here</a></td>
 </tr>
+<tr>
+<td align="left"><a href="#22-muon-optimizer">2.2</a></td>
+<td align="left">Muon Optimizer</td>
+<td align="left">4.53 hours</td>
+<td align="left">3.04B</td>
+<td align="left">186.7k</td>
+<td align="left">2025/01/23</td>
+<td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d">b91c2c0</a></td>
+<td align="left"><a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt">here</a></td>
+</tr>
 </tbody>
 </table></section>
 <section><h2 id="1-initial-setup-and-baseline">1. Initial setup and baseline</h2><p>Part of the goal of this project is for me to learn as I go, so I am going to start at the beginning - with with Andrej Karpathy’s <a href="https://github.com/karpathy/llm.c/blob/7b929300217ff1a974b63791a228928b39b26409/train_gpt2.py">PyTorch GPT-2 trainer</a> from <a href="https://github.com/karpathy/llm.c">llm.c</a>. This is the script that Keller Jordan used for <a href="https://github.com/KellerJordan/modded-nanogpt/tree/master?tab=readme-ov-file#modded-nanogpt">his initial baseline</a>. This trainer is very similar to the NanoGPT trainer with some minor modifications / simplifications (such as no dropout).</p><p>I have upstreamed some QOL improvements and basic tweaks to the training script from Keller’s fork, but have not changed any of the core training / modeling logic. Specifically:</p><ol>
@@ -122,17 +132,14 @@
 <li>Using Pytorch 2.5.1 (the switch from 2.4 to 2.5 gave ~9% speedup on the 8xH100 leaderboard).</li>
 </ol><p>Additionally, I added <code>wandb</code> logging for easy tracking of training progress - optimistically I may need to remove this one day as it slightly increases step time.</p><p>Commit with the initial setup is here: <a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt"><code>b3c32f8</code></a>.</p><p>The baseline run time on my 2xRTX 4090 setup is <strong>8.13 hours</strong>.</p><!-- TODO: plot --></section>
 <section><h2 id="2-implementing-major-improvements-from-the-8xh100-leaderboard">2. Implementing major improvements from the 8xH100 leaderboard</h2><p>Waiting 8 hours for a result is too slow for effective experimentation, so I’m going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I’ll start with the most impactful/easiest changes first:</p><ol>
-<li>
-<p>Architectural changes (31.8% speedup, then 24% speedup)</p>
-<!-- 2. Muon Optimizer (29% speedup) -->
-<!-- 3. Untied embeddings and lm_head (10% speedup) -->
-</li>
+<li>Architectural changes and training tweaks</li>
+<li>Muon Optimizer</li>
 </ol><h3 id="21-architectural-changes-and-training-tweaks">2.1 Architectural changes and training tweaks</h3><p>There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:</p><ol>
 <li><a href="https://arxiv.org/abs/2104.09864">RoPE (Rotary Positional Embeddings)</a>. There are <a href="https://www.jitx.io/posts/rope-embeddings">many</a> <a href="https://blog.eleuther.ai/rotary-embeddings/">good</a> explanations of RoPE out there so I won’t go into detail here.</li>
 <li><a href="https://arxiv.org/pdf/2109.08668">ReLU^2 Activation</a><label for="sd-relu-2-activation" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-relu-2-activation" class="margin-toggle"><span class="sidenote">ReLU^2 activation function. <picture><source type="image/webp" srcset="/assets/img/Zn-fTGuzYQ-300.webp 300w, /assets/img/Zn-fTGuzYQ-600.webp 600w, /assets/img/Zn-fTGuzYQ-900.webp 900w, /assets/img/Zn-fTGuzYQ-1920.webp 1920w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/Zn-fTGuzYQ-300.png" alt="Relu Activation plot" width="1920" height="1440" srcset="/assets/img/Zn-fTGuzYQ-300.png 300w, /assets/img/Zn-fTGuzYQ-600.png 600w, /assets/img/Zn-fTGuzYQ-900.png 900w, /assets/img/Zn-fTGuzYQ-1920.png 1920w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>. Many activations that are better than GeLU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.</li>
 <li>No gradient clipping. Gradient clipping can help stabilize training but it also slows down training. Since we are speed-running, we will remove gradient clipping. This also eliminates a hyperparameter that needs to be tuned.</li>
 <li><a href="https://arxiv.org/abs/2405.18392">Trapezoidal learning rate schedule</a>. While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been show to match the performance of cosine schedules.</li>
-</ol><p>In addition, learning rate and batch size have been tuned.</p><p>Once again, many of these changes are <a href="https://en.wikipedia.org/wiki/Downstream_(software_development)">downstreamed</a> from the <a href="https://github.com/KellerJordan/modded-nanogpt">modded-nanogpt</a> repository / 8xH100 speedrun. Its not efficient to reinvent the wheel, and I want to get training time down as fast as possible in the beginning.</p><p>After implementing these changes (commit <a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340"><code>b7bb93f</code></a>), the new run time is <strong>7.51 hours</strong>. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second increased, likely due to the larger batch size (more gradient accumulation steps which tends to translate to lower throughput) and the architectural changes, such as the inclusion of RoPE. Once I have a shorter run time, I will be able to tune more effectively and see if I can remove gradient accumulation.</p><p><picture><source type="image/webp" srcset="/assets/img/J9W8EvOzUU-300.webp 300w, /assets/img/J9W8EvOzUU-600.webp 600w, /assets/img/J9W8EvOzUU-900.webp 900w, /assets/img/J9W8EvOzUU-2562.webp 2562w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/J9W8EvOzUU-300.png" alt="Section 2.1 loss plot" width="2562" height="1612" srcset="/assets/img/J9W8EvOzUU-300.png 300w, /assets/img/J9W8EvOzUU-600.png 600w, /assets/img/J9W8EvOzUU-900.png 900w, /assets/img/J9W8EvOzUU-2562.png 2562w" sizes="(max-width: 900px) 100vw, 900px"></picture></p></section>
+</ol><p>In addition, learning rate and batch size have been tuned.</p><p>Once again, many of these changes are <a href="https://en.wikipedia.org/wiki/Downstream_(software_development)">downstreamed</a> from the <a href="https://github.com/KellerJordan/modded-nanogpt">modded-nanogpt</a> repository / 8xH100 speedrun. Its not efficient to reinvent the wheel, and I want to get training time down as fast as possible in the beginning.</p><p>After implementing these changes (commit <a href="https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340"><code>b7bb93f</code></a>), the new run time is <strong>7.51 hours</strong>. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second increased, likely due to the larger batch size (more gradient accumulation steps which tends to translate to lower throughput) and the architectural changes, such as the inclusion of RoPE. Once I have a shorter run time, I will be able to tune more effectively and see if I can remove gradient accumulation.</p><p><picture><source type="image/webp" srcset="/assets/img/J9W8EvOzUU-300.webp 300w, /assets/img/J9W8EvOzUU-600.webp 600w, /assets/img/J9W8EvOzUU-900.webp 900w, /assets/img/J9W8EvOzUU-2562.webp 2562w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/J9W8EvOzUU-300.png" alt="Section 2.1 loss plot" width="2562" height="1612" srcset="/assets/img/J9W8EvOzUU-300.png 300w, /assets/img/J9W8EvOzUU-600.png 600w, /assets/img/J9W8EvOzUU-900.png 900w, /assets/img/J9W8EvOzUU-2562.png 2562w" sizes="(max-width: 900px) 100vw, 900px"></picture></p><h3 id="22-muon-optimizer">2.2 Muon Optimizer</h3><p>The <a href="https://kellerjordan.github.io/posts/muon/">Muon Optimizer</a> is a new optimizer developed with and for the NanoGPT speedrun by Jordan et al. It is a variant of SGD with Momentum that applies a postprocessing step to the gradient updates to approximately orthogonalize each update matrix. Muon has <a href="https://kellerjordan.github.io/posts/muon/#why-is-it-good-to-orthogonalize-the-update">some</a> <a href="https://x.com/leloykun/status/1846842883967692926">connections</a> to approximate second-order optimizers<label for="sd-but-are-these" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-but-are-these" class="margin-toggle"><span class="sidenote">But are these approximate second-order methods actually second-order? <a href="https://arxiv.org/abs/2409.20325v1">New research</a> suggests that methods like Shampoo and Adam can be viewed as variants of steepest descent under specific norms, and thus are actually first-order methods.</span> like <a href="https://arxiv.org/abs/1802.09568">Shampoo</a>.</p><p>I highly recommend reading the original <a href="https://kellerjordan.github.io/posts/muon/">Muon blog post</a> for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put to gether <a href="https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers">here</a>.</p><p>Muon works on square matrices, so it is not a drop-in replacement for AdamW. However it can be used to optimize all of the hidden layers of our GPT-2 model. The output layer and the token embeddings will still be optimized with AdamW.</p><p>Just like on the 8xH100 leaderboard, we observe a massive speedup when switching to Muon. The new run time is <strong>4.53 hours</strong>, requiring only 3.04B tokens. The tokens/second is also very similar to the previous run, which is a good sign that we are not losing throughput by switching optimizers.</p><p><picture><source type="image/webp" srcset="/assets/img/OLzSwEFmsl-300.webp 300w, /assets/img/OLzSwEFmsl-600.webp 600w, /assets/img/OLzSwEFmsl-900.webp 900w, /assets/img/OLzSwEFmsl-2562.webp 2562w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/OLzSwEFmsl-300.png" alt="Section 2.2 loss plot" width="2562" height="1612" srcset="/assets/img/OLzSwEFmsl-300.png 300w, /assets/img/OLzSwEFmsl-600.png 600w, /assets/img/OLzSwEFmsl-900.png 900w, /assets/img/OLzSwEFmsl-2562.png 2562w" sizes="(max-width: 900px) 100vw, 900px"></picture></p></section>
 <section><h2 id="references">References</h2><textarea id="bibtex_input" style="display:none;">
 @misc{modded_nanogpt_2024,
   author       = {Keller Jordan and Jeremy Bernstein and Brendan Rappazzo and
@@ -187,6 +194,31 @@
       archivePrefix={arXiv},
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2203.15556},
+}
+@misc{jordan2024muon,
+  author       = {Keller Jordan and Yuchen Jin and Vlado Boza and Jiacheng You and
+                  Franz Cesista and Laker Newhouse and Jeremy Bernstein},
+  title        = {Muon: An optimizer for hidden layers in neural networks},
+  year         = {2024},
+  url          = {https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/}
+}
+@misc{gupta2018shampoopreconditionedstochastictensor,
+      title={Shampoo: Preconditioned Stochastic Tensor Optimization},
+      author={Vineet Gupta and Tomer Koren and Yoram Singer},
+      year={2018},
+      eprint={1802.09568},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1802.09568},
+}
+@misc{bernstein2024oldoptimizernewnorm,
+      title={Old Optimizer, New Norm: An Anthology},
+      author={Jeremy Bernstein and Laker Newhouse},
+      year={2024},
+      eprint={2409.20325},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2409.20325},
 }
 </textarea>
 <div id="bibtex_display"></div></section>
