@@ -32,8 +32,7 @@
 &lt;p&gt;Here’s what this looks like in code:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;def selective_log_softmax(logits, input_ids):
     # Gather logits just for the tokens we care about
-    token_logits = torch.gather(logits, dim=-1,
-    index=input_ids.unsqueeze(-1)).squeeze(-1)
+    token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
 
     # Compute logsumexp denominator for each sequence in the batch (loop to reduce memory peak)
     logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])

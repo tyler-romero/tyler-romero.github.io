@@ -43,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2025-02-06T21:35:25.680Z",
+            "dateModified": "2025-02-06T21:38:58.421Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -93,8 +93,7 @@
 <p>Here’s what this looks like in code:</p>
 <pre><code class="language-python">def selective_log_softmax(logits, input_ids):
     # Gather logits just for the tokens we care about
-    token_logits = torch.gather(logits, dim=-1,
-    index=input_ids.unsqueeze(-1)).squeeze(-1)
+    token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
 
     # Compute logsumexp denominator for each sequence in the batch (loop to reduce memory peak)
     logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
