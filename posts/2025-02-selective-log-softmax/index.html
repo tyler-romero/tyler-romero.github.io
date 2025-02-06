@@ -43,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2025-02-06T20:20:24.903Z",
+            "dateModified": "2025-02-06T21:35:25.680Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -51,7 +51,7 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, grpo, ppo, logprobs, logits, log-softmax, log_softmax, logsumexp, log-probabilities",
-            "wordCount": "1485",
+            "wordCount": "1501",
             "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM. For example, with a modest vocabulary size of 32768, sequence length of 1024, and batch size of 16, computing log_softmax naively can consume 2.1GB of VRAM! And that is in addition to..."
             }
         </script>
@@ -191,7 +191,8 @@ print("Efficient method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(effici
 # > Efficient method time:  0.000918 sec, Memory peak: 2282.23 MB
 </code></pre>
 <p>In this benchmark setting, <strong>peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)</strong> while maintaining numerical stability. And <strong>most of the memory consumed now is due to the size of the input logits (2147MB)</strong>. Additionally, the proposed method is about 40x faster than the naive implementation (0.0363s vs 0.0009s). Although, in practice, the speed of this operation is not very consequential.</p>
-<p>I <a href="https://github.com/huggingface/trl/pull/2773">contributed this optimization</a> to the GRPO trainer in the <a href="https://github.com/huggingface/trl">TRL</a> library. Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the benchmarking script and for suggesting to pull the <code>gather</code> and elementwise subtraction operations out of the for loop in order to improve operation speed (<code>method_3</code> → <code>efficient_method</code>).</p>
+<p>I have <a href="https://github.com/huggingface/trl/pull/2773">contributed this optimization to the GRPO trainer</a> in the <a href="https://github.com/huggingface/trl">TRL</a> library and to <a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">the PPO, GRPO, DPO, and KTO trainers</a> in the <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> library.</p>
+<p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the benchmarking script and for suggesting to pull the <code>gather</code> and element-wise subtraction operations out of the for loop in order to improve operation speed (<code>method_3</code> → <code>efficient_method</code>).</p>
 </section>
         </article>
         <footer>
