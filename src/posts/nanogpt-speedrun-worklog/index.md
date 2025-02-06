@@ -3,7 +3,7 @@ title: NanoGPT Speedrun Living Worklog
 subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
 date: 2025-01-18T00:00:00-08:00
 blurb: How fast can I train GPT-2 on two RTX 4090 GPUs? This is a living worklog of my progress.
-tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog"]
+tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 ---
 
 I've seen [some](https://x.com/kellerjordan0/status/1859331370268623321) [really](https://x.com/kellerjordan0/status/1842300916864844014) [awesome](https://x.com/kellerjordan0/status/1876048851158880624) [GPT-2](https://x.com/hi_tysam/status/1879687807678959729) speedrun results from people like [Keller Jordan](https://x.com/kellerjordan0), [Fern](https://x.com/hi_tysam), [Braden Koszarsky](https://x.com/KoszarskyB), and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware.
