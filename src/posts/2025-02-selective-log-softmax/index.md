@@ -135,4 +135,6 @@ print("Efficient method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(effici
 
 In this benchmark setting, **peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)** while maintaining numerical stability. And **most of the memory consumed now is due to the size of the input logits (2147MB)**. Additionally, the proposed method is about 40x faster than the naive implementation (0.0363s vs 0.0009s). Although, in practice, the speed of this operation is not very consequential.
 
-I [contributed this optimization](https://github.com/huggingface/trl/pull/2773) to the GRPO trainer in the [TRL](https://github.com/huggingface/trl) library. Thanks to [Quentin Gallouédec](https://github.com/qgallouedec) for providing the benchmarking script and for suggesting to pull the `gather` and elementwise subtraction operations out of the for loop in order to improve operation speed (`method_3` -> `efficient_method`).
+I have [contributed this optimization to the GRPO trainer](https://github.com/huggingface/trl/pull/2773) in the [TRL](https://github.com/huggingface/trl) library and to [the PPO, GRPO, DPO, and KTO trainers](https://github.com/OpenRLHF/OpenRLHF/pull/718) in the [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) library.
+
+Thanks to [Quentin Gallouédec](https://github.com/qgallouedec) for providing the benchmarking script and for suggesting to pull the `gather` and element-wise subtraction operations out of the for loop in order to improve operation speed (`method_3` -> `efficient_method`).
