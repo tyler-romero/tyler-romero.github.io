@@ -6,9 +6,9 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Selective log-softmax trick to reduce VRAM usage for PPO and GRPO</title>
+<title>Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax</title>
 <meta name="author" content="Tyler Romero">
-<meta name="description" content="Reduce VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest">
+<meta name="description" content="Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest">
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
 <link rel="canonical" href="https://www.tylerromero.com/posts/2025-02-selective-log-softmax/">
@@ -35,15 +35,15 @@
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            "headline": "Selective log-softmax trick to reduce VRAM usage for PPO and GRPO",
-            "description": "Reduce VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest",
+            "headline": "Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax",
+            "description": "Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2025-02-06T21:38:58.421Z",
+            "dateModified": "2025-02-07T22:42:45.554Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -51,8 +51,8 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, grpo, ppo, logprobs, logits, log-softmax, log_softmax, logsumexp, log-probabilities",
-            "wordCount": "1501",
-            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM. For example, with a modest vocabulary size of 32768, sequence length of 1024, and batch size of 16, computing log_softmax naively can consume 2.1GB of VRAM! And that is in addition to..."
+            "wordCount": "1863",
+            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM. This is the code snippet you might seeThis sample code is not made up - it is commonly found in many popular OSS RLHF implementations, such as in TRL, Verl, and OpenRLHF.: def..."
             }
         </script>
     </head>
@@ -71,14 +71,18 @@
     </header>
     <body>
         <article>
-            <h1>Selective log-softmax trick to reduce VRAM usage for PPO and GRPO
+            <h1>Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax
 </h1>
-            <p class="subtitle">Reduce VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest
+            <p class="subtitle">Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest
 </p>
             <p class="date">February 6, 2025</p>
-            <section><p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM.</p>
+            <section><p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM. This is the code snippet you might see<label for="sd-this-sample-code-is" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-this-sample-code-is" class="margin-toggle"><span class="sidenote">This sample code is not made up - it is commonly found in many popular OSS RLHF implementations, such as in TRL, Verl, and OpenRLHF.</span>:</p>
+<pre><code class="language-python">def naive_selective_log_softmax(logits, input_ids):
+    log_probs = logits.log_softmax(dim=-1)
+    return torch.gather(log_probs, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
+</code></pre>
 <p>For example, with a modest vocabulary size of 32768, sequence length of 1024, and batch size of 16, computing <code>log_softmax</code> naively can consume <strong>2.1GB</strong> of VRAM! And that is in addition to the 2.1GB required to hold the logits in the first place. <strong>However, in many cases, we only need the log probabilities for specific tokens</strong> - usually the ones that were actually generated or appear in the training data.</p>
-<p>This is particularly relevant when using reinforcement learning techniques like PPO and GRPO to fine-tune language models with RLHF. These methods only require log probabilities for the tokens that were actually generated in the model’s output, not for every possible token in the vocabulary.</p>
+<p>This is particularly relevant when using reinforcement learning techniques like PPO and GRPO to post-train language models. These methods only require log probabilities for the tokens that were actually generated in the model’s output, not for every possible token in the vocabulary.</p>
 <p>Let’s remind ourselves what <code>log_softmax</code> is actually computing for every input logit <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>:</p>
 <div class="math"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>log</mi><mo>⁡</mo><mtext>softmax</mtext><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo><mo>=</mo><mi>log</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><mfrac><msup><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></msup><mrow><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup></mrow></mfrac><mo fence="true">)</mo></mrow><mspace linebreak="newline"></mspace><mo>=</mo><mi>log</mi><mo>⁡</mo><mo>(</mo><msup><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></msup><mo>)</mo><mo>−</mo><mi>log</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup><mo fence="true">)</mo></mrow><mspace linebreak="newline"></mspace><mo>=</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>log</mi><mo>⁡</mo><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup></mrow><annotation encoding="application/x-tex">\log \text{softmax}(x_i) = \log\left(\frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}\right) \\
 = \log(e^{x_i}) - \log\left(\sum_{j=1}^n e^{x_j}\right) \\
@@ -92,29 +96,26 @@
 </ol>
 <p>Here’s what this looks like in code:</p>
 <pre><code class="language-python">def selective_log_softmax(logits, input_ids):
-    # Gather logits just for the tokens we care about
     token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
 
     # Compute logsumexp denominator for each sequence in the batch (loop to reduce memory peak)
     logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
-
-    # Subtract to get final log probs
     token_log_probs = token_logits - logsumexp_values
     return token_log_probs
 </code></pre>
-<p>This approach reduces the peak memory usage by only allocating tensors that are proportional to (batch_size * sequence length) rather than (batch_size * sequence_length * vocab_size).</p>
-<p>Lets benchmark this against some alternatives:</p>
+<p>This approach reduces the peak memory usage by only allocating tensors that are proportional to <code>batch_size * sequence_length</code> and <code>sequence_length * vocab_size</code> rather than <code>batch_size * sequence_length * vocab_size</code>. Specifically, in this snippet, <code>torch.logsumexp(l, dim=-1)</code> internally allocates a tensor of size <code>sequence_length * vocab_size</code> in order to exponentiate the logits. And then <code>logsumexp_values</code> is a tensor of size <code>batch_size * sequence_length</code> which is much smaller than the full logits tensor.</p>
+<p>Lets benchmark this approach against some alternatives:</p>
 <pre><code class="language-python">import time
 import torch
 
 def naive_method(logits, input_ids):
-    log_probs = logits.log_softmax(dim=-1)
+    log_probs = logits.log_softmax(dim=-1)  # (bs, seq_len, vocab_size)
     return torch.gather(log_probs, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
 
 def method_1(logits, input_ids):  # compute log_softmax in a loop to reduce peak memory
     per_token_logps = []
     for logits_row, input_ids_row in zip(logits, input_ids):
-        log_probs = logits_row.log_softmax(dim=-1)
+        log_probs = logits_row.log_softmax(dim=-1)  # (seq_len, vocab_size)
         token_log_prob = torch.gather(log_probs, dim=-1, index=input_ids_row.unsqueeze(-1)).squeeze(-1)
         per_token_logps.append(token_log_prob)
     return torch.stack(per_token_logps)
@@ -166,6 +167,7 @@ method3_result, method3_time, method3_mem = measure_memory_and_time(method_3, lo
 efficient_result, efficient_time, efficient_mem = measure_memory_and_time(efficient_method, logits, input_ids)
 
 # Check equivalence
+print("Logits Dtype:", logits.dtype)
 print("Max absolute difference (naive and 1):", (naive_result - method1_result).abs().max().item())
 print("Max absolute difference (naive and 2):", (naive_result - method2_result).abs().max().item())
 print("Max absolute difference (naive and 3):", (naive_result - method3_result).abs().max().item())
@@ -178,19 +180,65 @@ print("Method 3 time:          {:.6f} sec, Memory peak: {:.2f} MB".format(method
 print("Efficient method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(efficient_time, efficient_mem / 1e6))
 
 # Results:
-# > Max absolute difference (naive and 1): 0.0
-# > Max absolute difference (naive and 2): 1.9073486328125e-06
-# > Max absolute difference (naive and 3): 1.9073486328125e-06
-# > Max absolute difference (naive and efficient): 1.9073486328125e-06
-# > Memory consumed by logits: 2147.61 MB
-# > Naive method time:      0.036307 sec, Memory peak: 4295.16 MB
-# > Method 1 time:          0.012156 sec, Memory peak: 2416.18 MB
-# > Method 2 time:          0.134651 sec, Memory peak: 4295.43 MB
-# > Method 3 time:          0.001496 sec, Memory peak: 2282.10 MB
-# > Efficient method time:  0.000918 sec, Memory peak: 2282.23 MB
+# Logits Dtype: torch.float32
+# Memory consumed by logits: 2147.61 MB
+# Max absolute difference (naive and 1): 0.0
+# Max absolute difference (naive and 2): 1.9073486328125e-06
+# Max absolute difference (naive and 3): 1.9073486328125e-06
+# Max absolute difference (naive and efficient): 1.9073486328125e-06
+# Naive method time:      0.036307 sec, Memory peak: 4295.16 MB
+# Method 1 time:          0.012156 sec, Memory peak: 2416.18 MB
+# Method 2 time:          0.134651 sec, Memory peak: 4295.43 MB
+# Method 3 time:          0.001496 sec, Memory peak: 2282.10 MB
+# Efficient method time:  0.000918 sec, Memory peak: 2282.23 MB
 </code></pre>
 <p>In this benchmark setting, <strong>peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)</strong> while maintaining numerical stability. And <strong>most of the memory consumed now is due to the size of the input logits (2147MB)</strong>. Additionally, the proposed method is about 40x faster than the naive implementation (0.0363s vs 0.0009s). Although, in practice, the speed of this operation is not very consequential.</p>
-<p>I have <a href="https://github.com/huggingface/trl/pull/2773">contributed this optimization to the GRPO trainer</a> in the <a href="https://github.com/huggingface/trl">TRL</a> library and to <a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">the PPO, GRPO, DPO, and KTO trainers</a> in the <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> library.</p>
+<p>It is important to note that the <code>efficient_method</code> is not numerically stable when logits are cast to <code>bfloat16</code> or <code>float16</code>:</p>
+<pre><code class="language-python"># Results:
+# Logits Dtype: torch.bfloat16
+# Memory consumed by logits: 1073.87 MB
+# Max absolute difference (naive and 1): 0.0
+# Max absolute difference (naive and 2): 0.0625
+# Max absolute difference (naive and 3): 0.0625
+# Max absolute difference (naive and efficient): 0.0625    # &#x3C;-- this is the issue
+# Naive method time:      0.027738 sec, Memory peak: 2147.65 MB
+# Method 1 time:          0.003902 sec, Memory peak: 1208.15 MB
+# Method 2 time:          0.101947 sec, Memory peak: 2147.78 MB
+# Method 3 time:          0.001430 sec, Memory peak: 1141.12 MB
+# Efficient method time:  0.000880 sec, Memory peak: 1141.18 MB
+</code></pre>
+<p>So it makes sense to use the <code>efficient_method</code> for <code>torch.float32</code> and <code>torch.float64</code> and <code>method_1</code> for <code>torch.bfloat16</code> and <code>torch.float16</code>. The complete code snippet is as follows:</p>
+<pre><code class="language-python">def selective_log_softmax(logits, input_ids):
+    """Compute log softmax probabilities for selected tokens.
+
+    For float32/float64 tensors, uses a fast and memory-efficient implementation.
+    For half-precision (float16/bfloat16), uses a numerically stable implementation,
+        which is slightly less memory-efficent than the best implementation for float32/float64,
+        but still much more memory-efficient and faster than thee naive implementation.
+
+    Args:
+        logits (torch.Tensor): Logits tensor of shape (batch_size, sequence_length, vocab_size)
+        input_ids (torch.Tensor): Token indices of shape (batch_size, sequence_length)
+
+    Returns:
+        torch.Tensor: Log probabilities for the selected tokens
+    """
+    if logits.dtype in (torch.float32, torch.float64):
+        token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
+        logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
+        token_log_probs = token_logits - logsumexp_values
+
+    else:  # for half-precision, use numerically stable method
+        token_log_probs = []
+        for logits_row, input_ids_row in zip(logits, input_ids):
+            log_probs_row = logits_row.log_softmax(dim=-1)
+            token_log_probs_row = torch.gather(log_probs_row, dim=-1, index=input_ids_row.unsqueeze(-1)).squeeze(-1)
+            token_log_probs.append(token_log_probs_row)
+        token_log_probs = torch.stack(token_log_probs)
+
+    return token_log_probs
+</code></pre>
+<p>I have contributed this optimization to several popular RLHF libraries, including <a href="https://github.com/huggingface/trl">TRL</a> [<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>], <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> [<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>], and <a href="https://github.com/volcengine/verl">Verl</a> [<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>].</p>
 <p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the benchmarking script and for suggesting to pull the <code>gather</code> and element-wise subtraction operations out of the for loop in order to improve operation speed (<code>method_3</code> → <code>efficient_method</code>).</p>
 </section>
         </article>

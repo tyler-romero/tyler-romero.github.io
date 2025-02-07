@@ -43,7 +43,7 @@
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
-            "dateModified": "2025-02-06T21:38:58.421Z",
+            "dateModified": "2025-02-07T22:42:45.554Z",
             "url": "https://www.tylerromero.com/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -99,10 +99,10 @@
     <ul>
         
             <li>
-                <a href="/posts/2025-02-selective-log-softmax/">Selective log-softmax trick to reduce VRAM usage for PPO and GRPO</a>
+                <a href="/posts/2025-02-selective-log-softmax/">Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax</a>
                 &nbsp
                 <p style="margin-top: 0;">
-                    <small><em>February 6, 2025</em> - Cut VRAM usage in half when computing log probabilities by selectively applying log-softmax only to tokens of interest. Perfect for PPO and GRPO training where you only need log probabilities for a small subset of tokens.</small>
+                    <small><em>February 6, 2025</em> - Reduce VRAM usage by half when computing log probabilities by selectively applying log-softmax to only the necessary tokens. Perfect for many RLHF post-training algorithms (such as PPO and GRPO) where typically only one token&#39;s log probability is needed from the entire vocabulary at each sequence position.</small>
                 </p>
             </li>
         
