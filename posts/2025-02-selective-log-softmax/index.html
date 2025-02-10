@@ -43,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2025-02-07T22:42:45.554Z",
+            "dateModified": "2025-02-10T07:25:49.947Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -51,8 +51,8 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, grpo, ppo, logprobs, logits, log-softmax, log_softmax, logsumexp, log-probabilities",
-            "wordCount": "1863",
-            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM. This is the code snippet you might seeThis sample code is not made up - it is commonly found in many popular OSS RLHF implementations, such as in TRL, Verl, and OpenRLHF.: def..."
+            "wordCount": "2328",
+            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU’s fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
             }
         </script>
     </head>
@@ -76,77 +76,63 @@
             <p class="subtitle">Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest
 </p>
             <p class="date">February 6, 2025</p>
-            <section><p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM. This is the code snippet you might see<label for="sd-this-sample-code-is" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-this-sample-code-is" class="margin-toggle"><span class="sidenote">This sample code is not made up - it is commonly found in many popular OSS RLHF implementations, such as in TRL, Verl, and OpenRLHF.</span>:</p>
-<pre><code class="language-python">def naive_selective_log_softmax(logits, input_ids):
-    log_probs = logits.log_softmax(dim=-1)
-    return torch.gather(log_probs, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
+            <section><p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM<label for="sd-vram-is-a-gpu-s-fast" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-vram-is-a-gpu-s-fast" class="margin-toggle"><span class="sidenote">VRAM is a GPU’s fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span>. This is the code you might see:</p>
+<pre><code class="language-python">def naive_selective_log_softmax(logits, index):
+    logprobs = logits.log_softmax(dim=-1)  # shape: (batch_size, seq_len, vocab_size)
+    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
 </code></pre>
 <p>For example, with a modest vocabulary size of 32768, sequence length of 1024, and batch size of 16, computing <code>log_softmax</code> naively can consume <strong>2.1GB</strong> of VRAM! And that is in addition to the 2.1GB required to hold the logits in the first place. <strong>However, in many cases, we only need the log probabilities for specific tokens</strong> - usually the ones that were actually generated or appear in the training data.</p>
-<p>This is particularly relevant when using reinforcement learning techniques like PPO and GRPO to post-train language models. These methods only require log probabilities for the tokens that were actually generated in the model’s output, not for every possible token in the vocabulary.</p>
+<p>This optimization is especially valuable for reinforcement learning algorithms like PPO and GRPO that fine-tune language models. These methods only require log probabilities for the tokens that were actually generated in the model’s output, not for every possible token in the vocabulary. Additionally, for a typical implementation of one of these algorithms, <strong>peak VRAM consumption occurs from materializing these log probabilities!</strong> So optimizing<label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-less-than-a-href" class="margin-toggle"><span class="sidenote"><a href="#efficient-solution">To jump to the optimized solution, click here</a>.</span> this operation can directly allow us to train with a larger batch size.</p>
 <p>Let’s remind ourselves what <code>log_softmax</code> is actually computing for every input logit <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">x_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span></span>:</p>
 <div class="math"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>log</mi><mo>⁡</mo><mtext>softmax</mtext><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo><mo>=</mo><mi>log</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><mfrac><msup><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></msup><mrow><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup></mrow></mfrac><mo fence="true">)</mo></mrow><mspace linebreak="newline"></mspace><mo>=</mo><mi>log</mi><mo>⁡</mo><mo>(</mo><msup><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></msup><mo>)</mo><mo>−</mo><mi>log</mi><mo>⁡</mo><mrow><mo fence="true">(</mo><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup><mo fence="true">)</mo></mrow><mspace linebreak="newline"></mspace><mo>=</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>log</mi><mo>⁡</mo><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup></mrow><annotation encoding="application/x-tex">\log \text{softmax}(x_i) = \log\left(\frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}\right) \\
 = \log(e^{x_i}) - \log\left(\sum_{j=1}^n e^{x_j}\right) \\
 = x_i - \log \sum_{j=1}^n e^{x_j}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:3.0000299999999998em;vertical-align:-1.25003em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.341392em;"><span style="top:-2.305708em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:-0.0000050000000000050004em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.804292em;"><span style="top:-2.40029em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.43581800000000004em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6064620000000001em;"><span style="top:-3.0050700000000004em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.664392em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.1301100000000002em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size4">)</span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7143919999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:3.1637769999999996em;vertical-align:-1.4137769999999998em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size4">(</span></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6513970000000007em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3000050000000005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.4137769999999998em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7143919999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size4">)</span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="mspace newline"></span><span class="base"><span class="strut" style="height:0.36687em;vertical-align:0em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:3.0651740000000007em;vertical-align:-1.4137769999999998em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.6513970000000007em;"><span style="top:-1.872331em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.050005em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span><span style="top:-4.3000050000000005em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.4137769999999998em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7143919999999999em;"><span style="top:-3.113em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathdefault mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3280857142857143em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2818857142857143em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></div>
-<p>Essentially it is just taking every individual logit and subtracting the <code>logsumexp</code> over the full logit distribution.</p>
+<p>Essentially it is just taking every individual logit and subtracting the <a href="https://pytorch.org/docs/stable/generated/torch.logsumexp.html#torch-logsumexp"><code>logsumexp</code></a> over the full logit distribution.</p>
 <p> We can optimize this by:</p>
 <ol>
-<li>First gathering just the logits for the tokens we care about</li>
-<li>Computing the softmax denominator (logsumexp) over the full logit distribution</li>
-<li>Subtracting the denominator from our gathered logits to get the final log probabilities</li>
+<li>Computing the <code>logsumexp</code> values over the full logit distribution</li>
+<li>Gathering just the logits for the tokens we care about</li>
+<li>Subtracting the <code>logsumexp</code> values from our gathered logits to get the final log probabilities</li>
 </ol>
 <p>Here’s what this looks like in code:</p>
-<pre><code class="language-python">def selective_log_softmax(logits, input_ids):
-    token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
-
-    # Compute logsumexp denominator for each sequence in the batch (loop to reduce memory peak)
-    logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
-    token_log_probs = token_logits - logsumexp_values
-    return token_log_probs
+<pre><code class="language-python">def selective_log_softmax_take1(logits, index):
+    logsumexp_values = torch.logsumexp(logits, dim=-1)  # shape: (batch_size, seq_len)
+    token_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)  # shape: (batch_size, seq_len)
+    token_logprobs = token_logits - logsumexp_values  # shape: (batch_size, seq_len)
+    return token_logprobs
 </code></pre>
-<p>This approach reduces the peak memory usage by only allocating tensors that are proportional to <code>batch_size * sequence_length</code> and <code>sequence_length * vocab_size</code> rather than <code>batch_size * sequence_length * vocab_size</code>. Specifically, in this snippet, <code>torch.logsumexp(l, dim=-1)</code> internally allocates a tensor of size <code>sequence_length * vocab_size</code> in order to exponentiate the logits. And then <code>logsumexp_values</code> is a tensor of size <code>batch_size * sequence_length</code> which is much smaller than the full logits tensor.</p>
-<p>Lets benchmark this approach against some alternatives:</p>
+<p>On the surface, it looks like this should decrease the memory requirements of the selective log-softmax operation — we are now only outputting tensors of size <code>batch_size * sequence_length</code> rather than <code>batch_size * sequence_length * vocab_size</code>. However, there is a catch. Internally, <code>torch.logsumexp()</code> allocates a tensor of size <code>batch_size * sequence_length * vocab_size</code> in order to exponentiate the logits. So, unfortunately, our peak memory consumption has not decreased at all.</p>
+<p>What can we do to improve this situation?</p>
+<p>Well, we could just compute the logsumexp values one-by-one for each sequence in the batch. That would mean that <code>torch.logsumexp()</code> only materializes a <code>sequence_length * vocab_size</code> tensor internally.</p>
+<pre><code class="language-python">def selective_log_softmax_take2(logits, index):
+    logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
+    token_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+    token_logprobs = token_logits - logsumexp_values
+    return token_logprobs
+</code></pre>
+<p>This approach should effectively reduce peak memory usage by only allocating tensors that are proportional to <code>batch_size * sequence_length</code> and <code>sequence_length * vocab_size</code> rather than <code>batch_size * sequence_length * vocab_size</code>.</p>
+<p>Lets run a benchmark to see if we are correct. We’ll also include the following ablation that simply computes <code>log_softmax</code> in a loop over the batch dimension.</p>
+<pre><code class="language-python">def selective_log_softmax_ablation1(logits, index):
+    token_logprobs = []
+    for logits_row, index_row in zip(logits, index):
+        logprobs_row = logits_row.log_softmax(dim=-1)  # (seq_len, vocab_size)
+        token_logprobs_row = torch.gather(logprobs_row, dim=-1, index=index_row.unsqueeze(-1)).squeeze(-1)
+        token_logprobs.append(token_logprobs_row)
+    return torch.stack(token_logprobs)
+</code></pre>
+<p>Here is the benchmark script:</p>
 <pre><code class="language-python">import time
 import torch
 
-def naive_method(logits, input_ids):
-    log_probs = logits.log_softmax(dim=-1)  # (bs, seq_len, vocab_size)
-    return torch.gather(log_probs, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
-
-def method_1(logits, input_ids):  # compute log_softmax in a loop to reduce peak memory
-    per_token_logps = []
-    for logits_row, input_ids_row in zip(logits, input_ids):
-        log_probs = logits_row.log_softmax(dim=-1)  # (seq_len, vocab_size)
-        token_log_prob = torch.gather(log_probs, dim=-1, index=input_ids_row.unsqueeze(-1)).squeeze(-1)
-        per_token_logps.append(token_log_prob)
-    return torch.stack(per_token_logps)
-
-def method_2(logits, input_ids):  # avoid materializing unneeded log_probs to reduce peak memory
-    token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
-    logsumexp_values = torch.logsumexp(logits, dim=-1)
-    token_log_probs = token_logits - logsumexp_values  # log_softmax(logits) = logits - log(sum(exp(logits)))
-    return token_log_probs
-
-def method_3(logits, input_ids):  # combine methods 1 and 2
-    per_token_logps = []
-    for logits_row, input_ids_row in zip(logits, input_ids):
-        token_logits = torch.gather(logits_row, dim=-1, index=input_ids_row.unsqueeze(-1)).squeeze(-1)
-        token_log_prob = token_logits - torch.logsumexp(logits_row, dim=-1)
-        per_token_logps.append(token_log_prob)
-    return torch.stack(per_token_logps)
-
-def efficient_method(logits, input_ids):  # pull everything out of the loop except logsumexp
-    token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
-    logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
-    token_log_probs = token_logits - logsumexp_values
-    return token_log_probs
-
-def measure_memory_and_time(func, logits, input_ids):
+def measure_memory_and_time(func, logits, index, n_runs=100):
     torch.cuda.reset_peak_memory_stats()
-    start_time = time.perf_counter()
-    result = func(logits, input_ids)
-    end_time = time.perf_counter()
+    result = func(logits, index)
     mem_peak = torch.cuda.max_memory_allocated()
-    return result, end_time - start_time, mem_peak
+    start_time = time.perf_counter()
+    for _ in range(n_runs):
+        func(logits, index)
+    avg_time = (time.perf_counter() - start_time) / n_runs
+    return result, avg_time, mem_peak
 
 # Simulated data
 torch.manual_seed(42)
@@ -156,90 +142,98 @@ batch_size = 16
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 logits = torch.randn(batch_size, seq_len, vocab_size, device=device, dtype=torch.float32)
-input_ids = torch.randint(0, vocab_size, (batch_size, seq_len), device=device)
+index = torch.randint(0, vocab_size, (batch_size, seq_len), device=device)
 logit_mem = torch.cuda.max_memory_allocated()
 
 # Run all methods
-naive_result, naive_time, naive_mem = measure_memory_and_time(naive_method, logits, input_ids)
-method1_result, method1_time, method1_mem = measure_memory_and_time(method_1, logits, input_ids)
-method2_result, method2_time, method2_mem = measure_memory_and_time(method_2, logits, input_ids)
-method3_result, method3_time, method3_mem = measure_memory_and_time(method_3, logits, input_ids)
-efficient_result, efficient_time, efficient_mem = measure_memory_and_time(efficient_method, logits, input_ids)
+naive_result, naive_time, naive_mem = measure_memory_and_time(naive_selective_log_softmax, logits, index)
+take1_result, take1_time, take1_mem = measure_memory_and_time(selective_log_softmax_take1, logits, index)
+take2_result, take2_time, take2_mem = measure_memory_and_time(selective_log_softmax_take2, logits, index)
+ablation1_result, ablation1_time, ablation1_mem = measure_memory_and_time(selective_log_softmax_ablation1, logits, index)
 
 # Check equivalence
 print("Logits Dtype:", logits.dtype)
-print("Max absolute difference (naive and 1):", (naive_result - method1_result).abs().max().item())
-print("Max absolute difference (naive and 2):", (naive_result - method2_result).abs().max().item())
-print("Max absolute difference (naive and 3):", (naive_result - method3_result).abs().max().item())
-print("Max absolute difference (naive and efficient):", (naive_result - efficient_result).abs().max().item())
+print("Max absolute difference (naive and take1):", (naive_result - take1_result).abs().max().item())
+print("Max absolute difference (naive and take2):", (naive_result - take2_result).abs().max().item())
+print("Max absolute difference (naive and ablation1):", (naive_result - ablation1_result).abs().max().item())
 print("Memory consumed by logits: {:.2f} MB".format(logit_mem / 1e6))
 print("Naive method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(naive_time, naive_mem / 1e6))
-print("Method 1 time:          {:.6f} sec, Memory peak: {:.2f} MB".format(method1_time, method1_mem / 1e6))
-print("Method 2 time:          {:.6f} sec, Memory peak: {:.2f} MB".format(method2_time, method2_mem / 1e6))
-print("Method 3 time:          {:.6f} sec, Memory peak: {:.2f} MB".format(method3_time, method3_mem / 1e6))
-print("Efficient method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(efficient_time, efficient_mem / 1e6))
-
-# Results:
-# Logits Dtype: torch.float32
-# Memory consumed by logits: 2147.61 MB
-# Max absolute difference (naive and 1): 0.0
-# Max absolute difference (naive and 2): 1.9073486328125e-06
-# Max absolute difference (naive and 3): 1.9073486328125e-06
-# Max absolute difference (naive and efficient): 1.9073486328125e-06
-# Naive method time:      0.036307 sec, Memory peak: 4295.16 MB
-# Method 1 time:          0.012156 sec, Memory peak: 2416.18 MB
-# Method 2 time:          0.134651 sec, Memory peak: 4295.43 MB
-# Method 3 time:          0.001496 sec, Memory peak: 2282.10 MB
-# Efficient method time:  0.000918 sec, Memory peak: 2282.23 MB
+print("Take1 method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(take1_time, take1_mem / 1e6))
+print("Take2 method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(take2_time, take2_mem / 1e6))
+print("Ablation1 method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(ablation1_time, ablation1_mem / 1e6))
 </code></pre>
-<p>In this benchmark setting, <strong>peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)</strong> while maintaining numerical stability. And <strong>most of the memory consumed now is due to the size of the input logits (2147MB)</strong>. Additionally, the proposed method is about 40x faster than the naive implementation (0.0363s vs 0.0009s). Although, in practice, the speed of this operation is not very consequential.</p>
-<p>It is important to note that the <code>efficient_method</code> is not numerically stable when logits are cast to <code>bfloat16</code> or <code>float16</code>:</p>
-<pre><code class="language-python"># Results:
-# Logits Dtype: torch.bfloat16
-# Memory consumed by logits: 1073.87 MB
-# Max absolute difference (naive and 1): 0.0
-# Max absolute difference (naive and 2): 0.0625
-# Max absolute difference (naive and 3): 0.0625
-# Max absolute difference (naive and efficient): 0.0625    # &#x3C;-- this is the issue
-# Naive method time:      0.027738 sec, Memory peak: 2147.65 MB
-# Method 1 time:          0.003902 sec, Memory peak: 1208.15 MB
-# Method 2 time:          0.101947 sec, Memory peak: 2147.78 MB
-# Method 3 time:          0.001430 sec, Memory peak: 1141.12 MB
-# Efficient method time:  0.000880 sec, Memory peak: 1141.18 MB
+<p>Running this benchmark<label for="md-memory-usage-vs" class="margin-toggle ">&#8853;</label><input type="checkbox" id="md-memory-usage-vs" class="margin-toggle"><span class="marginnote">Memory usage vs. vocabulary size: <picture><source type="image/webp" srcset="/assets/img/pOD7cryWgt-300.webp 300w, /assets/img/pOD7cryWgt-600.webp 600w, /assets/img/pOD7cryWgt-640.webp 640w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/pOD7cryWgt-300.png" alt="Memory usage vs vocabulary size for different selective log softmax implementations" width="640" height="480" srcset="/assets/img/pOD7cryWgt-300.png 300w, /assets/img/pOD7cryWgt-600.png 600w, /assets/img/pOD7cryWgt-640.png 640w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> script with logits stored in <code>float32</code> gives the following output:</p>
+<pre><code class="language-text">Logits Dtype: torch.float32
+Max absolute difference (naive and take1): 1.9073486328125e-06
+Max absolute difference (naive and take2): 1.9073486328125e-06
+Max absolute difference (naive and ablation1): 0.0
+Memory consumed by logits: 2147.61 MB
+Naive method time:      0.000018 sec, Memory peak: 4295.16 MB
+Take1 method time:      0.000965 sec, Memory peak: 4295.29 MB
+Take2 method time:      0.012608 sec, Memory peak: 2282.03 MB
+Ablation1 method time:  0.004153 sec, Memory peak: 2416.31 MB
 </code></pre>
-<p>So it makes sense to use the <code>efficient_method</code> for <code>torch.float32</code> and <code>torch.float64</code> and <code>method_1</code> for <code>torch.bfloat16</code> and <code>torch.float16</code>. The complete code snippet is as follows:</p>
-<pre><code class="language-python">def selective_log_softmax(logits, input_ids):
+<p>In this benchmark setting, <strong>peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)</strong> while maintaining numerical stability. And <strong>most of the memory consumed now is due to the size of the input logits (2147MB)</strong>. The proposed method is notably slower than the naive method, although, in practice (for LLM post-training), the speed of this operation is not very consequential.</p>
+<h3 id="ablation-analysis">Ablation Analysis</h3>
+<p>One might note that the ablation method also only allocates tensors proportional to <code>sequence_length * vocab_size</code>, so why does it consume more memory than <code>selective_log_softmax_take2</code>? This is because of the gradient formulas for <code>log_softmax()</code> and <code>logsumexp()</code> require different intermediate values to be stored for the backward computation.</p>
+<p>For <code>log_softmax</code>, the gradient formula is:</p>
+<div class="math"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mrow><mi mathvariant="normal">∂</mi><mtext>log_softmax</mtext><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo></mrow><mrow><mi mathvariant="normal">∂</mi><msub><mi>x</mi><mi>j</mi></msub></mrow></mfrac><mo>=</mo><msub><mi>δ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><mtext>softmax</mtext><mo>(</mo><msub><mi>x</mi><mi>j</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">\frac{\partial \text{log\_softmax}(x_i)}{\partial x_j} = \delta_{ij} - \text{softmax}(x_j)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.4221079999999997em;vertical-align:-0.972108em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.45em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.6999999999999997em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord text"><span class="mord">log_softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.972108em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.03785em;">δ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:-0.03785em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">i</span><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:1.036108em;vertical-align:-0.286108em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.311664em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></div>
+<p>For <code>logsumexp</code>, the gradient formula is:</p>
+<div class="math"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mrow><mi mathvariant="normal">∂</mi><mtext>logsumexp</mtext><mo>(</mo><mi>x</mi><mo>)</mo></mrow><mrow><mi mathvariant="normal">∂</mi><msub><mi>x</mi><mi>i</mi></msub></mrow></mfrac><mo>=</mo><mtext>softmax</mtext><mo>(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">\frac{\partial \text{logsumexp}(x)}{\partial x_i} = \text{softmax}(x_i)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:2.263em;vertical-align:-0.8360000000000001em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.427em;"><span style="top:-2.3139999999999996em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord" style="margin-right:0.05556em;">∂</span><span class="mord text"><span class="mord">logsumexp</span></span><span class="mopen">(</span><span class="mord mathdefault">x</span><span class="mclose">)</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.8360000000000001em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">softmax</span></span><span class="mopen">(</span><span class="mord"><span class="mord mathdefault">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.31166399999999994em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></div>
+<p>For the backward pass through <code>logsumexp</code>, we need:</p>
+<ul>
+<li>Softmax of input: <code>(sequence_length, vocab_size)</code></li>
+</ul>
+<p>For the backward pass through <code>log_softmax</code>, we need:</p>
+<ul>
+<li>Softmax of input: <code>(sequence_length, vocab_size)</code></li>
+<li>Original <code>log_softmax</code> output: <code>(sequence_length, vocab_size)</code></li>
+</ul>
+<p>So while both methods avoid allocating additional <code>vocab_size</code>-scale tensors during the forward pass, <code>selective_log_softmax_ablation1</code> needs to store the full <code>log_softmax</code> output for the backward pass, leading to higher memory usage.</p>
+<h3 id="numerical-stability">Numerical Stability</h3>
+<p>It is important to note that the <code>selective_log_softmax_take2</code> is not numerically stable when logits are cast to <code>bfloat16</code> or <code>float16</code>:</p>
+<pre><code class="language-text">Logits Dtype: torch.bfloat16
+Max absolute difference (naive and take1): 0.0625
+Max absolute difference (naive and take2): 0.0625  # &#x3C;- this is the issue
+Max absolute difference (naive and ablation1): 0.0
+Memory consumed by logits: 1073.87 MB
+Naive method time:      0.000018 sec, Memory peak: 2147.65 MB
+Take1 method time:      0.000474 sec, Memory peak: 2147.75 MB
+Take2 method time:      0.005142 sec, Memory peak: 1141.11 MB
+Ablation1 method time:  0.002016 sec, Memory peak: 1208.22 MB
+</code></pre>
+<p>Therefore, we should use <code>selective_log_softmax_take2</code> when working with full precision (<code>torch.float32</code> and <code>torch.float64</code>) tensors, and fall back to <code>selective_log_softmax_ablation1</code> when using reduced precision (<code>torch.bfloat16</code> and <code>torch.float16</code>) tensors to maintain accuracy.</p>
+<h3 id="efficient-solution">Efficient Solution</h3>
+<p>The complete code snippet is as follows:</p>
+<pre><code class="language-python">def selective_log_softmax(logits, index):
     """Compute log softmax probabilities for selected tokens.
 
-    For float32/float64 tensors, uses a fast and memory-efficient implementation.
-    For half-precision (float16/bfloat16), uses a numerically stable implementation,
-        which is slightly less memory-efficent than the best implementation for float32/float64,
-        but still much more memory-efficient and faster than thee naive implementation.
-
     Args:
-        logits (torch.Tensor): Logits tensor of shape (batch_size, sequence_length, vocab_size)
-        input_ids (torch.Tensor): Token indices of shape (batch_size, sequence_length)
-
+        logits (`torch.Tensor`):
+            Logits tensor of shape `(..., num_classes)`.
+        index (`torch.Tensor`):
+            Index tensor of shape `(...)`, specifying the positions to gather from the log-softmax output.
     Returns:
-        torch.Tensor: Log probabilities for the selected tokens
+        `torch.Tensor`:
+            Gathered log probabilities with the same shape as `index`.
     """
-    if logits.dtype in (torch.float32, torch.float64):
-        token_logits = torch.gather(logits, dim=-1, index=input_ids.unsqueeze(-1)).squeeze(-1)
-        logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
-        token_log_probs = token_logits - logsumexp_values
-
-    else:  # for half-precision, use numerically stable method
-        token_log_probs = []
-        for logits_row, input_ids_row in zip(logits, input_ids):
-            log_probs_row = logits_row.log_softmax(dim=-1)
-            token_log_probs_row = torch.gather(log_probs_row, dim=-1, index=input_ids_row.unsqueeze(-1)).squeeze(-1)
-            token_log_probs.append(token_log_probs_row)
-        token_log_probs = torch.stack(token_log_probs)
-
-    return token_log_probs
+    if logits.dtype in [torch.float32, torch.float64]:
+        logsumexp_values = torch.stack([torch.logsumexp(lg, dim=-1) for lg in logits])  # loop to reduce peak mem consumption
+        selected_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+        token_logprobs = selected_logits - logsumexp_values  # log_softmax(x_i) = x_i - logsumexp(x)
+    else:
+        # logsumexp approach is unstable with bfloat16, fall back to slightly less efficent approach
+        token_logprobs = []
+        for logits_row, index_row in zip(logits, index):  # loop to reduce peak mem consumption
+            logprobs_row = logits_row.log_softmax(dim=-1)
+            token_logprobs_row = torch.gather(logprobs_row, dim=-1, index=index_row.unsqueeze(-1)).squeeze(-1)
+            token_logprobs.append(token_logprobs_row)
+        token_logprobs = torch.stack(token_logprobs)
+    return token_logprobs
 </code></pre>
 <p>I have contributed this optimization to several popular RLHF libraries, including <a href="https://github.com/huggingface/trl">TRL</a> [<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>], <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> [<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>], and <a href="https://github.com/volcengine/verl">Verl</a> [<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>].</p>
-<p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the benchmarking script and for suggesting to pull the <code>gather</code> and element-wise subtraction operations out of the for loop in order to improve operation speed (<code>method_3</code> → <code>efficient_method</code>).</p>
+<p>In-practice GPU memory usage before and after implementing selective log-softmax in <code>GRPOTrainer</code> from TRL: <picture><source type="image/webp" srcset="/assets/img/86Cr38P4RP-300.webp 300w, /assets/img/86Cr38P4RP-600.webp 600w, /assets/img/86Cr38P4RP-900.webp 900w, /assets/img/86Cr38P4RP-1180.webp 1180w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/86Cr38P4RP-300.png" alt="In-practive memory savings when using GRPOTrainer from TRL" width="1180" height="796" srcset="/assets/img/86Cr38P4RP-300.png 300w, /assets/img/86Cr38P4RP-600.png 600w, /assets/img/86Cr38P4RP-900.png 900w, /assets/img/86Cr38P4RP-1180.png 1180w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the initial benchmarking script and suggesting to pull <code>gather</code> out of the loop over <code>logsumexp</code> to improve performance.</p>
 </section>
         </article>
         <footer>
