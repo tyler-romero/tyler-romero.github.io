@@ -43,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2025-02-11T16:30:55.131Z",
+            "dateModified": "2025-02-11T16:41:14.109Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -51,7 +51,7 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, grpo, ppo, logprobs, logits, log-softmax, log_softmax, logsumexp, log-probabilities",
-            "wordCount": "2594",
+            "wordCount": "2596",
             "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU’s fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
             }
         </script>
@@ -232,8 +232,8 @@ Ablation1 method time:  0.002016 sec, Memory peak: 1208.22 MB
     return token_logprobs
 </code></pre>
 <p>I have contributed this optimization to several popular RLHF libraries, including <a href="https://github.com/huggingface/trl">TRL</a> [<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>], <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> [<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>], and <a href="https://github.com/volcengine/verl">Verl</a> [<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>].</p>
-<p>In-practice GPU memory usage (on an RTX 4090 with 24Gb VRAM) before and after implementing selective log-softmax when using the <code>GRPOTrainer</code> from TRL: <picture><source type="image/webp" srcset="/assets/img/C4oDMth8kH-300.webp 300w, /assets/img/C4oDMth8kH-600.webp 600w, /assets/img/C4oDMth8kH-900.webp 900w, /assets/img/C4oDMth8kH-1922.webp 1922w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/C4oDMth8kH-300.png" alt="In-practive memory savings when using GRPOTrainer from TRL" width="1922" height="1310" srcset="/assets/img/C4oDMth8kH-300.png 300w, /assets/img/C4oDMth8kH-600.png 600w, /assets/img/C4oDMth8kH-900.png 900w, /assets/img/C4oDMth8kH-1922.png 1922w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
-<p>A 10% reduction peak VRAM requirments is great for such a simple change!</p>
+<p>Here is the actual GPU memory usage on an RTX 4090 (24GB VRAM) before and after implementing selective log-softmax in TRL’s <code>GRPOTrainer</code>: <picture><source type="image/webp" srcset="/assets/img/C4oDMth8kH-300.webp 300w, /assets/img/C4oDMth8kH-600.webp 600w, /assets/img/C4oDMth8kH-900.webp 900w, /assets/img/C4oDMth8kH-1922.webp 1922w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/C4oDMth8kH-300.png" alt="Memory usage reduction from selective log-softmax in TRL" width="1922" height="1310" srcset="/assets/img/C4oDMth8kH-300.png 300w, /assets/img/C4oDMth8kH-600.png 600w, /assets/img/C4oDMth8kH-900.png 900w, /assets/img/C4oDMth8kH-1922.png 1922w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p>A 10% reduction in peak VRAM requirements is a great improvement for such a simple change!</p>
 <h3 id="a-note-on-torchcompile">A note on <code>torch.compile</code></h3>
 <p>When using <code>torch.compile()</code>, PyTorch will attempt to fuse operations and generate optimized CUDA kernels using <a href="https://github.com/openai/triton">Triton</a>. For our selective log-softmax implementation, this means PyTorch may be able to take the naive implementation and fuse the <code>log_softmax</code> and <code>gather</code> operations into a single kernel, potentially reducing memory consumption.</p>
 <pre><code class="language-python">@torch.compile(dynamic=True)
