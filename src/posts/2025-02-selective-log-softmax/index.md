@@ -131,7 +131,7 @@ Take2 method time:      0.012608 sec, Memory peak: 2282.03 MB
 Ablation1 method time:  0.004153 sec, Memory peak: 2416.31 MB
 ```
 
-[^benchmark]: {-} Memory usage vs. vocabulary size: ![Memory usage vs vocabulary size for different selective log softmax implementations](/assets/img/selective-logsoftmax-memory-vocab.png)
+[^benchmark]: {-} Memory usage vs. vocabulary size. `take1` is obscured by `naive` because they have the same memory requirements. ![Memory usage vs vocabulary size for different selective log softmax implementations](/assets/img/selective-logsoftmax-memory-vocab.png)
 
 In this benchmark setting, **peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)** while maintaining numerical stability. And **most of the memory consumed now is due to the size of the input logits (2147MB)**. The proposed method is notably slower than the naive method, although, in practice (for LLM post-training), the speed of this operation is not very consequential.
 
@@ -206,6 +206,40 @@ def selective_log_softmax(logits, index):
 
 I have contributed this optimization to several popular RLHF libraries, including [TRL](https://github.com/huggingface/trl) \[[PR 1](https://github.com/huggingface/trl/pull/2773), [PR 2](https://github.com/huggingface/trl/pull/2799)\], [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) \[[PR 3](https://github.com/OpenRLHF/OpenRLHF/pull/718)\], and [Verl](https://github.com/volcengine/verl) \[[PR 4](https://github.com/volcengine/verl/pull/220)\].
 
-In-practice GPU memory usage before and after implementing selective log-softmax in `GRPOTrainer` from TRL: ![In-practive memory savings when using GRPOTrainer from TRL](/assets/img/trl-selective-log-softmax.png)
+In-practice GPU memory usage (on an RTX 4090 with 24Gb VRAM) before and after implementing selective log-softmax when using the `GRPOTrainer` from TRL: ![In-practive memory savings when using GRPOTrainer from TRL](/assets/img/trl-selective-log-softmax.png)
 
+A 10% reduction peak VRAM requirments is great for such a simple change!
+
+### A note on `torch.compile`
+
+When using `torch.compile()`, PyTorch will attempt to fuse operations and generate optimized CUDA kernels using [Triton](https://github.com/openai/triton). For our selective log-softmax implementation, this means PyTorch may be able to take the naive implementation and fuse the `log_softmax` and `gather` operations into a single kernel, potentially reducing memory consumption.
+
+```python
+@torch.compile(dynamic=True)
+def compiled_selective_log_softmax(logits, index):
+    logprobs = logits.log_softmax(dim=-1)
+    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+```
+
+If we benchmark this method using `torch==2.6.0` and `triton==3.2.0`, we see these results when logits are in `float32`:
+```text
+Max absolute difference (naive and compiled): 9.5367431640625e-07
+Compiled method time:  0.000073 sec, Memory peak: 2147.94 MB
+```
+
+And these results when logits are in `bfloat16`[^exact]:
+
+[^exact]: Interestingly, `torch.compile` generates a kernel that maintains exact numerical equivalence for half-precision dtypes.
+
+```text
+Max absolute difference (naive and compiled): 0.0
+Compiled method time:  0.000129 sec, Memory peak: 1074.04 MB
+```
+
+Very impressive! This is both faster and more memory efficient than our hand-rolled solution, while being numerically stable. And the `dynamic=True` flag means that we shouldn't need to recompile every time a new sequence length is used.
+
+The only reason not to use this method is if you are in a setting where `torch.compile` usage is supposed to be enabled/disabled via a user-passed flag. Which is the case most open-source libraries that use `torch`. For your own projects, the compiled version is recommended!
+
+
+---
 Thanks to [Quentin Gallouédec](https://github.com/qgallouedec) for providing the initial benchmarking script and suggesting to pull `gather` out of the loop over `logsumexp` to improve performance.
