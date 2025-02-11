@@ -43,7 +43,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2025-02-10T07:25:49.947Z",
+            "dateModified": "2025-02-11T16:30:55.131Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -51,7 +51,7 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, grpo, ppo, logprobs, logits, log-softmax, log_softmax, logsumexp, log-probabilities",
-            "wordCount": "2328",
+            "wordCount": "2594",
             "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU’s fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
             }
         </script>
@@ -162,7 +162,7 @@ print("Take1 method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(take1_
 print("Take2 method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(take2_time, take2_mem / 1e6))
 print("Ablation1 method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(ablation1_time, ablation1_mem / 1e6))
 </code></pre>
-<p>Running this benchmark<label for="md-memory-usage-vs" class="margin-toggle ">&#8853;</label><input type="checkbox" id="md-memory-usage-vs" class="margin-toggle"><span class="marginnote">Memory usage vs. vocabulary size: <picture><source type="image/webp" srcset="/assets/img/pOD7cryWgt-300.webp 300w, /assets/img/pOD7cryWgt-600.webp 600w, /assets/img/pOD7cryWgt-640.webp 640w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/pOD7cryWgt-300.png" alt="Memory usage vs vocabulary size for different selective log softmax implementations" width="640" height="480" srcset="/assets/img/pOD7cryWgt-300.png 300w, /assets/img/pOD7cryWgt-600.png 600w, /assets/img/pOD7cryWgt-640.png 640w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> script with logits stored in <code>float32</code> gives the following output:</p>
+<p>Running this benchmark<label for="md-memory-usage-vs" class="margin-toggle ">&#8853;</label><input type="checkbox" id="md-memory-usage-vs" class="margin-toggle"><span class="marginnote">Memory usage vs. vocabulary size. <code>take1</code> is obscured by <code>naive</code> because they have the same memory requirements. <picture><source type="image/webp" srcset="/assets/img/5CQHH5jD6T-300.webp 300w, /assets/img/5CQHH5jD6T-600.webp 600w, /assets/img/5CQHH5jD6T-900.webp 900w, /assets/img/5CQHH5jD6T-2400.webp 2400w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5CQHH5jD6T-300.png" alt="Memory usage vs vocabulary size for different selective log softmax implementations" width="2400" height="1800" srcset="/assets/img/5CQHH5jD6T-300.png 300w, /assets/img/5CQHH5jD6T-600.png 600w, /assets/img/5CQHH5jD6T-900.png 900w, /assets/img/5CQHH5jD6T-2400.png 2400w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> script with logits stored in <code>float32</code> gives the following output:</p>
 <pre><code class="language-text">Logits Dtype: torch.float32
 Max absolute difference (naive and take1): 1.9073486328125e-06
 Max absolute difference (naive and take2): 1.9073486328125e-06
@@ -232,7 +232,26 @@ Ablation1 method time:  0.002016 sec, Memory peak: 1208.22 MB
     return token_logprobs
 </code></pre>
 <p>I have contributed this optimization to several popular RLHF libraries, including <a href="https://github.com/huggingface/trl">TRL</a> [<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>], <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> [<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>], and <a href="https://github.com/volcengine/verl">Verl</a> [<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>].</p>
-<p>In-practice GPU memory usage before and after implementing selective log-softmax in <code>GRPOTrainer</code> from TRL: <picture><source type="image/webp" srcset="/assets/img/86Cr38P4RP-300.webp 300w, /assets/img/86Cr38P4RP-600.webp 600w, /assets/img/86Cr38P4RP-900.webp 900w, /assets/img/86Cr38P4RP-1180.webp 1180w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/86Cr38P4RP-300.png" alt="In-practive memory savings when using GRPOTrainer from TRL" width="1180" height="796" srcset="/assets/img/86Cr38P4RP-300.png 300w, /assets/img/86Cr38P4RP-600.png 600w, /assets/img/86Cr38P4RP-900.png 900w, /assets/img/86Cr38P4RP-1180.png 1180w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p>In-practice GPU memory usage (on an RTX 4090 with 24Gb VRAM) before and after implementing selective log-softmax when using the <code>GRPOTrainer</code> from TRL: <picture><source type="image/webp" srcset="/assets/img/C4oDMth8kH-300.webp 300w, /assets/img/C4oDMth8kH-600.webp 600w, /assets/img/C4oDMth8kH-900.webp 900w, /assets/img/C4oDMth8kH-1922.webp 1922w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/C4oDMth8kH-300.png" alt="In-practive memory savings when using GRPOTrainer from TRL" width="1922" height="1310" srcset="/assets/img/C4oDMth8kH-300.png 300w, /assets/img/C4oDMth8kH-600.png 600w, /assets/img/C4oDMth8kH-900.png 900w, /assets/img/C4oDMth8kH-1922.png 1922w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p>A 10% reduction peak VRAM requirments is great for such a simple change!</p>
+<h3 id="a-note-on-torchcompile">A note on <code>torch.compile</code></h3>
+<p>When using <code>torch.compile()</code>, PyTorch will attempt to fuse operations and generate optimized CUDA kernels using <a href="https://github.com/openai/triton">Triton</a>. For our selective log-softmax implementation, this means PyTorch may be able to take the naive implementation and fuse the <code>log_softmax</code> and <code>gather</code> operations into a single kernel, potentially reducing memory consumption.</p>
+<pre><code class="language-python">@torch.compile(dynamic=True)
+def compiled_selective_log_softmax(logits, index):
+    logprobs = logits.log_softmax(dim=-1)
+    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+</code></pre>
+<p>If we benchmark this method using <code>torch==2.6.0</code> and <code>triton==3.2.0</code>, we see these results when logits are in <code>float32</code>:</p>
+<pre><code class="language-text">Max absolute difference (naive and compiled): 9.5367431640625e-07
+Compiled method time:  0.000073 sec, Memory peak: 2147.94 MB
+</code></pre>
+<p>And these results when logits are in <code>bfloat16</code><label for="sd-interestingly-less" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-interestingly-less" class="margin-toggle"><span class="sidenote">Interestingly, <code>torch.compile</code> generates a kernel that maintains exact numerical equivalence for half-precision dtypes.</span>:</p>
+<pre><code class="language-text">Max absolute difference (naive and compiled): 0.0
+Compiled method time:  0.000129 sec, Memory peak: 1074.04 MB
+</code></pre>
+<p>Very impressive! This is both faster and more memory efficient than our hand-rolled solution, while being numerically stable. And the <code>dynamic=True</code> flag means that we shouldn’t need to recompile every time a new sequence length is used.</p>
+<p>The only reason not to use this method is if you are in a setting where <code>torch.compile</code> usage is supposed to be enabled/disabled via a user-passed flag. Which is the case most open-source libraries that use <code>torch</code>. For your own projects, the compiled version is recommended!</p>
+<hr>
 <p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the initial benchmarking script and suggesting to pull <code>gather</code> out of the loop over <code>logsumexp</code> to improve performance.</p>
 </section>
         </article>
