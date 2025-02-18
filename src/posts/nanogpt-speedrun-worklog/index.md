@@ -1,7 +1,7 @@
 ---
 title: NanoGPT Speedrun Living Worklog
 subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
-date: 2025-01-18T00:00:00-08:00
+date: 2025-02-18T00:00:00-08:00
 blurb: How fast can I train GPT-2 on two RTX 4090 GPUs? This is a living worklog of my progress.
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 ---
@@ -17,9 +17,11 @@ I'll be documenting my progress here and updating this post as I go. Code can be
 ## Progress so far
 | #                                                    | Description           | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
 | :--------------------------------------------------- | :-------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| [1](#1-initial-setup-and-baseline)                   | Initial baseline      | 8.13 hours  | 6.44B           | 220.7k        | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
-| [2.1](#21-architectural-changes-and-training-tweaks) | Architectural changes | 7.51 hours  | 5.07B           | 187.7k        | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
-| [2.2](#22-muon-optimizer)                            | Muon Optimizer        | 4.53 hours  | 3.04B           | 186.7k        | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
+| [1](#1-initial-setup-and-baseline)                   | Initial baseline      | 8.13 hours  | 6.44B           | 221k          | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
+| [2.1](#21-architectural-changes-and-training-tweaks) | Architectural changes | 7.51 hours  | 5.07B           | 188k          | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
+| [2.2](#22-muon-optimizer)                            | Muon optimizer        | 4.53 hours  | 3.04B           | 187k          | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
+| [2.3](#23-dataloading-tweaks)                        | Dataloading tweaks    | 4.26 hours  | 3.31B           | 216k          | 2025/02/18 | [d59944d](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/08047f73-cb01-4f47-a901-de901b2a6b6e.txt) |
+
 
 ## 1. Initial setup and baseline
 
@@ -45,7 +47,8 @@ The baseline run time on my 2xRTX 4090 setup is **8.13 hours**.
 
 Waiting 8 hours for a result is too slow for effective experimentation, so I'm going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I'll start with the most impactful/easiest changes first:
 1. Architectural changes and training tweaks
-2. Muon Optimizer
+2. Muon optimizer
+3. Dataloading tweaks
 
 ### 2.1 Architectural changes and training tweaks
 There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:
@@ -76,6 +79,21 @@ Muon works on square matrices, so it is not a drop-in replacement for AdamW. How
 Just like on the 8xH100 leaderboard, we observe a massive speedup when switching to Muon. The new run time is **4.53 hours**, requiring only 3.04B tokens. The tokens/second is also very similar to the previous run, which is a good sign that we are not losing throughput by switching optimizers.
 
 ![Section 2.2 loss plot](/assets/img/2p2_loss_plot.png)
+
+### 2.3 Dataloading Tweaks
+As we have improved our data efficiency via architecture tweaks and an optimizer change, our training throughput has dropped from 221k tokens/second to 187k tokens/second. That is a ~15% drop in throughput. Recovering most of that throughput could provide a significant improvement to our run time. An obvious place to start is with our dataloading and gradient accumulation logic.
+
+Up until now, we have loaded a full-batch of data on each device and then split that full batch into smaller chunks (micro-batches) for each gradient accumulation step (recall that we are doing 8 accumulation steps per gradient update). We can instead make a minor tweak to our logic to load only the next micro-batch at each step of the dataloader, and then step the dataloader for each gradient accumulation step.
+
+We also increase our torch version from `2.5` to `2.6` (which was recently released), and, in accordance with the [new official rules](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#timing-change-after-record-21) designated on 2025/02/01, we have removed the use of `torch._inductor.config.coordinate_descent_tuning`.
+
+These tweak brings our throughput back up to 216k tokens/second. In order to make runs more consistently hit the 3.28 validation loss target[^variance], we have also slightly increased the total number of training steps, so now 3.31B tokens are consumed. The new run time is **4.26 hours**, and the changes can be found at [`d59944d`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5).
+
+[^variance]: Note that there is some variance in the amount of time it takes for a speedrun candidate to run. For a speedrun to be an official record, it must attain a *mean* validation loss of less than 3.28. I have been a bit lax about this so far because the time difference between runs has been large, and variance relatively small.
+
+![Section 2.3 loss plot](/assets/img/2p3_loss_plot.png)
+
+At this point, we code that can train GPT-2 almost twice as fast as the baseline.
 
 
 ## References
