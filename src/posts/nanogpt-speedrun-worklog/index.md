@@ -1,7 +1,7 @@
 ---
 title: NanoGPT Speedrun Living Worklog
 subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
-date: 2025-02-18T00:00:00-08:00
+date: 2025-02-23T00:00:00-08:00
 blurb: How fast can I train GPT-2 on two RTX 4090 GPUs? This is a living worklog of my progress.
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 ---
@@ -21,7 +21,7 @@ I'll be documenting my progress here and updating this post as I go. Code can be
 | [2.1](#21-architectural-changes-and-training-tweaks) | Architectural changes    | 7.51 hours  | 5.07B           | 188k          | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
 | [2.2](#22-muon-optimizer)                            | Muon optimizer           | 4.53 hours  | 3.04B           | 187k          | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
 | [2.3](#23-dataloading-tweaks)                        | Dataloading tweaks       | 4.26 hours  | 3.31B           | 216k          | 2025/02/18 | [d59944d](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/08047f73-cb01-4f47-a901-de901b2a6b6e.txt) |
-| [2.4](#24-logit-soft-capping)                        | Logit Soft-capping at 30 | 4.01 hours  | 3.15B           | 218k          | 2025/02/18 | [6e71fe3](https://github.com/tyler-romero/nanogpt-speedrun/commit/6e71fe3e85c22e0eb83a1f0f3572021c35d4f653) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/2dbf7fa6-561c-49bc-8aae-665fefdd9a44.txt) |
+| [2.4](#24-logit-soft-capping)                        | Logit Soft-capping at 30 | 4.01 hours  | 3.15B           | 218k          | 2025/02/23 | [12eab44](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/2dbf7fa6-561c-49bc-8aae-665fefdd9a44.txt) |
 
 
 ## 1. Initial setup and baseline
@@ -109,7 +109,7 @@ $$
 
 Logit soft-capping prevents logits from growing excessively large by scaling them to a fixed range, which seems to help improve training dynamics. One could argue that this is imposing an inductive bias - and since we're in a relatively small model/low data regime that this is helpful.
 
-After implementing logit soft-capping with a cap of 30 (and doing some learning-rate tuning, commit [`6e71fe3`](https://github.com/tyler-romero/nanogpt-speedrun/commit/6e71fe3e85c22e0eb83a1f0f3572021c35d4f653)), the new run time is **4.01 hours**, requiring 3.15B tokens. The tokens/second remained steady at 218k suggesting that the soft-capping did not impact throughput.
+After implementing logit soft-capping with a cap of 30 (and doing some learning-rate tuning), the new run time is **4.01 hours**, requiring 3.15B tokens (commit [`12eab44`](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e)). Throughput remained steady at ~218k tokens/second.
 
 ![Section 2.4 loss plot](/assets/img/2p4_loss_plot.png)
 
