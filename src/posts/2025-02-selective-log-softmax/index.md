@@ -204,7 +204,7 @@ def selective_log_softmax(logits, index):
     return token_logprobs
 ```
 
-I have contributed this optimization to several popular RLHF libraries, including [TRL](https://github.com/huggingface/trl) \[[PR 1](https://github.com/huggingface/trl/pull/2773), [PR 2](https://github.com/huggingface/trl/pull/2799)\], [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) \[[PR 3](https://github.com/OpenRLHF/OpenRLHF/pull/718)\], and [Verl](https://github.com/volcengine/verl) \[[PR 4](https://github.com/volcengine/verl/pull/220)\].
+I have contributed this optimization to several popular open-source RLHF libraries, including [huggingface/TRL](https://github.com/huggingface/trl) \[[PR 1](https://github.com/huggingface/trl/pull/2773), [PR 2](https://github.com/huggingface/trl/pull/2799)\], [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) \[[PR 3](https://github.com/OpenRLHF/OpenRLHF/pull/718)\], [Verl](https://github.com/volcengine/verl) \[[PR 4](https://github.com/volcengine/verl/pull/220)\], and [allenai/open-instruct](https://github.com/allenai/open-instruct) \[[PR 5](https://github.com/allenai/open-instruct/pull/584)\].
 
 Here is the actual GPU memory usage on an RTX 4090 (24GB VRAM) before and after implementing selective log-softmax in TRL's `GRPOTrainer`: ![Memory usage reduction from selective log-softmax in TRL](/assets/img/trl-selective-log-softmax.png)
 
