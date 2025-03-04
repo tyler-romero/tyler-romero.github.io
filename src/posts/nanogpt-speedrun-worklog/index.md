@@ -113,6 +113,10 @@ After implementing logit soft-capping with a cap of 30 (and doing some learning-
 
 ![Section 2.4 loss plot](/assets/img/2p4_loss_plot.png)
 
+## 3 Longer Training and Evaluation Sequence Length
+
+(coming soon)
+
 
 ## References
 <textarea id="bibtex_input" style="display:none;">
