@@ -1,7 +1,7 @@
 ---
 title: NanoGPT Speedrun Living Worklog
 subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
-date: 2025-02-23T00:00:00-08:00
+date: 2025-03-08T00:00:00-08:00
 blurb: How fast can I train GPT-2 on two RTX 4090 GPUs? This is a living worklog of my progress.
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 ---
@@ -15,14 +15,14 @@ I have access to **2xRTX 4090 GPUs** and I want to see how fast I can train GPT-
 I'll be documenting my progress here and updating this post as I go. Code can be found in [this GitHub repo](https://github.com/tyler-romero/nanogpt-speedrun).
 
 ## Progress so far
-| #                                                    | Description              | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
-| :--------------------------------------------------- | :----------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| [1](#1-initial-setup-and-baseline)                   | Initial baseline         | 8.13 hours  | 6.44B           | 221k          | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
-| [2.1](#21-architectural-changes-and-training-tweaks) | Architectural changes    | 7.51 hours  | 5.07B           | 188k          | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
-| [2.2](#22-muon-optimizer)                            | Muon optimizer           | 4.53 hours  | 3.04B           | 187k          | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
-| [2.3](#23-dataloading-tweaks)                        | Dataloading tweaks       | 4.26 hours  | 3.31B           | 216k          | 2025/02/18 | [d59944d](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/08047f73-cb01-4f47-a901-de901b2a6b6e.txt) |
-| [2.4](#24-logit-soft-capping)                        | Logit Soft-capping at 30 | 4.01 hours  | 3.15B           | 218k          | 2025/02/23 | [12eab44](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/2dbf7fa6-561c-49bc-8aae-665fefdd9a44.txt) |
-
+| #                                                      | Description              | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
+| :----------------------------------------------------- | :----------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| [1](#1-initial-setup-and-baseline)                     | Initial baseline         | 8.13 hours  | 6.44B           | 221k          | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
+| [2.1](#21-architectural-changes-and-training-tweaks)   | Architectural changes    | 7.51 hours  | 5.07B           | 188k          | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
+| [2.2](#22-muon-optimizer)                              | Muon optimizer           | 4.53 hours  | 3.04B           | 187k          | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
+| [2.3](#23-dataloading-tweaks)                          | Dataloading tweaks       | 4.26 hours  | 3.31B           | 216k          | 2025/02/18 | [d59944d](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/08047f73-cb01-4f47-a901-de901b2a6b6e.txt) |
+| [2.4](#24-logit-soft-capping)                          | Logit Soft-capping at 30 | 4.01 hours  | 3.15B           | 218k          | 2025/02/23 | [12eab44](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/2dbf7fa6-561c-49bc-8aae-665fefdd9a44.txt) |
+| [3](#3-longer-training-and-evaluation-sequence-length) | Longer Sequence Length   | 2.55 hours  | 1.88B           | 205k          | 2025/03/03 | [d982ed5](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/cf1ef5f9-9f79-4798-9360-2b174d8eb25f.txt) |
 
 ## 1. Initial setup and baseline
 
@@ -74,7 +74,7 @@ The [Muon Optimizer](https://kellerjordan.github.io/posts/muon/) is a new optimi
 
 [^steepest]: But are these approximate second-order methods actually second-order? [New research](https://arxiv.org/abs/2409.20325v1) suggests that methods like Shampoo and Adam can be viewed as variants of steepest descent under specific norms, and thus are actually first-order methods.
 
-I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put to gether [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers).
+I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put to gether [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers). For those interested in a more step-by-step walkthrough of Muon, check out [this excellent post](https://jeremybernste.in/writing/deriving-muon) by Jeremy Bernstein.
 
 Muon works on square matrices, so it is not a drop-in replacement for AdamW. However it can be used to optimize all of the hidden layers of our GPT-2 model. The output layer and the token embeddings will still be optimized with AdamW.
 
@@ -115,8 +115,63 @@ After implementing logit soft-capping with a cap of 30 (and doing some learning-
 
 ## 3 Longer Training and Evaluation Sequence Length
 
-(coming soon)
+So far, we've been training and evaluating on sequences of 1024 tokens. We also haven't been particularly clever about how those sequences are processed. At each step, we simply load the next 1024 tokens into an element of the batch without regard for where the document starts or stops. That means much of the time we are starting in the middle of a document and cutting that document off before it reaches its end. We are also attending to tokens *across documents* since we're just using a simple causal mask.
 
+Cutting off documents in the middle is an especially large issue. See this plot of average loss vs sequence position:
+![Average Loss vs Sequence Position](/assets/img/avg_loss_vs_seq_position.png)
+
+Notice how the first twenty-five or so positions have a much higher average loss than the later positions. This is because at the beginning of the sequence the LLM has much less information with which to make informed predictions about the next token in the sequence. We want to avoid needlessly restarting documents/sequences in order to avoid this loss penalty!
+
+A natural question to ask at this point is: how long are sequences in our dataset, on average?
+![Sequence Length CDF Plot](/assets/img/sequence_length_cdf.png)
+
+The data reveals that approximately 20% of documents exceed our current 1024 token sequence length. By increasing the sequence length to >=8192 tokens, we can accommodate virtually all documents in our dataset without truncation.
+
+To address the issues identified above, we'll implement two key improvements. First, we'll extend our sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, we'll eliminate the traditional batch dimension entirely and instead maximize sequence length (effectively using a "batch size" of 1 that contains multiple concatenated documents). Second, we'll implement sophisticated attention masking that prevents cross-document attention while simultaneously leveraging the computational efficiency of sparse attention patterns.
+
+Fortunately, [FlexAttention](https://pytorch.org/blog/flexattention/) provides an elegant solution that maintains the performance benefits of [FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) while enabling these improvements. One of FlexAttention's primary strengths is its ability to efficiently handle sparse, custom attention masks, making it ideal for our use case.
+
+To implement FlexAttention, we need to define an appropriate attention mask that handles our specific requirements:
+```python
+def make_attn_mask(idx, eot_token, window_size=1024):
+    # Create a causal mask (only attend to past tokens)
+    def causal_mask(b, h, q_idx, kv_idx):
+        return q_idx >= kv_idx
+
+    # Track document boundaries using end-of-text tokens
+    documents = (idx == eot_token).cumsum(dim=1)
+
+    # Only allow attention within the same document
+    def document_mask(b, h, q_idx, kv_idx):
+        return documents[b, q_idx] == documents[b, kv_idx]
+
+    # Limit attention to an N-token window for efficiency
+    def sliding_window_mask(b, h, q_idx, kv_idx):
+        return q_idx - kv_idx <= window_size
+
+    return and_masks(document_mask, causal_mask, sliding_window_mask)
+```
+
+Let's break down each mask:
+
+1. **Causal Mask**: Standard in autoregressive language modeling. Ensures that tokens can only attend to previous tokens in the sequence, preventing information leakage from future tokens.
+
+2. **Document Mask**: This restricts attention to tokens within the same document. By tracking document boundaries using end-of-text tokens, we prevent tokens from attending across different documents, which helps the model maintain coherent context within a single document.
+
+3. **Sliding Window Mask**: This limits attention to a fixed window of tokens before the current position. This approach balances efficiency with context retention with a clear tradeoff: smaller windows are more efficient but may miss long-range dependencies, while larger windows capture more context at the expense of resources.
+
+In order to build intuition about the individual component masks, we visualize them below:
+![Causal, Document, Sliding Window Attention Masks](/assets/img/attention_masks.svg)
+
+When combined with the `and_masks` function, these three masks[^redundant] work together to create an efficient attention pattern that respects document boundaries, maintains causality, and limits computational overhead for long sequences.
+
+[^redundant]: Note that the causal mask is actually redundant to the sliding window mask, as the sliding window mask already ensures that tokens can only attend to previous tokens in the sequence. The causal mask is included here for clarity.
+
+After incorporating FlexAttention with these masks, and increasing our sequence length to 32768 tokens, we observe a massive speedup[^hack]. The new run time is **2.55 hours**, requiring only 1.88B tokens (a huge data-efficiency improvement). Our throughput dropped slightly to ~205k tokens/second. See commit [`d982ed5`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) for the full details.
+
+[^hack]: This speedup is a bit of a hack against the target metric. Supporting longer sequences is a straightforward way to drop the loss on the validation set, but is unlikely to provide a meaningful improvement to the overall performance of the model on practical benchmarks.
+
+![Section 3 loss plot](/assets/img/3_loss_plot.png)
 
 ## References
 <textarea id="bibtex_input" style="display:none;">
@@ -208,5 +263,21 @@ After implementing logit soft-capping with a cap of 30 (and doing some learning-
       primaryClass={cs.CL},
       url={https://arxiv.org/abs/2408.00118},
 }
+@misc{dong2024flexattentionprogrammingmodel,
+      title={Flex Attention: A Programming Model for Generating Optimized Attention Kernels},
+      author={Juechu Dong and Boyuan Feng and Driss Guessous and Yanbo Liang and Horace He},
+      year={2024},
+      eprint={2412.05496},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2412.05496},
+}
+@misc{bernstein2025deriving,
+  author = {Jeremy Bernstein},
+  title = {Deriving Muon},
+  url = {https://jeremybernste.in/writing/deriving-muon},
+  year = {2025}
+}
+
 </textarea>
 <div id="bibtex_display"></div>
