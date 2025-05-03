@@ -1,7 +1,7 @@
 ---
 title: Greek-Style Lemon Chicken Orzo Soup
-subtitle: A really good soup from broccyourbody
-blurb: a really good soup from broccyourbody.
+subtitle: A really good soup from Carissa Stanton (@broccyourbody).
+blurb: a really good soup from Carissa Stanton (@broccyourbody).
 tags: ["recipe", "soup", "lemon", "orzo", "greek"]
 ---
 

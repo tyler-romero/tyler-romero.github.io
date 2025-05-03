@@ -7,6 +7,8 @@ tags: ["recipe", "salmon", "rice", "mayo"]
 
 *Makes 2 portions*
 
+Modified from a recipe by [@kulas_kitchen](https://thefeedfeed.com/kulas_kitchen1/spicy-honey-salmon-bites).
+
 ~1 lb. skin-off salmon[^tjs] (Atlantic is less fishy than Alaskan/Pacific if thats what you prefer)<br>
 
 **Marinade:**<br>
@@ -27,8 +29,6 @@ avocado<br>
 ## Steps
 1. Cut salmon into bite-sized chunks (large dice).
 2. Marinate salmon in a mixture of all of the other ingredients for >1 hour.
-3. Cook in an air fryer[^castiron] at 380-400°F for ~10-15 minutes, stirring halfway through.
-
-[^castiron]: Could also cook in a cast iron skillet on medium heat. Cook for 3-4 minutes on one side, flip and cook 2-3 minutes on the opposite side.
+3. Cook in an air fryer  at 380-400°F for ~10-15 minutes, stirring halfway through.
 
 Can be served with sticky rice, mayo, green onions, sesame seeds, and avocado. We also like to cook some broccolini in sesame oil as a side.
