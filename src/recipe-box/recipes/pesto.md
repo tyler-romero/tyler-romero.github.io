@@ -14,7 +14,7 @@ tags: ["recipe", "pesto", "basil", "pasta", "sauce"]
 3/4 cups Parmesan cheese[^parm]<br>
 1/2 packed cups fresh parsley (optional)<br>
 1/4 - 1/2 tsp. salt (to taste)<br>
-Black pepper<br>
+Black pepper
 
 [^pine-nuts]: Pesto is traditionally made with pine nuts, but I prefer the earthier flavor of walnuts. Plus walnuts are less expensive.
 

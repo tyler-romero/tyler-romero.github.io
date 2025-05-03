@@ -22,7 +22,7 @@ rice<br>
 mayo<br>
 green onions<br>
 sesame seeds<br>
-avocado<br>
+avocado
 
 [^tjs]: Trader Joes carries everything you need for this recipe.
 

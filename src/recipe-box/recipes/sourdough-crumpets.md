@@ -1,7 +1,7 @@
 ---
 title: Sourdough Crumpets
 subtitle: Recipe for using sourdough starter discard.
-blurb: Recipe for using sourdough starter discard.
+blurb: king arthur recipe for using sourdough starter discard.
 tags: ["recipe", "sourdough", "crumpets"]
 ---
 
@@ -9,9 +9,9 @@ tags: ["recipe", "sourdough", "crumpets"]
 
 Adjusted proportions from this King Arthur recipe: https://www.kingarthurbaking.com/recipes/sourdough-crumpets-recipe
 
-350g Sourdough starter discard
-1.5 tsp. granulated sugar
-1/2 tsp. table salt
+350g Sourdough starter discard<br>
+1.5 tsp. granulated sugar<br>
+1/2 tsp. table salt<br>
 1/2 tsp (or just slightly more) baking soda
 
 ## Instructions
