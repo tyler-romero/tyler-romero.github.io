@@ -105,8 +105,9 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding-left: 8%;
-  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD",
-    "Book Antiqua", Georgia, serif;
+  font-family:
+    et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
+    Georgia, serif;
   background-color: #fffff0; /* #fcfcf5; */
   color: #111;
   max-width: 1400px;
@@ -310,8 +311,8 @@ a:link,
     -webkit-linear-gradient(#fcfcf5, #fcfcf5),
     -webkit-linear-gradient(#fcfcf5, #fcfcf5),
     -webkit-linear-gradient(currentColor, currentColor);
-  background: linear-gradient(#fcfcf5, #fcfcf5),
-    linear-gradient(#fcfcf5, #fcfcf5),
+  background:
+    linear-gradient(#fcfcf5, #fcfcf5), linear-gradient(#fcfcf5, #fcfcf5),
     linear-gradient(currentColor, currentColor);
   -webkit-background-size:
     0.05em 1px,
