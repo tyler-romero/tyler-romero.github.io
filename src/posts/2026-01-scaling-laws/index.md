@@ -56,11 +56,11 @@ It's important to distinguish between three different aspects of model performan
 
 **1. Offsets (A and B coefficients)**
 
-- These coefficients determine the *intercept* of the scaling curve
-- Lower A means better parameter efficiency at any given scale
-- Lower B means better data efficiency at any given scale
-- The optimal compute split between parameters and data is *independent* of A and B.
-- **Key insight**: A variant can be more efficient (lower A, B) while scaling the same as baseline
+- These coefficients are multiplicative constants that shift the scaling curve vertically
+- Lower A means lower loss for any given model size (a constant factor improvement in the parameter term)
+- Lower B means lower loss for any given dataset size (a constant factor improvement in the data term)
+- The optimal compute split between parameters and data is *independent* of A and B
+- A variant can have better offsets (lower A, B) while scaling at the same rate as baseline
 
 **2. Scalability (α and β exponents)**
 
@@ -68,7 +68,7 @@ It's important to distinguish between three different aspects of model performan
 - A model with higher α and β will *eventually* beat one with lower exponents, regardless of A and B values (assuming a constant E)
 - Higher α means loss decreases faster as you add parameters
 - Higher β means loss decreases faster as you add data
-- **Key insight**: A variant with worse scaling (lower α, β) will eventually be overtaken by baseline at large enough scale
+- A variant with worse scaling (lower α, β) will eventually be overtaken by baseline at large enough scale
 
 **3. Irreducible Loss (E)**
 
@@ -78,9 +78,9 @@ It's important to distinguish between three different aspects of model performan
 
 **The Crossover Problem**
 
-A variant that is *more efficient but scales worse* presents an interesting tradeoff:
-- At small scale: Variant wins due to better efficiency (lower A)
-- At large scale: Baseline wins due to better scaling (higher α)
+A variant that has *better offsets but scales worse* presents an interesting tradeoff:
+- At small scale: Variant wins due to lower A and B
+- At large scale: Baseline wins due to better scaling (higher α, β)
 - The **crossover point** is where baseline catches up
 
 **When Scaling Differences Matter**
@@ -93,18 +93,18 @@ The table below gives practical guidance on how to interpret differences in scal
 
 | α, β vs baseline | A, B vs baseline | E vs baseline | Verdict |
 |------------------|------------------|---------------|---------|
-| Higher (scales better) | Lower (more efficient) | Lower | **Best case** — wins at all scales |
-| Higher (scales better) | Lower (more efficient) | Higher | Wins at most scales, but baseline may catch up at very large scale due to E floor |
-| Higher (scales better) | Higher (less efficient) | Lower | Likely wins at large scale (better scaling + lower floor) |
-| Higher (scales better) | Higher (less efficient) | Higher | Mixed — scaling helps but E hurts; depends on target scale |
-| Similar | Lower (more efficient) | Lower | **Good** — consistent efficiency gain with lower floor |
-| Similar | Lower (more efficient) | Higher | Wins at small/medium scale, may lose at very large scale |
-| Similar | Higher (less efficient) | Lower | May recover at very large scale due to lower E |
-| Similar | Higher (less efficient) | Higher | **Bad** — loses at all scales |
-| Lower (scales worse) | Lower (more efficient) | Lower | Complex tradeoff — E helps at large scale but worse α/β hurts |
-| Lower (scales worse) | Lower (more efficient) | Higher | Wins at small scale only — crossover point exists |
-| Lower (scales worse) | Higher (less efficient) | Lower | Only hope is very large scale where E dominates |
-| Lower (scales worse) | Higher (less efficient) | Higher | **Worst case** — loses at all scales |
+| Higher (scales better) | Lower (better offsets) | Lower | **Best case** — wins at all scales |
+| Higher (scales better) | Lower (better offsets) | Higher | Wins at most scales, but baseline may catch up at very large scale due to E floor |
+| Higher (scales better) | Higher (worse offsets) | Lower | Likely wins at large scale (better scaling + lower floor) |
+| Higher (scales better) | Higher (worse offsets) | Higher | Mixed — scaling helps but E hurts; depends on target scale |
+| Similar | Lower (better offsets) | Lower | **Good** — consistent gains at all scales |
+| Similar | Lower (better offsets) | Higher | Wins at small/medium scale, may lose at very large scale |
+| Similar | Higher (worse offsets) | Lower | May recover at very large scale due to lower E |
+| Similar | Higher (worse offsets) | Higher | **Bad** — loses at all scales |
+| Lower (scales worse) | Lower (better offsets) | Lower | Complex tradeoff — E helps at large scale but worse α/β hurts |
+| Lower (scales worse) | Lower (better offsets) | Higher | Wins at small scale only — crossover point exists |
+| Lower (scales worse) | Higher (worse offsets) | Lower | Only hope is very large scale where E dominates |
+| Lower (scales worse) | Higher (worse offsets) | Higher | **Worst case** — loses at all scales |
 
 ### Targeting Specific Model and Dataset Sizes
 
