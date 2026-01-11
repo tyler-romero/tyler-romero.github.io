@@ -1,8 +1,8 @@
 ---
 title: Thinking about Scaling Laws
-subtitle: How can we use scaling laws to train stronger LLMs at lower cost?
+subtitle: How can we use scaling laws to train stronger LLMs?
 date: 2026-01-10T00:00:00-08:00
-blurb: How can we use scaling laws to make better decisions when training LLMs?
+blurb: How can we use scaling laws to train stronger LLMs?
 tags: ["post", "scaling-laws", "chinchilla", "llms"]
 ---
 
