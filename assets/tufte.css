@@ -47,7 +47,10 @@
   --text-color: #111;
 }
 
-/* Tufte CSS styles */
+/* ========================================================================
+   Base Tufte CSS styles
+   ======================================================================== */
+
 html {
   font-size: 10px;
   scroll-behavior: smooth;
@@ -164,7 +167,6 @@ ul {
 p {
   margin-top: 1.4rem;
   margin-bottom: 1.4rem;
-  /* padding-right: 0; */
   vertical-align: baseline;
 }
 
@@ -190,7 +192,6 @@ div.epigraph > blockquote > footer {
 div.epigraph > blockquote > footer > cite {
   font-style: italic;
 }
-/* end chapter epigraphs styles */
 
 div.math {
   /* For KaTeX */
@@ -422,118 +423,9 @@ label.margin-toggle:not(.sidenote-number) {
   height: 100%;
 }
 
-@media (max-width: 760px) {
-  body {
-    width: 84%;
-    padding-left: 8%;
-    padding-right: 8%;
-  }
-
-  hr,
-  section > p,
-  section > footer,
-  section > table {
-    width: 100%;
-  }
-
-  pre > code {
-    width: 97%;
-  }
-
-  section > dl,
-  section > ol,
-  section > ul {
-    width: 90%;
-  }
-
-  figure {
-    max-width: 90%;
-  }
-
-  figcaption,
-  figure.fullwidth figcaption {
-    margin-right: 0%;
-    max-width: none;
-  }
-
-  blockquote {
-    margin-left: 1.5em;
-    margin-right: 0em;
-  }
-
-  blockquote p,
-  blockquote footer {
-    width: 100%;
-  }
-
-  label.margin-toggle:not(.sidenote-number) {
-    display: inline;
-  }
-
-  .sidenote,
-  .marginnote {
-    display: none;
-  }
-
-  .desktop-only {
-    display: none;
-  }
-
-  .margin-toggle:checked + .sidenote,
-  .margin-toggle:checked + .marginnote {
-    display: block;
-    float: left;
-    left: 1rem;
-    clear: both;
-    width: 95%;
-    margin: 1rem 2.5%;
-    vertical-align: baseline;
-    position: relative;
-  }
-
-  label {
-    cursor: pointer;
-  }
-
-  div.table-wrapper,
-  table {
-    width: 85%;
-  }
-
-  img,
-  video {
-    width: 100%;
-  }
-
-  .post-list {
-    width: 100%;
-  }
-
-  .post-list li {
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .post-date {
-    width: auto;
-  }
-
-  .item-list {
-    width: 100%;
-  }
-
-  hr.section-divider {
-    width: 30%;
-    margin: 0 auto 1em;
-  }
-
-  .toc {
-    width: 100%;
-  }
-
-}
-
-/* Custom Classes */
+/* ========================================================================
+   Custom classes
+   ======================================================================== */
 
 .profile-picture {
   border-radius: 5%;
@@ -552,7 +444,6 @@ header {
 nav a,
 nav a:link,
 nav a:visited {
-  /* top block */
   font-size: 1.4rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -721,8 +612,6 @@ code[class*="language-"] {
   color: var(--link-color);
 }
 
-
-
 /* Reading progress bar */
 .progress-bar {
   position: fixed;
@@ -735,7 +624,121 @@ code[class*="language-"] {
   transition: width 0.1s linear;
 }
 
-/* Print styles */
+/* ========================================================================
+   Mobile
+   ======================================================================== */
+
+@media (max-width: 760px) {
+  body {
+    width: 84%;
+    padding-left: 8%;
+    padding-right: 8%;
+  }
+
+  hr,
+  section > p,
+  section > footer,
+  section > table {
+    width: 100%;
+  }
+
+  pre > code {
+    width: 97%;
+  }
+
+  section > dl,
+  section > ol,
+  section > ul {
+    width: 90%;
+  }
+
+  figure {
+    max-width: 90%;
+  }
+
+  figcaption,
+  figure.fullwidth figcaption {
+    margin-right: 0%;
+    max-width: none;
+  }
+
+  blockquote {
+    margin-left: 1.5em;
+    margin-right: 0em;
+  }
+
+  blockquote p,
+  blockquote footer {
+    width: 100%;
+  }
+
+  label.margin-toggle:not(.sidenote-number) {
+    display: inline;
+  }
+
+  .sidenote,
+  .marginnote {
+    display: none;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .margin-toggle:checked + .sidenote,
+  .margin-toggle:checked + .marginnote {
+    display: block;
+    float: left;
+    left: 1rem;
+    clear: both;
+    width: 95%;
+    margin: 1rem 2.5%;
+    vertical-align: baseline;
+    position: relative;
+  }
+
+  label {
+    cursor: pointer;
+  }
+
+  div.table-wrapper,
+  table {
+    width: 85%;
+  }
+
+  img,
+  video {
+    width: 100%;
+  }
+
+  .item-list,
+  .post-list {
+    width: 100%;
+  }
+
+  .post-list li {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .post-date {
+    width: auto;
+  }
+
+  hr.section-divider {
+    width: 30%;
+    margin: 0 auto 1em;
+  }
+
+  .toc {
+    width: 100%;
+  }
+}
+
+/* ========================================================================
+   Print
+   ======================================================================== */
+
 @media print {
   nav,
   footer,
