@@ -31,6 +31,7 @@
 <!-- Goat Counter for basic view counting w/o cookies -->
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
+        
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -43,7 +44,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-01-10T08:00:00.000Z",
-            "dateModified": "2026-01-11T02:23:05.624Z",
+            "dateModified": "2026-02-18T00:38:42.619Z",
             "url": "https://www.tylerromero.com/posts/2026-01-scaling-laws/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -55,27 +56,31 @@
             "articleBody": "Note: This post is a work in progress. I will continue to update and expand it over time. Scaling laws are one of the few tools we have for predicting model performance before committing serious compute. When a single training run can cost millions of dollars and take months, the ability to extrapolate from small-scale experiments becomes invaluable. In this post, I want to explore how we can use scaling laws not just as descriptive summaries, but as decision-making frameworks for comparing..."
             }
         </script>
+
     </head>
-    <header>
-        <nav class="topbar">
-            <div class="right-aligned-links">
-                <a href="/" class="no-tufte-underline" style="color: #246eb9;
-                          margin-right: 3%">Tyler Romero</a>
-                <a href="/#posts" class="no-tufte-underline">posts</a>
-                <span class="desktop-only">
-                    <a href="/#projects" class="no-tufte-underline">projects</a>
-                    <a href="/#reading-list" class="no-tufte-underline">reading list</a>
-                </span>
-            </div>
-        </nav>
-    </header>
     <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/#posts" class="no-tufte-underline">posts</a>
+                    <span class="desktop-only">
+                        <a href="/#projects" class="no-tufte-underline">projects</a>
+                        <a href="/#reading-list" class="no-tufte-underline">reading list</a>
+                    </span>
+                    
+                </div>
+            </nav>
+        </header>
         <article>
+            
             <h1>Thinking about Scaling Laws
 </h1>
             <p class="subtitle">How can we use scaling laws to train stronger LLMs?
 </p>
             <p class="date">January 10, 2026</p>
+
             <section><p><em>Note: This post is a work in progress. I will continue to update and expand it over time.</em></p><p>Scaling laws are one of the few tools we have for predicting model performance before committing serious compute. When a single training run can cost millions of dollars and take months, the ability to extrapolate from small-scale experiments becomes invaluable. In this post, I want to explore how we can use scaling laws not just as descriptive summaries, but as decision-making frameworks for comparing architectural choices and planning training runs.</p><p>This post assumes familiarity with the seminal papers <a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a> (Kaplan et al.) and <a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models</a> (Hoffmann et al.). If you haven’t read them, I’d recommend at least skimming Hoffmann et al. (the “Chinchilla” paper) first.</p></section>
 <section><h2 id="the-chinchilla-scaling-law">The Chinchilla Scaling Law</h2><p>The scaling laws from Hoffmann et al., also known as the “Chinchilla” scaling laws, are the basis for the billions of dollars being spent on training larger models on more data. They are empirical predictions—validated across many orders of magnitude of scale—about how much compute (in terms of data and model size) is required to lower loss. Chinchilla also demonstrates that model size and data should be scaled up at roughly the same rate, giving rise to the well-known heuristic of “20 tokens per parameter” as the optimal ratio.</p><p>The Chinchilla paper uses three separate approaches to arrive at the same “compute-optimal” scaling results. In particular, the third approach models the final loss of a language model as a function of model size <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span></span></span></span></span> and training data <span class="inlineMath"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>D</mi></mrow><annotation encoding="application/x-tex">D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.68333em;vertical-align:0em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span></span></span></span></span> in the following form:</p><div class="math"><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>L</mi><mo>(</mo><mi>N</mi><mo separator="true">,</mo><mi>D</mi><mo>)</mo><mo>=</mo><mi>E</mi><mo>+</mo><mfrac><mi>A</mi><msup><mi>N</mi><mi>α</mi></msup></mfrac><mo>+</mo><mfrac><mi>B</mi><msup><mi>D</mi><mi>β</mi></msup></mfrac></mrow><annotation encoding="application/x-tex">L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault">L</span><span class="mopen">(</span><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.76666em;vertical-align:-0.08333em;"></span><span class="mord mathdefault" style="margin-right:0.05764em;">E</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.04633em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.36033em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.590392em;"><span style="top:-2.9890000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.0037em;">α</span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault">A</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222222222222222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height:2.04633em;vertical-align:-0.686em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.36033em;"><span style="top:-2.314em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord"><span class="mord mathdefault" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7751079999999999em;"><span style="top:-2.9890000000000003em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.05278em;">β</span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.677em;"><span class="pstrut" style="height:3em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.686em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></span></div><p>Where:</p><ul>
 <li><strong>N</strong> = number of model parameters</li>
@@ -216,21 +221,17 @@
 
         </article>
         <footer>
-            <footer>
-    <hr class="slender">
+                <hr class="slender">
     <p class="social-links">
-        <a href="/"><span class="fas fa-home"></span></a>
-        &nbsp
-        <a href="https://twitter.com/tyleraromero"><i class="fab fa-twitter-square"></i></a>
-        <a href="https://github.com/tyler-romero"><i class="fab fa-github-square"></i></a>
-        <a href="https://linkedin.com/in/tylerromero"><i class="fab fa-linkedin"></i></a>
-        <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ"><i class="fas fa-link"></i></a>
-        <a href="mailto:tyler.alexander.romero+site@gmail.com"><i class="fas fa-envelope-square"></i></a>
-        &nbsp
-        <a href="/feed.xml"><i class="fas fa-rss-square"></i></a>
+        <a href="/" aria-label="Home"><span class="fas fa-home"></span></a>
+        <a href="https://twitter.com/tyleraromero" aria-label="Twitter"><i class="fab fa-twitter-square"></i></a>
+        <a href="https://github.com/tyler-romero" aria-label="GitHub"><i class="fab fa-github-square"></i></a>
+        <a href="https://linkedin.com/in/tylerromero" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+        <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ" aria-label="Google Scholar"><i class="fas fa-link"></i></a>
+        <a href="mailto:tyler.alexander.romero+site@gmail.com" aria-label="Email"><i class="fas fa-envelope-square"></i></a>
+        <a href="/feed.xml" aria-label="RSS Feed"><i class="fas fa-rss-square"></i></a>
     </p>
-    <p class="copyright" style="font-size: 1.0em;">&copy; 2026 Tyler Romero</p>
-</footer>
+    <p class="copyright">&copy; 2026 Tyler Romero</p>
 
         </footer>
     </body>
