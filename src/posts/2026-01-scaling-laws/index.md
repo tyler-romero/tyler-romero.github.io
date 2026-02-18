@@ -4,6 +4,7 @@ subtitle: How can we use scaling laws to train stronger LLMs?
 date: 2026-01-10T00:00:00-08:00
 blurb: How can we use scaling laws to train stronger LLMs?
 tags: ["post", "scaling-laws", "chinchilla", "llms"]
+math: true
 ---
 
 *Note: This post is a work in progress. I will continue to update and expand it over time.*

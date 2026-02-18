@@ -21,7 +21,7 @@
       href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..700&display=swap" />
 <link rel="preload"
       as="font"
-      type="font/woff2"
+      type="font/woff"
       crossorigin
       href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff" />
 <!-- Open Graph -->
@@ -38,6 +38,7 @@
 {% if featured_image %}<meta name="twitter:image" content="{{ site.url }}{{ featured_image }}" />{% endif %}
 {% if attachments %}{{ attachments | linkToHead | safe }}{% endif %}
 {% if libraries %}{{ libraries | linkToHead | safe }}{% endif %}
+{% if math %}
 <!-- KaTeX Support -->
 <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
@@ -52,9 +53,13 @@
         integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk"
         crossorigin="anonymous"
         onload="renderMathInElement(document.body);"></script>
+{% endif %}
+{% if bibtex %}
 <!-- BibTeX Support -->
-<script type="text/javascript"
+<script defer
         src="https://cdn.jsdelivr.net/gh/pcooksey/bibtex-js@1.0.0/src/bibtex_js.min.js"></script>
+{% endif %}
+{% if code %}
 <!-- Prism.js Syntax Highlighting -->
 <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
@@ -66,10 +71,9 @@
         src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
 <script defer
         src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
+{% endif %}
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css" />
-<link rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
 <!-- Goat Counter for basic view counting w/o cookies -->
 <script data-goatcounter="https://tylerromero.goatcounter.com/count"
         async

@@ -4,6 +4,7 @@ subtitle: BADGE (like other greedy acquisition algorithms) can be trivially exte
 date: 2025-01-05T00:00:00-08:00
 blurb: We show how BADGE's batch selection strategy can be adapted to handle flexible batch sizes without compromising its ability to select diverse, informative samples - enabling more practical active learning workflows.
 tags: ["post", "machine-learning", "active-learning", "BADGE", "batch-active-learning", "k-means++", "MNIST", "multidimensional-scaling", "uncertainty-sampling"]
+code: true
 ---
 
 [Batch Active learning by Diverse Gradient Embeddings (BADGE)](https://arxiv.org/abs/1906.03671) is a simple and effective batch-based [active learning](https://en.wikipedia.org/wiki/Active_learning_(machine_learning)) method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.

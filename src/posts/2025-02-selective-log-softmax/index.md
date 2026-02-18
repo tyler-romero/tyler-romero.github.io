@@ -4,6 +4,8 @@ subtitle: Slash VRAM usage by half when computing log probs by selectively apply
 date: 2025-02-06T00:00:00-08:00
 blurb: Reduce VRAM usage by half when computing log probabilities by selectively applying log-softmax to only the necessary tokens. Perfect for many RLHF post-training algorithms (such as PPO and GRPO) where typically only one token's log probability is needed from the entire vocabulary at each sequence position.
 tags: ["post", "grpo", "ppo", "logprobs", "logits", "log-softmax", "log_softmax", "logsumexp", "log-probabilities"]
+math: true
+code: true
 ---
 
 When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses `log_softmax` which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM[^vram]. This is the code you might see:
