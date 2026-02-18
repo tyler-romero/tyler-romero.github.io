@@ -1,35 +1,6 @@
 @charset "UTF-8";
 
-/* Import ET Book styles
-   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */
-
-@font-face {
-  font-family: "et-book";
-  src: url("et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "et-book";
-  src: url("et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "et-book";
-  src: url("et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff")
-    format("woff");
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* ET Book old-style figures for dates and sidenote numbers */
 @font-face {
   font-family: "et-book-roman-old-style";
   src: url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff")
@@ -86,7 +57,7 @@ body {
   margin-right: auto;
   padding-left: 8%;
   font-family:
-    "Crimson Pro", et-book, Palatino, "Palatino Linotype", "Palatino LT STD",
+    "Crimson Pro", Palatino, "Palatino Linotype", "Palatino LT STD",
     "Book Antiqua", Georgia, serif;
   background-color: var(--bg-color);
   color: var(--text-color);
@@ -476,6 +447,12 @@ nav a:visited {
   gap: 0.4em;
 }
 
+.social-links .icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.15em;
+}
+
 .copyright {
   font-size: 1rem;
 }
@@ -534,17 +511,6 @@ hr.section-divider {
 .post-info .item-description {
   margin-top: 0.2em;
   margin-bottom: 0;
-}
-
-.post-tag {
-  display: inline-block;
-  font-size: 0.85rem;
-  padding: 0.1em 0.5em;
-  margin-right: 0.3em;
-  margin-top: 0.3em;
-  border-radius: 3px;
-  background-color: rgba(86, 130, 89, 0.1);
-  color: #555;
 }
 
 /* Code block styling */
