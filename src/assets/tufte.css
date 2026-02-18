@@ -43,8 +43,7 @@
 :root {
   --link-color: #568259;
   --brand-color: #246eb9;
-  --bg-color: #fffff0;
-  --text-shadow-color: #fcfcf5;
+  --bg-color: #fafaf8;
   --text-color: #111;
 }
 
@@ -84,8 +83,8 @@ body {
   margin-right: auto;
   padding-left: 8%;
   font-family:
-    et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua",
-    Georgia, serif;
+    "Crimson Pro", et-book, Palatino, "Palatino Linotype", "Palatino LT STD",
+    "Book Antiqua", Georgia, serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   max-width: 1400px;
@@ -258,73 +257,23 @@ figure.fullwidth figcaption {
   margin-right: 24%;
 }
 
-/* Links: replicate underline that clears descenders */
+/* Links */
 a:link,
 a:visited {
   color: var(--link-color);
+  text-decoration: underline;
+  text-decoration-skip-ink: auto;
+  text-underline-offset: 2px;
+  text-decoration-color: rgba(86, 130, 89, 0.35);
+  transition: text-decoration-color 0.2s ease;
+}
+
+a:hover {
+  text-decoration-color: var(--link-color);
 }
 
 .no-tufte-underline:link {
-  background: unset;
-  text-shadow: unset;
-}
-
-a:link,
-.tufte-underline,
-.hover-tufte-underline:hover {
   text-decoration: none;
-  background:
-    linear-gradient(var(--text-shadow-color), var(--text-shadow-color)),
-    linear-gradient(var(--text-shadow-color), var(--text-shadow-color)),
-    linear-gradient(currentColor, currentColor);
-  background-size:
-    0.05em 1px,
-    0.05em 1px,
-    1px 1px;
-  background-repeat: no-repeat, no-repeat, repeat-x;
-  text-shadow:
-    0.03em 0 var(--text-shadow-color),
-    -0.03em 0 var(--text-shadow-color),
-    0 0.03em var(--text-shadow-color),
-    0 -0.03em var(--text-shadow-color),
-    0.06em 0 var(--text-shadow-color),
-    -0.06em 0 var(--text-shadow-color),
-    0.09em 0 var(--text-shadow-color),
-    -0.09em 0 var(--text-shadow-color),
-    0.12em 0 var(--text-shadow-color),
-    -0.12em 0 var(--text-shadow-color),
-    0.15em 0 var(--text-shadow-color),
-    -0.15em 0 var(--text-shadow-color);
-  background-position:
-    0% 93%,
-    100% 93%,
-    0% 93%;
-}
-
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  a:link,
-  .tufte-underline,
-  .hover-tufte-underline:hover {
-    background-position-y: 87%, 87%, 87%;
-  }
-}
-
-a:link::selection,
-a:link::-moz-selection {
-  text-shadow:
-    0.03em 0 #b4d5fe,
-    -0.03em 0 #b4d5fe,
-    0 0.03em #b4d5fe,
-    0 -0.03em #b4d5fe,
-    0.06em 0 #b4d5fe,
-    -0.06em 0 #b4d5fe,
-    0.09em 0 #b4d5fe,
-    -0.09em 0 #b4d5fe,
-    0.12em 0 #b4d5fe,
-    -0.12em 0 #b4d5fe,
-    0.15em 0 #b4d5fe,
-    -0.15em 0 #b4d5fe;
-  background: #b4d5fe;
 }
 
 /* Sidenotes, margin notes, figures, captions */
@@ -765,12 +714,9 @@ pre > code {
     content: "[" counter(sidenote-counter) "] ";
   }
 
-  a:link,
-  .tufte-underline,
-  .hover-tufte-underline:hover {
-    background: none;
-    text-shadow: none;
+  a:link {
     text-decoration: underline;
+    text-decoration-color: currentColor;
   }
 
   a[href^="http"]::after {
