@@ -29,30 +29,45 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         You can reach me via <a href="mailto:tyler.alexander.romero+site@gmail.com">email</a> or <a href="https://www.linkedin.com/in/tylerromero/">LinkedIn</a> message.
     </p>
 </section>
+<hr class="section-divider" />
 <section>
     <h2 id="posts">Posts</h2>
-    <ul>
+    <ul class="post-list">
         {% for p in collections.post | reverse %}
             <li>
-                <a href="{{ p.url }}">{{ p.data.title }}</a>
-                <p class="item-description">
-                    <small><em>{{ p.data.date | postDate }}</em> - {{ p.data.blurb }}</small>
-                </p>
+                <span class="post-date">{{ p.data.date | postDate }}</span>
+                <div class="post-info">
+                    <a href="{{ p.url }}">{{ p.data.title }}</a>
+                    <p class="item-description">
+                        <small>{{ p.data.blurb }}</small>
+                    </p>
+                    {% if p.data.tags %}
+                        <div>
+                            {% for tag in p.data.tags %}
+                                {% if tag != "post" %}
+                                    <span class="post-tag">{{ tag }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
             </li>
         {% endfor %}
     </ul>
 </section>
+<hr class="section-divider" />
 <section>
     <h2 id="publications">Publications & Preprints</h2>
-    <ul>
+    <ul class="item-list">
         <li>
             <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a> <small>Team OLMo. <em>arXiv preprint arXiv:2512.13961</em>, 2025.</small>
         </li>
     </ul>
 </section>
+<hr class="section-divider" />
 <section>
     <h2 id="projects">Projects</h2>
-    <ul>
+    <ul class="item-list">
         <li>
             <a href="https://github.com/linkedin/Liger-Kernel">Liger-Kernel</a>
             <p class="item-description">
@@ -70,9 +85,10 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         </li>
     </ul>
 </section>
+<hr class="section-divider" />
 <section>
     <h2 id="reading-list">Favorite Reads</h2>
-    <ul>
+    <ul class="item-list">
         <li>
             <a href="https://huggingface.co/spaces/nanotron/ultrascale-playbook">The Ultra-Scale Playbook: Training LLMs on GPU Clusters</a>
             <p class="item-description">
@@ -123,9 +139,10 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         </li>
     </ul>
 </section>
+<hr class="section-divider" />
 <section>
     <h2 id="fun">Fun Stuff</h2>
-    <ul>
+    <ul class="item-list">
         <li>
             <a href="/recipe-box">Recipe Box</a>
             <p class="item-description">
@@ -140,6 +157,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         </li>
     </ul>
 </section>
+<hr class="section-divider" />
 <section>
     <h2 id="website">Website</h2>
     <p>

@@ -35,6 +35,18 @@
       type="font/woff2"
       crossorigin
       href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff" />
+<!-- Open Graph -->
+<meta property="og:title" content="{{ metaTitle | markdownInline | striptags }}" />
+<meta property="og:description" content="{{ metaDescription | markdownInline | striptags }}" />
+<meta property="og:url" content="{{ site.url }}{{ page.url }}" />
+<meta property="og:type" content="{% if layout == 'posts' %}article{% else %}website{% endif %}" />
+<meta property="og:site_name" content="{{ site.title }}" />
+{% if featured_image %}<meta property="og:image" content="{{ site.url }}{{ featured_image }}" />{% endif %}
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="{{ metaTitle | markdownInline | striptags }}" />
+<meta name="twitter:description" content="{{ metaDescription | markdownInline | striptags }}" />
+{% if featured_image %}<meta name="twitter:image" content="{{ site.url }}{{ featured_image }}" />{% endif %}
 {% if attachments %}{{ attachments | linkToHead | safe }}{% endif %}
 {% if libraries %}{{ libraries | linkToHead | safe }}{% endif %}
 <!-- KaTeX Support -->

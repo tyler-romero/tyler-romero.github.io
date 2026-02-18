@@ -28,7 +28,19 @@
 {% endblock %}
 
 {% block article_header %}
+            <div class="progress-bar"></div>
             <h1>{{ title | markdownInline | safe }}</h1>
             {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
             {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
+            <script>
+                (function() {
+                    var bar = document.querySelector('.progress-bar');
+                    window.addEventListener('scroll', function() {
+                        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                        var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+                        bar.style.width = progress + '%';
+                    });
+                })();
+            </script>
 {% endblock %}

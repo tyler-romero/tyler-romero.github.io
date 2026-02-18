@@ -51,6 +51,7 @@
 /* Tufte CSS styles */
 html {
   font-size: 10px;
+  scroll-behavior: smooth;
 }
 /* Thanks siboehm */
 @media screen and (min-width: 800px) {
@@ -554,6 +555,28 @@ label.margin-toggle:not(.sidenote-number) {
   video {
     width: 100%;
   }
+
+  .post-list {
+    width: 100%;
+  }
+
+  .post-list li {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .post-date {
+    width: auto;
+  }
+
+  .item-list {
+    width: 100%;
+  }
+
+  hr.section-divider {
+    width: 30%;
+    margin: 2em auto;
+  }
 }
 
 /* Custom Classes */
@@ -561,6 +584,7 @@ label.margin-toggle:not(.sidenote-number) {
 .profile-picture {
   border-radius: 5%;
   width: 97.5%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 nav a,
@@ -599,4 +623,163 @@ nav a:visited {
 
 .copyright {
   font-size: 1rem;
+}
+
+/* Section dividers */
+hr.section-divider {
+  width: 20%;
+  margin: 2em 0 2em 17.5%;
+  border-top: 1px solid #ccc;
+  clear: both;
+}
+
+/* Styled lists */
+.item-list,
+.post-list {
+  list-style: none;
+  padding-left: 0;
+  width: 55%;
+}
+
+.item-list li,
+.post-list li {
+  padding: 0.4em 0.4em;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.item-list li:hover,
+.post-list li:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.item-list li + li {
+  margin-top: 0.25rem;
+}
+
+.post-list li {
+  display: flex;
+  gap: 1.2em;
+}
+
+.post-date {
+  font-family: et-book-roman-old-style;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  width: 7em;
+  color: #555;
+  padding-top: 0.15em;
+}
+
+.post-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-info .item-description {
+  margin-top: 0.2em;
+  margin-bottom: 0;
+}
+
+.post-tag {
+  display: inline-block;
+  font-size: 0.85rem;
+  padding: 0.1em 0.5em;
+  margin-right: 0.3em;
+  margin-top: 0.3em;
+  border-radius: 3px;
+  background-color: rgba(86, 130, 89, 0.1);
+  color: #555;
+}
+
+/* Code block styling */
+pre > code {
+  background-color: #f5f5f0;
+  border-radius: 4px;
+  padding: 1em 1.2em;
+  border-left: 3px solid var(--link-color);
+}
+
+/* Reading progress bar */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 3px;
+  background-color: var(--link-color);
+  z-index: 1000;
+  transition: width 0.1s linear;
+}
+
+/* Print styles */
+@media print {
+  nav,
+  footer,
+  .progress-bar,
+  label.margin-toggle {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+    width: 100%;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
+
+  article {
+    padding: 0;
+  }
+
+  section > p,
+  section > footer,
+  section > table,
+  section > dl,
+  section > ol,
+  section > ul,
+  hr,
+  blockquote p,
+  blockquote footer,
+  .item-list,
+  .post-list {
+    width: 100%;
+  }
+
+  pre > code {
+    width: 95%;
+  }
+
+  .sidenote,
+  .marginnote {
+    float: none;
+    display: block;
+    margin: 0.5em 0;
+    width: 100%;
+    font-size: 0.9rem;
+    color: #333;
+  }
+
+  .sidenote::before {
+    content: "[" counter(sidenote-counter) "] ";
+  }
+
+  a:link,
+  .tufte-underline,
+  .hover-tufte-underline:hover {
+    background: none;
+    text-shadow: none;
+    text-decoration: underline;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #555;
+  }
+
+  figure {
+    max-width: 100%;
+  }
 }
