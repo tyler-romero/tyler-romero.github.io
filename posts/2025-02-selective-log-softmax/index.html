@@ -17,6 +17,18 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<!-- Open Graph -->
+<meta property="og:title" content="Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax">
+<meta property="og:description" content="Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest">
+<meta property="og:url" content="https://www.tylerromero.com/posts/2025-02-selective-log-softmax/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax">
+<meta name="twitter:description" content="Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest">
+
 
 
 <!-- KaTeX Support -->
@@ -44,7 +56,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2026-02-18T00:38:42.619Z",
+            "dateModified": "2026-02-18T01:02:43.380Z",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -75,11 +87,23 @@
         </header>
         <article>
             
+            <div class="progress-bar"></div>
             <h1>Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax
 </h1>
             <p class="subtitle">Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest
 </p>
             <p class="date">February 6, 2025</p>
+            <script>
+                (function() {
+                    var bar = document.querySelector('.progress-bar');
+                    window.addEventListener('scroll', function() {
+                        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                        var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+                        bar.style.width = progress + '%';
+                    });
+                })();
+            </script>
 
             <section><p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM<label for="sd-vram-is-a-gpu-s-fast" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-vram-is-a-gpu-s-fast" class="margin-toggle"><span class="sidenote">VRAM is a GPU’s fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span>. This is the code you might see:</p>
 <pre><code class="language-python">def naive_selective_log_softmax(logits, index):

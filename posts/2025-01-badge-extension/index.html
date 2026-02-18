@@ -17,6 +17,18 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<!-- Open Graph -->
+<meta property="og:title" content="An Extension to BADGE Active Learning for Variable-Sized Batches">
+<meta property="og:description" content="BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data">
+<meta property="og:url" content="https://www.tylerromero.com/posts/2025-01-badge-extension/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="An Extension to BADGE Active Learning for Variable-Sized Batches">
+<meta name="twitter:description" content="BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data">
+
 
 
 <!-- KaTeX Support -->
@@ -44,7 +56,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-02-18T00:38:42.619Z",
+            "dateModified": "2026-02-18T01:02:43.380Z",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -75,11 +87,23 @@
         </header>
         <article>
             
+            <div class="progress-bar"></div>
             <h1>An Extension to BADGE Active Learning for Variable-Sized Batches
 </h1>
             <p class="subtitle">BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data
 </p>
             <p class="date">January 5, 2025</p>
+            <script>
+                (function() {
+                    var bar = document.querySelector('.progress-bar');
+                    window.addEventListener('scroll', function() {
+                        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                        var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+                        bar.style.width = progress + '%';
+                    });
+                })();
+            </script>
 
             <section><p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p><p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-less-than-a-href" class="margin-toggle"><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model’s uncertainty to select points for labeling.
 In a batch setting, this can degenerate into selecting points that are all very similar, leading to suboptimal performance. Take this example on MNIST, where uncertainty sampling selects eight similar-looking <code>1</code>s in a batch of nine:

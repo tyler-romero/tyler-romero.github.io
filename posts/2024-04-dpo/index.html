@@ -17,6 +17,18 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<!-- Open Graph -->
+<meta property="og:title" content="Direct Preference Optimization Explained In-depth">
+<meta property="og:description" content="Simpler preference-tuning without reinforcement learning">
+<meta property="og:url" content="https://www.tylerromero.com/posts/2024-04-dpo/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Direct Preference Optimization Explained In-depth">
+<meta name="twitter:description" content="Simpler preference-tuning without reinforcement learning">
+
 
 
 <!-- KaTeX Support -->
@@ -44,7 +56,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2024-04-13T08:00:00.000Z",
-            "dateModified": "2026-02-18T00:38:42.619Z",
+            "dateModified": "2026-02-18T01:02:43.380Z",
             "url": "https://www.tylerromero.com/posts/2024-04-dpo/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -75,11 +87,23 @@
         </header>
         <article>
             
+            <div class="progress-bar"></div>
             <h1>Direct Preference Optimization Explained In-depth
 </h1>
             <p class="subtitle">Simpler preference-tuning without reinforcement learning
 </p>
             <p class="date">April 13, 2024</p>
+            <script>
+                (function() {
+                    var bar = document.querySelector('.progress-bar');
+                    window.addEventListener('scroll', function() {
+                        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+                        var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+                        bar.style.width = progress + '%';
+                    });
+                })();
+            </script>
 
             <section><p>With my first blog post, I want to cover an excellent paper that was published last year: <a href="https://arxiv.org/abs/2305.18290">Direct Preference Optimization: Your Language Model is Secretly a Reward Model</a> by Rafailov et al.</p><p>Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF. However, fair warning that there will be some math involved - mostly probability, algebra, and optimization - but I will do my best to explain everything clearly.</p></section>
 <section><h2 id="training-tuning-and-aligning-llms">Training, tuning, and aligning LLMs</h2><p>To contextualize DPO, and preference-tuning in general, let’s review the modern process for creating language models such as ChatGPT or Claude. The following steps are sequential, with each one building upon the previous:</p><ol>
