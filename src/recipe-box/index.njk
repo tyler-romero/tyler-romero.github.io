@@ -9,9 +9,7 @@ tags: ["home-cooking", "recipe-box"]
         <span class="marginnote">
             <img src="/assets/img/chef-pic.jpeg"
                  alt="me"
-                 class="profile-picture"
-                 style="max-width: 749px;
-                        height: auto" />
+                 class="profile-picture responsive-image" />
         </span>
         I love cooking despite being a very middle of the road home cook. I find it to be relaxing and I like that I get to actually make something in the physical world.
         I keep an old-school recipe box filled with note cards of recipes that I enjoyed making and that turned out well. So I thought
@@ -22,12 +20,11 @@ tags: ["home-cooking", "recipe-box"]
     </p>
 </section>
 <section>
-    <h2 id="posts"></h2>
+    <h2 id="recipes">Recipes</h2>
     <ul>
         {% for p in collections.recipe | sort(attribute='date') %}
             <li>
                 <a href="{{ p.url }}">{{ p.data.title }}</a>
-                &nbsp
                 <small>- {{ p.data.blurb }}</small>
             </li>
         {% endfor %}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% include "head.njk" %}
+        {% block structured_data %}{% endblock %}
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/"
+                       class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    {% block nav_links %}
+                    <a href="/#posts" class="no-tufte-underline">posts</a>
+                    <span class="desktop-only">
+                        <a href="/#projects" class="no-tufte-underline">projects</a>
+                        <a href="/#reading-list" class="no-tufte-underline">reading list</a>
+                    </span>
+                    {% endblock %}
+                </div>
+            </nav>
+        </header>
+        <article>
+            {% block article_header %}{% endblock %}
+            {{ content | safe }}
+        </article>
+        <footer>
+            {% include "footer.njk" %}
+        </footer>
+    </body>
+</html>

@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        {% include "head.njk" %}
+{% extends "base.njk" %}
+
+{% block structured_data %}
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -24,28 +23,4 @@
             "keywords": "{{ tags | join(', ') }}"
             }
         </script>
-    </head>
-    <header>
-        <nav class="topbar">
-            <div class="right-aligned-links">
-                <a href="/"
-                   class="no-tufte-underline"
-                   style="color: #246eb9;
-                          margin-right: 3%">Tyler Romero</a>
-                <a href="/#posts" class="no-tufte-underline">posts</a>
-                <span class="desktop-only">
-                    <a href="/#projects" class="no-tufte-underline">projects</a>
-                    <a href="/#reading-list" class="no-tufte-underline">reading list</a>
-                </span>
-            </nav>
-        </header>
-        <body>
-            <article>
-                {# NOTE: no title in this layout#}
-                {{ content | safe }}
-            </article>
-            <footer>
-                {% include "footer.njk" %}
-            </footer>
-        </body>
-    </html>
+{% endblock %}

@@ -1,7 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        {% include "head.njk" %}
+{% extends "base.njk" %}
+
+{% block structured_data %}
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -26,27 +25,14 @@
             "articleBody": "{{ content | replace('<p>', '') | replace('</p>', ' ') | striptags | truncate(500) | escape }}"
             }
         </script>
-    </head>
-    <header>
-        <nav class="topbar">
-            <div class="right-aligned-links">
-                <a href="/"
-                   class="no-tufte-underline"
-                   style="color: #246eb9;
-                          margin-right: 3%">Tyler Romero</a>
-                <a href="/recipe-box" class="no-tufte-underline">Recipe Box</a>
-            </div>
-        </nav>
-    </header>
-    <body>
-        <article>
+{% endblock %}
+
+{% block nav_links %}
+                    <a href="/recipe-box" class="no-tufte-underline">Recipe Box</a>
+{% endblock %}
+
+{% block article_header %}
             <h1>{{ title | markdownInline | safe }}</h1>
             {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
             <p class="date">{{ page.inputPath | lastModifiedDate | postDate }}</p>
-            {{ content | safe }}
-        </article>
-        <footer>
-            {% include "footer.njk" %}
-        </footer>
-    </body>
-</html>
+{% endblock %}

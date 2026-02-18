@@ -17,8 +17,11 @@
     "@11ty/eleventy-plugin-rss": "^2.0.2",
     "@tufte-markdown/parser": "^2.0.1",
     "clean-css": "^5.3.3",
-    "node": "^21.6.1",
+    "luxon": "^3.5.0",
     "remark-html": ">=13.0.2"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "devDependencies": {
     "prettier": "^3.3.3"
