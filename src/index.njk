@@ -41,15 +41,6 @@ tags: ["ML", "Research", "Blog", "LLMs"]
                     <p class="item-description">
                         <small>{{ p.data.blurb }}</small>
                     </p>
-                    {% if p.data.tags %}
-                        <div>
-                            {% for tag in p.data.tags %}
-                                {% if tag != "post" %}
-                                    <span class="post-tag">{{ tag }}</span>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    {% endif %}
                 </div>
             </li>
         {% endfor %}
@@ -58,9 +49,19 @@ tags: ["ML", "Research", "Blog", "LLMs"]
 <hr class="section-divider" />
 <section>
     <h2 id="publications">Publications & Preprints</h2>
-    <ul class="item-list">
+    <ul class="post-list">
         <li>
-            <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a> <small>Team OLMo. <em>arXiv preprint arXiv:2512.13961</em>, 2025.</small>
+            <span class="post-date">2025</span>
+            <div class="post-info">
+                <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a> <small>— Team Olmo. <em>arXiv preprint arXiv:2512.13961</em>, 2025.</small>
+                <p class="item-description">
+                    <small>We introduce Olmo 3, a family of state-of-the-art, fully-open language models at the 7B and 32B parameter scales.
+                        <label for="sd-olmo3" class="margin-toggle sidenote-number"></label>
+                        <input type="checkbox" id="sd-olmo3" class="margin-toggle" />
+                        <span class="sidenote">Check out <a href="https://huggingface.co/allenai/OLMo-3-32B-Think">Olmo 3 32B Think on HuggingFace</a> and the pretraining codebase I work on: <a href="https://github.com/allenai/OLMo-core">OLMo-core</a>.</span>
+                        Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model, Olmo 3 32B Think, is the strongest fully-open thinking model released to-date.</small>
+                </p>
+            </div>
         </li>
     </ul>
 </section>
@@ -156,11 +157,4 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             </p>
         </li>
     </ul>
-</section>
-<hr class="section-divider" />
-<section>
-    <h2 id="website">Website</h2>
-    <p>
-        This website is made with <a href="https://www.11ty.dev/">11ty</a>, <a href="https://edwardtufte.github.io/tufte-css/">Tufte CSS</a>, and <a href="https://github.com/nerdhaus/eleventufte/tree/main">eleventufte</a>. Custom figures are made with <a href="https://excalidraw.com/">Excalidraw</a>. The combination of Tufte CSS and Excalidraw to achieve a notebook-like appearance was borrowed from <a href="https://siboehm.com/">Simon Boehm's website</a>, because having a visually appealing site helps motivate me to write.
-    </p>
 </section>

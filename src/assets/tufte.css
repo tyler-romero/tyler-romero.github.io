@@ -102,8 +102,8 @@ h1 {
 h2 {
   font-style: italic;
   font-weight: 400;
-  margin-top: 2.1rem;
-  margin-bottom: 1.4rem;
+  margin-top: 1.4rem;
+  margin-bottom: 1rem;
   font-size: 2.2rem;
   line-height: 1;
 }
@@ -149,8 +149,8 @@ article {
 }
 
 section {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 p,
@@ -524,7 +524,7 @@ label.margin-toggle:not(.sidenote-number) {
 
   hr.section-divider {
     width: 30%;
-    margin: 2em auto;
+    margin: 0 auto 1em;
   }
 }
 
@@ -562,6 +562,7 @@ nav a:visited {
 
 .item-description {
   margin-top: 0;
+  margin-bottom: 0.4rem;
 }
 
 .social-links {
@@ -577,7 +578,7 @@ nav a:visited {
 /* Section dividers */
 hr.section-divider {
   width: 20%;
-  margin: 2em 0 2em 17.5%;
+  margin: 0 0 1em 17.5%;
   border-top: 1px solid #ccc;
   clear: both;
 }
