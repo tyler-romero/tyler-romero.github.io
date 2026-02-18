@@ -374,8 +374,8 @@ h3 > code {
 
 pre > code {
   font-size: 0.9rem;
-  width: 52.5%;
-  margin-left: 2.5%;
+  width: 55%;
+  box-sizing: border-box;
   overflow-x: auto;
   display: block;
 }
@@ -526,6 +526,11 @@ label.margin-toggle:not(.sidenote-number) {
     width: 30%;
     margin: 0 auto 1em;
   }
+
+  .toc {
+    width: 100%;
+  }
+
 }
 
 /* Custom Classes */
@@ -536,6 +541,14 @@ label.margin-toggle:not(.sidenote-number) {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Sticky header */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background-color: var(--bg-color);
+}
+
 nav a,
 nav a:link,
 nav a:visited {
@@ -544,7 +557,8 @@ nav a:visited {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--link-color);
-  padding-top: 2rem;
+  padding-top: 1.2rem;
+  padding-bottom: 1.2rem;
   display: inline-block;
   margin-top: 0;
   margin-bottom: 0;
@@ -650,6 +664,65 @@ pre > code {
   border-left: 3px solid var(--link-color);
 }
 
+/* Prism.js overrides — neutralize Prism's layout so tufte's pre > code rules control sizing */
+pre[class*="language-"] {
+  background: none;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+code[class*="language-"] {
+  background: none;
+  text-shadow: none;
+}
+
+/* Table of Contents */
+.toc {
+  width: 55%;
+  border-left: 3px solid rgba(86, 130, 89, 0.3);
+  padding: 0.8em 1.2em;
+  margin-bottom: 1.5rem;
+  color: #555;
+  font-size: 1.2rem;
+}
+
+.toc:empty {
+  display: none;
+}
+
+.toc ol {
+  list-style: decimal;
+  margin: 0;
+  padding-left: 1.5em;
+}
+
+.toc ol ol {
+  list-style: lower-alpha;
+  margin-top: 0.2em;
+}
+
+.toc li {
+  margin-top: 0.3em;
+  line-height: 1.5;
+}
+
+.toc a,
+.toc a:link,
+.toc a:visited {
+  text-decoration: none;
+  color: #555;
+}
+
+.toc a:hover {
+  text-decoration: underline;
+  color: var(--link-color);
+}
+
+
+
 /* Reading progress bar */
 .progress-bar {
   position: fixed;
@@ -667,6 +740,7 @@ pre > code {
   nav,
   footer,
   .progress-bar,
+  .toc,
   label.margin-toggle {
     display: none !important;
   }

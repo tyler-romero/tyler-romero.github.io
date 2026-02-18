@@ -37,6 +37,12 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 <!-- BibTeX Support -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/pcooksey/bibtex-js@1.0.0/src/bibtex_js.min.js"></script>
+<!-- Prism.js Syntax Highlighting -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
@@ -56,7 +62,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-02-18T01:42:33.787Z",
+            "dateModified": "2026-02-18T06:16:13.385Z",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -93,6 +99,7 @@
             <p class="subtitle">BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data
 </p>
             <p class="date">January 5, 2025</p>
+            <nav class="toc"></nav>
             <script>
                 (function() {
                     var bar = document.querySelector('.progress-bar');
@@ -102,6 +109,38 @@
                         var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
                         bar.style.width = progress + '%';
                     });
+
+                    var headings = document.querySelectorAll('article h2, article h3');
+                    if (headings.length >= 3) {
+                        var toc = document.querySelector('.toc');
+                        var ol = document.createElement('ol');
+                        var currentH2Item = null;
+                        var nestedOl = null;
+                        headings.forEach(function(h) {
+                            var li = document.createElement('li');
+                            var a = document.createElement('a');
+                            a.href = '#' + h.id;
+                            a.textContent = h.textContent;
+                            li.appendChild(a);
+                            if (h.tagName === 'H2') {
+                                currentH2Item = li;
+                                nestedOl = null;
+                                ol.appendChild(li);
+                            } else {
+                                if (!nestedOl) {
+                                    nestedOl = document.createElement('ol');
+                                    if (currentH2Item) {
+                                        currentH2Item.appendChild(nestedOl);
+                                    } else {
+                                        ol.appendChild(li);
+                                        return;
+                                    }
+                                }
+                                nestedOl.appendChild(li);
+                            }
+                        });
+                        toc.appendChild(ol);
+                    }
                 })();
             </script>
 
