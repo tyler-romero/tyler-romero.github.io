@@ -20,6 +20,23 @@
                 </div>
             </nav>
         </header>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof RoughNotation === 'undefined') return;
+                var links = document.querySelectorAll('.topbar a:not(.nav-brand)');
+                links.forEach(function(link) {
+                    var annotation = RoughNotation.annotate(link, {
+                        type: 'underline',
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--link-color').trim(),
+                        strokeWidth: 2,
+                        animationDuration: 300,
+                        iterations: 1
+                    });
+                    link.addEventListener('mouseenter', function() { annotation.show(); });
+                    link.addEventListener('mouseleave', function() { annotation.hide(); });
+                });
+            });
+        </script>
         <article>
             {% block article_header %}{% endblock %}
             {{ content | safe }}

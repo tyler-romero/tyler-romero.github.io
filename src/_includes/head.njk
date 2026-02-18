@@ -24,6 +24,11 @@
       type="font/woff"
       crossorigin
       href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff" />
+<link rel="preload"
+      as="font"
+      type="font/woff2"
+      crossorigin
+      href="/assets/fonts/Virgil.woff2" />
 <!-- Open Graph -->
 <meta property="og:title" content="{{ metaTitle | markdownInline | striptags }}" />
 <meta property="og:description" content="{{ metaDescription | markdownInline | striptags }}" />
@@ -72,6 +77,9 @@
 <script defer
         src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
 {% endif %}
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer
+        src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css" />
 <!-- Goat Counter for basic view counting w/o cookies -->
