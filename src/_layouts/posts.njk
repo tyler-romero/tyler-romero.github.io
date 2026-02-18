@@ -32,6 +32,7 @@
             <h1>{{ title | markdownInline | safe }}</h1>
             {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
             {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
+            <nav class="toc"></nav>
             <script>
                 (function() {
                     var bar = document.querySelector('.progress-bar');
@@ -41,6 +42,38 @@
                         var progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
                         bar.style.width = progress + '%';
                     });
+
+                    var headings = document.querySelectorAll('article h2, article h3');
+                    if (headings.length >= 3) {
+                        var toc = document.querySelector('.toc');
+                        var ol = document.createElement('ol');
+                        var currentH2Item = null;
+                        var nestedOl = null;
+                        headings.forEach(function(h) {
+                            var li = document.createElement('li');
+                            var a = document.createElement('a');
+                            a.href = '#' + h.id;
+                            a.textContent = h.textContent;
+                            li.appendChild(a);
+                            if (h.tagName === 'H2') {
+                                currentH2Item = li;
+                                nestedOl = null;
+                                ol.appendChild(li);
+                            } else {
+                                if (!nestedOl) {
+                                    nestedOl = document.createElement('ol');
+                                    if (currentH2Item) {
+                                        currentH2Item.appendChild(nestedOl);
+                                    } else {
+                                        ol.appendChild(li);
+                                        return;
+                                    }
+                                }
+                                nestedOl.appendChild(li);
+                            }
+                        });
+                        toc.appendChild(ol);
+                    }
                 })();
             </script>
 {% endblock %}
