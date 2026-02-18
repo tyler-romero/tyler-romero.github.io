@@ -23,7 +23,7 @@ $$
 L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
 $$
 
-Where:
+where:
 
 - **N** = number of model parameters
 - **D** = number of training tokens
@@ -75,7 +75,7 @@ It's important to distinguish between three different aspects of model performan
 
 - At large scales, the A/N^α and B/D^β terms shrink toward zero, so E dominates.
 - Therefore, a lower E can indicate that a model will achieve a lower loss at large scale even if the marginal scaling efficiency is worse.
-- Despite there being a constant entropy floor for a given dataset, not all models can achieve the same irreducible loss on that dataset.
+- Although there is a constant entropy floor for a given dataset, not all models can achieve the same irreducible loss on that dataset.
 
 **The Crossover Problem**
 
@@ -109,9 +109,9 @@ The table below gives practical guidance on how to interpret differences in scal
 
 ### Targeting Specific Model and Dataset Sizes
 
-When pretraining models, there is essentially a set of model families of roughly the same size. For example, there are many 7B, 32B, and 70B parameter models. Additionally, labs know how many useful tokens they have available for pretraining (or roughly how many GPU hours can be allotted to a specific run).
+When pretraining models, there are essentially a set of model families of roughly the same size. For example, there are many 7B, 32B, and 70B parameter models. Additionally, labs know how many useful tokens they have available for pretraining (or roughly how many GPU hours can be allotted to a specific run).
 
-Using a chosen model and dataset size (e.g., N=32B, D=10T), we can use our formula to predict the final training loss of a given model architecture based on our empirical scaling law fit. This makes decision making straightforward: whichever intervention predicts the lowest loss at the target scale is the one we should use[^considerations].
+Using a chosen model and dataset size (e.g., N=32B, D=10T), we can use our formula to predict the final training loss of a given model architecture based on our empirical scaling law fit. This makes decision-making straightforward: whichever intervention predicts the lowest loss at the target scale is the one we should use[^considerations].
 
 [^considerations]: However, this is still ignoring other important considerations, such as inference-time efficiency, long-context performance, training throughput, and training stability. A complete evaluation framework would need to weigh these factors alongside the raw scaling predictions. For example, faster inference-time efficiency is critical for scaling up RL post-training and directly impacts the end-user experience.
 

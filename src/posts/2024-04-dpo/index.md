@@ -69,13 +69,13 @@ $$
 p^*(i \succ j) = \frac{s_i}{s_i + s_j} = \frac{e^{r^*_i}}{e^{r^*_i} + e^{r^*_j}} = \frac{1}{1+e^{-(r^*_i-r^*_j)}} = \sigma(r^*_i - r^*_j)
 $$
 
-[^logistic]: The logistic function is an S-shaped (or sigmoid) function commonly denoted using $\sigma(x)$. It frequently appears when working with probabilities because it can "squash" values in $\mathbb{R}$ (the set of all real numbers) into $(0, 1)$ (the set of probabilities values, excluding exactly 0 or 1). ![Sigmoid Function](/assets/img/sigmoid.png)
+[^logistic]: The logistic function is an S-shaped (or sigmoid) function commonly denoted using $\sigma(x)$. It frequently appears when working with probabilities because it can "squash" values in $\mathbb{R}$ (the set of all real numbers) into $(0, 1)$ (the set of probability values, excluding exactly 0 or 1). ![Sigmoid Function](/assets/img/sigmoid.png)
 
 ### Applying the Bradley-Terry Model to LLMs
 
 Now, we want to take the Bradley-Terry model and leverage it alongside a dataset of preferences in order to improve our LLM's generated outputs.
 
-In our preference dataset ($\mathcal{D}$), we have two comparisons and we want to model the probability of one completion being preferred over the other. In a sense, each completion elicits some reward based on its quality, and our ultimate goal will be to nudge our LLM to produce completions that are of higher quality. Therefore, we will parameterize the reward using our LLM. We will call this reward $r^*(x, y)$, which just means that the reward is a function of the context/prompt ($x$) and the completion ($y$).
+In our preference dataset ($\mathcal{D}$), we have two completions and we want to model the probability of one being preferred over the other. In a sense, each completion elicits some reward based on its quality, and our ultimate goal will be to nudge our LLM to produce completions that are of higher quality. Therefore, we will parameterize the reward using our LLM. We will call this reward $r^*(x, y)$, which just means that the reward is a function of the context/prompt ($x$) and the completion ($y$).
 
 So after adapting our preference model to use our parameterized reward function, we have:
 
@@ -99,10 +99,10 @@ At this point, the idea of optimizing LLMs based on preferences or rewards may f
 
 What do we mean by "the probability of generating the completion $y$"? Our LLM is an auto-regressive text generator, and, upon each auto-regressive step, it computes a probability value for every word[^token] in its vocabulary.
 
-[^token]: In practice, modern LLMs operate on tokens, not words. For our purposes, the difference doesn't really matter. You can learn more by playing with an [online tokenizer demo](https://platform.openai.com/tokenizer) or digging through Karparthy's [minbpe](https://github.com/karpathy/minbpe) repo.
+[^token]: In practice, modern LLMs operate on tokens, not words. For our purposes, the difference doesn't really matter. You can learn more by playing with an [online tokenizer demo](https://platform.openai.com/tokenizer) or digging through Karpathy's [minbpe](https://github.com/karpathy/minbpe) repo.
 
 ![Next Word Prediction Graphic](/assets/img/next-word-prediction.png)
-So - proceeding in order through every word in completion $y$ - we compute the probability of the next word in the completion given all of the proceeding words. Now, we have a probability value for every word in the completion! So we can compute the joint probability of generating the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
+So - proceeding in order through every word in completion $y$ - we compute the probability of the next word in the completion given all of the preceding words. Now, we have a probability value for every word in the completion! So we can compute the joint probability of generating the sequence of words as the product of the individual probabilities of observing each word along the way[^logprobs]:
 
 $$
 \pi_\theta(y|x)=\prod_{t=0}^{|y|}p_{LLM_\theta}(y_t|x,y_{0:t})
@@ -114,11 +114,11 @@ Another way to think about it is that there is a tree of possible completions an
 
 ![Probability of Sequence Graphic](/assets/img/sequence-prediction.png)
 
-When training, we know the entire text completion ahead of time, so, by applying a causal attention mask, we can calculate all of the the individual next-word probabilities (and thus $\pi_\theta(y|x)$) via a single forward pass through our LLM.
+When training, we know the entire text completion ahead of time, so, by applying a causal attention mask, we can calculate all of the individual next-word probabilities (and thus $\pi_\theta(y|x)$) via a single forward pass through our LLM.
 
 ## Optimizing our LLM based on preferences
 
-Ok, so now that we've got our framework in place. Let us remind ourselves of our goal: to improve the outputs of our LLM. Stated another way, we want the completion (y) our LLM provides for a prompt (x) to generate a large reward $r(x, y)$. With this in mind, we can formulate an optimization problem where we want to find the parameters of our LLM ($\theta$) that maximize our expected reward for prompts similar to those we see in practice.[^expectation2]
+Now that we've got our framework in place, let us remind ourselves of our goal: to improve the outputs of our LLM. Stated another way, we want the completion (y) our LLM provides for a prompt (x) to generate a large reward $r(x, y)$. With this in mind, we can formulate an optimization problem where we want to find the parameters of our LLM ($\theta$) that maximize our expected reward for prompts similar to those we see in practice.[^expectation2]
 
 $$
 \max_{\theta}\mathbb{E}_{x\sim \mathcal{D},y\sim \pi_\theta(y|x)}[r(x, y)]
@@ -132,11 +132,11 @@ $$
 \max_{\theta}\mathbb{E}_{x\sim \mathcal{D},y\sim \pi_\theta(y|x)}[r(x, y)] - \beta\mathbb{D}_{KL}[\pi_\theta(y|x) \ \Vert \ \pi_{ref}(y|x)]
 $$
 
-$\mathbb{D}_{KL}[P \Vert Q]$ is the [Kullback-Leibler divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)[^kldiv], a statistical distance measure. It quantifies how the probability distribution P differs from probability distribution Q. This constraint based on the KL divergence just encodes the idea that we want to penalize outputs from our model ($\pi_\theta$) based on how much they differ from outputs from the fine-tuned model (e.g. the reference model) we started with ($\pi_{ref}$). $\beta$ is a scalar hyperparameter that controls the strength of the constraint.
+$\mathbb{D}_{KL}[P \Vert Q]$ is the [Kullback-Leibler divergence](https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence)[^kldiv], a statistical distance measure. It quantifies how the probability distribution P differs from probability distribution Q. This constraint based on the KL divergence just encodes the idea that we want to penalize outputs from our model ($\pi_\theta$) based on how much they differ from outputs from the fine-tuned model (i.e. the reference model) we started with ($\pi_{ref}$). $\beta$ is a scalar hyperparameter that controls the strength of the constraint.
 
 [^kldiv]: KL divergence is [one of many](https://arxiv.org/pdf/2006.05990.pdf) traditional methods for regularizing an RL agent's policy. In the cases of DPO and RLHF, it is a natural choice because we begin with a strong reference policy at hand - the LLM output by our fine-tuning procedure.
 
-Now, we want to derive the optimal solution to this optimization problem. This will rely on [Gibb's Inequality](https://en.wikipedia.org/wiki/Gibbs%27_inequality) - the fact that $\mathbb{D}_{KL}[P \Vert Q]\geq0$ and $\mathbb{D}_{KL}[P \Vert Q]=0$ if and only if $P=Q$.[^gibbs]
+Now, we want to derive the optimal solution to this optimization problem. This will rely on [Gibbs' Inequality](https://en.wikipedia.org/wiki/Gibbs%27_inequality) - the fact that $\mathbb{D}_{KL}[P \Vert Q]\geq0$ and $\mathbb{D}_{KL}[P \Vert Q]=0$ if and only if $P=Q$.[^gibbs]
 
 [^gibbs]: The intuition here is that the KL-divergence is a distance measure (kind of), and there is no distance between P and Q if they are equal, and there must be some distance if they are not equal.
 
@@ -155,7 +155,7 @@ $$
 = \min_{\pi_\theta}\mathbb{E}_{x\sim \mathcal{D}}\left[\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right) - logZ(x)\right]
 $$
 
-And we have nearly arrived! Since $Z(x)$ does not depend on $\pi_\theta$, we can just ignore it when deriving the optimal solution. We can now use Gibb's inequality as mentioned above: $\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right)$ is minimized at zero if, and only if, the two distributions on either side of $\Vert$ are identical. So, the optimal solution (denoted as $\pi^*$) to our optimization problem for all $x \in \mathcal{D}$ is:
+And we have nearly arrived! Since $Z(x)$ does not depend on $\pi_\theta$, we can just ignore it when deriving the optimal solution. We can now use Gibbs' inequality as mentioned above: $\mathbb{D}_{KL}\left(\pi_\theta(y|x)\ \Vert\ \frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}\right)$ is minimized at zero if, and only if, the two distributions on either side of $\Vert$ are identical. So, the optimal solution (denoted as $\pi^*$) to our optimization problem for all $x \in \mathcal{D}$ is:
 
 $$
 \pi^*(y|x)=\pi_\theta(y|x)=\frac{1}{Z(x)}\pi_{ref}(y|x)e^{\frac{1}{\beta}r(x,y)}
@@ -205,7 +205,7 @@ The avoidance of reinforcement learning is particularly important. DPO has made 
 
 ### Properties and Caveats of DPO
 
-One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RHLF and DPO is the same.
+One of the key properties of DPO is that when the Bradley-Terry model perfectly fits our preference data and RLHF learns the optimal reward function, then the global optimizer of RLHF and DPO is the same.
 
 This is an important equivalence result; however, in practice:
 

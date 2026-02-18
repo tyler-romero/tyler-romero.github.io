@@ -29,10 +29,10 @@ I'll be documenting my progress here and updating this post as I go. Code can be
 
 ## 1. Initial setup and baseline
 
-Part of the goal of this project is for me to learn as I go, so I am going to start at the beginning - with with Andrej Karpathy's [PyTorch GPT-2 trainer](https://github.com/karpathy/llm.c/blob/7b929300217ff1a974b63791a228928b39b26409/train_gpt2.py) from [llm.c](https://github.com/karpathy/llm.c). This is the script that Keller Jordan used for [his initial baseline](https://github.com/KellerJordan/modded-nanogpt/tree/master?tab=readme-ov-file#modded-nanogpt). This trainer is very similar to the NanoGPT trainer with some minor modifications / simplifications (such as no dropout).
+Part of the goal of this project is for me to learn as I go, so I am going to start at the beginning - with Andrej Karpathy's [PyTorch GPT-2 trainer](https://github.com/karpathy/llm.c/blob/7b929300217ff1a974b63791a228928b39b26409/train_gpt2.py) from [llm.c](https://github.com/karpathy/llm.c). This is the script that Keller Jordan used for [his initial baseline](https://github.com/KellerJordan/modded-nanogpt/tree/master?tab=readme-ov-file#modded-nanogpt). This trainer is very similar to the NanoGPT trainer with some minor modifications / simplifications (such as no dropout).
 
 I have upstreamed some QOL improvements and basic tweaks to the training script from Keller's fork, but have not changed any of the core training / modeling logic. Specifically:
-1. Implemented gradient accumulation so that my 2x24GB GPUs simulate the training experience of a 8xH100 machine.
+1. Implemented gradient accumulation so that my 2x24GB GPUs simulate the training experience of an 8xH100 machine.
 2. Increased learning rate to 0.0015 and halved the batch size (total batch size is 262144 - that is bs of `32/device * 2 devices * 1024 sequence length * 4 gradient accum steps`).
 3. Improved learning rate schedule (linear warmup then linear decay).
 4. Removed all affine scale/bias parameters and switched to RMSNorm.
@@ -60,15 +60,15 @@ There are some basic architectural changes and modernizations that can be made t
 1. [RoPE (Rotary Positional Embeddings)](https://arxiv.org/abs/2104.09864). There are [many](https://www.jitx.io/posts/rope-embeddings) [good](https://blog.eleuther.ai/rotary-embeddings/) explanations of RoPE out there so I won't go into detail here.
 2. [ReLU^2 Activation](https://arxiv.org/pdf/2109.08668)[^relu2]. Many activations that are better than GeLU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.
 3. No gradient clipping. Gradient clipping can help stabilize training but it also slows down training. Since we are speed-running, we will remove gradient clipping. This also eliminates a hyperparameter that needs to be tuned.
-4. [Trapezoidal learning rate schedule](https://arxiv.org/abs/2405.18392). While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been show to match the performance of cosine schedules.
+4. [Trapezoidal learning rate schedule](https://arxiv.org/abs/2405.18392). While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been shown to match the performance of cosine schedules.
 
 [^relu2]: ReLU^2 activation function. ![Relu Activation plot](/assets/img/relu2.png)
 
 In addition, learning rate and batch size have been tuned.
 
-Once again, many of these changes are [downstreamed](https://en.wikipedia.org/wiki/Downstream_(software_development)) from the [modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt) repository / 8xH100 speedrun. Its not efficient to reinvent the wheel, and I want to get training time down as fast as possible in the beginning.
+Once again, many of these changes are [downstreamed](https://en.wikipedia.org/wiki/Downstream_(software_development)) from the [modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt) repository / 8xH100 speedrun. It's not efficient to reinvent the wheel, and I want to get training time down as fast as possible in the beginning.
 
-After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340)), the new run time is **7.51 hours**. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second increased, likely due to the larger batch size (more gradient accumulation steps which tends to translate to lower throughput) and the architectural changes, such as the inclusion of RoPE. Once I have a shorter run time, I will be able to tune more effectively and see if I can remove gradient accumulation.
+After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340)), the new run time is **7.51 hours**. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second decreased, likely due to the larger batch size (more gradient accumulation steps which tends to translate to lower throughput) and the architectural changes, such as the inclusion of RoPE. Once I have a shorter run time, I will be able to tune more effectively and see if I can remove gradient accumulation.
 
 ![Section 2.1 loss plot](/assets/img/2p1_loss_plot.png)
 
@@ -77,7 +77,7 @@ The [Muon Optimizer](https://kellerjordan.github.io/posts/muon/) is a new optimi
 
 [^steepest]: But are these approximate second-order methods actually second-order? [New research](https://arxiv.org/abs/2409.20325v1) suggests that methods like Shampoo and Adam can be viewed as variants of steepest descent under specific norms, and thus are actually first-order methods.
 
-I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put to gether [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers). For those interested in a more step-by-step walkthrough of Muon, check out [this excellent post](https://jeremybernste.in/writing/deriving-muon) by Jeremy Bernstein.
+I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put together [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers). For those interested in a more step-by-step walkthrough of Muon, check out [this excellent post](https://jeremybernste.in/writing/deriving-muon) by Jeremy Bernstein.
 
 Muon is designed to work on *Linear* layers, so it is not quite a drop-in replacement for AdamW (e.g. it isn't meant to optimize Embedding layers). However it can be used to optimize all of the hidden layers of our GPT-2 model. The output `lm_head` layer and the token embeddings will still be optimized with AdamW.
 
@@ -92,13 +92,13 @@ Up until now, we have loaded a full-batch of data on each device and then split 
 
 We also increase our torch version from `2.5` to `2.6` (which was recently released), and, in accordance with the [new official rules](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#timing-change-after-record-21) designated on 2025/02/01, we have removed the use of `torch._inductor.config.coordinate_descent_tuning`.
 
-These tweak brings our throughput back up to 216k tokens/second. In order to make runs more consistently hit the 3.28 validation loss target[^variance], we have also slightly increased the total number of training steps, so now 3.31B tokens are consumed. The new run time is **4.26 hours**, and the changes can be found at [`d59944d`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5).
+These tweaks bring our throughput back up to 216k tokens/second. In order to make runs more consistently hit the 3.28 validation loss target[^variance], we have also slightly increased the total number of training steps, so now 3.31B tokens are consumed. The new run time is **4.26 hours**, and the changes can be found at [`d59944d`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5).
 
 [^variance]: Note that there is some variance in the amount of time it takes for a speedrun candidate to run. For a speedrun to be an official record, it must attain a *mean* validation loss of less than 3.28. I have been a bit lax about this so far because the time difference between runs has been large, and variance relatively small.
 
 ![Section 2.3 loss plot](/assets/img/2p3_loss_plot.png)
 
-At this point, we code that can train GPT-2 almost twice as fast as the baseline.
+At this point, we have code that can train GPT-2 almost twice as fast as the baseline.
 
 ### 2.4 Logit Soft-capping
 Logit soft-capping is a technique popularized by [Gemma 2](https://storage.googleapis.com/deepmind-media/gemma/gemma-2-report.pdf) and initially used to improve the NanoGPT speedrun by [@Grad62304977](https://x.com/Grad62304977).
@@ -110,7 +110,7 @@ $$
 
 [^softcap]: {-} Soft-capping vs Clipping at ±5: ![Soft-capping](/assets/img/softcap.png)
 
-Logit soft-capping prevents logits from growing excessively large by scaling them to a fixed range, which seems to help improve training dynamics. One could argue that this is imposing an inductive bias - and since we're in a relatively small model/low data regime that this is helpful.
+Logit soft-capping prevents logits from growing excessively large by scaling them to a fixed range, which seems to help improve training dynamics. One could argue that this is imposing an inductive bias - and since we're in a relatively small model/low-data regime, this is helpful.
 
 After implementing logit soft-capping with a cap of 30 (and doing some learning-rate tuning), the new run time is **4.01 hours**, requiring 3.15B tokens (commit [`12eab44`](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e)). Throughput remained steady at ~218k tokens/second.
 

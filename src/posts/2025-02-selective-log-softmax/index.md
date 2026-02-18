@@ -34,7 +34,7 @@ $$
 
 Essentially it is just taking every individual logit and subtracting the [`logsumexp`](https://pytorch.org/docs/stable/generated/torch.logsumexp.html#torch-logsumexp) over the full logit distribution.
 
- We can optimize this by:
+We can optimize this by:
 
 1. Computing the `logsumexp` values over the full logit distribution
 2. Gathering just the logits for the tokens we care about
@@ -65,7 +65,7 @@ def selective_log_softmax_take2(logits, index):
 
 This approach should effectively reduce peak memory usage by only allocating tensors that are proportional to `batch_size * sequence_length` and `sequence_length * vocab_size` rather than `batch_size * sequence_length * vocab_size`.
 
-Lets run a benchmark to see if we are correct. We'll also include the following ablation that simply computes `log_softmax` in a loop over the batch dimension.
+Let's run a benchmark to see if we are correct. We'll also include the following ablation that simply computes `log_softmax` in a loop over the batch dimension.
 ```python
 def selective_log_softmax_ablation1(logits, index):
     token_logprobs = []
@@ -240,7 +240,7 @@ Compiled method time:  0.000129 sec, Memory peak: 1074.04 MB
 
 Very impressive! This is both faster and more memory efficient than our hand-rolled solution, while being numerically stable. And the `dynamic=True` flag means that we shouldn't need to recompile every time a new sequence length is used.
 
-The only reason not to use this method is if you are in a setting where `torch.compile` usage is supposed to be enabled/disabled via a user-passed flag. Which is the case most open-source libraries that use `torch`. For your own projects, the compiled version is recommended!
+The only reason not to use this method is if you are in a setting where `torch.compile` usage is supposed to be enabled/disabled via a user-passed flag. Which is the case for most open-source libraries that use `torch`. For your own projects, the compiled version is recommended!
 
 
 ---
