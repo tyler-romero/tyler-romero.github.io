@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
 <meta property="og:title" content="An Extension to BADGE Active Learning for Variable-Sized Batches">
 <meta property="og:description" content="BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data">
@@ -41,6 +42,8 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
 
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -59,7 +62,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-02-18T19:07:37.921Z",
+            "dateModified": "2026-02-18T23:00:24.990Z",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -88,6 +91,23 @@
                 </div>
             </nav>
         </header>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof RoughNotation === 'undefined') return;
+                var links = document.querySelectorAll('.topbar a:not(.nav-brand)');
+                links.forEach(function(link) {
+                    var annotation = RoughNotation.annotate(link, {
+                        type: 'underline',
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--link-color').trim(),
+                        strokeWidth: 2,
+                        animationDuration: 300,
+                        iterations: 1
+                    });
+                    link.addEventListener('mouseenter', function() { annotation.show(); });
+                    link.addEventListener('mouseleave', function() { annotation.hide(); });
+                });
+            });
+        </script>
         <article>
             
             <div class="progress-bar"></div>
@@ -139,6 +159,31 @@
                         toc.appendChild(ol);
                     }
                 })();
+            </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(86, 130, 89, 0.5)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
             </script>
 
             <section><p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p><p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sd-less-than-a-href" class="margin-toggle"><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model’s uncertainty to select points for labeling.

@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
 <meta property="og:title" content="Tyler’s Technical Blog">
 <meta property="og:description" content="undefined">
@@ -34,6 +35,8 @@
 
 
 
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -52,7 +55,7 @@
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
-            "dateModified": "2026-02-18T19:07:37.921Z",
+            "dateModified": "2026-02-18T23:00:24.991Z",
             "url": "https://www.tylerromero.com/recipe-box/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -79,6 +82,23 @@
                 </div>
             </nav>
         </header>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof RoughNotation === 'undefined') return;
+                var links = document.querySelectorAll('.topbar a:not(.nav-brand)');
+                links.forEach(function(link) {
+                    var annotation = RoughNotation.annotate(link, {
+                        type: 'underline',
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--link-color').trim(),
+                        strokeWidth: 2,
+                        animationDuration: 300,
+                        iterations: 1
+                    });
+                    link.addEventListener('mouseenter', function() { annotation.show(); });
+                    link.addEventListener('mouseleave', function() { annotation.hide(); });
+                });
+            });
+        </script>
         <article>
             
             

@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
 <meta property="og:title" content="Thinking about Scaling Laws">
 <meta property="og:description" content="How can we use scaling laws to train stronger LLMs?">
@@ -39,6 +40,8 @@
 
 
 
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -57,7 +60,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-01-10T08:00:00.000Z",
-            "dateModified": "2026-02-18T19:07:37.921Z",
+            "dateModified": "2026-02-18T23:00:24.990Z",
             "url": "https://www.tylerromero.com/posts/2026-01-scaling-laws/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -86,6 +89,23 @@
                 </div>
             </nav>
         </header>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof RoughNotation === 'undefined') return;
+                var links = document.querySelectorAll('.topbar a:not(.nav-brand)');
+                links.forEach(function(link) {
+                    var annotation = RoughNotation.annotate(link, {
+                        type: 'underline',
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--link-color').trim(),
+                        strokeWidth: 2,
+                        animationDuration: 300,
+                        iterations: 1
+                    });
+                    link.addEventListener('mouseenter', function() { annotation.show(); });
+                    link.addEventListener('mouseleave', function() { annotation.hide(); });
+                });
+            });
+        </script>
         <article>
             
             <div class="progress-bar"></div>
@@ -137,6 +157,31 @@
                         toc.appendChild(ol);
                     }
                 })();
+            </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(86, 130, 89, 0.5)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
             </script>
 
             <section><p><em>Note: This post is a work in progress. I will continue to update and expand it over time.</em></p><p>Scaling laws are one of the few tools we have for predicting model performance before committing serious compute. When a single training run can cost millions of dollars and take months, the ability to extrapolate from small-scale experiments becomes invaluable. In this post, I want to explore how we can use scaling laws not just as descriptive summaries, but as decision-making frameworks for comparing architectural choices and planning training runs.</p><p>This post assumes familiarity with the seminal papers <a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a> (Kaplan et al.) and <a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models</a> (Hoffmann et al.). If you haven’t read them, I’d recommend at least skimming Hoffmann et al. (the “Chinchilla” paper) first.</p></section>

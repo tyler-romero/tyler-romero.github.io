@@ -10,6 +10,15 @@
   font-display: swap;
 }
 
+/* Virgil (Excalidraw) for headings — OFL-1.1 licensed */
+@font-face {
+  font-family: "Virgil";
+  src: url("fonts/Virgil.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Custom Properties */
 :root {
   --link-color: #568259;
@@ -66,26 +75,27 @@ body {
 }
 
 h1 {
+  font-family: "Virgil", cursive;
   font-weight: 400;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
-  font-size: 2.6rem;
+  font-size: 3rem;
   line-height: 1;
 }
 
 h2 {
-  font-style: italic;
+  font-family: "Virgil", cursive;
   font-weight: 400;
   margin-top: 1.4rem;
   margin-bottom: 1rem;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   line-height: 1;
 }
 
 h3 {
-  font-style: italic;
+  font-family: "Virgil", cursive;
   font-weight: 400;
-  font-size: 1.7rem;
+  font-size: 1.9rem;
   margin-top: 2rem;
   margin-bottom: 1.4rem;
   line-height: 1;
@@ -102,10 +112,10 @@ hr {
 }
 
 p.subtitle {
-  font-style: italic;
+  font-family: "Virgil", cursive;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  font-size: 1.8rem;
+  font-size: 2rem;
   display: block;
   line-height: 1;
 }
@@ -457,12 +467,16 @@ nav a:visited {
   font-size: 1rem;
 }
 
-/* Section dividers */
+/* Section dividers — hand-drawn wavy line */
 hr.section-divider {
   width: 20%;
   margin: 0 0 1em 17.5%;
-  border-top: 1px solid #ccc;
+  border: none;
+  height: 8px;
   clear: both;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' fill='none'%3E%3Cpath d='M0 5 C10 2, 20 7, 35 4 S55 1, 70 5 S90 8, 105 4 S125 1, 140 5 S160 8, 175 4 S190 2, 200 5' stroke='%23bbb' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")
+    repeat-x center;
+  background-size: 200px 8px;
 }
 
 /* Styled lists */
@@ -515,10 +529,9 @@ hr.section-divider {
 
 /* Code block styling */
 pre > code {
-  background-color: #f5f5f0;
-  border-radius: 4px;
-  padding: 1em 1.2em;
-  border-left: 3px solid var(--link-color);
+  background: #f5f5f0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C1.5 8, 3 16, 2.2 24 S1 40, 2.5 48 S3.5 64, 1.8 72 S1 88, 2 100' stroke='%23568259' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
+  border-radius: 4px 3px 5px 2px;
+  padding: 1em 1.2em 1em 1.4em;
 }
 
 /* Prism.js overrides — neutralize Prism's layout so tufte's pre > code rules control sizing */
@@ -532,18 +545,23 @@ pre[class*="language-"] {
 }
 
 code[class*="language-"] {
-  background: none;
   text-shadow: none;
+}
+
+/* Re-apply code block background over Prism's reset (higher specificity than code[class*]) */
+pre[class*="language-"] > code {
+  background: #f5f5f0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C1.5 8, 3 16, 2.2 24 S1 40, 2.5 48 S3.5 64, 1.8 72 S1 88, 2 100' stroke='%23568259' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
 }
 
 /* Table of Contents */
 .toc {
   width: 55%;
-  border-left: 3px solid rgba(86, 130, 89, 0.3);
-  padding: 0.8em 1.2em;
+  border-left: none;
+  padding: 0.8em 1.2em 0.8em 1.4em;
   margin-bottom: 1.5rem;
   color: #555;
   font-size: 1.2rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C3 10, 1 20, 2.5 30 S3 45, 1.5 55 S0.8 70, 2.8 80 S3 90, 2 100' stroke='%23568259' stroke-opacity='0.3' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
 }
 
 .toc:empty {
@@ -694,6 +712,7 @@ code[class*="language-"] {
   hr.section-divider {
     width: 30%;
     margin: 0 auto 1em;
+    background-size: 200px 8px;
   }
 
   .toc {
