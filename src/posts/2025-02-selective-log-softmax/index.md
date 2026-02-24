@@ -24,13 +24,13 @@ This optimization is especially valuable for reinforcement learning algorithms l
 
 [^optimized]: [To jump to the optimized solution, click here](#efficient-solution).
 
-Let's remind ourselves what `log_softmax` is actually computing for every input logit $x_i$:
+Let's remind ourselves what `log_softmax` is actually computing for every input logit \(x_i\):
 
-$$
+\[
 \log \text{softmax}(x_i) = \log\left(\frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}\right) \\
 = \log(e^{x_i}) - \log\left(\sum_{j=1}^n e^{x_j}\right) \\
 = x_i - \log \sum_{j=1}^n e^{x_j}
-$$
+\]
 
 Essentially it is just taking every individual logit and subtracting the [`logsumexp`](https://pytorch.org/docs/stable/generated/torch.logsumexp.html#torch-logsumexp) over the full logit distribution.
 
@@ -141,14 +141,14 @@ In this benchmark setting, **peak VRAM usage for this operation was reduced by 4
 One might note that the ablation method also only allocates tensors proportional to `sequence_length * vocab_size`, so why does it consume more memory than `selective_log_softmax_take2`? This is because of the gradient formulas for `log_softmax()` and `logsumexp()` require different intermediate values to be stored for the backward computation.
 
 For `log_softmax`, the gradient formula is:
-$$
+\[
 \frac{\partial \text{log\_softmax}(x_i)}{\partial x_j} = \delta_{ij} - \text{softmax}(x_j)
-$$
+\]
 
 For `logsumexp`, the gradient formula is:
-$$
+\[
 \frac{\partial \text{logsumexp}(x)}{\partial x_i} = \text{softmax}(x_i)
-$$
+\]
 
 For the backward pass through `logsumexp`, we need:
 - Softmax of input: `(sequence_length, vocab_size)`

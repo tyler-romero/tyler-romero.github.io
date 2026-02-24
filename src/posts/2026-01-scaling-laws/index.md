@@ -17,11 +17,11 @@ This post assumes familiarity with the seminal papers [Scaling Laws for Neural L
 
 The scaling laws from Hoffmann et al., also known as the "Chinchilla" scaling laws, are the basis for the billions of dollars being spent on training larger models on more data. They are empirical predictions—validated across many orders of magnitude of scale—about how much compute (in terms of data and model size) is required to lower loss. Chinchilla also demonstrates that model size and data should be scaled up at roughly the same rate, giving rise to the well-known heuristic of "20 tokens per parameter" as the optimal ratio.
 
-The Chinchilla paper uses three separate approaches to arrive at the same "compute-optimal" scaling results. In particular, the third approach models the final loss of a language model as a function of model size $N$ and training data $D$ in the following form:
+The Chinchilla paper uses three separate approaches to arrive at the same "compute-optimal" scaling results. In particular, the third approach models the final loss of a language model as a function of model size \(N\) and training data \(D\) in the following form:
 
-$$
+\[
 L(N, D) = E + \frac{A}{N^\alpha} + \frac{B}{D^\beta}
-$$
+\]
 
 where:
 
@@ -33,17 +33,17 @@ where:
 
 The parameters of this function are fit to empirical data.
 
-The fitted values from the Chinchilla paper are approximately $\alpha \approx 0.34$, $\beta \approx 0.28$, $E \approx 1.69$, $A \approx 406.4$, and $B \approx 410.7$.
+The fitted values from the Chinchilla paper are approximately \(\alpha \approx 0.34\), \(\beta \approx 0.28\), \(E \approx 1.69\), \(A \approx 406.4\), and \(B \approx 410.7\).
 
-The key insight comes from minimizing this loss function subject to a fixed compute budget $C$. Since compute scales roughly as $C \propto 6ND$ (the number of FLOPs required for a forward and backward pass through a model of size $N$ for $D$ tokens), we can derive the optimal allocation of compute between model size and data.
+The key insight comes from minimizing this loss function subject to a fixed compute budget \(C\). Since compute scales roughly as \(C \propto 6ND\) (the number of FLOPs required for a forward and backward pass through a model of size \(N\) for \(D\) tokens), we can derive the optimal allocation of compute between model size and data.
 
 Taking the derivative and setting it to zero, we find that the optimal scaling satisfies:
 
-$$
+\[
 N_{opt} \propto C^{a}, \quad D_{opt} \propto C^{b}
-$$
+\]
 
-where $a = \frac{\beta}{\alpha + \beta}$ and $b = \frac{\alpha}{\alpha + \beta}$. Using the fitted values from Chinchilla ($\alpha \approx 0.34$, $\beta \approx 0.28$), we get $a \approx 0.45$ and $b \approx 0.55$. This means that as compute increases, we should scale data slightly faster than model size.
+where \(a = \frac{\beta}{\alpha + \beta}\) and \(b = \frac{\alpha}{\alpha + \beta}\). Using the fitted values from Chinchilla (\(\alpha \approx 0.34\), \(\beta \approx 0.28\)), we get \(a \approx 0.45\) and \(b \approx 0.55\). This means that as compute increases, we should scale data slightly faster than model size.
 
 ## Decision Making with Scaling Laws
 

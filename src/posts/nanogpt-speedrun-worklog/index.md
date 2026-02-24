@@ -104,9 +104,9 @@ At this point, we have code that can train GPT-2 almost twice as fast as the bas
 Logit soft-capping is a technique popularized by [Gemma 2](https://storage.googleapis.com/deepmind-media/gemma/gemma-2-report.pdf) and initially used to improve the NanoGPT speedrun by [@Grad62304977](https://x.com/Grad62304977).
 
 Soft-capping is essentially a smooth and differentiable version of clipping[^softcap]:
-$$
+\[
 \text{softcap(x, cap)} = \text{cap} \cdot \tanh\left(\frac{\text{x}}{\text{cap}}\right)
-$$
+\]
 
 [^softcap]: {-} Soft-capping vs Clipping at ±5: ![Soft-capping](/assets/img/softcap.png)
 
