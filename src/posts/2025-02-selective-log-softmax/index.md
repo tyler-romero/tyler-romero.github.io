@@ -44,7 +44,9 @@ Here's what this looks like in code:
 ```python
 def selective_log_softmax_take1(logits, index):
     logsumexp_values = torch.logsumexp(logits, dim=-1)  # shape: (batch_size, seq_len)
-    token_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)  # shape: (batch_size, seq_len)
+    token_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(
+        -1
+    )  # shape: (batch_size, seq_len)
     token_logprobs = token_logits - logsumexp_values  # shape: (batch_size, seq_len)
     return token_logprobs
 ```
@@ -71,7 +73,9 @@ def selective_log_softmax_ablation1(logits, index):
     token_logprobs = []
     for logits_row, index_row in zip(logits, index):
         logprobs_row = logits_row.log_softmax(dim=-1)  # (seq_len, vocab_size)
-        token_logprobs_row = torch.gather(logprobs_row, dim=-1, index=index_row.unsqueeze(-1)).squeeze(-1)
+        token_logprobs_row = torch.gather(
+            logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
+        ).squeeze(-1)
         token_logprobs.append(token_logprobs_row)
     return torch.stack(token_logprobs)
 ```
@@ -80,6 +84,7 @@ Here is the benchmark script:
 ```python
 import time
 import torch
+
 
 def measure_memory_and_time(func, logits, index, n_runs=100):
     torch.cuda.reset_peak_memory_stats()
@@ -91,6 +96,7 @@ def measure_memory_and_time(func, logits, index, n_runs=100):
     avg_time = (time.perf_counter() - start_time) / n_runs
     return result, avg_time, mem_peak
 
+
 # Simulated data
 torch.manual_seed(42)
 vocab_size = 32768
@@ -98,39 +104,45 @@ seq_len = 1024
 batch_size = 16
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
-logits = torch.randn(batch_size, seq_len, vocab_size, device=device, dtype=torch.float32)
+logits = torch.randn(
+    batch_size, seq_len, vocab_size, device=device, dtype=torch.float32
+)
 index = torch.randint(0, vocab_size, (batch_size, seq_len), device=device)
 logit_mem = torch.cuda.max_memory_allocated()
 
 # Run all methods
-naive_result, naive_time, naive_mem = measure_memory_and_time(naive_selective_log_softmax, logits, index)
-take1_result, take1_time, take1_mem = measure_memory_and_time(selective_log_softmax_take1, logits, index)
-take2_result, take2_time, take2_mem = measure_memory_and_time(selective_log_softmax_take2, logits, index)
-ablation1_result, ablation1_time, ablation1_mem = measure_memory_and_time(selective_log_softmax_ablation1, logits, index)
+funcs = {
+    "Naive": naive_selective_log_softmax,
+    "Take1": selective_log_softmax_take1,
+    "Take2": selective_log_softmax_take2,
+    "Ablation1": selective_log_softmax_ablation1,
+}
+results = {}
+for name, fn in funcs.items():
+    results[name] = measure_memory_and_time(fn, logits, index)
 
 # Check equivalence
 print("Logits Dtype:", logits.dtype)
-print("Max absolute difference (naive and take1):", (naive_result - take1_result).abs().max().item())
-print("Max absolute difference (naive and take2):", (naive_result - take2_result).abs().max().item())
-print("Max absolute difference (naive and ablation1):", (naive_result - ablation1_result).abs().max().item())
-print("Memory consumed by logits: {:.2f} MB".format(logit_mem / 1e6))
-print("Naive method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(naive_time, naive_mem / 1e6))
-print("Take1 method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(take1_time, take1_mem / 1e6))
-print("Take2 method time:      {:.6f} sec, Memory peak: {:.2f} MB".format(take2_time, take2_mem / 1e6))
-print("Ablation1 method time:  {:.6f} sec, Memory peak: {:.2f} MB".format(ablation1_time, ablation1_mem / 1e6))
+for name in ["Take1", "Take2", "Ablation1"]:
+    diff = (results["Naive"][0] - results[name][0]).abs().max().item()
+    print(f"Max abs diff (Naive vs {name}): {diff}")
+
+print(f"Logits memory: {logit_mem / 1e6:.2f} MB")
+for name, (_, t, mem) in results.items():
+    print(f"{name:10s} time: {t:.6f} sec, peak: {mem / 1e6:.2f} MB")
 ```
 
 Running this benchmark[^benchmark] script with logits stored in `float32` gives the following output:
 ```text
 Logits Dtype: torch.float32
-Max absolute difference (naive and take1): 1.9073486328125e-06
-Max absolute difference (naive and take2): 1.9073486328125e-06
-Max absolute difference (naive and ablation1): 0.0
-Memory consumed by logits: 2147.61 MB
-Naive method time:      0.000018 sec, Memory peak: 4295.16 MB
-Take1 method time:      0.000965 sec, Memory peak: 4295.29 MB
-Take2 method time:      0.012608 sec, Memory peak: 2282.03 MB
-Ablation1 method time:  0.004153 sec, Memory peak: 2416.31 MB
+Max abs diff (Naive vs Take1): 1.9073486328125e-06
+Max abs diff (Naive vs Take2): 1.9073486328125e-06
+Max abs diff (Naive vs Ablation1): 0.0
+Logits memory: 2147.61 MB
+Naive      time: 0.000018 sec, peak: 4295.16 MB
+Take1      time: 0.000965 sec, peak: 4295.29 MB
+Take2      time: 0.012608 sec, peak: 2282.03 MB
+Ablation1  time: 0.004153 sec, peak: 2416.31 MB
 ```
 
 [^benchmark]: {-} Memory usage vs. vocabulary size. `take1` is obscured by `naive` because they have the same memory requirements. ![Memory usage vs vocabulary size for different selective log softmax implementations](/assets/img/selective-logsoftmax-memory-vocab.png)
@@ -163,14 +175,14 @@ So while both methods avoid allocating additional `vocab_size`-scale tensors dur
 It is important to note that the `selective_log_softmax_take2` is not numerically stable when logits are cast to `bfloat16` or `float16`:
 ```text
 Logits Dtype: torch.bfloat16
-Max absolute difference (naive and take1): 0.0625
-Max absolute difference (naive and take2): 0.0625  # <- this is the issue
-Max absolute difference (naive and ablation1): 0.0
-Memory consumed by logits: 1073.87 MB
-Naive method time:      0.000018 sec, Memory peak: 2147.65 MB
-Take1 method time:      0.000474 sec, Memory peak: 2147.75 MB
-Take2 method time:      0.005142 sec, Memory peak: 1141.11 MB
-Ablation1 method time:  0.002016 sec, Memory peak: 1208.22 MB
+Max abs diff (Naive vs Take1): 0.0625
+Max abs diff (Naive vs Take2): 0.0625  # <- this is the issue
+Max abs diff (Naive vs Ablation1): 0.0
+Logits memory: 1073.87 MB
+Naive      time: 0.000018 sec, peak: 2147.65 MB
+Take1      time: 0.000474 sec, peak: 2147.75 MB
+Take2      time: 0.005142 sec, peak: 1141.11 MB
+Ablation1  time: 0.002016 sec, peak: 1208.22 MB
 ```
 
 Therefore, we should use `selective_log_softmax_take2` when working with full precision (`torch.float32` and `torch.float64`) tensors, and fall back to `selective_log_softmax_ablation1` when using reduced precision (`torch.bfloat16` and `torch.float16`) tensors to maintain accuracy.
@@ -186,21 +198,27 @@ def selective_log_softmax(logits, index):
         logits (`torch.Tensor`):
             Logits tensor of shape `(..., num_classes)`.
         index (`torch.Tensor`):
-            Index tensor of shape `(...)`, specifying the positions to gather from the log-softmax output.
+            Index tensor of shape `(...)`, specifying the positions
+            to gather from the log-softmax output.
     Returns:
         `torch.Tensor`:
             Gathered log probabilities with the same shape as `index`.
     """
     if logits.dtype in [torch.float32, torch.float64]:
-        logsumexp_values = torch.stack([torch.logsumexp(lg, dim=-1) for lg in logits])  # loop to reduce peak mem consumption
-        selected_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
-        token_logprobs = selected_logits - logsumexp_values  # log_softmax(x_i) = x_i - logsumexp(x)
+        # Loop to reduce peak memory consumption
+        lse = torch.stack([torch.logsumexp(lg, dim=-1) for lg in logits])
+        selected = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+        # log_softmax(x_i) = x_i - logsumexp(x)
+        token_logprobs = selected - lse
     else:
-        # logsumexp approach is unstable with bfloat16, fall back to slightly less efficent approach
+        # logsumexp is unstable with bfloat16; use log_softmax instead
+        # Loop to reduce peak memory consumption
         token_logprobs = []
-        for logits_row, index_row in zip(logits, index):  # loop to reduce peak mem consumption
+        for logits_row, index_row in zip(logits, index):
             logprobs_row = logits_row.log_softmax(dim=-1)
-            token_logprobs_row = torch.gather(logprobs_row, dim=-1, index=index_row.unsqueeze(-1)).squeeze(-1)
+            token_logprobs_row = torch.gather(
+                logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
+            ).squeeze(-1)
             token_logprobs.append(token_logprobs_row)
         token_logprobs = torch.stack(token_logprobs)
     return token_logprobs

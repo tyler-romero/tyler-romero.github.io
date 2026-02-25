@@ -37,6 +37,7 @@ Here is a reference implementation for computing the gradient embedding of a dat
 from torch import Tensor
 from torch.nn import functional as F
 
+
 @torch.no_grad()
 def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
     """
@@ -63,7 +64,7 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
 
     # Compute gradient of cross entropy loss wrt final layer weights
     # For cross entropy loss, this is simply (prediction - target)
-    loss_gradient = (probs - y_hat)  # [num_classes]
+    loss_gradient = probs - y_hat  # [num_classes]
 
     # Compute gradient embedding by outer product of:
     # - final_acts: the last layer's activations (semantic information)
@@ -71,7 +72,7 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
     # This is equivalent to the gradient w.r.t the final layer weights
     grad_embedding = torch.outer(
         final_acts.squeeze(0),  # [hidden_size]
-        loss_gradient           # [num_classes]
+        loss_gradient,  # [num_classes]
     ).flatten()  # [hidden_size * num_classes]
 
     return grad_embedding
@@ -190,6 +191,7 @@ However, we can optimize this process by leveraging a GPU to significantly speed
 
 ```python
 import torch
+
 
 @torch.no_grad()
 def kmeans_pp_pytorch(data: torch.Tensor, k: int = -1) -> torch.Tensor:
