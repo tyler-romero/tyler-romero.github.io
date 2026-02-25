@@ -76,7 +76,7 @@ body {
 
 h1 {
   font-family: "Fraunces", Georgia, serif;
-  font-style: italic;
+  font-style: normal;
   font-weight: 300;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
@@ -118,12 +118,13 @@ hr {
 p.subtitle {
   font-family: "Fraunces", Georgia, serif;
   font-style: italic;
+  font-weight: 300;
   margin-top: 1rem;
   margin-bottom: 1rem;
   font-size: 2rem;
   display: block;
   line-height: 1;
-  color: var(--warm-accent);
+  color: var(--text-color);
 }
 
 .numeral {
@@ -685,6 +686,27 @@ pre[class*="language-"] > code {
 }
 
 
+/* Bibliography (citation-js output) */
+.bibliography {
+  width: 55%;
+  margin-top: 1.4rem;
+}
+
+.bibliography .csl-bib-body {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.bibliography .csl-entry {
+  margin-bottom: 1.4rem;
+  padding-left: 2em;
+  text-indent: -2em;
+}
+
+.bibliography .csl-entry b {
+  font-weight: normal;
+}
+
 /* ========================================================================
    Mobile
    ======================================================================== */
@@ -809,6 +831,10 @@ pre[class*="language-"] > code {
   }
 
   .toc {
+    width: 100%;
+  }
+
+  .bibliography {
     width: 100%;
   }
 

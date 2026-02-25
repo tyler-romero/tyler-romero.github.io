@@ -4,6 +4,7 @@ import {
 } from "@11ty/eleventy";
 import { eleventyImageTransformPlugin } from "@11ty/eleventy-img";
 import { feedPlugin } from "@11ty/eleventy-plugin-rss";
+import Cite from "citation-js";
 import CleanCSS from "clean-css";
 import { DateTime } from "luxon";
 import fs from "node:fs";
@@ -96,6 +97,35 @@ export default function (eleventyConfig) {
   // Plugins
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
   eleventyConfig.addPlugin(InputPathToUrlTransformPlugin);
+
+  // BibTeX → static bibliography (replaces client-side bibtex-js)
+  eleventyConfig.addTransform("bibtex", function (content) {
+    if (!this.page.outputPath?.endsWith(".html")) return content;
+
+    const regex =
+      /<textarea id="bibtex_input"[^>]*>([\s\S]*?)<\/textarea>\s*(?:<div id="bibtex_display"><\/div>)?/;
+    const match = content.match(regex);
+    if (!match) return content;
+
+    const bibtex = match[1];
+    const cite = new Cite(bibtex);
+    let html = cite.format("bibliography", {
+      format: "html",
+      template: "apa",
+      lang: "en-US",
+    });
+
+    // Linkify bare URLs that citation-js leaves as plain text
+    html = html.replace(
+      /(?<!href=["'])(?<!<a[^>]*>)(https?:\/\/[^\s<]+)/g,
+      '<a href="$1">$1</a>',
+    );
+
+    return content.replace(
+      regex,
+      `<div class="bibliography">${html}</div>`,
+    );
+  });
 
   return {
     // When a passthrough file is modified, rebuild the pages:

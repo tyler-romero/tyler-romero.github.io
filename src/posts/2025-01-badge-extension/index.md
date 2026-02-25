@@ -269,17 +269,61 @@ In short, greedy methods like BADGE naturally extend to variable batches, while 
 If you're building something interesting with these methods or want to dive deeper into active learning, I'd love to [hear from you](mailto:tyler.alexander.romero@gmail.com)!
 
 ## References
-
-[1] Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., & Agarwal, A. (2020). Deep Batch Active Learning by Diverse, Uncertain Gradient Lower Bounds.  [https://arxiv.org/abs/1906.03671](https://arxiv.org/abs/1906.03671)
-
-[2] LeCun, Y., Cortes, C., & Burges, C. J. C. (1998). The MNIST Database of Handwritten Digits. [http://yann.lecun.com/exdb/mnist/](http://yann.lecun.com/exdb/mnist/)
-
-[3] De Silva, V., & Tenenbaum, J. B. (2004). Sparse Multidimensional Scaling using Landmark Points. *Technical Report, Stanford University*. [https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf](https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf)
-
-[4] Sener, O., & Savarese, S. (2018). Active Learning for Convolutional Neural Networks: A Core-Set Approach. *International Conference on Learning Representations*. [https://arxiv.org/abs/1708.00489](https://arxiv.org/abs/1708.00489)
-
-[5] Kirsch, A., van Amersfoort, J., & Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. *Advances in Neural Information Processing Systems*. [https://arxiv.org/abs/1906.08158](https://arxiv.org/abs/1906.08158)
-
-[6] Motta, D. (2019). MDS and LMDS implementation. *GitHub Repository*. [https://github.com/danilomotta/LMDS](https://github.com/danilomotta/LMDS)
-
-[7] De Moriarty, A. (2024). fast_pytorch_kmeans. *GitHub Repository*. [https://github.com/DeMoriarty/fast_pytorch_kmeans](https://github.com/DeMoriarty/fast_pytorch_kmeans)
+<textarea id="bibtex_input" style="display:none;">
+@misc{ash2020deep,
+      title={Deep Batch Active Learning by Diverse, Uncertain Gradient Lower Bounds},
+      author={Jordan T. Ash and Chicheng Zhang and Akshay Krishnamurthy and John Langford and Alekh Agarwal},
+      year={2020},
+      eprint={1906.03671},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1906.03671}
+}
+@misc{lecun1998mnist,
+      author={Yann LeCun and Corinna Cortes and Christopher J. C. Burges},
+      title={The MNIST Database of Handwritten Digits},
+      year={1998},
+      url={http://yann.lecun.com/exdb/mnist/}
+}
+@techreport{desilva2004sparse,
+      author={Vin De Silva and Joshua B. Tenenbaum},
+      title={Sparse Multidimensional Scaling using Landmark Points},
+      year={2004},
+      institution={Stanford University},
+      url={https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf}
+}
+@inproceedings{sener2018active,
+      title={Active Learning for Convolutional Neural Networks: A Core-Set Approach},
+      author={Ozan Sener and Silvio Savarese},
+      year={2018},
+      booktitle={International Conference on Learning Representations},
+      eprint={1708.00489},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1708.00489}
+}
+@inproceedings{kirsch2019batchbald,
+      title={BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning},
+      author={Andreas Kirsch and Joost van Amersfoort and Yarin Gal},
+      year={2019},
+      booktitle={Advances in Neural Information Processing Systems},
+      eprint={1906.08158},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/1906.08158}
+}
+@software{motta2019lmds,
+      author={Danilo Motta},
+      title={MDS and LMDS implementation},
+      year={2019},
+      url={https://github.com/danilomotta/LMDS},
+      note={GitHub repository}
+}
+@software{demoriarty2024fast,
+      author={De Moriarty, A.},
+      title={fast\_pytorch\_kmeans},
+      year={2024},
+      url={https://github.com/DeMoriarty/fast_pytorch_kmeans},
+      note={GitHub repository}
+}
+</textarea>
