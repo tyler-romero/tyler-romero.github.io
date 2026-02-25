@@ -88,7 +88,7 @@ h1 {
 
 h2 {
   font-family: "Fraunces", Georgia, serif;
-  font-weight: 400;
+  font-weight: 300;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   font-size: 2.4rem;
@@ -98,7 +98,7 @@ h2 {
 
 h3 {
   font-family: "Fraunces", Georgia, serif;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 1.9rem;
   margin-top: 2rem;
   margin-bottom: 1.4rem;
@@ -307,7 +307,7 @@ video {
   position: absolute;
   float: none;
   clear: none;
-  left: 105%;
+  left: 110%;
   top: 0;
   transform: none;
   width: 50%;
@@ -573,7 +573,7 @@ hr.section-divider {
 
 .item-list li,
 .post-list li {
-  padding: 0.4em 0.4em;
+  padding: 0.4em 0;
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
