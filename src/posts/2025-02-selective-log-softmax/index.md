@@ -206,7 +206,7 @@ def selective_log_softmax(logits, index):
     return token_logprobs
 ```
 
-I have contributed this optimization to several popular open-source RLHF libraries, including [huggingface/TRL](https://github.com/huggingface/trl) \[[PR 1](https://github.com/huggingface/trl/pull/2773), [PR 2](https://github.com/huggingface/trl/pull/2799)\], [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) \[[PR 3](https://github.com/OpenRLHF/OpenRLHF/pull/718)\], [Verl](https://github.com/volcengine/verl) \[[PR 4](https://github.com/volcengine/verl/pull/220)\], and [allenai/open-instruct](https://github.com/allenai/open-instruct) \[[PR 5](https://github.com/allenai/open-instruct/pull/584)\]. This implementation was also incorporated into [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) \[[here](https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47)\] for the training of the [INTELLECT-2](https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf) model.
+I have contributed this optimization to several popular open-source RLHF libraries, including [huggingface/TRL](https://github.com/huggingface/trl) ([PR 1](https://github.com/huggingface/trl/pull/2773), [PR 2](https://github.com/huggingface/trl/pull/2799)), [OpenRLHF](https://github.com/OpenRLHF/OpenRLHF) ([PR 3](https://github.com/OpenRLHF/OpenRLHF/pull/718)), [Verl](https://github.com/volcengine/verl) ([PR 4](https://github.com/volcengine/verl/pull/220)), and [allenai/open-instruct](https://github.com/allenai/open-instruct) ([PR 5](https://github.com/allenai/open-instruct/pull/584)). This implementation was also incorporated into [PrimeIntellect-ai/prime-rl](https://github.com/PrimeIntellect-ai/prime-rl) ([here](https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47)) for the training of the [INTELLECT-2](https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf) model.
 
 Here is the actual GPU memory usage on an RTX 4090 (24GB VRAM) before and after implementing selective log-softmax in TRL's `GRPOTrainer`: ![Memory usage reduction from selective log-softmax in TRL](/assets/img/trl-selective-log-softmax.png)
 
@@ -243,5 +243,6 @@ Very impressive! This is both faster and more memory efficient than our hand-rol
 The only reason not to use this method is if you are in a setting where `torch.compile` usage is supposed to be enabled/disabled via a user-passed flag. Which is the case for most open-source libraries that use `torch`. For your own projects, the compiled version is recommended!
 
 
----
+<hr class="section-divider">
+
 Thanks to [Quentin Gallouédec](https://github.com/qgallouedec) for providing the initial benchmarking script and suggesting to pull `gather` out of the loop over `logsumexp` to improve performance.

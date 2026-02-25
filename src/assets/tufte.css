@@ -546,7 +546,7 @@ nav a:visited {
 /* Section dividers — hand-drawn wavy line */
 hr.section-divider {
   width: 20%;
-  margin: 1.5rem 0 1.5rem 17.5%;
+  margin: 3rem 0 3rem 17.5%;
   border: none;
   height: 8px;
   clear: both;
