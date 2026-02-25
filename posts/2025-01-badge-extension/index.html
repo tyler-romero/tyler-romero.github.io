@@ -15,7 +15,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -61,7 +61,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-02-25T21:38:26.941Z",
+            "dateModified": "2026-02-25T22:47:07.615Z",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -176,6 +176,7 @@ The expected label is then used to compute the gradient.</p>
 <pre><code class="language-python">from torch import Tensor
 from torch.nn import functional as F
 
+
 @torch.no_grad()
 def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&gt; Tensor:
     &quot;&quot;&quot;
@@ -202,7 +203,7 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&gt; Tenso
 
     # Compute gradient of cross entropy loss wrt final layer weights
     # For cross entropy loss, this is simply (prediction - target)
-    loss_gradient = (probs - y_hat)  # [num_classes]
+    loss_gradient = probs - y_hat  # [num_classes]
 
     # Compute gradient embedding by outer product of:
     # - final_acts: the last layer's activations (semantic information)
@@ -210,7 +211,7 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&gt; Tenso
     # This is equivalent to the gradient w.r.t the final layer weights
     grad_embedding = torch.outer(
         final_acts.squeeze(0),  # [hidden_size]
-        loss_gradient           # [num_classes]
+        loss_gradient,  # [num_classes]
     ).flatten()  # [hidden_size * num_classes]
 
     return grad_embedding
@@ -305,6 +306,7 @@ When we generate a complete ordering over the pool of unlabeled data points, we 
 This means that the overall time complexity is $O(n^2d)$, which can be expensive for large datasets or high-dimensional data.</p>
 <p>However, we can optimize this process by leveraging a GPU to significantly speed up the distance computations:</p>
 <pre><code class="language-python">import torch
+
 
 @torch.no_grad()
 def kmeans_pp_pytorch(data: torch.Tensor, k: int = -1) -&gt; torch.Tensor:

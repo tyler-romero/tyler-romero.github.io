@@ -26,6 +26,7 @@
   --warm-accent: #B07A65;
   --warm-glow: #C49A6C;
   --bg-color: #FEF9ED;
+  --code-bg: #f3efe4;
   --text-color: #1a1a1a;
 }
 
@@ -87,7 +88,7 @@ h1 {
 
 h2 {
   font-family: "Fraunces", Georgia, serif;
-  font-weight: 400;
+  font-weight: 300;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   font-size: 2.4rem;
@@ -97,7 +98,7 @@ h2 {
 
 h3 {
   font-family: "Fraunces", Georgia, serif;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 1.9rem;
   margin-top: 2rem;
   margin-bottom: 1.4rem;
@@ -306,7 +307,7 @@ video {
   position: absolute;
   float: none;
   clear: none;
-  left: 105%;
+  left: 110%;
   top: 0;
   transform: none;
   width: 50%;
@@ -362,10 +363,17 @@ div.table-wrapper {
 
 code,
 pre > code {
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-family: "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 1rem;
   line-height: 1.42;
   -webkit-text-size-adjust: 100%; /* Prevent adjustments of font size after orientation changes in iOS. See https://github.com/edwardtufte/tufte-css/issues/81#issuecomment-261953409 */
+}
+
+/* Inline code highlight */
+:not(pre) > code {
+  background: var(--code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
 }
 
 .sans > code {
@@ -565,7 +573,7 @@ hr.section-divider {
 
 .item-list li,
 .post-list li {
-  padding: 0.4em 0.4em;
+  padding: 0.4em 0;
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
@@ -609,8 +617,9 @@ hr.section-divider {
 
 /* Code block styling */
 pre > code {
-  background: #f5f5f0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C1.5 8, 3 16, 2.2 24 S1 40, 2.5 48 S3.5 64, 1.8 72 S1 88, 2 100' stroke='%23568259' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
-  border-radius: 4px 3px 5px 2px;
+  background: var(--code-bg);
+  border-left: 3px solid rgba(176, 122, 101, 0.25);
+  border-radius: 0;
   padding: 1em 1.2em 1em 1.4em;
 }
 
@@ -625,12 +634,72 @@ pre[class*="language-"] {
 }
 
 code[class*="language-"] {
+  font-family: "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
   text-shadow: none;
+  background: none;
 }
 
 /* Re-apply code block background over Prism's reset (higher specificity than code[class*]) */
 pre[class*="language-"] > code {
-  background: #f5f5f0 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C1.5 8, 3 16, 2.2 24 S1 40, 2.5 48 S3.5 64, 1.8 72 S1 88, 2 100' stroke='%23568259' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
+  background: var(--code-bg);
+  border-left: 3px solid rgba(176, 122, 101, 0.25);
+}
+
+/* Prism.js token colors — warm manuscript palette */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #8b8477;
+}
+
+.token.punctuation {
+  color: #6e685e;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #976243;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #5d7a4a;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #7a6e5d;
+  background: none;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: var(--brand-color);
+}
+
+.token.function,
+.token.class-name {
+  color: #a2665c;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #9a7640;
 }
 
 /* Table of Contents */
