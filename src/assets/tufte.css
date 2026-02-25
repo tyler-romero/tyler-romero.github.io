@@ -297,6 +297,21 @@ video {
   position: relative;
 }
 
+.post-list li:has(.marginnote-wide) {
+  position: relative;
+}
+
+.marginnote-wide {
+  position: absolute;
+  float: none;
+  clear: none;
+  right: 0;
+  top: 0;
+  transform: translateX(105%);
+  width: 55%;
+  margin: 0;
+}
+
 .sidenote-number {
   counter-increment: sidenote-counter;
 }
@@ -509,7 +524,7 @@ nav a:visited {
 }
 
 .colophon-copyright {
-  font-family: "Gentium Book Plus", Georgia, serif;
+  font-family: "Newsreader", Georgia, serif;
   font-size: 0.95rem;
   color: rgba(26, 26, 26, 0.4);
   margin-top: 0;
@@ -556,12 +571,16 @@ hr.section-divider {
   gap: 1.2em;
 }
 
+.post-date,
+.date {
+  font-family: "Virgil", cursive;
+  font-size: 0.95rem;
+  color: var(--warm-accent);
+}
+
 .post-date {
-  font-family: et-book-roman-old-style;
-  font-size: 1.2rem;
   flex-shrink: 0;
   width: 7em;
-  color: var(--warm-accent);
   padding-top: 0.15em;
 }
 

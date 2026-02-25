@@ -34,7 +34,7 @@ export default function (eleventyConfig) {
     } else {
       dateObj = DateTime.fromJSDate(dateObj);
     }
-    return dateObj.toFormat("MMMM d, yyyy");
+    return dateObj.toFormat("MMM d, yyyy");
   });
   eleventyConfig.addFilter("lastModifiedDate", function (filepath) {
     const stat = fs.statSync(filepath);

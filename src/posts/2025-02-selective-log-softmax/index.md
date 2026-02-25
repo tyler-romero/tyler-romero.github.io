@@ -2,7 +2,7 @@
 title: Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax
 subtitle: Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest
 date: 2025-02-06T00:00:00-08:00
-blurb: Reduce VRAM usage by half when computing log probabilities by selectively applying log-softmax to only the necessary tokens. Perfect for many RLHF post-training algorithms (such as PPO and GRPO) where typically only one token's log probability is needed from the entire vocabulary at each sequence position.
+blurb: Reduce VRAM usage by half when computing log probabilities by selectively applying log-softmax to only the necessary tokens.
 tags: ["post", "grpo", "ppo", "logprobs", "logits", "log-softmax", "log_softmax", "logsumexp", "log-probabilities"]
 math: true
 code: true

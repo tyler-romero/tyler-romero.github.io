@@ -2,7 +2,7 @@
 title: NanoGPT Speedrun Living Worklog
 subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
 date: 2025-03-08T00:00:00-08:00
-blurb: How fast can I train GPT-2 on two RTX 4090 GPUs? This is a living worklog of my progress.
+blurb: How fast can I train GPT-2 on two RTX 4090 GPUs?
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 math: true
 code: true
