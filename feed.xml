@@ -716,14 +716,14 @@ of unlabeled data on-the-fly as those points become available! See &lt;a href=&q
 &lt;h2 id=&quot;can-other-popular-batch-active-learning-methods-be-similarly-extended%3F&quot; tabindex=&quot;-1&quot;&gt;Can Other Popular Batch Active Learning Methods Be Similarly Extended?&lt;/h2&gt;
 &lt;p&gt;Not all batch active learning methods can be extended to support variable-sized batches.
 Let&#39;s consider two categories of batch active learning methods and discuss their potential for extension:&lt;/p&gt;
-&lt;h3 id=&quot;%E2%9C%85-coreset-and-other-greedy-selection-algorithms&quot; tabindex=&quot;-1&quot;&gt;✅ CORESET and other Greedy-Selection Algorithms&lt;/h3&gt;
+&lt;h3 id=&quot;yes%3A-coreset-and-other-greedy-selection-algorithms&quot; tabindex=&quot;-1&quot;&gt;Yes: CORESET and other Greedy-Selection Algorithms&lt;/h3&gt;
 &lt;p&gt;&lt;a href=&quot;https://arxiv.org/abs/1708.00489&quot;&gt;CORESET&lt;/a&gt; is a batch active learning method that selects diverse data points by maximizing the minimum distance to already selected points. Like BADGE, it can be extended to generate a priority ordering over the unlabeled pool.&lt;/p&gt;
 &lt;p&gt;The extension is straightforward: instead of stopping after selecting k points, run the standard greedy
 CORESET selection until all unlabeled points are ordered. Starting with an initial point (chosen randomly or as the furthest from existing labeled data),
 each iteration selects the point with the maximum minimum distance to all previously selected points.&lt;/p&gt;
 &lt;p&gt;This naturally prioritizes points that cover unexplored regions of the feature space - earlier points represent more crucial additions to the diverse subset.
 The ordering maintains CORESET&#39;s goal of representative sampling while enabling variable batch sizes.&lt;/p&gt;
-&lt;h3 id=&quot;%E2%9D%8C-batchbald-and-other-methods-that-require-a-global-view&quot; tabindex=&quot;-1&quot;&gt;❌ BatchBALD and Other Methods That Require a Global View&lt;/h3&gt;
+&lt;h3 id=&quot;no%3A-batchbald-and-other-methods-that-require-a-global-view&quot; tabindex=&quot;-1&quot;&gt;No: BatchBALD and Other Methods That Require a Global View&lt;/h3&gt;
 &lt;p&gt;Unlike BADGE and CORESET, &lt;a href=&quot;https://arxiv.org/abs/1906.08158&quot;&gt;BatchBALD&lt;/a&gt; doesn&#39;t lend itself well to variable-sized batches. BatchBALD works by selecting points that
 maximize mutual information between selected and remaining points, using predictive entropy across the entire unlabeled pool.&lt;/p&gt;
 &lt;p&gt;The core issue is that BatchBALD&#39;s mutual information calculation is inherently global - it depends on the full set of unlabeled data. This makes it difficult to generate a
