@@ -19,14 +19,14 @@ Black pepper
 [^pine-nuts]: Pesto is traditionally made with pine nuts, but I prefer the earthier flavor of walnuts. Plus walnuts are less expensive.
 
 ## Steps
-1. Use a food processor to puree everything together. Its easiest to fit it all by starting with the Basil and olive oil, then adding everything else.
+1. Use a food processor to puree everything together. It's easiest to fit it all by starting with the basil and olive oil, then adding everything else.
 
 
 ---
-Can be stored for a few days in the fridge or almost indefinitely in a freezer (Thaw in a microwave on a low power setting).
+Can be stored for a few days in the fridge or almost indefinitely in a freezer (thaw in a microwave on a low power setting).
 
 This recipe is modified from the pesto recipe in [The Enchanted Broccoli Forest](https://www.molliekatzen.com/books_enchanted_broccoli.php).
 
-[^parm]: The foodies in my life disagree but I am perfectly happy with the green bottle of Kraft Parmesan cheese.
+[^parm]: The foodies in my life disagree, but I am perfectly happy with the green bottle of Kraft Parmesan cheese.
 
 ![Homemade basil pesto on pasta](/assets/img/pesto.jpg)

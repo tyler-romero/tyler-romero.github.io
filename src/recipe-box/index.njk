@@ -19,13 +19,16 @@ tags: ["home-cooking", "recipe-box"]
         <span class="sidenote">With attribution provided as appropriate.</span> some of those recipes here the next time I decide to make them.
     </p>
 </section>
+<hr class="section-divider" style="margin-top: 1rem; clear: none;" />
 <section>
     <h2 id="recipes">Recipes</h2>
-    <ul>
-        {% for p in collections.recipe | sort(attribute='date') %}
+    <ul class="item-list">
+        {% for p in collections.recipe | sort(attribute='data.title') %}
             <li>
                 <a href="{{ p.url }}">{{ p.data.title }}</a>
-                <small>- {{ p.data.blurb }}</small>
+                <p class="item-description">
+                    <small>{{ p.data.blurb | capitalize }}</small>
+                </p>
             </li>
         {% endfor %}
     </ul>
