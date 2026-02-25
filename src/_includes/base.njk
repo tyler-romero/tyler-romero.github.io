@@ -27,5 +27,21 @@
         <footer>
             {% include "footer.njk" %}
         </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
     </body>
 </html>

@@ -424,17 +424,17 @@ label.margin-toggle:not(.sidenote-number) {
    ======================================================================== */
 
 .profile-picture {
-  border-radius: 5%;
+  border-radius: 3px;
   width: 97.5%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Sticky header */
+/* Header — slides out on scroll-down, slides back on scroll-up */
 header {
   position: sticky;
   top: 0;
   z-index: 999;
   background-color: var(--bg-color);
+  will-change: transform;
 }
 
 nav a,
@@ -467,20 +467,52 @@ nav a:visited {
   margin-bottom: 0.4rem;
 }
 
-.social-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4em;
+/* Colophon */
+.colophon {
+  width: 55%;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
 }
 
-.social-links .icon {
-  width: 1.2em;
-  height: 1.2em;
-  vertical-align: -0.15em;
+.colophon-links {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.1rem;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.6rem;
 }
 
-.copyright {
-  font-size: 1rem;
+.colophon-links a,
+.colophon-links a:link,
+.colophon-links a:visited {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.colophon-links a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--warm-accent);
+  text-underline-offset: 2px;
+}
+
+.colophon-sep {
+  margin: 0 0.3em;
+  color: rgba(26, 26, 26, 0.3);
+}
+
+.colophon-note {
+  font-family: "Virgil", cursive;
+  font-size: 0.95rem;
+  color: rgba(26, 26, 26, 0.5);
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
+.colophon-copyright {
+  font-family: "Gentium Book Plus", Georgia, serif;
+  font-size: 0.95rem;
+  color: rgba(26, 26, 26, 0.4);
+  margin-top: 0;
 }
 
 /* Section dividers — hand-drawn wavy line */
@@ -741,6 +773,10 @@ pre[class*="language-"] > code {
   }
 
   .toc {
+    width: 100%;
+  }
+
+  .colophon {
     width: 100%;
   }
 }
