@@ -183,6 +183,26 @@ The colophon is separated from the page content by a hand-drawn wavy divider. No
 
 ---
 
+## Recipe Box
+
+The recipe box section has a different voice from the technical blog. Where blog posts are educational and precise, recipes are **conversational and warm**, in the spirit of Bon Appetit. Think of a friend telling you about a dish they love.
+
+### Writing Style
+
+- **Conversational tone**: Write like you're telling someone about a recipe over dinner, not writing documentation. Short, direct sentences. Personal opinions welcome.
+- **Headnotes over instructions**: The editorial value is in the headnotes (why you love this recipe, what makes it work, tips and substitutions). Many recipes simply link out to the original source.
+- **Honest and specific**: "No frying required, but they still come out incredibly well" is better than "a delicious treat the whole family will love." Say what you actually think.
+- **Proper formatting**: Use correct typographic conventions (en dashes for ranges, curly apostrophes, °F with the degree symbol). Capitalize proper nouns (Trader Joe's, English muffin). Spell out ingredients fully (extra-virgin olive oil, not EVOO).
+
+### Structure
+
+- Each recipe page has a short, punchy subtitle and blurb that reads as a sentence fragment starting lowercase (the list page capitalizes the first letter).
+- Recipes that link to an external source should use a descriptive link like `[Full recipe on sitename.com](url)`, not a bare URL.
+- Personal notes and tips go above the recipe link or ingredients. Keep them brief.
+- Yield and time go in italics at the top: `*Serves 8 — 35 minutes total*`
+
+---
+
 ## What This Is Not
 
 This is not a developer portfolio template or a tech company blog. There are no dark-mode dashboards, no terminal-green-on-black hero sections, no "built with" badge walls, no Medium-clone layouts. It's also not a sterile LaTeX PDF — the manuscript is warm, not clinical.
