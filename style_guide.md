@@ -2,7 +2,7 @@
 
 ## Identity
 
-**tylerromero.com** is a personal blog about AI/ML. The governing metaphor is **hand-drawn notes on a beautiful academic manuscript** — the kind of paper that's been typeset with care, then annotated in the margins with a warm pen. The typography is serious and well-set. The annotations, dividers, and decorative elements are sketchy, human, and slightly imperfect.
+**tylerromero.com** is a personal blog about AI/ML. The governing metaphor is **hand-drawn notes on a beautiful academic manuscript or journal** — the kind of paper that's been typeset with care, then annotated in the margins with a warm pen. The typography is serious and well-set. The annotations, dividers, and decorative elements are sketchy, human, and slightly imperfect.
 
 Two layers work together:
 1. **The manuscript**: Clean serif typography, generous whitespace, Tufte-style sidenotes and margin notes. This is the foundation — the part that says "the content here is rigorous and worth your time."
@@ -71,26 +71,32 @@ Photos on the site are personal — a headshot, a snapshot from a project, a pho
 - Depth of field should be moderate — the subject is clear, but the environment is present and readable.
 - Color grade warm but not orange. Shadows should stay open and slightly cool for contrast.
 - No seamless studio backdrops, no stock photography, no AI-generated faces.
+- Photos are presented as clean rectangles with minimal border-radius (3px desktop, 2px mobile) — never circular or heavily rounded. No drop shadows. A photo should sit flat on the page like a print pasted into a manuscript.
 
 ---
 
 ## Typography
 
-Typography is the manuscript layer — the part that should feel properly typeset, like a paper you'd want to read in print.
+Typography spans both layers: the manuscript carries the main text; the hand-drawn layer adds annotations and human touches.
 
-### Hierarchy
+### Manuscript Layer
+
+The manuscript layer is properly typeset — like a paper you'd want to read in print.
 
 - **Display / Hero**: Large, serif-italic headlines that feel literary and human. Italic style distinguishes display headings from the roman section headers below.
-- **Section Headers**: Same serif family as display (Crimson Pro or similar), roman weight 600. The italic/roman contrast between hero and section headers creates hierarchy without introducing a second typeface.
-- **Body**: A warm, readable serif (Bradford LL or similar — something with humanist warmth and slightly soft terminals) at comfortable reading sizes with tall line-height (1.6–1.7).
+- **Section Headers**: Same serif family as display (Fraunces), roman weight 400. The italic/roman contrast between hero and section headers creates hierarchy without introducing a second typeface.
+- **Body**: Newsreader — a warm, readable serif with humanist warmth at comfortable reading sizes with tall line-height (1.6–1.7). Sidenotes and margin notes use Gentium Book Plus.
 - **Pull Quotes**: Set in a serif italic, often oversized, used to surface human voices and values.
-- **Hand-drawn layer**: The Virgil font (a handwriting face) is available for annotations, diagram labels, and decorative elements. It should appear only in the "notes" layer, never in body text or headings.
 
-### Rules
+**Rules**: No all-caps except for small UI labels (tags like "research," "announcements"). Monospaced fonts are reserved for code blocks only — never in editorial or decorative contexts. Generous whitespace between sections. Let every element breathe.
 
-- No all-caps except for small UI labels (tags like "research," "announcements").
-- Monospaced fonts are reserved for code blocks only — never in editorial or decorative contexts.
-- Generous whitespace between sections. Let every element breathe.
+### Hand-Drawn Layer
+
+The Virgil font (a handwriting face) is the typographic voice of the annotation layer. It should appear only in the "notes" layer, never in body text or headings.
+
+- **Dates**: Set in Virgil with abbreviated months (e.g., "Jan 10, 2026").
+- **Diagram labels**: Virgil for labels on conceptual diagrams — like something scribbled in the margin.
+- **Decorative elements**: The margin-toggle icon on mobile is a Virgil asterisk (`*`) in superscript, rendered in the warm accent color.
 
 ---
 
@@ -115,10 +121,14 @@ White space is a first-class design element, not leftover. Minimum 80px between 
 
 Animations belong to the hand-drawn layer. The manuscript itself is static; the annotations appear as if someone is marking up the page as you read.
 
-- Rough Notation brackets and underlines animate in as the reader scrolls — like a pen drawing them in real time.
+- Rough Notation brackets and underlines animate in as the reader scrolls — like a pen drawing them in real time. These use the warm accent color (`--warm-accent`), not the link green.
 - Transitions are slow and eased — nothing snappy or bouncy. Think: the pace of a deep breath.
 - Hover states are subtle (slight background shift, soft shadow deepening). No color shifts.
 - The overall feeling should be **calm confidence**, never urgency.
+
+### Navigation
+
+The header slides out of view as the reader scrolls down and slides back in when scrolling up — tracking 1:1 with scroll delta, not snapping. This balances editorial pacing (the nav doesn't permanently occupy the page) with usability (it's always one scroll-up away). At the top of the page, the header is always fully visible.
 
 ---
 
@@ -158,6 +168,18 @@ The writing voice is:
 - **Quietly ambitious** — the work speaks for itself; the words stay grounded
 
 The blog is earnest. The visuals exist to make that earnestness feel credible rather than disposable.
+
+---
+
+## Footer / Colophon
+
+The footer is a typographic colophon, not a row of social icons. It contains:
+
+1. **Text links** in Fraunces small-caps (GitHub / LinkedIn / Scholar / Twitter / Email / RSS), separated by `/` dividers.
+2. **A typesetting line** that names the fonts used — set self-referentially (typeface names in Newsreader italic, "Annotations in Virgil" in Virgil with warm accent color).
+3. **Copyright** in Newsreader at reduced opacity.
+
+The colophon is separated from the page content by a hand-drawn wavy divider. No SVG icons, no icon fonts.
 
 ---
 
