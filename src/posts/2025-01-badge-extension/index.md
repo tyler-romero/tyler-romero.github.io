@@ -244,7 +244,7 @@ of unlabeled data on-the-fly as those points become available! See [this (longer
 Not all batch active learning methods can be extended to support variable-sized batches.
 Let's consider two categories of batch active learning methods and discuss their potential for extension:
 
-### ✅ CORESET and other Greedy-Selection Algorithms
+### Yes: CORESET and other Greedy-Selection Algorithms
 
 [CORESET](https://arxiv.org/abs/1708.00489) is a batch active learning method that selects diverse data points by maximizing the minimum distance to already selected points. Like BADGE, it can be extended to generate a priority ordering over the unlabeled pool.
 
@@ -255,7 +255,7 @@ each iteration selects the point with the maximum minimum distance to all previo
 This naturally prioritizes points that cover unexplored regions of the feature space - earlier points represent more crucial additions to the diverse subset.
 The ordering maintains CORESET's goal of representative sampling while enabling variable batch sizes.
 
-### ❌ BatchBALD and Other Methods That Require a Global View
+### No: BatchBALD and Other Methods That Require a Global View
 
 Unlike BADGE and CORESET, [BatchBALD](https://arxiv.org/abs/1906.08158) doesn't lend itself well to variable-sized batches. BatchBALD works by selecting points that
 maximize mutual information between selected and remaining points, using predictive entropy across the entire unlabeled pool.

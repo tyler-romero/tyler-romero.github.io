@@ -683,6 +683,17 @@ pre[class*="language-"] > code {
     display: none;
   }
 
+  .marginnote:has(.profile-picture),
+  .marginnote.mobile-visible,
+  .sidenote.mobile-visible {
+    display: block;
+    float: none;
+    width: 55%;
+    max-width: 280px;
+    margin: 0 auto 1rem;
+    position: relative;
+  }
+
   .margin-toggle:checked + .sidenote,
   .margin-toggle:checked + .marginnote {
     display: block;
