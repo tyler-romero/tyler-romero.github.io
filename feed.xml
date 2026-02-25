@@ -211,113 +211,20 @@
 &lt;/section&gt;
 &lt;section&gt;
 &lt;h2 id=&quot;references&quot; tabindex=&quot;-1&quot;&gt;References&lt;/h2&gt;
-&lt;textarea id=&quot;bibtex_input&quot; style=&quot;display:none;&quot;&gt;
-@misc{modded_nanogpt_2024,
-  author       = {Keller Jordan and Jeremy Bernstein and Brendan Rappazzo and
-                  @fernbear.bsky.social and Boza Vlado and You Jiacheng and
-                  Franz Cesista and Braden Koszarsky and @Grad62304977},
-  title        = {modded-nanogpt: Speedrunning the NanoGPT baseline},
-  year         = {2024},
-  url          = {https://github.com/KellerJordan/modded-nanogpt},
-  note = {GitHub repository}
-}
-@software{hlb-gpt_2024,
-  author={Fern},
-  month={3},
-  year = {2024},
-  title={hlb-gpt},
-  url={https://github.com/tysam-code/hlb-gpt},
-  version = {0.4.0},
-  note = {GitHub repository}
-}
-@misc{su2023roformerenhancedtransformerrotary,
-      title={RoFormer: Enhanced Transformer with Rotary Position Embedding},
-      author={Jianlin Su and Yu Lu and Shengfeng Pan and Ahmed Murtadha and Bo Wen and Yunfeng Liu},
-      year={2023},
-      eprint={2104.09864},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2104.09864},
-}
-@misc{so2022primersearchingefficienttransformers,
-      title={Primer: Searching for Efficient Transformers for Language Modeling},
-      author={David R. So and Wojciech Mańke and Hanxiao Liu and Zihang Dai and Noam Shazeer and Quoc V. Le},
-      year={2022},
-      eprint={2109.08668},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2109.08668},
-}
-@misc{hagele2024scalinglawscomputeoptimaltraining,
-      title={Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations},
-      author={Alexander Hägele and Elie Bakouch and Atli Kosson and Loubna Ben Allal and Leandro Von Werra and Martin Jaggi},
-      year={2024},
-      eprint={2405.18392},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2405.18392},
-}
-@misc{hoffmann2022trainingcomputeoptimallargelanguage,
-      title={Training Compute-Optimal Large Language Models},
-      author={Jordan Hoffmann and Sebastian Borgeaud and Arthur Mensch and Elena Buchatskaya and Trevor Cai and Eliza Rutherford and Diego de Las Casas and Lisa Anne Hendricks and Johannes Welbl and Aidan Clark and Tom Hennigan and Eric Noland and Katie Millican and George van den Driessche and Bogdan Damoc and Aurelia Guy and Simon Osindero and Karen Simonyan and Erich Elsen and Jack W. Rae and Oriol Vinyals and Laurent Sifre},
-      year={2022},
-      eprint={2203.15556},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2203.15556},
-}
-@misc{jordan2024muon,
-  author       = {Keller Jordan and Yuchen Jin and Vlado Boza and Jiacheng You and
-                  Franz Cesista and Laker Newhouse and Jeremy Bernstein},
-  title        = {Muon: An optimizer for hidden layers in neural networks},
-  year         = {2024},
-  url          = {https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/}
-}
-@misc{gupta2018shampoopreconditionedstochastictensor,
-      title={Shampoo: Preconditioned Stochastic Tensor Optimization},
-      author={Vineet Gupta and Tomer Koren and Yoram Singer},
-      year={2018},
-      eprint={1802.09568},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/1802.09568},
-}
-@misc{bernstein2024oldoptimizernewnorm,
-      title={Old Optimizer, New Norm: An Anthology},
-      author={Jeremy Bernstein and Laker Newhouse},
-      year={2024},
-      eprint={2409.20325},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2409.20325},
-}
-@misc{gemmateam2024gemma2improvingopen,
-      title={Gemma 2: Improving Open Language Models at a Practical Size},
-      author={Gemma Team and Morgane Riviere and Shreya Pathak and Pier Giuseppe Sessa and Cassidy Hardin and Surya Bhupatiraju and Léonard Hussenot and Thomas Mesnard and Bobak Shahriari and Alexandre Ramé and Johan Ferret and Peter Liu and Pouya Tafti and Abe Friesen and Michelle Casbon and Sabela Ramos and Ravin Kumar and Charline Le Lan and Sammy Jerome and Anton Tsitsulin and Nino Vieillard and Piotr Stanczyk and Sertan Girgin and Nikola Momchev and Matt Hoffman and Shantanu Thakoor and Jean-Bastien Grill and Behnam Neyshabur and Olivier Bachem and Alanna Walton and Aliaksei Severyn and Alicia Parrish and Aliya Ahmad and Allen Hutchison and Alvin Abdagic and Amanda Carl and Amy Shen and Andy Brock and Andy Coenen and Anthony Laforge and Antonia Paterson and Ben Bastian and Bilal Piot and Bo Wu and Brandon Royal and Charlie Chen and Chintu Kumar and Chris Perry and Chris Welty and Christopher A. Choquette-Choo and Danila Sinopalnikov and David Weinberger and Dimple Vijaykumar and Dominika Rogozińska and Dustin Herbison and Elisa Bandy and Emma Wang and Eric Noland and Erica Moreira and Evan Senter and Evgenii Eltyshev and Francesco Visin and Gabriel Rasskin and Gary Wei and Glenn Cameron and Gus Martins and Hadi Hashemi and Hanna Klimczak-Plucińska and Harleen Batra and Harsh Dhand and Ivan Nardini and Jacinda Mein and Jack Zhou and James Svensson and Jeff Stanway and Jetha Chan and Jin Peng Zhou and Joana Carrasqueira and Joana Iljazi and Jocelyn Becker and Joe Fernandez and Joost van Amersfoort and Josh Gordon and Josh Lipschultz and Josh Newlan and Ju-yeong Ji and Kareem Mohamed and Kartikeya Badola and Kat Black and Katie Millican and Keelin McDonell and Kelvin Nguyen and Kiranbir Sodhia and Kish Greene and Lars Lowe Sjoesund and Lauren Usui and Laurent Sifre and Lena Heuermann and Leticia Lago and Lilly McNealus and Livio Baldini Soares and Logan Kilpatrick and Lucas Dixon and Luciano Martins and Machel Reid and Manvinder Singh and Mark Iverson and Martin Görner and Mat Velloso and Mateo Wirth and Matt Davidow and Matt Miller and Matthew Rahtz and Matthew Watson and Meg Risdal and Mehran Kazemi and Michael Moynihan and Ming Zhang and Minsuk Kahng and Minwoo Park and Mofi Rahman and Mohit Khatwani and Natalie Dao and Nenshad Bardoliwalla and Nesh Devanathan and Neta Dumai and Nilay Chauhan and Oscar Wahltinez and Pankil Botarda and Parker Barnes and Paul Barham and Paul Michel and Pengchong Jin and Petko Georgiev and Phil Culliton and Pradeep Kuppala and Ramona Comanescu and Ramona Merhej and Reena Jana and Reza Ardeshir Rokni and Rishabh Agarwal and Ryan Mullins and Samaneh Saadat and Sara Mc Carthy and Sarah Cogan and Sarah Perrin and Sébastien M. R. Arnold and Sebastian Krause and Shengyang Dai and Shruti Garg and Shruti Sheth and Sue Ronstrom and Susan Chan and Timothy Jordan and Ting Yu and Tom Eccles and Tom Hennigan and Tomas Kocisky and Tulsee Doshi and Vihan Jain and Vikas Yadav and Vilobh Meshram and Vishal Dharmadhikari and Warren Barkley and Wei Wei and Wenming Ye and Woohyun Han and Woosuk Kwon and Xiang Xu and Zhe Shen and Zhitao Gong and Zichuan Wei and Victor Cotruta and Phoebe Kirk and Anand Rao and Minh Giang and Ludovic Peran and Tris Warkentin and Eli Collins and Joelle Barral and Zoubin Ghahramani and Raia Hadsell and D. Sculley and Jeanine Banks and Anca Dragan and Slav Petrov and Oriol Vinyals and Jeff Dean and Demis Hassabis and Koray Kavukcuoglu and Clement Farabet and Elena Buchatskaya and Sebastian Borgeaud and Noah Fiedel and Armand Joulin and Kathleen Kenealy and Robert Dadashi and Alek Andreev},
-      year={2024},
-      eprint={2408.00118},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2408.00118},
-}
-@misc{dong2024flexattentionprogrammingmodel,
-      title={Flex Attention: A Programming Model for Generating Optimized Attention Kernels},
-      author={Juechu Dong and Boyuan Feng and Driss Guessous and Yanbo Liang and Horace He},
-      year={2024},
-      eprint={2412.05496},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2412.05496},
-}
-@misc{bernstein2025deriving,
-  author = {Jeremy Bernstein},
-  title = {Deriving Muon},
-  url = {https://jeremybernste.in/writing/deriving-muon},
-  year = {2025}
-}
-
-&lt;/textarea&gt;
-&lt;div id=&quot;bibtex_display&quot;&gt;&lt;/div&gt;&lt;/section&gt;
+&lt;div class=&quot;bibliography&quot;&gt;&lt;div class=&quot;csl-bib-body&quot;&gt;
+  &lt;div data-csl-entry-id=&quot;bernstein2025deriving&quot; class=&quot;csl-entry&quot;&gt;Bernstein, J. (2025). &lt;i&gt;Deriving Muon&lt;/i&gt;. &lt;a href=&quot;https://jeremybernste.in/writing/deriving-muon&quot;&gt;https://jeremybernste.in/writing/deriving-muon&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;bernstein2024oldoptimizernewnorm&quot; class=&quot;csl-entry&quot;&gt;Bernstein, J., &amp;#38; Newhouse, L. (2024). &lt;i&gt;Old Optimizer, New Norm: An Anthology&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2409.20325&quot;&gt;https://arxiv.org/abs/2409.20325&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;dong2024flexattentionprogrammingmodel&quot; class=&quot;csl-entry&quot;&gt;Dong, J., Feng, B., Guessous, D., Liang, Y., &amp;#38; He, H. (2024). &lt;i&gt;Flex Attention: A Programming Model for Generating Optimized Attention Kernels&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2412.05496&quot;&gt;https://arxiv.org/abs/2412.05496&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;hlb-gpt_2024&quot; class=&quot;csl-entry&quot;&gt;Fern. (2024). &lt;i&gt;hlb-gpt&lt;/i&gt; (0.4.0) [Computer software]. &lt;a href=&quot;https://github.com/tysam-code/hlb-gpt&quot;&gt;https://github.com/tysam-code/hlb-gpt&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;gupta2018shampoopreconditionedstochastictensor&quot; class=&quot;csl-entry&quot;&gt;Gupta, V., Koren, T., &amp;#38; Singer, Y. (2018). &lt;i&gt;Shampoo: Preconditioned Stochastic Tensor Optimization&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/1802.09568&quot;&gt;https://arxiv.org/abs/1802.09568&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;hagele2024scalinglawscomputeoptimaltraining&quot; class=&quot;csl-entry&quot;&gt;Hägele, A., Bakouch, E., Kosson, A., Allal, L. B., Werra, L. V., &amp;#38; Jaggi, M. (2024). &lt;i&gt;Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2405.18392&quot;&gt;https://arxiv.org/abs/2405.18392&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;hoffmann2022trainingcomputeoptimallargelanguage&quot; class=&quot;csl-entry&quot;&gt;Hoffmann, J., Borgeaud, S., Mensch, A., Buchatskaya, E., Cai, T., Rutherford, E., de Las Casas, D., Hendricks, L. A., Welbl, J., Clark, A., Hennigan, T., Noland, E., Millican, K., van den Driessche, G., Damoc, B., Guy, A., Osindero, S., Simonyan, K., Elsen, E., … Sifre, L. (2022). &lt;i&gt;Training Compute-Optimal Large Language Models&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2203.15556&quot;&gt;https://arxiv.org/abs/2203.15556&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;modded_nanogpt_2024&quot; class=&quot;csl-entry&quot;&gt;Jordan, K., Bernstein, J., Rappazzo, B., @fernbear.bsky.social, Vlado, B., Jiacheng, Y., Cesista, F., Koszarsky, B., &amp;#38; @Grad62304977. (2024). &lt;i&gt;modded-nanogpt: Speedrunning the NanoGPT baseline&lt;/i&gt;. &lt;a href=&quot;https://github.com/KellerJordan/modded-nanogpt&quot;&gt;https://github.com/KellerJordan/modded-nanogpt&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;jordan2024muon&quot; class=&quot;csl-entry&quot;&gt;Jordan, K., Jin, Y., Boza, V., You, J., Cesista, F., Newhouse, L., &amp;#38; Bernstein, J. (2024). &lt;i&gt;Muon: An optimizer for hidden layers in neural networks&lt;/i&gt;. &lt;a href=&quot;https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/&quot;&gt;https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;so2022primersearchingefficienttransformers&quot; class=&quot;csl-entry&quot;&gt;So, D. R., Mańke, W., Liu, H., Dai, Z., Shazeer, N., &amp;#38; Le, Q. V. (2022). &lt;i&gt;Primer: Searching for Efficient Transformers for Language Modeling&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2109.08668&quot;&gt;https://arxiv.org/abs/2109.08668&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;su2023roformerenhancedtransformerrotary&quot; class=&quot;csl-entry&quot;&gt;Su, J., Lu, Y., Pan, S., Murtadha, A., Wen, B., &amp;#38; Liu, Y. (2023). &lt;i&gt;RoFormer: Enhanced Transformer with Rotary Position Embedding&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2104.09864&quot;&gt;https://arxiv.org/abs/2104.09864&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;gemmateam2024gemma2improvingopen&quot; class=&quot;csl-entry&quot;&gt;Team, G., Riviere, M., Pathak, S., Sessa, P. G., Hardin, C., Bhupatiraju, S., Hussenot, L., Mesnard, T., Shahriari, B., Ramé, A., Ferret, J., Liu, P., Tafti, P., Friesen, A., Casbon, M., Ramos, S., Kumar, R., Lan, C. L., Jerome, S., … Andreev, A. (2024). &lt;i&gt;Gemma 2: Improving Open Language Models at a Practical Size&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2408.00118&quot;&gt;https://arxiv.org/abs/2408.00118&lt;/a&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
 </content>
   </entry>
   <entry>
@@ -487,7 +394,7 @@ Ablation1 method time:  0.002016 sec, Memory peak: 1208.22 MB
         token_logprobs = torch.stack(token_logprobs)
     return token_logprobs
 &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I have contributed this optimization to several popular open-source RLHF libraries, including &lt;a href=&quot;https://github.com/huggingface/trl&quot;&gt;huggingface/TRL&lt;/a&gt; &#92;[[PR 1](https://github.com/huggingface/trl/pull/2773), [PR 2](https://github.com/huggingface/trl/pull/2799)&#92;], &lt;a href=&quot;https://github.com/OpenRLHF/OpenRLHF&quot;&gt;OpenRLHF&lt;/a&gt; &#92;[[PR 3](https://github.com/OpenRLHF/OpenRLHF/pull/718)&#92;], &lt;a href=&quot;https://github.com/volcengine/verl&quot;&gt;Verl&lt;/a&gt; &#92;[[PR 4](https://github.com/volcengine/verl/pull/220)&#92;], and &lt;a href=&quot;https://github.com/allenai/open-instruct&quot;&gt;allenai/open-instruct&lt;/a&gt; &#92;[[PR 5](https://github.com/allenai/open-instruct/pull/584)&#92;]. This implementation was also incorporated into &lt;a href=&quot;https://github.com/PrimeIntellect-ai/prime-rl&quot;&gt;PrimeIntellect-ai/prime-rl&lt;/a&gt; &#92;[[here](https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47)&#92;] for the training of the &lt;a href=&quot;https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf&quot;&gt;INTELLECT-2&lt;/a&gt; model.&lt;/p&gt;
+&lt;p&gt;I have contributed this optimization to several popular open-source RLHF libraries, including &lt;a href=&quot;https://github.com/huggingface/trl&quot;&gt;huggingface/TRL&lt;/a&gt; (&lt;a href=&quot;https://github.com/huggingface/trl/pull/2773&quot;&gt;PR 1&lt;/a&gt;, &lt;a href=&quot;https://github.com/huggingface/trl/pull/2799&quot;&gt;PR 2&lt;/a&gt;), &lt;a href=&quot;https://github.com/OpenRLHF/OpenRLHF&quot;&gt;OpenRLHF&lt;/a&gt; (&lt;a href=&quot;https://github.com/OpenRLHF/OpenRLHF/pull/718&quot;&gt;PR 3&lt;/a&gt;), &lt;a href=&quot;https://github.com/volcengine/verl&quot;&gt;Verl&lt;/a&gt; (&lt;a href=&quot;https://github.com/volcengine/verl/pull/220&quot;&gt;PR 4&lt;/a&gt;), and &lt;a href=&quot;https://github.com/allenai/open-instruct&quot;&gt;allenai/open-instruct&lt;/a&gt; (&lt;a href=&quot;https://github.com/allenai/open-instruct/pull/584&quot;&gt;PR 5&lt;/a&gt;). This implementation was also incorporated into &lt;a href=&quot;https://github.com/PrimeIntellect-ai/prime-rl&quot;&gt;PrimeIntellect-ai/prime-rl&lt;/a&gt; (&lt;a href=&quot;https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47&quot;&gt;here&lt;/a&gt;) for the training of the &lt;a href=&quot;https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf&quot;&gt;INTELLECT-2&lt;/a&gt; model.&lt;/p&gt;
 &lt;p&gt;Here is the actual GPU memory usage on an RTX 4090 (24GB VRAM) before and after implementing selective log-softmax in TRL&#39;s &lt;code&gt;GRPOTrainer&lt;/code&gt;: &lt;picture&gt;&lt;source type=&quot;image/webp&quot; srcset=&quot;https://tylerromero.com/assets/img/C4oDMth8kH-300.webp 300w, https://tylerromero.com/assets/img/C4oDMth8kH-600.webp 600w, https://tylerromero.com/assets/img/C4oDMth8kH-900.webp 900w, https://tylerromero.com/assets/img/C4oDMth8kH-1922.webp 1922w&quot; sizes=&quot;(max-width: 900px) 100vw, 900px&quot;&gt;&lt;img loading=&quot;lazy&quot; decoding=&quot;async&quot; class=&quot;responsive-image&quot; src=&quot;https://tylerromero.com/assets/img/C4oDMth8kH-300.png&quot; alt=&quot;Memory usage reduction from selective log-softmax in TRL&quot; width=&quot;1922&quot; height=&quot;1310&quot; srcset=&quot;https://tylerromero.com/assets/img/C4oDMth8kH-300.png 300w, https://tylerromero.com/assets/img/C4oDMth8kH-600.png 600w, https://tylerromero.com/assets/img/C4oDMth8kH-900.png 900w, https://tylerromero.com/assets/img/C4oDMth8kH-1922.png 1922w&quot; sizes=&quot;(max-width: 900px) 100vw, 900px&quot;&gt;&lt;/picture&gt;&lt;/p&gt;
 &lt;p&gt;A 10% reduction in peak VRAM requirements is a great improvement for such a simple change!&lt;/p&gt;
 &lt;h3 id=&quot;a-note-on-torch.compile&quot; tabindex=&quot;-1&quot;&gt;A note on &lt;code&gt;torch.compile&lt;/code&gt;&lt;/h3&gt;
@@ -507,7 +414,7 @@ Compiled method time:  0.000129 sec, Memory peak: 1074.04 MB
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Very impressive! This is both faster and more memory efficient than our hand-rolled solution, while being numerically stable. And the &lt;code&gt;dynamic=True&lt;/code&gt; flag means that we shouldn&#39;t need to recompile every time a new sequence length is used.&lt;/p&gt;
 &lt;p&gt;The only reason not to use this method is if you are in a setting where &lt;code&gt;torch.compile&lt;/code&gt; usage is supposed to be enabled/disabled via a user-passed flag. Which is the case for most open-source libraries that use &lt;code&gt;torch&lt;/code&gt;. For your own projects, the compiled version is recommended!&lt;/p&gt;
-&lt;hr&gt;
+&lt;hr class=&quot;section-divider&quot;&gt;
 &lt;p&gt;Thanks to &lt;a href=&quot;https://github.com/qgallouedec&quot;&gt;Quentin Gallouédec&lt;/a&gt; for providing the initial benchmarking script and suggesting to pull &lt;code&gt;gather&lt;/code&gt; out of the loop over &lt;code&gt;logsumexp&lt;/code&gt; to improve performance.&lt;/p&gt;
 &lt;/section&gt;
 </content>
@@ -736,14 +643,15 @@ meaningful priority ordering, since selecting points one at a time would break t
 &lt;/section&gt;
 &lt;section&gt;
 &lt;h2 id=&quot;references&quot; tabindex=&quot;-1&quot;&gt;References&lt;/h2&gt;
-&lt;p&gt;[1] Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., &amp;amp; Agarwal, A. (2020). Deep Batch Active Learning by Diverse, Uncertain Gradient Lower Bounds.  &lt;a href=&quot;https://arxiv.org/abs/1906.03671&quot;&gt;https://arxiv.org/abs/1906.03671&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;[2] LeCun, Y., Cortes, C., &amp;amp; Burges, C. J. C. (1998). The MNIST Database of Handwritten Digits. &lt;a href=&quot;http://yann.lecun.com/exdb/mnist/&quot;&gt;http://yann.lecun.com/exdb/mnist/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;[3] De Silva, V., &amp;amp; Tenenbaum, J. B. (2004). Sparse Multidimensional Scaling using Landmark Points. &lt;em&gt;Technical Report, Stanford University&lt;/em&gt;. &lt;a href=&quot;https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf&quot;&gt;https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;[4] Sener, O., &amp;amp; Savarese, S. (2018). Active Learning for Convolutional Neural Networks: A Core-Set Approach. &lt;em&gt;International Conference on Learning Representations&lt;/em&gt;. &lt;a href=&quot;https://arxiv.org/abs/1708.00489&quot;&gt;https://arxiv.org/abs/1708.00489&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;[5] Kirsch, A., van Amersfoort, J., &amp;amp; Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. &lt;em&gt;Advances in Neural Information Processing Systems&lt;/em&gt;. &lt;a href=&quot;https://arxiv.org/abs/1906.08158&quot;&gt;https://arxiv.org/abs/1906.08158&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;[6] Motta, D. (2019). MDS and LMDS implementation. &lt;em&gt;GitHub Repository&lt;/em&gt;. &lt;a href=&quot;https://github.com/danilomotta/LMDS&quot;&gt;https://github.com/danilomotta/LMDS&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;[7] De Moriarty, A. (2024). fast_pytorch_kmeans. &lt;em&gt;GitHub Repository&lt;/em&gt;. &lt;a href=&quot;https://github.com/DeMoriarty/fast_pytorch_kmeans&quot;&gt;https://github.com/DeMoriarty/fast_pytorch_kmeans&lt;/a&gt;&lt;/p&gt;
-&lt;/section&gt;
+&lt;div class=&quot;bibliography&quot;&gt;&lt;div class=&quot;csl-bib-body&quot;&gt;
+  &lt;div data-csl-entry-id=&quot;ash2020deep&quot; class=&quot;csl-entry&quot;&gt;Ash, J. T., Zhang, C., Krishnamurthy, A., Langford, J., &amp;#38; Agarwal, A. (2020). &lt;i&gt;Deep Batch Active Learning by Diverse, Uncertain Gradient Lower Bounds&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/1906.03671&quot;&gt;https://arxiv.org/abs/1906.03671&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;demoriarty2024fast&quot; class=&quot;csl-entry&quot;&gt;De Moriarty, A. (2024). &lt;i&gt;fast_pytorch_kmeans&lt;/i&gt;. &lt;a href=&quot;https://github.com/DeMoriarty/fast_pytorch_kmeans&quot;&gt;https://github.com/DeMoriarty/fast_pytorch_kmeans&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;kirsch2019batchbald&quot; class=&quot;csl-entry&quot;&gt;Kirsch, A., van Amersfoort, J., &amp;#38; Gal, Y. (2019). BatchBALD: Efficient and Diverse Batch Acquisition for Deep Bayesian Active Learning. &lt;i&gt;Advances in Neural Information Processing Systems&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/1906.08158&quot;&gt;https://arxiv.org/abs/1906.08158&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;lecun1998mnist&quot; class=&quot;csl-entry&quot;&gt;LeCun, Y., Cortes, C., &amp;#38; Burges, C. J. C. (1998). &lt;i&gt;The MNIST Database of Handwritten Digits&lt;/i&gt;. &lt;a href=&quot;http://yann.lecun.com/exdb/mnist/&quot;&gt;http://yann.lecun.com/exdb/mnist/&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;motta2019lmds&quot; class=&quot;csl-entry&quot;&gt;Motta, D. (2019). &lt;i&gt;MDS and LMDS implementation&lt;/i&gt;. &lt;a href=&quot;https://github.com/danilomotta/LMDS&quot;&gt;https://github.com/danilomotta/LMDS&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;sener2018active&quot; class=&quot;csl-entry&quot;&gt;Sener, O., &amp;#38; Savarese, S. (2018). Active Learning for Convolutional Neural Networks: A Core-Set Approach. &lt;i&gt;International Conference on Learning Representations&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/1708.00489&quot;&gt;https://arxiv.org/abs/1708.00489&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;desilva2004sparse&quot; class=&quot;csl-entry&quot;&gt;Silva, V. D., &amp;#38; Tenenbaum, J. B. (2004). &lt;i&gt;Sparse Multidimensional Scaling using Landmark Points&lt;/i&gt; [Techreport]. Stanford University. &lt;a href=&quot;https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf&quot;&gt;https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf&lt;/a&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
 </content>
   </entry>
   <entry>
@@ -903,13 +811,14 @@ p^*(y_1 &#92;succ y_2 | x) = &#92;sigma(r^*(x, y_1) - r^*(x, y_2)) &#92;&#92;[10
 &lt;/section&gt;
 &lt;section&gt;
 &lt;h2 id=&quot;references&quot; tabindex=&quot;-1&quot;&gt;References&lt;/h2&gt;
-&lt;p&gt;[1] Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., &amp;amp; Finn, C. (2023). Direct Preference Optimization: Your Language Model is Secretly a Reward Model. arXiv. https://arxiv.org/abs/2305.18290.&lt;/p&gt;
-&lt;p&gt;[2] Bertrand, Q., Czarnecki, W. M., &amp;amp; Gidel, G. (2023). On the limitations of Elo: Real-world games are transitive, not additive. arXiv. https://arxiv.org/abs/2206.12301.&lt;/p&gt;
-&lt;p&gt;[3] Azar, M. G., Rowland, M., Piot, B., Guo, D., Calandriello, D., Valko, M., &amp;amp; Munos, R. (2023). A General Theoretical Paradigm to Understand Learning from Human Preferences. arXiv. https://arxiv.org/abs/2310.12036.&lt;/p&gt;
-&lt;p&gt;[4] Jitkrittum, W. (2013). Log-Sum-Exp Trick to Prevent Numerical Underflow. http://wittawat.com/posts/log-sum_exp_underflow.html&lt;/p&gt;
-&lt;p&gt;[5] Gemini Team (2024). Gemini: A Family of Highly Capable Multimodal Models. arXiv. https://arxiv.org/abs/2312.11805.&lt;/p&gt;
-&lt;p&gt;[6] Andrychowicz, M., Raichuk, A., Stańczyk, P., Orsini, M., Girgin, S., Marinier, R., Hussenot, L., Geist, M., Pietquin, O., Michalski, M., Gelly, S., &amp;amp; Bachem, O. (2020). What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study. arXiv. https://arxiv.org/abs/2006.05990.&lt;/p&gt;
-&lt;/section&gt;
+&lt;div class=&quot;bibliography&quot;&gt;&lt;div class=&quot;csl-bib-body&quot;&gt;
+  &lt;div data-csl-entry-id=&quot;andrychowicz2020what&quot; class=&quot;csl-entry&quot;&gt;Andrychowicz, M., Raichuk, A., Stańczyk, P., Orsini, M., Girgin, S., Marinier, R., Hussenot, L., Geist, M., Pietquin, O., Michalski, M., Gelly, S., &amp;#38; Bachem, O. (2020). &lt;i&gt;What Matters In On-Policy Reinforcement Learning? A Large-Scale Empirical Study&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2006.05990&quot;&gt;https://arxiv.org/abs/2006.05990&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;azar2023general&quot; class=&quot;csl-entry&quot;&gt;Azar, M. G., Rowland, M., Piot, B., Guo, D., Calandriello, D., Valko, M., &amp;#38; Munos, R. (2023). &lt;i&gt;A General Theoretical Paradigm to Understand Learning from Human Preferences&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2310.12036&quot;&gt;https://arxiv.org/abs/2310.12036&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;bertrand2023limitations&quot; class=&quot;csl-entry&quot;&gt;Bertrand, Q., Czarnecki, W. M., &amp;#38; Gidel, G. (2023). &lt;i&gt;On the Limitations of Elo: Real-World Games Are Transitive, Not Additive&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2206.12301&quot;&gt;https://arxiv.org/abs/2206.12301&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;jitkrittum2013logsumexp&quot; class=&quot;csl-entry&quot;&gt;Jitkrittum, W. (2013). &lt;i&gt;Log-Sum-Exp Trick to Prevent Numerical Underflow&lt;/i&gt;. &lt;a href=&quot;http://wittawat.com/posts/log-sum_exp_underflow.html&quot;&gt;http://wittawat.com/posts/log-sum_exp_underflow.html&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;rafailov2023direct&quot; class=&quot;csl-entry&quot;&gt;Rafailov, R., Sharma, A., Mitchell, E., Ermon, S., Manning, C. D., &amp;#38; Finn, C. (2023). &lt;i&gt;Direct Preference Optimization: Your Language Model is Secretly a Reward Model&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2305.18290&quot;&gt;https://arxiv.org/abs/2305.18290&lt;/a&gt;&lt;/div&gt;
+  &lt;div data-csl-entry-id=&quot;geminiteam2025geminifamilyhighlycapable&quot; class=&quot;csl-entry&quot;&gt;Team, G., Anil, R., Borgeaud, S., Alayrac, J.-B., Yu, J., Soricut, R., Schalkwyk, J., Dai, A. M., Hauth, A., Millican, K., Silver, D., Johnson, M., Antonoglou, I., Schrittwieser, J., Glaese, A., Chen, J., Pitler, E., Lillicrap, T., Lazaridou, A., … Vinyals, O. (2025). &lt;i&gt;Gemini: A Family of Highly Capable Multimodal Models&lt;/i&gt;. &lt;a href=&quot;https://arxiv.org/abs/2312.11805&quot;&gt;https://arxiv.org/abs/2312.11805&lt;/a&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;
 </content>
   </entry>
 </feed>

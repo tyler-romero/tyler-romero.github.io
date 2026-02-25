@@ -39,10 +39,6 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
-<!-- BibTeX Support -->
-<script defer="" src="https://cdn.jsdelivr.net/gh/pcooksey/bibtex-js@1.0.0/src/bibtex_js.min.js"></script>
-
-
 <!-- Prism.js Syntax Highlighting -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
@@ -70,7 +66,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-03-08T08:00:00.000Z",
-            "dateModified": "2026-02-25T18:08:21.253Z",
+            "dateModified": "2026-02-25T21:38:26.941Z",
             "url": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -78,7 +74,7 @@
             },
             "image": "https://www.tylerromero.com",
             "keywords": "post, llm, gpt2, speedrun, nanogpt, worklog, muon",
-            "wordCount": "3527",
+            "wordCount": "3525",
             "articleBody": "I&#39;ve seen some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!). I have access to 2xRTX 4090 GPUs and..."
             }
         </script>
@@ -103,7 +99,7 @@
             
             <h1>NanoGPT Speedrun Living Worklog</h1>
             <p class="subtitle">How fast can I train GPT-2 on two RTX 4090 GPUs?</p>
-            <p class="date">March 8, 2025</p>
+            <p class="date">Mar 8, 2025</p>
             <nav class="toc"></nav>
             <script>
                 (function() {
@@ -152,7 +148,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(86, 130, 89, 0.5)',
+                                    color: 'rgba(176, 122, 101, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -363,128 +359,58 @@
 </section>
 <section>
 <h2 id="references" tabindex="-1">References</h2>
-<textarea id="bibtex_input" style="display:none;">
-@misc{modded_nanogpt_2024,
-  author       = {Keller Jordan and Jeremy Bernstein and Brendan Rappazzo and
-                  @fernbear.bsky.social and Boza Vlado and You Jiacheng and
-                  Franz Cesista and Braden Koszarsky and @Grad62304977},
-  title        = {modded-nanogpt: Speedrunning the NanoGPT baseline},
-  year         = {2024},
-  url          = {https://github.com/KellerJordan/modded-nanogpt},
-  note = {GitHub repository}
-}
-@software{hlb-gpt_2024,
-  author={Fern},
-  month={3},
-  year = {2024},
-  title={hlb-gpt},
-  url={https://github.com/tysam-code/hlb-gpt},
-  version = {0.4.0},
-  note = {GitHub repository}
-}
-@misc{su2023roformerenhancedtransformerrotary,
-      title={RoFormer: Enhanced Transformer with Rotary Position Embedding},
-      author={Jianlin Su and Yu Lu and Shengfeng Pan and Ahmed Murtadha and Bo Wen and Yunfeng Liu},
-      year={2023},
-      eprint={2104.09864},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2104.09864},
-}
-@misc{so2022primersearchingefficienttransformers,
-      title={Primer: Searching for Efficient Transformers for Language Modeling},
-      author={David R. So and Wojciech Mańke and Hanxiao Liu and Zihang Dai and Noam Shazeer and Quoc V. Le},
-      year={2022},
-      eprint={2109.08668},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2109.08668},
-}
-@misc{hagele2024scalinglawscomputeoptimaltraining,
-      title={Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations},
-      author={Alexander Hägele and Elie Bakouch and Atli Kosson and Loubna Ben Allal and Leandro Von Werra and Martin Jaggi},
-      year={2024},
-      eprint={2405.18392},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2405.18392},
-}
-@misc{hoffmann2022trainingcomputeoptimallargelanguage,
-      title={Training Compute-Optimal Large Language Models},
-      author={Jordan Hoffmann and Sebastian Borgeaud and Arthur Mensch and Elena Buchatskaya and Trevor Cai and Eliza Rutherford and Diego de Las Casas and Lisa Anne Hendricks and Johannes Welbl and Aidan Clark and Tom Hennigan and Eric Noland and Katie Millican and George van den Driessche and Bogdan Damoc and Aurelia Guy and Simon Osindero and Karen Simonyan and Erich Elsen and Jack W. Rae and Oriol Vinyals and Laurent Sifre},
-      year={2022},
-      eprint={2203.15556},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2203.15556},
-}
-@misc{jordan2024muon,
-  author       = {Keller Jordan and Yuchen Jin and Vlado Boza and Jiacheng You and
-                  Franz Cesista and Laker Newhouse and Jeremy Bernstein},
-  title        = {Muon: An optimizer for hidden layers in neural networks},
-  year         = {2024},
-  url          = {https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/}
-}
-@misc{gupta2018shampoopreconditionedstochastictensor,
-      title={Shampoo: Preconditioned Stochastic Tensor Optimization},
-      author={Vineet Gupta and Tomer Koren and Yoram Singer},
-      year={2018},
-      eprint={1802.09568},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/1802.09568},
-}
-@misc{bernstein2024oldoptimizernewnorm,
-      title={Old Optimizer, New Norm: An Anthology},
-      author={Jeremy Bernstein and Laker Newhouse},
-      year={2024},
-      eprint={2409.20325},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2409.20325},
-}
-@misc{gemmateam2024gemma2improvingopen,
-      title={Gemma 2: Improving Open Language Models at a Practical Size},
-      author={Gemma Team and Morgane Riviere and Shreya Pathak and Pier Giuseppe Sessa and Cassidy Hardin and Surya Bhupatiraju and Léonard Hussenot and Thomas Mesnard and Bobak Shahriari and Alexandre Ramé and Johan Ferret and Peter Liu and Pouya Tafti and Abe Friesen and Michelle Casbon and Sabela Ramos and Ravin Kumar and Charline Le Lan and Sammy Jerome and Anton Tsitsulin and Nino Vieillard and Piotr Stanczyk and Sertan Girgin and Nikola Momchev and Matt Hoffman and Shantanu Thakoor and Jean-Bastien Grill and Behnam Neyshabur and Olivier Bachem and Alanna Walton and Aliaksei Severyn and Alicia Parrish and Aliya Ahmad and Allen Hutchison and Alvin Abdagic and Amanda Carl and Amy Shen and Andy Brock and Andy Coenen and Anthony Laforge and Antonia Paterson and Ben Bastian and Bilal Piot and Bo Wu and Brandon Royal and Charlie Chen and Chintu Kumar and Chris Perry and Chris Welty and Christopher A. Choquette-Choo and Danila Sinopalnikov and David Weinberger and Dimple Vijaykumar and Dominika Rogozińska and Dustin Herbison and Elisa Bandy and Emma Wang and Eric Noland and Erica Moreira and Evan Senter and Evgenii Eltyshev and Francesco Visin and Gabriel Rasskin and Gary Wei and Glenn Cameron and Gus Martins and Hadi Hashemi and Hanna Klimczak-Plucińska and Harleen Batra and Harsh Dhand and Ivan Nardini and Jacinda Mein and Jack Zhou and James Svensson and Jeff Stanway and Jetha Chan and Jin Peng Zhou and Joana Carrasqueira and Joana Iljazi and Jocelyn Becker and Joe Fernandez and Joost van Amersfoort and Josh Gordon and Josh Lipschultz and Josh Newlan and Ju-yeong Ji and Kareem Mohamed and Kartikeya Badola and Kat Black and Katie Millican and Keelin McDonell and Kelvin Nguyen and Kiranbir Sodhia and Kish Greene and Lars Lowe Sjoesund and Lauren Usui and Laurent Sifre and Lena Heuermann and Leticia Lago and Lilly McNealus and Livio Baldini Soares and Logan Kilpatrick and Lucas Dixon and Luciano Martins and Machel Reid and Manvinder Singh and Mark Iverson and Martin Görner and Mat Velloso and Mateo Wirth and Matt Davidow and Matt Miller and Matthew Rahtz and Matthew Watson and Meg Risdal and Mehran Kazemi and Michael Moynihan and Ming Zhang and Minsuk Kahng and Minwoo Park and Mofi Rahman and Mohit Khatwani and Natalie Dao and Nenshad Bardoliwalla and Nesh Devanathan and Neta Dumai and Nilay Chauhan and Oscar Wahltinez and Pankil Botarda and Parker Barnes and Paul Barham and Paul Michel and Pengchong Jin and Petko Georgiev and Phil Culliton and Pradeep Kuppala and Ramona Comanescu and Ramona Merhej and Reena Jana and Reza Ardeshir Rokni and Rishabh Agarwal and Ryan Mullins and Samaneh Saadat and Sara Mc Carthy and Sarah Cogan and Sarah Perrin and Sébastien M. R. Arnold and Sebastian Krause and Shengyang Dai and Shruti Garg and Shruti Sheth and Sue Ronstrom and Susan Chan and Timothy Jordan and Ting Yu and Tom Eccles and Tom Hennigan and Tomas Kocisky and Tulsee Doshi and Vihan Jain and Vikas Yadav and Vilobh Meshram and Vishal Dharmadhikari and Warren Barkley and Wei Wei and Wenming Ye and Woohyun Han and Woosuk Kwon and Xiang Xu and Zhe Shen and Zhitao Gong and Zichuan Wei and Victor Cotruta and Phoebe Kirk and Anand Rao and Minh Giang and Ludovic Peran and Tris Warkentin and Eli Collins and Joelle Barral and Zoubin Ghahramani and Raia Hadsell and D. Sculley and Jeanine Banks and Anca Dragan and Slav Petrov and Oriol Vinyals and Jeff Dean and Demis Hassabis and Koray Kavukcuoglu and Clement Farabet and Elena Buchatskaya and Sebastian Borgeaud and Noah Fiedel and Armand Joulin and Kathleen Kenealy and Robert Dadashi and Alek Andreev},
-      year={2024},
-      eprint={2408.00118},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2408.00118},
-}
-@misc{dong2024flexattentionprogrammingmodel,
-      title={Flex Attention: A Programming Model for Generating Optimized Attention Kernels},
-      author={Juechu Dong and Boyuan Feng and Driss Guessous and Yanbo Liang and Horace He},
-      year={2024},
-      eprint={2412.05496},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2412.05496},
-}
-@misc{bernstein2025deriving,
-  author = {Jeremy Bernstein},
-  title = {Deriving Muon},
-  url = {https://jeremybernste.in/writing/deriving-muon},
-  year = {2025}
-}
-
-</textarea>
-<div id="bibtex_display"></div></section>
+<div class="bibliography"><div class="csl-bib-body">
+  <div data-csl-entry-id="bernstein2025deriving" class="csl-entry">Bernstein, J. (2025). <i>Deriving Muon</i>. <a href="https://jeremybernste.in/writing/deriving-muon">https://jeremybernste.in/writing/deriving-muon</a></div>
+  <div data-csl-entry-id="bernstein2024oldoptimizernewnorm" class="csl-entry">Bernstein, J., &#38; Newhouse, L. (2024). <i>Old Optimizer, New Norm: An Anthology</i>. <a href="https://arxiv.org/abs/2409.20325">https://arxiv.org/abs/2409.20325</a></div>
+  <div data-csl-entry-id="dong2024flexattentionprogrammingmodel" class="csl-entry">Dong, J., Feng, B., Guessous, D., Liang, Y., &#38; He, H. (2024). <i>Flex Attention: A Programming Model for Generating Optimized Attention Kernels</i>. <a href="https://arxiv.org/abs/2412.05496">https://arxiv.org/abs/2412.05496</a></div>
+  <div data-csl-entry-id="hlb-gpt_2024" class="csl-entry">Fern. (2024). <i>hlb-gpt</i> (0.4.0) [Computer software]. <a href="https://github.com/tysam-code/hlb-gpt">https://github.com/tysam-code/hlb-gpt</a></div>
+  <div data-csl-entry-id="gupta2018shampoopreconditionedstochastictensor" class="csl-entry">Gupta, V., Koren, T., &#38; Singer, Y. (2018). <i>Shampoo: Preconditioned Stochastic Tensor Optimization</i>. <a href="https://arxiv.org/abs/1802.09568">https://arxiv.org/abs/1802.09568</a></div>
+  <div data-csl-entry-id="hagele2024scalinglawscomputeoptimaltraining" class="csl-entry">Hägele, A., Bakouch, E., Kosson, A., Allal, L. B., Werra, L. V., &#38; Jaggi, M. (2024). <i>Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations</i>. <a href="https://arxiv.org/abs/2405.18392">https://arxiv.org/abs/2405.18392</a></div>
+  <div data-csl-entry-id="hoffmann2022trainingcomputeoptimallargelanguage" class="csl-entry">Hoffmann, J., Borgeaud, S., Mensch, A., Buchatskaya, E., Cai, T., Rutherford, E., de Las Casas, D., Hendricks, L. A., Welbl, J., Clark, A., Hennigan, T., Noland, E., Millican, K., van den Driessche, G., Damoc, B., Guy, A., Osindero, S., Simonyan, K., Elsen, E., … Sifre, L. (2022). <i>Training Compute-Optimal Large Language Models</i>. <a href="https://arxiv.org/abs/2203.15556">https://arxiv.org/abs/2203.15556</a></div>
+  <div data-csl-entry-id="modded_nanogpt_2024" class="csl-entry">Jordan, K., Bernstein, J., Rappazzo, B., @fernbear.bsky.social, Vlado, B., Jiacheng, Y., Cesista, F., Koszarsky, B., &#38; @Grad62304977. (2024). <i>modded-nanogpt: Speedrunning the NanoGPT baseline</i>. <a href="https://github.com/KellerJordan/modded-nanogpt">https://github.com/KellerJordan/modded-nanogpt</a></div>
+  <div data-csl-entry-id="jordan2024muon" class="csl-entry">Jordan, K., Jin, Y., Boza, V., You, J., Cesista, F., Newhouse, L., &#38; Bernstein, J. (2024). <i>Muon: An optimizer for hidden layers in neural networks</i>. <a href="https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/">https://web.archive.org/web/20250122060345/https://kellerjordan.github.io/posts/muon/</a></div>
+  <div data-csl-entry-id="so2022primersearchingefficienttransformers" class="csl-entry">So, D. R., Mańke, W., Liu, H., Dai, Z., Shazeer, N., &#38; Le, Q. V. (2022). <i>Primer: Searching for Efficient Transformers for Language Modeling</i>. <a href="https://arxiv.org/abs/2109.08668">https://arxiv.org/abs/2109.08668</a></div>
+  <div data-csl-entry-id="su2023roformerenhancedtransformerrotary" class="csl-entry">Su, J., Lu, Y., Pan, S., Murtadha, A., Wen, B., &#38; Liu, Y. (2023). <i>RoFormer: Enhanced Transformer with Rotary Position Embedding</i>. <a href="https://arxiv.org/abs/2104.09864">https://arxiv.org/abs/2104.09864</a></div>
+  <div data-csl-entry-id="gemmateam2024gemma2improvingopen" class="csl-entry">Team, G., Riviere, M., Pathak, S., Sessa, P. G., Hardin, C., Bhupatiraju, S., Hussenot, L., Mesnard, T., Shahriari, B., Ramé, A., Ferret, J., Liu, P., Tafti, P., Friesen, A., Casbon, M., Ramos, S., Kumar, R., Lan, C. L., Jerome, S., … Andreev, A. (2024). <i>Gemma 2: Improving Open Language Models at a Practical Size</i>. <a href="https://arxiv.org/abs/2408.00118">https://arxiv.org/abs/2408.00118</a></div>
+</div></div></section>
 
         </article>
         <footer>
-                <hr class="slender">
-    <p class="social-links">
-        <a href="/" aria-label="Home"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L4 9v12h5v-7h6v7h5V9z"></path></svg></a>
-        <a href="https://twitter.com/tyleraromero" aria-label="Twitter"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg></a>
-        <a href="https://github.com/tyler-romero" aria-label="GitHub"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path></svg></a>
-        <a href="https://linkedin.com/in/tylerromero" aria-label="LinkedIn"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"></path></svg></a>
-        <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ" aria-label="Google Scholar"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"></path></svg></a>
-        <a href="mailto:tyler.alexander.romero+site@gmail.com" aria-label="Email"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path></svg></a>
-        <a href="/feed.xml" aria-label="RSS Feed"><svg class="icon" viewBox="0 0 24 24" fill="currentColor"><path d="M6.18 15.64a2.18 2.18 0 010 4.36 2.18 2.18 0 010-4.36zM4 4.44A15.56 15.56 0 0119.56 20h-2.83A12.73 12.73 0 004 7.27V4.44zm0 5.66a9.9 9.9 0 019.9 9.9h-2.83A7.07 7.07 0 004 12.93V10.1z"></path></svg></a>
-    </p>
-    <p class="copyright">&copy; 2026 Tyler Romero</p>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
 
         </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
     </body>
 </html>

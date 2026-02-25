@@ -76,7 +76,7 @@ body {
 
 h1 {
   font-family: "Fraunces", Georgia, serif;
-  font-style: italic;
+  font-style: normal;
   font-weight: 300;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
@@ -118,12 +118,13 @@ hr {
 p.subtitle {
   font-family: "Fraunces", Georgia, serif;
   font-style: italic;
+  font-weight: 300;
   margin-top: 1rem;
   margin-bottom: 1rem;
   font-size: 2rem;
   display: block;
   line-height: 1;
-  color: var(--warm-accent);
+  color: var(--text-color);
 }
 
 .numeral {
@@ -297,6 +298,21 @@ video {
   position: relative;
 }
 
+.post-list li:has(.marginnote-wide) {
+  position: relative;
+}
+
+.marginnote-wide {
+  position: absolute;
+  float: none;
+  clear: none;
+  left: 105%;
+  top: 0;
+  transform: none;
+  width: 50%;
+  margin: 0;
+}
+
 .sidenote-number {
   counter-increment: sidenote-counter;
 }
@@ -402,6 +418,18 @@ label.sidenote-number {
 label.margin-toggle:not(.sidenote-number) {
   display: none;
   font-family: "Virgil", cursive;
+  color: var(--warm-accent);
+  cursor: pointer;
+  font-size: 0;
+}
+
+label.margin-toggle:not(.sidenote-number)::after {
+  content: "*";
+  font-family: "Virgil", cursive;
+  font-size: 0.85rem;
+  color: var(--warm-accent);
+  position: relative;
+  top: -0.7em;
 }
 
 .iframe-wrapper {
@@ -424,17 +452,17 @@ label.margin-toggle:not(.sidenote-number) {
    ======================================================================== */
 
 .profile-picture {
-  border-radius: 5%;
+  border-radius: 3px;
   width: 97.5%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-/* Sticky header */
+/* Header — slides out on scroll-down, slides back on scroll-up */
 header {
   position: sticky;
   top: 0;
   z-index: 999;
   background-color: var(--bg-color);
+  will-change: transform;
 }
 
 nav a,
@@ -467,26 +495,58 @@ nav a:visited {
   margin-bottom: 0.4rem;
 }
 
-.social-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4em;
+/* Colophon */
+.colophon {
+  width: 55%;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
 }
 
-.social-links .icon {
-  width: 1.2em;
-  height: 1.2em;
-  vertical-align: -0.15em;
+.colophon-links {
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.1rem;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.6rem;
 }
 
-.copyright {
-  font-size: 1rem;
+.colophon-links a,
+.colophon-links a:link,
+.colophon-links a:visited {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.colophon-links a:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--warm-accent);
+  text-underline-offset: 2px;
+}
+
+.colophon-sep {
+  margin: 0 0.3em;
+  color: rgba(26, 26, 26, 0.3);
+}
+
+.colophon-note {
+  font-family: "Virgil", cursive;
+  font-size: 0.95rem;
+  color: rgba(26, 26, 26, 0.5);
+  margin-top: 0;
+  margin-bottom: 0.4rem;
+}
+
+.colophon-copyright {
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 0.95rem;
+  color: rgba(26, 26, 26, 0.4);
+  margin-top: 0;
 }
 
 /* Section dividers — hand-drawn wavy line */
 hr.section-divider {
   width: 20%;
-  margin: 1.5rem 0 1.5rem 17.5%;
+  margin: 3rem 0 3rem 17.5%;
   border: none;
   height: 8px;
   clear: both;
@@ -524,12 +584,16 @@ hr.section-divider {
   gap: 1.2em;
 }
 
+.post-date,
+.date {
+  font-family: "Virgil", cursive;
+  font-size: 0.95rem;
+  color: var(--warm-accent);
+}
+
 .post-date {
-  font-family: et-book-roman-old-style;
-  font-size: 1.2rem;
   flex-shrink: 0;
   width: 7em;
-  color: var(--warm-accent);
   padding-top: 0.15em;
 }
 
@@ -622,6 +686,27 @@ pre[class*="language-"] > code {
 }
 
 
+/* Bibliography (citation-js output) */
+.bibliography {
+  width: 55%;
+  margin-top: 1.4rem;
+}
+
+.bibliography .csl-bib-body {
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.bibliography .csl-entry {
+  margin-bottom: 1.4rem;
+  padding-left: 2em;
+  text-indent: -2em;
+}
+
+.bibliography .csl-entry b {
+  font-weight: normal;
+}
+
 /* ========================================================================
    Mobile
    ======================================================================== */
@@ -692,6 +777,11 @@ pre[class*="language-"] > code {
     max-width: 280px;
     margin: 0 auto 1rem;
     position: relative;
+    transform: none;
+  }
+
+  .profile-picture {
+    border-radius: 2px;
   }
 
   .margin-toggle:checked + .sidenote,
@@ -741,6 +831,14 @@ pre[class*="language-"] > code {
   }
 
   .toc {
+    width: 100%;
+  }
+
+  .bibliography {
+    width: 100%;
+  }
+
+  .colophon {
     width: 100%;
   }
 }
