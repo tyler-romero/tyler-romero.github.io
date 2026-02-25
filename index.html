@@ -6,7 +6,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Tyler’s Technical Blog</title>
+<title>Tyler&#39;s Technical Blog</title>
 <meta name="author" content="Tyler Romero">
 <meta name="description" content="Notes on Machine Learning and related topics.">
 <link rel="manifest" href="/manifest.json">
@@ -15,11 +15,11 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300..700;1,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
-<meta property="og:title" content="Tyler’s Technical Blog">
+<meta property="og:title" content="Tyler&#39;s Technical Blog">
 <meta property="og:description" content="Notes on Machine Learning and related topics.">
 <meta property="og:url" content="https://www.tylerromero.com/">
 <meta property="og:type" content="website">
@@ -27,7 +27,7 @@
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Tyler’s Technical Blog">
+<meta name="twitter:title" content="Tyler&#39;s Technical Blog">
 <meta name="twitter:description" content="Notes on Machine Learning and related topics.">
 
 
@@ -55,7 +55,7 @@
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
-            "dateModified": "2026-02-23T22:27:48.129Z",
+            "dateModified": "2026-02-25T07:43:28.830Z",
             "url": "https://www.tylerromero.com/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -82,23 +82,6 @@
                 </div>
             </nav>
         </header>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                if (typeof RoughNotation === 'undefined') return;
-                var links = document.querySelectorAll('.topbar a:not(.nav-brand)');
-                links.forEach(function(link) {
-                    var annotation = RoughNotation.annotate(link, {
-                        type: 'underline',
-                        color: getComputedStyle(document.documentElement).getPropertyValue('--link-color').trim(),
-                        strokeWidth: 2,
-                        animationDuration: 300,
-                        iterations: 1
-                    });
-                    link.addEventListener('mouseenter', function() { annotation.show(); });
-                    link.addEventListener('mouseleave', function() { annotation.hide(); });
-                });
-            });
-        </script>
         <article>
             
             
@@ -129,16 +112,6 @@
 <section>
     <h2 id="posts">Posts</h2>
     <ul class="post-list">
-        
-            <li>
-                <span class="post-date">January 10, 2026</span>
-                <div class="post-info">
-                    <a href="/posts/2026-01-scaling-laws/">Thinking about Scaling Laws</a>
-                    <p class="item-description">
-                        <small>How can we use scaling laws to train stronger LLMs?</small>
-                    </p>
-                </div>
-            </li>
         
             <li>
                 <span class="post-date">March 8, 2025</span>
@@ -189,13 +162,18 @@
         <li>
             <span class="post-date">Nov 2025</span>
             <div class="post-info">
-                <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a> <small>— Team Olmo. <em>arXiv preprint arXiv:2512.13961</em>, Nov 2025.</small>
+                <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a>
+                        <label for="mn-olmo3-loss" class="margin-toggle">&#8853;</label>
+                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle">
+                        <span class="marginnote"><picture><source type="image/webp" srcset="/assets/img/fqEFQpUXWs-300.webp 300w, /assets/img/fqEFQpUXWs-600.webp 600w, /assets/img/fqEFQpUXWs-900.webp 900w, /assets/img/fqEFQpUXWs-3490.webp 3490w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/fqEFQpUXWs-300.png" alt="OLMo 3 32B training loss curve" width="3490" height="2341" srcset="/assets/img/fqEFQpUXWs-300.png 300w, /assets/img/fqEFQpUXWs-600.png 600w, /assets/img/fqEFQpUXWs-900.png 900w, /assets/img/fqEFQpUXWs-3490.png 3490w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
+                <small>— Team Olmo. <em>arXiv preprint arXiv:2512.13961</em>, Nov 2025.</small>
                 <p class="item-description">
                     <small>We introduce Olmo 3, a family of state-of-the-art, fully-open language models at the 7B and 32B parameter scales.
+                        Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model,
                         <label for="sd-olmo3" class="margin-toggle sidenote-number"></label>
                         <input type="checkbox" id="sd-olmo3" class="margin-toggle">
                         <span class="sidenote">Check out <a href="https://huggingface.co/allenai/OLMo-3-32B-Think">Olmo 3 32B Think on HuggingFace</a> and the pretraining codebase I work on: <a href="https://github.com/allenai/OLMo-core">OLMo-core</a>.</span>
-                        Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model, Olmo 3 32B Think, is the strongest fully-open thinking model released to-date.</small>
+                        Olmo 3 32B Think, is the strongest fully-open thinking model released to-date.</small>
                 </p>
             </div>
         </li>

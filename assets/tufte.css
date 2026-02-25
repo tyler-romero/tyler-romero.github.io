@@ -22,9 +22,11 @@
 /* Custom Properties */
 :root {
   --link-color: #568259;
-  --brand-color: #246eb9;
-  --bg-color: #fafaf8;
-  --text-color: #111;
+  --brand-color: #6B7FA3;
+  --warm-accent: #B07A65;
+  --warm-glow: #C49A6C;
+  --bg-color: #FEF9ED;
+  --text-color: #1a1a1a;
 }
 
 /* ========================================================================
@@ -65,9 +67,7 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding-left: 8%;
-  font-family:
-    "Crimson Pro", Palatino, "Palatino Linotype", "Palatino LT STD",
-    "Book Antiqua", Georgia, serif;
+  font-family: "Newsreader", Georgia, "Times New Roman", serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   max-width: 1400px;
@@ -75,30 +75,34 @@ body {
 }
 
 h1 {
-  font-family: "Virgil", cursive;
-  font-weight: 400;
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
   font-size: 3rem;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 h2 {
-  font-family: "Virgil", cursive;
+  font-family: "Fraunces", Georgia, serif;
   font-weight: 400;
-  margin-top: 1.4rem;
+  margin-top: 2.5rem;
   margin-bottom: 1rem;
   font-size: 2.4rem;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 h3 {
-  font-family: "Virgil", cursive;
+  font-family: "Fraunces", Georgia, serif;
   font-weight: 400;
   font-size: 1.9rem;
   margin-top: 2rem;
   margin-bottom: 1.4rem;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 hr {
@@ -112,12 +116,14 @@ hr {
 }
 
 p.subtitle {
-  font-family: "Virgil", cursive;
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
   margin-top: 1rem;
   margin-bottom: 1rem;
   font-size: 2rem;
   display: block;
   line-height: 1;
+  color: var(--warm-accent);
 }
 
 .numeral {
@@ -129,12 +135,12 @@ p.subtitle {
 }
 
 article {
-  padding: 5rem 0rem;
+  padding: 6rem 0rem;
 }
 
 section {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
 }
 
 p,
@@ -142,7 +148,7 @@ dl,
 ol,
 ul {
   font-size: 1.4rem;
-  line-height: 2rem;
+  line-height: 2.24rem;
 }
 
 p {
@@ -167,6 +173,7 @@ div.epigraph > blockquote > p {
 }
 
 div.epigraph > blockquote > footer {
+  font-family: "Virgil", cursive;
   font-style: normal;
 }
 
@@ -181,6 +188,10 @@ div.math {
 
 blockquote {
   font-size: 1.4rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  border-left: 3px solid rgba(196, 154, 108, 0.4);
+  padding-left: 1.2em;
 }
 
 blockquote p {
@@ -279,6 +290,7 @@ video {
   width: 50%;
   margin-top: 0.3rem;
   margin-bottom: 0;
+  font-family: "Gentium Book Plus", Georgia, serif;
   font-size: 1.1rem;
   line-height: 1.3;
   vertical-align: baseline;
@@ -291,9 +303,10 @@ video {
 
 .sidenote-number:after,
 .sidenote:before {
-  font-family: et-book-roman-old-style;
+  font-family: "Virgil", cursive;
   position: relative;
   vertical-align: baseline;
+  color: var(--warm-accent);
 }
 
 .sidenote-number:after {
@@ -374,6 +387,7 @@ pre.fullwidth > code {
 span.newthought {
   font-variant: small-caps;
   font-size: 1.2em;
+  color: var(--warm-accent);
 }
 
 input.margin-toggle {
@@ -387,6 +401,7 @@ label.sidenote-number {
 
 label.margin-toggle:not(.sidenote-number) {
   display: none;
+  font-family: "Virgil", cursive;
 }
 
 .iframe-wrapper {
@@ -425,6 +440,7 @@ header {
 nav a,
 nav a:link,
 nav a:visited {
+  font-family: "Fraunces", Georgia, serif;
   font-size: 1.4rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -436,7 +452,7 @@ nav a:visited {
   margin-bottom: 0;
   padding-right: 2rem;
   vertical-align: baseline;
-  font-weight: bold;
+  font-weight: 400;
 }
 
 .nav-brand,
@@ -470,11 +486,11 @@ nav a:visited {
 /* Section dividers — hand-drawn wavy line */
 hr.section-divider {
   width: 20%;
-  margin: 0 0 1em 17.5%;
+  margin: 1.5rem 0 1.5rem 17.5%;
   border: none;
   height: 8px;
   clear: both;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' fill='none'%3E%3Cpath d='M0 5 C10 2, 20 7, 35 4 S55 1, 70 5 S90 8, 105 4 S125 1, 140 5 S160 8, 175 4 S190 2, 200 5' stroke='%23bbb' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8' fill='none'%3E%3Cpath d='M0 5 C10 2, 20 7, 35 4 S55 1, 70 5 S90 8, 105 4 S125 1, 140 5 S160 8, 175 4 S190 2, 200 5' stroke='%23C49A6C' stroke-opacity='0.55' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E")
     repeat-x center;
   background-size: 200px 8px;
 }
@@ -513,7 +529,7 @@ hr.section-divider {
   font-size: 1.2rem;
   flex-shrink: 0;
   width: 7em;
-  color: #555;
+  color: var(--warm-accent);
   padding-top: 0.15em;
 }
 
@@ -564,6 +580,15 @@ pre[class*="language-"] > code {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C3 10, 1 20, 2.5 30 S3 45, 1.5 55 S0.8 70, 2.8 80 S3 90, 2 100' stroke='%23568259' stroke-opacity='0.3' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
 }
 
+.toc:has(ol)::before {
+  content: "Contents";
+  font-family: "Virgil", cursive;
+  font-size: 1.1rem;
+  color: var(--warm-accent);
+  display: block;
+  margin-bottom: 0.4em;
+}
+
 .toc:empty {
   display: none;
 }
@@ -596,17 +621,6 @@ pre[class*="language-"] > code {
   color: var(--link-color);
 }
 
-/* Reading progress bar */
-.progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 3px;
-  background-color: var(--link-color);
-  z-index: 1000;
-  transition: width 0.1s linear;
-}
 
 /* ========================================================================
    Mobile
@@ -711,7 +725,7 @@ pre[class*="language-"] > code {
 
   hr.section-divider {
     width: 30%;
-    margin: 0 auto 1em;
+    margin: 1.5rem auto;
     background-size: 200px 8px;
   }
 
@@ -727,7 +741,6 @@ pre[class*="language-"] > code {
 @media print {
   nav,
   footer,
-  .progress-bar,
   .toc,
   label.margin-toggle {
     display: none !important;
