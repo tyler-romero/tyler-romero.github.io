@@ -305,10 +305,10 @@ video {
   position: absolute;
   float: none;
   clear: none;
-  right: 0;
+  left: 105%;
   top: 0;
-  transform: translateX(105%);
-  width: 55%;
+  transform: none;
+  width: 50%;
   margin: 0;
 }
 
@@ -417,6 +417,18 @@ label.sidenote-number {
 label.margin-toggle:not(.sidenote-number) {
   display: none;
   font-family: "Virgil", cursive;
+  color: var(--warm-accent);
+  cursor: pointer;
+  font-size: 0;
+}
+
+label.margin-toggle:not(.sidenote-number)::after {
+  content: "*";
+  font-family: "Virgil", cursive;
+  font-size: 0.85rem;
+  color: var(--warm-accent);
+  position: relative;
+  top: -0.7em;
 }
 
 .iframe-wrapper {
@@ -743,6 +755,11 @@ pre[class*="language-"] > code {
     max-width: 280px;
     margin: 0 auto 1rem;
     position: relative;
+    transform: none;
+  }
+
+  .profile-picture {
+    border-radius: 2px;
   }
 
   .margin-toggle:checked + .sidenote,
