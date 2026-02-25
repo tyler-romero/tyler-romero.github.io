@@ -75,31 +75,34 @@ body {
 }
 
 h1 {
-  font-family: "Crimson Pro", Palatino, "Palatino Linotype", Georgia, serif;
+  font-family: "Fraunces", Georgia, serif;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 300;
   margin-top: 1rem;
   margin-bottom: 1.5rem;
   font-size: 3rem;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 h2 {
-  font-family: "Crimson Pro", Palatino, "Palatino Linotype", Georgia, serif;
-  font-weight: 600;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
   margin-top: 2.5rem;
   margin-bottom: 1rem;
   font-size: 2.4rem;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 h3 {
-  font-family: "Crimson Pro", Palatino, "Palatino Linotype", Georgia, serif;
-  font-weight: 600;
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 400;
   font-size: 1.9rem;
   margin-top: 2rem;
   margin-bottom: 1.4rem;
   line-height: 1;
+  letter-spacing: 0.01em;
 }
 
 hr {
@@ -113,7 +116,7 @@ hr {
 }
 
 p.subtitle {
-  font-family: "Crimson Pro", Palatino, "Palatino Linotype", Georgia, serif;
+  font-family: "Fraunces", Georgia, serif;
   font-style: italic;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -170,6 +173,7 @@ div.epigraph > blockquote > p {
 }
 
 div.epigraph > blockquote > footer {
+  font-family: "Virgil", cursive;
   font-style: normal;
 }
 
@@ -286,6 +290,7 @@ video {
   width: 50%;
   margin-top: 0.3rem;
   margin-bottom: 0;
+  font-family: "Gentium Book Plus", Georgia, serif;
   font-size: 1.1rem;
   line-height: 1.3;
   vertical-align: baseline;
@@ -298,7 +303,7 @@ video {
 
 .sidenote-number:after,
 .sidenote:before {
-  font-family: et-book-roman-old-style;
+  font-family: "Virgil", cursive;
   position: relative;
   vertical-align: baseline;
   color: var(--warm-accent);
@@ -396,6 +401,7 @@ label.sidenote-number {
 
 label.margin-toggle:not(.sidenote-number) {
   display: none;
+  font-family: "Virgil", cursive;
 }
 
 .iframe-wrapper {
@@ -434,6 +440,7 @@ header {
 nav a,
 nav a:link,
 nav a:visited {
+  font-family: "Fraunces", Georgia, serif;
   font-size: 1.4rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -445,7 +452,7 @@ nav a:visited {
   margin-bottom: 0;
   padding-right: 2rem;
   vertical-align: baseline;
-  font-weight: bold;
+  font-weight: 400;
 }
 
 .nav-brand,
@@ -573,6 +580,15 @@ pre[class*="language-"] > code {
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C3 10, 1 20, 2.5 30 S3 45, 1.5 55 S0.8 70, 2.8 80 S3 90, 2 100' stroke='%23568259' stroke-opacity='0.3' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
 }
 
+.toc:has(ol)::before {
+  content: "Contents";
+  font-family: "Virgil", cursive;
+  font-size: 1.1rem;
+  color: var(--warm-accent);
+  display: block;
+  margin-bottom: 0.4em;
+}
+
 .toc:empty {
   display: none;
 }
@@ -605,17 +621,6 @@ pre[class*="language-"] > code {
   color: var(--link-color);
 }
 
-/* Reading progress bar */
-.progress-bar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 3px;
-  background-color: var(--link-color);
-  z-index: 1000;
-  transition: width 0.1s linear;
-}
 
 /* ========================================================================
    Mobile
@@ -736,7 +741,6 @@ pre[class*="language-"] > code {
 @media print {
   nav,
   footer,
-  .progress-bar,
   .toc,
   label.margin-toggle {
     display: none !important;

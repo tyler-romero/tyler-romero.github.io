@@ -53,13 +53,18 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         <li>
             <span class="post-date">Nov 2025</span>
             <div class="post-info">
-                <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a> <small>— Team Olmo. <em>arXiv preprint arXiv:2512.13961</em>, Nov 2025.</small>
+                <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a>
+                        <label for="mn-olmo3-loss" class="margin-toggle">&#8853;</label>
+                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" />
+                        <span class="marginnote"><img src="/assets/img/olmo3-32b-loss-curve.png" alt="OLMo 3 32B training loss curve" /></span>
+                <small>— Team Olmo. <em>arXiv preprint arXiv:2512.13961</em>, Nov 2025.</small>
                 <p class="item-description">
                     <small>We introduce Olmo 3, a family of state-of-the-art, fully-open language models at the 7B and 32B parameter scales.
+                        Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model,
                         <label for="sd-olmo3" class="margin-toggle sidenote-number"></label>
                         <input type="checkbox" id="sd-olmo3" class="margin-toggle" />
                         <span class="sidenote">Check out <a href="https://huggingface.co/allenai/OLMo-3-32B-Think">Olmo 3 32B Think on HuggingFace</a> and the pretraining codebase I work on: <a href="https://github.com/allenai/OLMo-core">OLMo-core</a>.</span>
-                        Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model, Olmo 3 32B Think, is the strongest fully-open thinking model released to-date.</small>
+                        Olmo 3 32B Think, is the strongest fully-open thinking model released to-date.</small>
                 </p>
             </div>
         </li>

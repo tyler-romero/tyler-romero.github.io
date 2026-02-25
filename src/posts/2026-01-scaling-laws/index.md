@@ -3,7 +3,7 @@ title: Thinking about Scaling Laws
 subtitle: How can we use scaling laws to train stronger LLMs?
 date: 2026-01-10T00:00:00-08:00
 blurb: How can we use scaling laws to train stronger LLMs?
-tags: ["post", "scaling-laws", "chinchilla", "llms"]
+tags: ["scaling-laws", "chinchilla", "llms"]  # Add "post" back to list on homepage
 math: true
 ---
 
