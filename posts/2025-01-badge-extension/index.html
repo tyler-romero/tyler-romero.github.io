@@ -33,6 +33,11 @@
 
 
 
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
 
 <!-- Prism.js Syntax Highlighting -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
@@ -61,7 +66,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-02-25T23:35:14.669Z",
+            "dateModified": "2026-02-26T19:40:44.572Z",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -222,10 +227,10 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&gt; Tenso
 <ol>
 <li>Initialize the first point by selecting one uniformly at random from the unlabeled pool.</li>
 <li>For each subsequent point to be selected, compute the squared Euclidean distance from each unlabeled point to the nearest point that has already been selected.</li>
-<li>Select the next point with a probability proportional to this squared distance. That is, a point $x_i$ is selected with probability $\frac{d^2(x_i, S)}{\sum_{x_j \in U} d^2(x_j, S)}$, where $S$ is the set of already-selected points, $U$ is the set of unlabeled points, and $d^2(x_i, S) = \min_{x_j \in S} ||\mathbf{g}(x_i) - \mathbf{g}(x_j)||^2$, with $\mathbf{g}(x_i)$ being the gradient embedding of point $x_i$.</li>
+<li>Select the next point with a probability proportional to this squared distance. That is, a point \(x_i\) is selected with probability \(\frac{d^2(x_i, S)}{\sum_{x_j \in U} d^2(x_j, S)}\), where \(S\) is the set of already-selected points, \(U\) is the set of unlabeled points, and \(d^2(x_i, S) = \min_{x_j \in S} ||\mathbf{g}(x_i) - \mathbf{g}(x_j)||^2\), with \(\mathbf{g}(x_i)\) being the gradient embedding of point \(x_i\).</li>
 <li>Repeat steps 2 and 3 until the desired number of points have been selected.</li>
 </ol>
-<p>If a batch size of $k$ is specified, BADGE uses k-means++ to greedily select $k$ diverse points from the unlabeled pool based on their gradient embeddings.</p>
+<p>If a batch size of \(k\) is specified, BADGE uses k-means++ to greedily select \(k\) diverse points from the unlabeled pool based on their gradient embeddings.</p>
 <p>The strength of k-means++ lies in its ability to efficiently select a set of points that are well-spread out in the gradient embedding space. By probabilistically favoring points that are far from the already selected points, k-means++ encourages the selection of a diverse set of examples. This diversity is crucial for active learning because it ensures that the newly labeled data points cover a broader range of the data distribution, leading to more informative updates to the model. Furthermore, the tendency to select points far from existing selections <em>implicitly favors points with higher magnitude embeddings</em>, as these points are likely to reside in less densely populated regions of the embedding space.</p>
 <p>Scikit-learn provides <a href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.kmeans_plusplus.html">an implementation</a> of the k-means++ centroid initialization algorithm, which can be readily adapted for BADGE.</p>
 <h3 id="a-demonstration-with-mnist" tabindex="-1">A Demonstration with MNIST</h3>
@@ -300,10 +305,10 @@ We can then work through this priority queue of points, stopping whenever we've 
     </video>
 </p>
 <h3 id="computing-k-means%2B%2B-ordering-efficiently" tabindex="-1">Computing K-means++ Ordering Efficiently</h3>
-<p>The time complexity of k-means++ initialization is $O(nkd)$ where $n$ is the number of data points, $k$ is the number of centroids to select,
-and $d$ is the dimensionality of the data. The $d$ factor comes from computing pairwise distances between points in $d$-dimensional space.
-When we generate a complete ordering over the pool of unlabeled data points, we effectively run k-means++ $k$ times, where $k$ is the size of the pool.
-This means that the overall time complexity is $O(n^2d)$, which can be expensive for large datasets or high-dimensional data.</p>
+<p>The time complexity of k-means++ initialization is \(O(nkd)\) where \(n\) is the number of data points, \(k\) is the number of centroids to select,
+and \(d\) is the dimensionality of the data. The \(d\) factor comes from computing pairwise distances between points in \(d\)-dimensional space.
+When we generate a complete ordering over the pool of unlabeled data points, we effectively run k-means++ \(k\) times, where \(k\) is the size of the pool.
+This means that the overall time complexity is \(O(n^2d)\), which can be expensive for large datasets or high-dimensional data.</p>
 <p>However, we can optimize this process by leveraging a GPU to significantly speed up the distance computations:</p>
 <pre><code class="language-python">import torch
 

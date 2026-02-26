@@ -506,10 +506,10 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&amp;gt; T
 &lt;ol&gt;
 &lt;li&gt;Initialize the first point by selecting one uniformly at random from the unlabeled pool.&lt;/li&gt;
 &lt;li&gt;For each subsequent point to be selected, compute the squared Euclidean distance from each unlabeled point to the nearest point that has already been selected.&lt;/li&gt;
-&lt;li&gt;Select the next point with a probability proportional to this squared distance. That is, a point $x_i$ is selected with probability $&#92;frac{d^2(x_i, S)}{&#92;sum_{x_j &#92;in U} d^2(x_j, S)}$, where $S$ is the set of already-selected points, $U$ is the set of unlabeled points, and $d^2(x_i, S) = &#92;min_{x_j &#92;in S} ||&#92;mathbf{g}(x_i) - &#92;mathbf{g}(x_j)||^2$, with $&#92;mathbf{g}(x_i)$ being the gradient embedding of point $x_i$.&lt;/li&gt;
+&lt;li&gt;Select the next point with a probability proportional to this squared distance. That is, a point &#92;(x_i&#92;) is selected with probability &#92;(&#92;frac{d^2(x_i, S)}{&#92;sum_{x_j &#92;in U} d^2(x_j, S)}&#92;), where &#92;(S&#92;) is the set of already-selected points, &#92;(U&#92;) is the set of unlabeled points, and &#92;(d^2(x_i, S) = &#92;min_{x_j &#92;in S} ||&#92;mathbf{g}(x_i) - &#92;mathbf{g}(x_j)||^2&#92;), with &#92;(&#92;mathbf{g}(x_i)&#92;) being the gradient embedding of point &#92;(x_i&#92;).&lt;/li&gt;
 &lt;li&gt;Repeat steps 2 and 3 until the desired number of points have been selected.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;If a batch size of $k$ is specified, BADGE uses k-means++ to greedily select $k$ diverse points from the unlabeled pool based on their gradient embeddings.&lt;/p&gt;
+&lt;p&gt;If a batch size of &#92;(k&#92;) is specified, BADGE uses k-means++ to greedily select &#92;(k&#92;) diverse points from the unlabeled pool based on their gradient embeddings.&lt;/p&gt;
 &lt;p&gt;The strength of k-means++ lies in its ability to efficiently select a set of points that are well-spread out in the gradient embedding space. By probabilistically favoring points that are far from the already selected points, k-means++ encourages the selection of a diverse set of examples. This diversity is crucial for active learning because it ensures that the newly labeled data points cover a broader range of the data distribution, leading to more informative updates to the model. Furthermore, the tendency to select points far from existing selections &lt;em&gt;implicitly favors points with higher magnitude embeddings&lt;/em&gt;, as these points are likely to reside in less densely populated regions of the embedding space.&lt;/p&gt;
 &lt;p&gt;Scikit-learn provides &lt;a href=&quot;https://scikit-learn.org/stable/modules/generated/sklearn.cluster.kmeans_plusplus.html&quot;&gt;an implementation&lt;/a&gt; of the k-means++ centroid initialization algorithm, which can be readily adapted for BADGE.&lt;/p&gt;
 &lt;h3 id=&quot;a-demonstration-with-mnist&quot; tabindex=&quot;-1&quot;&gt;A Demonstration with MNIST&lt;/h3&gt;
@@ -584,10 +584,10 @@ We can then work through this priority queue of points, stopping whenever we&#39
     &lt;/video&gt;
 &lt;/p&gt;
 &lt;h3 id=&quot;computing-k-means%2B%2B-ordering-efficiently&quot; tabindex=&quot;-1&quot;&gt;Computing K-means++ Ordering Efficiently&lt;/h3&gt;
-&lt;p&gt;The time complexity of k-means++ initialization is $O(nkd)$ where $n$ is the number of data points, $k$ is the number of centroids to select,
-and $d$ is the dimensionality of the data. The $d$ factor comes from computing pairwise distances between points in $d$-dimensional space.
-When we generate a complete ordering over the pool of unlabeled data points, we effectively run k-means++ $k$ times, where $k$ is the size of the pool.
-This means that the overall time complexity is $O(n^2d)$, which can be expensive for large datasets or high-dimensional data.&lt;/p&gt;
+&lt;p&gt;The time complexity of k-means++ initialization is &#92;(O(nkd)&#92;) where &#92;(n&#92;) is the number of data points, &#92;(k&#92;) is the number of centroids to select,
+and &#92;(d&#92;) is the dimensionality of the data. The &#92;(d&#92;) factor comes from computing pairwise distances between points in &#92;(d&#92;)-dimensional space.
+When we generate a complete ordering over the pool of unlabeled data points, we effectively run k-means++ &#92;(k&#92;) times, where &#92;(k&#92;) is the size of the pool.
+This means that the overall time complexity is &#92;(O(n^2d)&#92;), which can be expensive for large datasets or high-dimensional data.&lt;/p&gt;
 &lt;p&gt;However, we can optimize this process by leveraging a GPU to significantly speed up the distance computations:&lt;/p&gt;
 &lt;pre&gt;&lt;code class=&quot;language-python&quot;&gt;import torch
 
