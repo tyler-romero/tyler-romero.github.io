@@ -203,14 +203,14 @@ The first version of the RoFormer model has been trained and open-sourced on Git
 In brief, RoFormer is a [WoBERT](https://github.com/ZhuiyiTechnology/WoBERT) model with its absolute position encoding replaced by RoPE. Its structural comparison with other models is as follows:
 
 |  | BERT | WoBERT | NEZHA | RoFormer |
-|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+|---|---|---|---|---|
 | Token unit | Character | Word | Character | Word |
 | Position encoding | Absolute | Absolute | Classical relative | RoPE |
 
 For pre-training, we used WoBERT Plus as the base and adopted an alternating training strategy with multiple sequence lengths and batch sizes, allowing the model to adapt to different training scenarios in advance:
 
 | Stage | maxlen | batch size | Training steps | Final loss | Final acc |
-|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+|---|---|---|---|---|---|
 | 1 | 512 | 256 | 200k | 1.73 | 65.0% |
 | 2 | 1536 | 256 | 12.5k | 1.61 | 66.8% |
 | 3 | 256 | 256 | 120k | 1.75 | 64.6% |
@@ -221,7 +221,7 @@ For pre-training, we used WoBERT Plus as the base and adopted an alternating tra
 From the table, we can also see that increasing the sequence length actually improves pre-training accuracy, which indirectly demonstrates RoFormer's effectiveness at handling long-text semantics and reflects the good extrapolation capability of RoPE. On short-text tasks, RoFormer performs similarly to WoBERT; the main strength of RoFormer is its ability to directly handle text of arbitrary length. Below are our experimental results on the [CAIL2019-SCM](https://arxiv.org/abs/1911.08962) task:
 
 |  | Validation set | Test set |
-|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+|---|---|---|
 | BERT-512 | 64.13% | 67.77% |
 | WoBERT-512 | 64.07% | 68.10% |
 | RoFormer-512 | 64.13% | 68.29% |
@@ -240,3 +240,5 @@ This article introduced our self-developed Rotary Position Embedding (RoPE) and 
 <hr class="section-divider">
 
 *Citation: Su, J. (2021, March 23). Transformer升级之路：2、博采众长的旋转式位置编码 [Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds]. Scientific Spaces. [https://kexue.fm/archives/8265](https://kexue.fm/archives/8265)*
+
+*Original content licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This translation is shared under the same license.*

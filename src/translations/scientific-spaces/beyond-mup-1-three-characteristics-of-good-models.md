@@ -116,3 +116,5 @@ Starting from this article, I will share a top-down understanding of model optim
 <hr class="section-divider">
 
 *Citation: Su, J. (2025, October 21). MuP之上：1. 好模型的三个特征 [Beyond MuP: 1. Three Characteristics of Good Models]. Scientific Spaces. [https://kexue.fm/archives/11340](https://kexue.fm/archives/11340)*
+
+*Original content licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This translation is shared under the same license.*

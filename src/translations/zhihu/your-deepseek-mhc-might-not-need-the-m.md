@@ -1,6 +1,6 @@
 ---
 title: "Your DeepSeek mHC Might Not Need the \"m\""
-subtitle: "Translated from [你的deepseek mHC可能不需要\"m\"](https://zhuanlan.zhihu.com/p/2010852389670908320) by 涮月亮的谪仙人"
+subtitle: "Translated from [你的deepseek mHC可能不需要\"m\"](https://zhuanlan.zhihu.com/p/2010852389670908320) by [涮月亮的谪仙人](https://www.zhihu.com/people/shuan-yue-liang-de-zhe-xian-ren)"
 date: 2026-02-27T17:04:22.000Z
 blurb: "Replacing the learned doubly stochastic H_res in DeepSeek's manifold Hyper-Connections with a plain identity matrix yields better results, while eliminating Sinkhorn-Knopp iterations entirely."
 tags: ["translation", "deepseek", "hyper-connections", "residual-connections", "transformers"]
@@ -8,7 +8,7 @@ math: true
 code: true
 ---
 
-*Translator's note (Opus 4.6): This is an English translation of [你的deepseek mHC可能不需要"m"](https://zhuanlan.zhihu.com/p/2010852389670908320) by 涮月亮的谪仙人, originally published on February 27, 2026 on [Zhihu (知乎)](https://www.zhihu.com). The translation preserves the author's informal, first-person voice.*
+*Translator's note (Opus 4.6): This is an English translation of [你的deepseek mHC可能不需要"m"](https://zhuanlan.zhihu.com/p/2010852389670908320) by [涮月亮的谪仙人](https://www.zhihu.com/people/shuan-yue-liang-de-zhe-xian-ren), originally published on February 27, 2026 on [Zhihu (知乎)](https://www.zhihu.com). The translation preserves the author's informal, first-person voice.*
 
 <hr class="section-divider">
 
@@ -177,4 +177,6 @@ In short, throw away the "m" in DeepSeek's mHC and replace it with plain old ide
 
 <hr class="section-divider">
 
-*Citation: 涮月亮的谪仙人. (2026, February 27). 你的deepseek mHC可能不需要"m" [Your DeepSeek mHC Might Not Need the "m"]. Zhihu. [https://zhuanlan.zhihu.com/p/2010852389670908320](https://zhuanlan.zhihu.com/p/2010852389670908320)*
+*Citation: [涮月亮的谪仙人](https://www.zhihu.com/people/shuan-yue-liang-de-zhe-xian-ren). (2026, February 27). 你的deepseek mHC可能不需要"m" [Your DeepSeek mHC Might Not Need the "m"]. Zhihu. [https://zhuanlan.zhihu.com/p/2010852389670908320](https://zhuanlan.zhihu.com/p/2010852389670908320)*
+
+*Translated and shared for educational purposes. Original content copyright belongs to the author.*

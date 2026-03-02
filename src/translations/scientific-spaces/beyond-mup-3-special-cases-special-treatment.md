@@ -281,3 +281,5 @@ The steepest descent directions for Embedding and LM Head are row-wise and colum
 <hr class="section-divider">
 
 *Citation: Su, J. (2026, March 02). MuP之上：3. 特殊情况特殊处理 [Beyond MuP: 3. Special Cases, Special Treatment]. Scientific Spaces. [https://kexue.fm/archives/11647](https://kexue.fm/archives/11647)*
+
+*Original content licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This translation is shared under the same license.*

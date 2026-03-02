@@ -140,11 +140,11 @@ Put plainly, it simply **adds a trainable bias term** to the Attention matrix --
 What's rather distinctive is that, unlike the standard approach of treating \(\boldsymbol{\beta}_{i,j}\) as a function of \(i - j\) with clipping, T5 applies a **"bucketing"** operation to relative positions. That is, relative position \(i - j\) actually maps to position \(f(i - j)\), with the mapping as follows:
 
 | \(i - j\) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
-|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | \(f(i-j)\) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 8 | 8 | 8 | 9 | 9 | 9 | 9 |
 
 | \(i - j\) | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | ... |
-|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | \(f(i-j)\) | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 11 | 11 | 11 | 11 | 11 | 11 | 11 | 11 | ... |
 
 For the specific mapping code, readers can consult the source code. The design intuition is actually quite straightforward: for nearby positions (0--7), we need finer-grained distinctions, so each gets its own independent position encoding. For somewhat more distant positions (e.g., 8--11), we don't need to distinguish so precisely, so they can share a position encoding. The farther away, the larger the range that can share, until reaching the specified range where clipping is applied.
@@ -248,3 +248,5 @@ This article surveys a collection of position encoding methods, broadly divided 
 <hr class="section-divider">
 
 *Citation: Su, J. (2021, February 03). 让研究人员绞尽脑汁的Transformer位置编码 [Transformer Position Encodings That Rack Researchers' Brains]. Scientific Spaces. [https://kexue.fm/archives/8130](https://kexue.fm/archives/8130)*
+
+*Original content licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This translation is shared under the same license.*

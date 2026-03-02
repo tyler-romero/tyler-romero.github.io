@@ -105,3 +105,5 @@ That said, none of this is absolute. Under certain extreme settings, it is indee
 <hr class="section-divider">
 
 *Citation: Su, J. (2025, November 19). Muon优化器指南：快速上手与关键细节 [Muon Optimizer Guide: Quick Start and Key Details]. Scientific Spaces. [https://kexue.fm/archives/11416](https://kexue.fm/archives/11416)*
+
+*Original content licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This translation is shared under the same license.*

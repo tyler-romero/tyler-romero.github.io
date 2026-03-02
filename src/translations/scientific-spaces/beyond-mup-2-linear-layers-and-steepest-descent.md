@@ -170,3 +170,5 @@ This article took the three stability metrics from the previous article as the s
 <hr class="section-divider">
 
 *Citation: Su, J. (2026, February 15). MuP之上：2. 线性层与最速下降 [Beyond MuP: 2. Linear Layers and Steepest Descent]. Scientific Spaces. [https://kexue.fm/archives/11605](https://kexue.fm/archives/11605)*
+
+*Original content licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). This translation is shared under the same license.*
