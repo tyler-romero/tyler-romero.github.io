@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds</title>
+<meta name="author" content="Tyler Romero">
+<meta name="description" content="Translated from Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林)">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+<link rel="canonical" href="https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">
+<link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
+<!-- Open Graph -->
+<meta property="og:title" content="Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds">
+<meta property="og:description" content="Translated from Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林)">
+<meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds">
+<meta name="twitter:description" content="Translated from Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林)">
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+<!-- Prism.js Syntax Highlighting -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
+
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/assets/tufte.min.css">
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+        
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds",
+            "description": "Translated from [Transformer升级之路：2、博采众长的旋转式位置编码](https://kexue.fm/archives/8265) by Jianlin Su (苏剑林)",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2021-03-22T16:00:00.000Z",
+            "dateModified": "2026-03-02T21:44:03.160Z",
+            "url": "https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/"
+            },
+            "keywords": "translation, rope, position-encoding, attention, transformers",
+            "wordCount": "2627",
+            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林), originally published on March 23, 2021 on Scientific Spaces (科学空间). It is the second article in the &amp;quot;Transformer Upgrade Path&amp;quot; series. The translation preserves the author&#39;s first-person voice. In the previous article, we gave a fairly detailed derivation and analysis of the original Sinusoidal position encoding. The overall impression is that Sinusoidal position encoding..."
+            }
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/translations" class="no-tufte-underline">Translations</a>
+
+                </div>
+            </nav>
+        </header>
+        <article>
+            
+            <div class="post-header">
+                <h1>Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds</h1>
+                <p class="subtitle">Translated from <a href="https://kexue.fm/archives/8265">Transformer升级之路：2、博采众长的旋转式位置编码</a> by Jianlin Su (苏剑林)</p>
+                <p class="date">Mar 22, 2021</p>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
+            </script>
+
+            <section>
+<p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/8265">Transformer升级之路：2、博采众长的旋转式位置编码</a> by Jianlin Su (苏剑林), originally published on March 23, 2021 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. It is the second article in the &quot;Transformer Upgrade Path&quot; series. The translation preserves the author's first-person voice.</em></p>
+<hr class="section-divider">
+<p>In the <a href="/translations/scientific-spaces/transformer-position-encodings-that-rack-researchers-brains/">previous article</a>, we gave a fairly detailed derivation and analysis of the original Sinusoidal position encoding. The overall impression is that Sinusoidal position encoding is &quot;an absolute position encoding that wants to be a relative position encoding.&quot; Generally speaking, absolute position encodings are simple to implement and fast to compute, while relative position encodings directly capture relative position signals, align with our intuition, and often perform better in practice. It follows that if one could implement relative position encoding <em>through</em> an absolute position encoding, that would be &quot;taking the best of all worlds&quot; (博采众长) — &quot;having one's cake and eating it too&quot; (鱼与熊掌兼得). Sinusoidal position encoding vaguely achieves this, but not well enough.</p>
+<p>This article introduces our self-developed <strong>Rotary Transformer (RoFormer)</strong> model, whose main modification is the application of <strong>Rotary Position Embedding (RoPE)</strong>, which I conceived. This is a design that, in conjunction with the Attention mechanism, achieves &quot;relative position encoding via the mechanism of absolute position encoding.&quot; Precisely because of this design, it is also currently the only relative position encoding that can be used with linear Attention.</p>
+<blockquote>
+<p><strong>RoFormer: <a href="https://github.com/ZhuiyiTechnology/roformer">https://github.com/ZhuiyiTechnology/roformer</a></strong></p>
+</blockquote>
+</section>
+<section>
+<h2 id="basic-idea" tabindex="-1">Basic Idea</h2>
+<p>In the earlier article <a href="/translations/scientific-spaces/transformer-position-encodings-that-rack-researchers-brains/"><em>Transformer Position Encodings That Rack Researchers' Brains</em></a>, we briefly introduced RoPE, calling it the &quot;fusion-style&quot; approach at the time. This article provides a more detailed account of its origin and properties. In RoPE, our starting point is &quot;implementing relative position encoding through absolute position encoding.&quot; This approach has both theoretical elegance and practical utility — for instance, its extensibility to linear Attention is primarily due to this property.</p>
+<p>To achieve this goal, we assume the following operations add absolute position information to \(\boldsymbol{q}\) and \(\boldsymbol{k}\):</p>
+<p>\[
+\tilde{\boldsymbol{q}}_m = \boldsymbol{f}(\boldsymbol{q}, m), \quad \tilde{\boldsymbol{k}}_n = \boldsymbol{f}(\boldsymbol{k}, n) \tag{1}
+\]</p>
+<p>That is, we design operations \(\boldsymbol{f}(\cdot, m)\) and \(\boldsymbol{f}(\cdot, n)\) for \(\boldsymbol{q}\) and \(\boldsymbol{k}\) respectively, such that after applying them, \(\tilde{\boldsymbol{q}}_m\) and \(\tilde{\boldsymbol{k}}_n\) carry absolute position information for positions \(m\) and \(n\). Since the core operation of Attention is the inner product, we want the inner product result to carry relative position information. We therefore posit the following identity:</p>
+<p>\[
+\langle \boldsymbol{f}(\boldsymbol{q}, m),\, \boldsymbol{f}(\boldsymbol{k}, n) \rangle = g(\boldsymbol{q}, \boldsymbol{k}, m - n) \tag{2}
+\]</p>
+<p>So we need to find a (preferably simple) solution to this identity. The solution process also requires some initial conditions; we can reasonably set \(\boldsymbol{f}(\boldsymbol{q}, 0) = \boldsymbol{q}\) and \(\boldsymbol{f}(\boldsymbol{k}, 0) = \boldsymbol{k}\).</p>
+</section>
+<section>
+<h2 id="derivation" tabindex="-1">Derivation</h2>
+<p>Following the same approach as the previous article, we first consider the two-dimensional case and use complex numbers to solve it. In complex numbers, \(\langle \boldsymbol{q}, \boldsymbol{k} \rangle = \text{Re}[\boldsymbol{q}\boldsymbol{k}^*]\), where \(\text{Re}[\cdot]\) denotes the real part, so we have</p>
+<p>\[
+\text{Re}[\boldsymbol{f}(\boldsymbol{q}, m)\,\boldsymbol{f}^*(\boldsymbol{k}, n)] = g(\boldsymbol{q}, \boldsymbol{k}, m - n) \tag{3}
+\]</p>
+<p>For simplicity, we assume there exists a complex number \(\boldsymbol{g}(\boldsymbol{q}, \boldsymbol{k}, m - n)\) such that \(\boldsymbol{f}(\boldsymbol{q}, m)\,\boldsymbol{f}^*(\boldsymbol{k}, n) = \boldsymbol{g}(\boldsymbol{q}, \boldsymbol{k}, m - n)\). Then we write these in exponential form:</p>
+<p>\[
+\begin{aligned}
+\boldsymbol{f}(\boldsymbol{q}, m) &= R_f(\boldsymbol{q}, m)\,e^{\text{i}\,\Theta_f(\boldsymbol{q}, m)} \\
+\boldsymbol{f}(\boldsymbol{k}, n) &= R_f(\boldsymbol{k}, n)\,e^{\text{i}\,\Theta_f(\boldsymbol{k}, n)} \\
+\boldsymbol{g}(\boldsymbol{q}, \boldsymbol{k}, m - n) &= R_g(\boldsymbol{q}, \boldsymbol{k}, m - n)\,e^{\text{i}\,\Theta_g(\boldsymbol{q}, \boldsymbol{k}, m - n)}
+\end{aligned} \tag{4}
+\]</p>
+<p>Substituting into the equation yields the system:</p>
+<p>\[
+\begin{aligned}
+R_f(\boldsymbol{q}, m)\, R_f(\boldsymbol{k}, n) &= R_g(\boldsymbol{q}, \boldsymbol{k}, m - n) \\
+\Theta_f(\boldsymbol{q}, m) - \Theta_f(\boldsymbol{k}, n) &= \Theta_g(\boldsymbol{q}, \boldsymbol{k}, m - n)
+\end{aligned} \tag{5}
+\]</p>
+<p>For the first equation, substituting \(m = n\) gives</p>
+<p>\[
+R_f(\boldsymbol{q}, m)\, R_f(\boldsymbol{k}, m) = R_g(\boldsymbol{q}, \boldsymbol{k}, 0) = R_f(\boldsymbol{q}, 0)\, R_f(\boldsymbol{k}, 0) = \|\boldsymbol{q}\|\,\|\boldsymbol{k}\| \tag{6}
+\]</p>
+<p>The last equality follows from the initial conditions \(\boldsymbol{f}(\boldsymbol{q}, 0) = \boldsymbol{q}\) and \(\boldsymbol{f}(\boldsymbol{k}, 0) = \boldsymbol{k}\). So we can simply set \(R_f(\boldsymbol{q}, m) = \|\boldsymbol{q}\|\) and \(R_f(\boldsymbol{k}, m) = \|\boldsymbol{k}\|\) — that is, the modulus does not depend on \(m\). For the second equation, again substituting \(m = n\) yields</p>
+<p>\[
+\Theta_f(\boldsymbol{q}, m) - \Theta_f(\boldsymbol{k}, m) = \Theta_g(\boldsymbol{q}, \boldsymbol{k}, 0) = \Theta_f(\boldsymbol{q}, 0) - \Theta_f(\boldsymbol{k}, 0) = \Theta(\boldsymbol{q}) - \Theta(\boldsymbol{k}) \tag{7}
+\]</p>
+<p>Here \(\Theta(\boldsymbol{q})\) and \(\Theta(\boldsymbol{k})\) are the arguments (angles) of \(\boldsymbol{q}\) and \(\boldsymbol{k}\) themselves, and the last equality again follows from the initial conditions. From the above we get \(\Theta_f(\boldsymbol{q}, m) - \Theta(\boldsymbol{q}) = \Theta_f(\boldsymbol{k}, m) - \Theta(\boldsymbol{k})\), so \(\Theta_f(\boldsymbol{q}, m) - \Theta(\boldsymbol{q})\) must be a function of \(m\) alone, independent of \(\boldsymbol{q}\). Denote it \(\varphi(m)\), i.e., \(\Theta_f(\boldsymbol{q}, m) = \Theta(\boldsymbol{q}) + \varphi(m)\). Next, substituting \(n = m - 1\) and rearranging gives</p>
+<p>\[
+\varphi(m) - \varphi(m - 1) = \Theta_g(\boldsymbol{q}, \boldsymbol{k}, 1) + \Theta(\boldsymbol{k}) - \Theta(\boldsymbol{q}) \tag{8}
+\]</p>
+<p>That is, \(\{\varphi(m)\}\) is an arithmetic sequence. Letting the right-hand side equal \(\theta\), we solve \(\varphi(m) = m\theta\).</p>
+</section>
+<section>
+<h2 id="encoding-form" tabindex="-1">Encoding Form</h2>
+<p>In summary, we obtain the complex-number representation of RoPE in the two-dimensional case:</p>
+<p>\[
+\boldsymbol{f}(\boldsymbol{q}, m) = R_f(\boldsymbol{q}, m)\,e^{\text{i}\,\Theta_f(\boldsymbol{q}, m)} = \|\boldsymbol{q}\|\, e^{\text{i}(\Theta(\boldsymbol{q}) + m\theta)} = \boldsymbol{q}\, e^{\text{i}\,m\theta} \tag{9}
+\]</p>
+<p>By the geometric meaning of complex multiplication, this transformation corresponds to rotating the vector, which is why we call it &quot;Rotary Position Embedding.&quot; It can also be written in matrix form:</p>
+<p>\[
+\boldsymbol{f}(\boldsymbol{q}, m) = \begin{pmatrix} \cos m\theta & -\sin m\theta \\ \sin m\theta & \cos m\theta \end{pmatrix} \begin{pmatrix} q_0 \\ q_1 \end{pmatrix} \tag{10}
+\]</p>
+<p>Since the inner product satisfies linear additivity, RoPE for any even dimension can be expressed as a concatenation of two-dimensional cases:</p>
+<p>\[
+\underbrace{\begin{pmatrix}
+\cos m\theta_0 & -\sin m\theta_0 & 0 & 0 & \cdots & 0 & 0 \\
+\sin m\theta_0 & \cos m\theta_0 & 0 & 0 & \cdots & 0 & 0 \\
+0 & 0 & \cos m\theta_1 & -\sin m\theta_1 & \cdots & 0 & 0 \\
+0 & 0 & \sin m\theta_1 & \cos m\theta_1 & \cdots & 0 & 0 \\
+\vdots & \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
+0 & 0 & 0 & 0 & \cdots & \cos m\theta_{d/2-1} & -\sin m\theta_{d/2-1} \\
+0 & 0 & 0 & 0 & \cdots & \sin m\theta_{d/2-1} & \cos m\theta_{d/2-1}
+\end{pmatrix}}_{\boldsymbol{\mathcal{R}}_m}
+\begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ \vdots \\ q_{d-2} \\ q_{d-1} \end{pmatrix} \tag{11}
+\]</p>
+<p>In other words, multiply the vector \(\boldsymbol{q}\) at position \(m\) by the matrix \(\boldsymbol{\mathcal{R}}_m\), and the vector \(\boldsymbol{k}\) at position \(n\) by the matrix \(\boldsymbol{\mathcal{R}}_n\). Then perform Attention using the transformed \(\boldsymbol{Q}\) and \(\boldsymbol{K}\) sequences. The Attention automatically incorporates relative position information, because the following identity holds:</p>
+<p>\[
+(\boldsymbol{\mathcal{R}}_m \boldsymbol{q})^{\top}(\boldsymbol{\mathcal{R}}_n \boldsymbol{k}) = \boldsymbol{q}^{\top} \boldsymbol{\mathcal{R}}_m^{\top} \boldsymbol{\mathcal{R}}_n \boldsymbol{k} = \boldsymbol{q}^{\top} \boldsymbol{\mathcal{R}}_{n-m} \boldsymbol{k} \tag{12}
+\]</p>
+<p>It is worth noting that \(\boldsymbol{\mathcal{R}}_m\) is an orthogonal matrix — it does not change the magnitude of vectors, so it generally does not affect the stability of the original model.</p>
+<p>Because \(\boldsymbol{\mathcal{R}}_m\) is sparse, implementing it directly via matrix multiplication wastes computation. The recommended implementation of RoPE is:</p>
+<p>\[
+\begin{pmatrix} q_0 \\ q_1 \\ q_2 \\ q_3 \\ \vdots \\ q_{d-2} \\ q_{d-1} \end{pmatrix} \otimes \begin{pmatrix} \cos m\theta_0 \\ \cos m\theta_0 \\ \cos m\theta_1 \\ \cos m\theta_1 \\ \vdots \\ \cos m\theta_{d/2-1} \\ \cos m\theta_{d/2-1} \end{pmatrix} + \begin{pmatrix} -q_1 \\ q_0 \\ -q_3 \\ q_2 \\ \vdots \\ -q_{d-1} \\ q_{d-2} \end{pmatrix} \otimes \begin{pmatrix} \sin m\theta_0 \\ \sin m\theta_0 \\ \sin m\theta_1 \\ \sin m\theta_1 \\ \vdots \\ \sin m\theta_{d/2-1} \\ \sin m\theta_{d/2-1} \end{pmatrix} \tag{13}
+\]</p>
+<p>where \(\otimes\) denotes element-wise multiplication, i.e., the <code>*</code> operation in NumPy, TensorFlow, and similar frameworks. From this implementation, we can also see that RoPE can be viewed as a variant of multiplicative position encoding.</p>
+</section>
+<section>
+<h2 id="long-range-decay" tabindex="-1">Long-Range Decay</h2>
+<p>We can see that RoPE is formally somewhat similar to Sinusoidal position encoding, except that Sinusoidal position encoding is additive while RoPE can be viewed as multiplicative. For the choice of \(\theta_i\), we follow the same scheme as Sinusoidal position encoding: \(\theta_i = 10000^{-2i/d}\), which provides a degree of long-range decay.</p>
+<p>The specific proof is as follows. After pairing the dimensions of \(\boldsymbol{q}\) and \(\boldsymbol{k}\) in groups of two, the inner product after applying RoPE can be expressed via complex multiplication as:</p>
+<p>\[
+(\boldsymbol{\mathcal{R}}_m \boldsymbol{q})^{\top}(\boldsymbol{\mathcal{R}}_n \boldsymbol{k}) = \text{Re}\left[\sum_{i=0}^{d/2-1} \boldsymbol{q}_{[2i:2i+1]}\,\boldsymbol{k}_{[2i:2i+1]}^*\, e^{\text{i}(m-n)\theta_i}\right] \tag{14}
+\]</p>
+<p>Let \(h_i = \boldsymbol{q}_{[2i:2i+1]}\,\boldsymbol{k}_{[2i:2i+1]}^*\) and \(S_j = \sum_{i=0}^{j-1} e^{\text{i}(m-n)\theta_i}\), with the convention that \(h_{d/2} = 0\) and \(S_0 = 0\). Then by the <a href="https://en.wikipedia.org/wiki/Abel%27s_summation_formula">Abel transformation (summation by parts)</a>, we obtain:</p>
+<p>\[
+\sum_{i=0}^{d/2-1} \boldsymbol{q}_{[2i:2i+1]}\,\boldsymbol{k}_{[2i:2i+1]}^*\, e^{\text{i}(m-n)\theta_i} = \sum_{i=0}^{d/2-1} h_i(S_{i+1} - S_i) = -\sum_{i=0}^{d/2-1} S_{i+1}(h_{i+1} - h_i) \tag{15}
+\]</p>
+<p>Therefore:</p>
+<p>\[
+\begin{aligned}
+\left|\sum_{i=0}^{d/2-1} \boldsymbol{q}_{[2i:2i+1]}\,\boldsymbol{k}_{[2i:2i+1]}^*\, e^{\text{i}(m-n)\theta_i}\right| &= \left|\sum_{i=0}^{d/2-1} S_{i+1}(h_{i+1} - h_i)\right| \\
+&\leq \sum_{i=0}^{d/2-1} |S_{i+1}|\,|h_{i+1} - h_i| \\
+&\leq \left(\max_i |h_{i+1} - h_i|\right) \sum_{i=0}^{d/2-1} |S_{i+1}|
+\end{aligned} \tag{16}
+\]</p>
+<p>We can therefore examine how \(\frac{1}{d/2}\sum_{i=1}^{d/2} |S_i|\) varies with relative distance as a measure of the decay. The Mathematica code is:</p>
+<pre><code class="language-mathematica">d = 128;
+\[Theta][t_] = 10000^(-2*t/d);
+f[m_] = Sum[
+    Norm[Sum[Exp[I*m*\[Theta][i]], {i, 0, j}]], {j, 0, d/2 - 1}]/(d/2);
+Plot[f[m], {m, 0, 256}, AxesLabel -&gt; {Relative Distance, Relative Magnitude}]
+</code></pre>
+<p>From the resulting plot<label for="sn-decay-plot" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-decay-plot" class="margin-toggle"><span class="sidenote">Long-range decay of RoPE with \(\theta_i = 10000^{-2i/d}\) and \(d = 128\). <picture><source type="image/webp" srcset="/assets/img/5FIdFKQ0G0-300.webp 300w, /assets/img/5FIdFKQ0G0-600.webp 600w, /assets/img/5FIdFKQ0G0-900.webp 900w, /assets/img/5FIdFKQ0G0-1100.webp 1100w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5FIdFKQ0G0-300.png" alt="RoPE long-range decay plot" width="1100" height="700" srcset="/assets/img/5FIdFKQ0G0-300.png 300w, /assets/img/5FIdFKQ0G0-600.png 600w, /assets/img/5FIdFKQ0G0-900.png 900w, /assets/img/5FIdFKQ0G0-1100.png 1100w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>, we can see that as the relative distance increases, the inner product result exhibits a decaying trend. Therefore, the choice \(\theta_i = 10000^{-2i/d}\) does indeed provide a degree of long-range decay. Of course, as mentioned in the previous article, this is not the only choice that yields long-range decay — almost any smooth monotonic function will do. We simply follow the existing convention. I also tried initializing with \(\theta_i = 10000^{-2i/d}\) and treating \(\theta_i\) as trainable parameters, but after training for a while found that \(\theta_i\) did not update significantly, so I simply fixed \(\theta_i = 10000^{-2i/d}\).</p>
+</section>
+<section>
+<h2 id="linear-attention-setting" tabindex="-1">Linear Attention Setting</h2>
+<p>Finally, we point out that RoPE is currently the only relative position encoding that can be used with linear Attention. This is because other relative position encodings operate directly on the Attention matrix, but linear Attention does not compute the Attention matrix explicitly, so there is no way to manipulate it. Consequently, other approaches cannot be applied to linear Attention. RoPE, on the other hand, implements relative position encoding through the mechanism of absolute position encoding and does not need to operate on the Attention matrix, thus making it possible to apply to linear Attention.</p>
+<p>For an introduction to linear Attention, we refer interested readers to <a href="https://kexue.fm/archives/7546"><em>Exploring Linear Attention: Does Attention Need a Softmax?</em></a>. The common form of linear Attention is:</p>
+<p>\[
+\text{Attention}(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V})_i = \frac{\sum_{j=1}^{n} \text{sim}(\boldsymbol{q}_i, \boldsymbol{k}_j)\,\boldsymbol{v}_j}{\sum_{j=1}^{n} \text{sim}(\boldsymbol{q}_i, \boldsymbol{k}_j)} = \frac{\sum_{j=1}^{n} \phi(\boldsymbol{q}_i)^{\top} \varphi(\boldsymbol{k}_j)\,\boldsymbol{v}_j}{\sum_{j=1}^{n} \phi(\boldsymbol{q}_i)^{\top} \varphi(\boldsymbol{k}_j)} \tag{17}
+\]</p>
+<p>where \(\phi\) and \(\varphi\) are activation functions with non-negative range. As we can see, linear Attention is also based on inner products, so a natural idea is to insert RoPE into the inner product:</p>
+<p>\[
+\frac{\sum_{j=1}^{n} [\boldsymbol{\mathcal{R}}_i \phi(\boldsymbol{q}_i)]^{\top} [\boldsymbol{\mathcal{R}}_j \varphi(\boldsymbol{k}_j)]\,\boldsymbol{v}_j}{\sum_{j=1}^{n} [\boldsymbol{\mathcal{R}}_i \phi(\boldsymbol{q}_i)]^{\top} [\boldsymbol{\mathcal{R}}_j \varphi(\boldsymbol{k}_j)]} \tag{18}
+\]</p>
+<p>However, the problem is that the inner product \([\boldsymbol{\mathcal{R}}_i \phi(\boldsymbol{q}_i)]^{\top} [\boldsymbol{\mathcal{R}}_j \varphi(\boldsymbol{k}_j)]\) may be negative, so it is no longer standard probabilistic attention, and the denominator risks being zero, which could cause optimization instability. Since \(\boldsymbol{\mathcal{R}}_i\) and \(\boldsymbol{\mathcal{R}}_j\) are both orthogonal matrices that do not change vector magnitudes, we can abandon the standard probabilistic normalization requirement and use the following as a new form of linear Attention:</p>
+<p>\[
+\frac{\sum_{j=1}^{n} [\boldsymbol{\mathcal{R}}_i \phi(\boldsymbol{q}_i)]^{\top} [\boldsymbol{\mathcal{R}}_j \varphi(\boldsymbol{k}_j)]\,\boldsymbol{v}_j}{\sum_{j=1}^{n} \phi(\boldsymbol{q}_i)^{\top} \varphi(\boldsymbol{k}_j)} \tag{19}
+\]</p>
+<p>That is, RoPE is inserted only in the numerator, while the denominator remains unchanged. This type of attention is no longer probability-based (the attention matrix no longer satisfies non-negative normalization), but in some sense it is still a normalization scheme, and there is no evidence that non-probabilistic attention is necessarily worse (for example, <a href="https://kexue.fm/archives/8180"><em>Nystromformer</em></a> also does not strictly construct attention according to probability distributions). So we include it as a candidate for experiments, and our preliminary results show that this form of linear Attention is indeed effective.</p>
+<p>Additionally, in <a href="https://kexue.fm/archives/7546"><em>Exploring Linear Attention: Does Attention Need a Softmax?</em></a>, I also proposed another linear Attention scheme: \(\text{sim}(\boldsymbol{q}_i, \boldsymbol{k}_j) = 1 + \left(\frac{\boldsymbol{q}_i}{\|\boldsymbol{q}_i\|}\right)^{\top}\left(\frac{\boldsymbol{k}_j}{\|\boldsymbol{k}_j\|}\right)\). It does not depend on the non-negativity of the range, and since RoPE does not change magnitudes, RoPE can be directly applied to this type of linear Attention without altering its probabilistic interpretation.</p>
+</section>
+<section>
+<h2 id="open-source-model" tabindex="-1">Open-Source Model</h2>
+<p>The first version of the RoFormer model has been trained and open-sourced on Github:</p>
+<blockquote>
+<p><strong>RoFormer: <a href="https://github.com/ZhuiyiTechnology/roformer">https://github.com/ZhuiyiTechnology/roformer</a></strong></p>
+</blockquote>
+<p>In brief, RoFormer is a <a href="https://github.com/ZhuiyiTechnology/WoBERT">WoBERT</a> model with its absolute position encoding replaced by RoPE. Its structural comparison with other models is as follows:</p>
+<p>|  | BERT | WoBERT | NEZHA | RoFormer |
+|</p><hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+| Token unit | Character | Word | Character | Word |
+| Position encoding | Absolute | Absolute | Classical relative | RoPE |<p></p>
+<p>For pre-training, we used WoBERT Plus as the base and adopted an alternating training strategy with multiple sequence lengths and batch sizes, allowing the model to adapt to different training scenarios in advance:</p>
+<p>| Stage | maxlen | batch size | Training steps | Final loss | Final acc |
+|</p><hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+| 1 | 512 | 256 | 200k | 1.73 | 65.0% |
+| 2 | 1536 | 256 | 12.5k | 1.61 | 66.8% |
+| 3 | 256 | 256 | 120k | 1.75 | 64.6% |
+| 4 | 128 | 512 | 80k | 1.83 | 63.4% |
+| 5 | 1536 | 256 | 10k | 1.58 | 67.4% |
+| 6 | 512 | 512 | 30k | 1.66 | 66.2% |<p></p>
+<p>From the table, we can also see that increasing the sequence length actually improves pre-training accuracy, which indirectly demonstrates RoFormer's effectiveness at handling long-text semantics and reflects the good extrapolation capability of RoPE. On short-text tasks, RoFormer performs similarly to WoBERT; the main strength of RoFormer is its ability to directly handle text of arbitrary length. Below are our experimental results on the <a href="https://arxiv.org/abs/1911.08962">CAIL2019-SCM</a> task:</p>
+<p>|  | Validation set | Test set |
+|</p><hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
+| BERT-512 | 64.13% | 67.77% |
+| WoBERT-512 | 64.07% | 68.10% |
+| RoFormer-512 | 64.13% | 68.29% |
+| RoFormer-1024 | <strong>66.07%</strong> | <strong>69.79%</strong> |<p></p>
+<p>The number after the hyphen is the maxlen used during fine-tuning. We can see that RoFormer does handle long-text semantics well. As for hardware requirements, on a 24GB GPU, running maxlen=1024, the batch_size can reach 8 or above. Among Chinese tasks, this is the only one I found that is suitable as a test of long-text capability, so long-text evaluation was limited to this task. Readers are welcome to run tests or recommend other evaluation tasks.</p>
+<p>Of course, although RoFormer can theoretically handle sequences of arbitrary length, the current version still has quadratic complexity. We are also training a linear Attention-based RoFormer model, which will be open-sourced once the experiments are complete.</p>
+<p>(Note: RoPE and RoFormer have been compiled into the paper <a href="https://arxiv.org/abs/2104.09864"><em>RoFormer: Enhanced Transformer with Rotary Position Embedding</em></a> and submitted to arXiv. Feel free to use and cite it!)</p>
+</section>
+<section>
+<h2 id="summary" tabindex="-1">Summary</h2>
+<p>This article introduced our self-developed Rotary Position Embedding (RoPE) and the corresponding pre-trained model RoFormer. From a theoretical perspective, RoPE shares some commonalities with Sinusoidal position encoding, but RoPE does not rely on Taylor expansion and is more rigorous and interpretable. From the results of the pre-trained RoFormer model, RoPE exhibits good extrapolation properties, and when applied to Transformers, it demonstrates strong long-text processing capability. Furthermore, RoPE is currently the only relative position encoding that can be used with linear Attention.</p>
+<hr class="section-divider">
+<p><em>Citation: Su, J. (2021, March 23). Transformer升级之路：2、博采众长的旋转式位置编码 [Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds]. Scientific Spaces. <a href="https://kexue.fm/archives/8265">https://kexue.fm/archives/8265</a></em></p>
+</section>
+
+        </article>
+        <footer>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
+
+        </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
+    </body>
+</html>

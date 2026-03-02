@@ -924,12 +924,23 @@ pre[class*="language-"] > code {
     display: none !important;
   }
 
+  /* Hide rough-notation bracket SVGs */
+  svg.rough-annotation {
+    display: none !important;
+  }
+
   body {
     background: white;
     color: black;
     width: 100%;
+    max-width: 100%;
     padding-left: 5%;
     padding-right: 5%;
+    margin: 0;
+    box-sizing: border-box;
+    /* Add CJK fonts so Chinese characters render in print/PDF */
+    font-family: "Newsreader", "Noto Serif CJK SC", "Songti SC",
+      "Source Han Serif SC", "SimSun", Georgia, "Times New Roman", serif;
   }
 
   article {
@@ -946,7 +957,10 @@ pre[class*="language-"] > code {
   blockquote p,
   blockquote footer,
   .item-list,
-  .post-list {
+  .post-list,
+  .colophon,
+  .bibliography,
+  div.math {
     width: 100%;
   }
 
