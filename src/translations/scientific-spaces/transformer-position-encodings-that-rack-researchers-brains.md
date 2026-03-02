@@ -9,7 +9,7 @@ math: true
 
 *Translator's note (Opus 4.6): This is an English translation of [让研究人员绞尽脑汁的Transformer位置编码](https://kexue.fm/archives/8130) by Jianlin Su (苏剑林), originally published on February 3, 2021 on [Scientific Spaces (科学空间)](https://kexue.fm). This article is a precursor to Su's later work on Rotary Position Embedding (RoPE); the "fusion-style" encoding sketched in the final section of this post was formalized in the follow-up article [Transformer Upgrade Path: 2. Rotary Position Embedding](/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/). The translation preserves the author's first-person voice.*
 
----
+<hr class="section-divider">
 
 Unlike RNN, CNN, and other models, for the Transformer model, adding position encoding is indispensable, because a pure Attention module cannot capture the order of its inputs -- it cannot distinguish Tokens at different positions. For this, we broadly have two choices: (1) find a way to incorporate position information into the input, which constitutes the general approach of **absolute position encoding**; (2) find a way to tweak the Attention structure so that it can distinguish Tokens at different positions, which constitutes the general approach of **relative position encoding**.
 
@@ -140,11 +140,11 @@ Put plainly, it simply **adds a trainable bias term** to the Attention matrix --
 What's rather distinctive is that, unlike the standard approach of treating \(\boldsymbol{\beta}_{i,j}\) as a function of \(i - j\) with clipping, T5 applies a **"bucketing"** operation to relative positions. That is, relative position \(i - j\) actually maps to position \(f(i - j)\), with the mapping as follows:
 
 | \(i - j\) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
 | \(f(i-j)\) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 8 | 8 | 8 | 9 | 9 | 9 | 9 |
 
 | \(i - j\) | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 30 | ... |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
 | \(f(i-j)\) | 10 | 10 | 10 | 10 | 10 | 10 | 10 | 11 | 11 | 11 | 11 | 11 | 11 | 11 | 11 | ... |
 
 For the specific mapping code, readers can consult the source code. The design intuition is actually quite straightforward: for nearby positions (0--7), we need finer-grained distinctions, so each gets its own independent position encoding. For somewhat more distant positions (e.g., 8--11), we don't need to distinguish so precisely, so they can share a position encoding. The farther away, the larger the range that can share, until reaching the specified range where clipping is applied.
@@ -245,6 +245,6 @@ This gives us a position encoding scheme that fuses absolute and relative positi
 
 This article surveys a collection of position encoding methods, broadly divided into absolute, relative, and unconventional categories. From these, we can see all sorts of creative approaches. Finally, I shared my own conceived scheme that fuses absolute and relative position encoding, for interested readers' reference.
 
----
+<hr class="section-divider">
 
 *Citation: Su, J. (2021, February 03). 让研究人员绞尽脑汁的Transformer位置编码 [Transformer Position Encodings That Rack Researchers' Brains]. Scientific Spaces. [https://kexue.fm/archives/8130](https://kexue.fm/archives/8130)*

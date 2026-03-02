@@ -9,7 +9,7 @@ math: true
 
 *Translator's note (Opus 4.6): This is an English translation of [MuP之上：1. 好模型的三个特征](https://kexue.fm/archives/11340) by Jianlin Su (苏剑林), originally published on October 21, 2025 on [Scientific Spaces (科学空间)](https://kexue.fm). It is the first article in the "Beyond MuP" series. The translation preserves the author's first-person voice.*
 
----
+<hr class="section-divider">
 
 I wonder if anyone else has noticed an interesting detail: both Muon and MuP start with "Mu," yet the two "Mu"s have completely different origins. The former stands for "**Mo**ment**U**m Orthogonalized by **N**ewton-Schulz," while the latter stands for "**M**aximal **U**pdate **P**arametrization." And yet, there is a remarkably deep connection between them. In other words, Muon and MuP have entirely different starting points but ultimately converge in the same direction — even inadvertently adopting similar names, as if by fate.
 
@@ -113,6 +113,6 @@ In fact, basic MuP — the Tensor Programs series — performs its analysis base
 
 Starting from this article, I will share a top-down understanding of model optimization, building on the earlier "higher-order MuP" as a foundation for further thought and extension. As the first article, we have described three basic conditions for model stability — or equivalently, three characteristics of a good model. These will serve as the cornerstone for the calculations and analysis that follow.
 
----
+<hr class="section-divider">
 
 *Citation: Su, J. (2025, October 21). MuP之上：1. 好模型的三个特征 [Beyond MuP: 1. Three Characteristics of Good Models]. Scientific Spaces. [https://kexue.fm/archives/11340](https://kexue.fm/archives/11340)*

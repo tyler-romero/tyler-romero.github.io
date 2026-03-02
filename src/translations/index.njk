@@ -11,6 +11,28 @@ tags: ["translations"]
 </section>
 <hr class="section-divider" style="margin-top: 1rem; clear: none;" />
 <section>
+    <h2 id="zhihu">Zhihu (知乎)</h2>
+    <p>
+        <a href="https://www.zhihu.com">Zhihu</a> (知乎, "Do you know?" in classical Chinese) is China's largest Q&A platform. Like Quora, but with a stronger culture of long-form technical writing.
+    </p>
+    <ul class="post-list">
+        {% for p in collections.translation | reverse %}
+            {% if "/translations/zhihu/" in p.url %}
+            <li>
+                <span class="post-date">{{ p.data.date | postDate }}</span>
+                <div class="post-info">
+                    <a href="{{ p.url }}">{{ p.data.title }}</a>
+                    <p class="item-description">
+                        <small>{{ p.data.blurb }}</small>
+                    </p>
+                </div>
+            </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</section>
+<hr class="section-divider" style="margin-top: 1rem; clear: none;" />
+<section>
     <h2 id="scientific-spaces">Scientific Spaces (科学空间) — Jianlin Su</h2>
     <p>
         <a href="https://kexue.fm">Scientific Spaces</a> (科学空间) is a Chinese-language AI/ML blog by Jianlin Su (苏剑林). Su is a prolific researcher and writer, and his blog is well-regarded in the Chinese ML community.
@@ -30,28 +52,6 @@ tags: ["translations"]
                         <small><em>Contains the first public sketch of what would become <a href="/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">Rotary Position Embedding (RoPE)</a>.</em></small>
                     </p>
                     {% endif %}
-                </div>
-            </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
-</section>
-<hr class="section-divider" style="margin-top: 1rem; clear: none;" />
-<section>
-    <h2 id="zhihu">Zhihu (知乎)</h2>
-    <p>
-        <a href="https://www.zhihu.com">Zhihu</a> (知乎, "Do you know?" in classical Chinese) is China's largest Q&A platform. Like Quora, but with a stronger culture of long-form technical writing.
-    </p>
-    <ul class="post-list">
-        {% for p in collections.translation | reverse %}
-            {% if "/translations/zhihu/" in p.url %}
-            <li>
-                <span class="post-date">{{ p.data.date | postDate }}</span>
-                <div class="post-info">
-                    <a href="{{ p.url }}">{{ p.data.title }}</a>
-                    <p class="item-description">
-                        <small>{{ p.data.blurb }}</small>
-                    </p>
                 </div>
             </li>
             {% endif %}

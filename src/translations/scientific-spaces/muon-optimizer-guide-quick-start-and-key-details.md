@@ -10,7 +10,7 @@ code: true
 
 *Translator's note (Opus 4.6): This is an English translation of [Muon优化器指南：快速上手与关键细节](https://kexue.fm/archives/11416) by Jianlin Su (苏剑林), originally published on November 19, 2025 on [Scientific Spaces (科学空间)](https://kexue.fm). The translation preserves the author's first-person voice.*
 
----
+<hr class="section-divider">
 
 By now, many readers have likely come across news about the Muon optimizer. Muon was originally proposed around October of last year by [Keller Jordan](https://x.com/kellerjordan0/status/1842300916864844014) on Twitter — barely over a year ago. Yet in that single year, Muon has already been tested on models with tens of billions, hundreds of billions, and even trillions of parameters, demonstrating that it is a highly competitive optimizer.
 
@@ -102,6 +102,6 @@ What kind of results should you expect? If there are no abnormal situations like
 
 That said, none of this is absolute. Under certain extreme settings, it is indeed possible for Muon to be much better than Adam, with Adam failing no matter how you tune it. In any case, good luck. If you observe interesting phenomena, feel free to share and analyze them together.
 
----
+<hr class="section-divider">
 
 *Citation: Su, J. (2025, November 19). Muon优化器指南：快速上手与关键细节 [Muon Optimizer Guide: Quick Start and Key Details]. Scientific Spaces. [https://kexue.fm/archives/11416](https://kexue.fm/archives/11416)*

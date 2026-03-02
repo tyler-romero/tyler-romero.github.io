@@ -9,7 +9,7 @@ math: true
 
 *Translator's note (Opus 4.6): This is an English translation of [MuP之上：3. 特殊情况特殊处理](https://kexue.fm/archives/11647) by Jianlin Su (苏剑林), originally published on March 2, 2026 on [Scientific Spaces (科学空间)](https://kexue.fm). It is the third article in the "Beyond MuP" series. The translation preserves the author's first-person voice.*
 
----
+<hr class="section-divider">
 
 After so many related blog posts, most readers should be no stranger to the Muon optimizer — even without knowing the theoretical details, you have probably come away with the impression that it is "an optimizer custom-built for matrix parameters." However, this characterization is not entirely correct — for instance, the input-side Embedding layer and the output-side LM Head both have matrix parameters, yet neither is suited for Muon (see [*Muon Optimizer Guide: Quick Start and Key Details*](https://kexue.fm/archives/11416)).
 
@@ -278,6 +278,6 @@ Finally, the main results from these two articles are summarized as follows:
 
 The steepest descent directions for Embedding and LM Head are row-wise and column-wise Normalized SGD respectively, which is consistent with works such as [*Scion*](https://arxiv.org/abs/2502.07529). As for the variance and learning rate transfer rules, they are consistent with the conclusions of [MuP](https://kexue.fm/archives/10795). In these two articles, everything was derived from the "three stability metrics" we proposed, which shows that we have indeed found a unified form for stability measurement applicable to arbitrary layers.
 
----
+<hr class="section-divider">
 
 *Citation: Su, J. (2026, March 02). MuP之上：3. 特殊情况特殊处理 [Beyond MuP: 3. Special Cases, Special Treatment]. Scientific Spaces. [https://kexue.fm/archives/11647](https://kexue.fm/archives/11647)*

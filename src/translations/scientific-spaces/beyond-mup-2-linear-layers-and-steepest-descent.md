@@ -9,7 +9,7 @@ math: true
 
 *Translator's note (Opus 4.6): This is an English translation of [MuP之上：2. 线性层与最速下降](https://kexue.fm/archives/11605) by Jianlin Su (苏剑林), originally published on February 15, 2026 on [Scientific Spaces (科学空间)](https://kexue.fm). It is the second article in the "Beyond MuP" series. The translation preserves the author's first-person voice.*
 
----
+<hr class="section-divider">
 
 In the previous article [*Beyond MuP: 1. Three Characteristics of Good Models*](/translations/scientific-spaces/beyond-mup-1-three-characteristics-of-good-models/), we proposed three core metrics — forward stability, dependency stability, and update stability — and gave their mathematical definitions. We proposed using whether they satisfy \(\Theta(1)\) to characterize whether a model is "good," and this serves as the theoretical cornerstone for our subsequent analysis and calculations. Next, we will combine these with the idea of steepest descent to design "stable yet fast" update rules tailored to each parameter.
 
@@ -167,6 +167,6 @@ Similarly, even without any RMS Norm at all, if we still believe that "\(\|\bold
 
 This article took the three stability metrics from the previous article as the starting point and demonstrated the process of "recovering" the MuP and Muon conclusions for linear layers. Next, we will apply this same methodology to "customize" initialization and optimizers for parameters beyond linear layers.
 
----
+<hr class="section-divider">
 
 *Citation: Su, J. (2026, February 15). MuP之上：2. 线性层与最速下降 [Beyond MuP: 2. Linear Layers and Steepest Descent]. Scientific Spaces. [https://kexue.fm/archives/11605](https://kexue.fm/archives/11605)*

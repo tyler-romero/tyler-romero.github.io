@@ -10,9 +10,9 @@ code: true
 
 *Translator's note (Opus 4.6): This is an English translation of [你的deepseek mHC可能不需要"m"](https://zhuanlan.zhihu.com/p/2010852389670908320) by 涮月亮的谪仙人, originally published on February 27, 2026 on [Zhihu (知乎)](https://www.zhihu.com). The translation preserves the author's informal, first-person voice.*
 
----
+<hr class="section-divider">
 
-Over the past few weeks I've been studying the advanced techniques from DeepSeek's mHC and stumbled upon an experimental conclusion that's both amusing and embarrassing:
+Over the past few weeks I've been studying the advanced techniques from DeepSeek's [mHC](https://arxiv.org/abs/2512.24880) and stumbled upon an experimental conclusion that's both amusing and embarrassing:
 
 > The paper's most critical algorithmic improvement is applying a manifold constraint to \(H^{res}\), using Sinkhorn-Knopp to constrain it to a doubly stochastic matrix so that forward and backward propagation remain stable.
 >
@@ -49,7 +49,7 @@ The advantage of identity may lie in using the same identity permutation across 
 
 Identity should be the most intuitive, most straightforward \(H^{res}\) implementation. I'm not sure why neither the original HC paper nor the mHC paper included this ablation. Perhaps they did run it, but for such a critical ablation on the necessity of the \(H^{res}\) matrix, I feel it warrants being written up.
 
----
+<hr class="section-divider">
 
 ## Background on Hyper-Connections and mHC
 
@@ -77,7 +77,7 @@ DeepSeek's core innovation is constraining \(\mathcal{H}^{\text{res}}\) to the d
 
 The Sinkhorn-Knopp iteration in the paper still looks fairly expensive. The key question is: how important is \(H^{res}\) really?
 
----
+<hr class="section-divider">
 
 ## \(\phi\) Is the Real Key to Cross-Stream Mixing
 
@@ -137,7 +137,7 @@ So when we set \(H^{res} = I\):
 | Extra parameters | \(nC \times n^2\) projection weights | none |
 | Signal propagation | shallow signals decay exponentially | lossless propagation |
 
----
+<hr class="section-divider">
 
 (Okay, some of the text above was AI-generated — like that table, heh — but the experimental data is from runs we actually conducted.)
 
@@ -147,7 +147,7 @@ Failed attempts include: trying mHC-lite with convex combinations for exact doub
 
 I also tried orthogonalization (Cayley transform, Givens rotations) to guarantee spectral norm of exactly 1 — no explosion, no vanishing. Experiments showed \(\alpha_{res}\) barely moved, staying near 0.01. The fatal problem with orthogonal matrices is that they allow negative values — some streams can get negated, causing capacity collapse and some ugly internal metrics.
 
----
+<hr class="section-divider">
 
 ## Analysis Plots
 
@@ -175,6 +175,6 @@ Writing in haste, there are surely oversights — particularly where I borrowed 
 
 In short, throw away the "m" in DeepSeek's mHC and replace it with plain old identity. Think of it this way: you don't even need to trouble infra to develop some Sinkhorn-Knopp TileLang kernel. Everybody wins!
 
----
+<hr class="section-divider">
 
 *Citation: 涮月亮的谪仙人. (2026, February 27). 你的deepseek mHC可能不需要"m" [Your DeepSeek mHC Might Not Need the "m"]. Zhihu. [https://zhuanlan.zhihu.com/p/2010852389670908320](https://zhuanlan.zhihu.com/p/2010852389670908320)*
