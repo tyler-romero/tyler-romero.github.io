@@ -66,14 +66,14 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2021-03-22T16:00:00.000Z",
-            "dateModified": "2026-03-02T21:44:03.160Z",
+            "dateModified": "2026-03-02T21:57:57.875Z",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/"
             },
             "keywords": "translation, rope, position-encoding, attention, transformers",
-            "wordCount": "2627",
+            "wordCount": "2589",
             "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林), originally published on March 23, 2021 on Scientific Spaces (科学空间). It is the second article in the &amp;quot;Transformer Upgrade Path&amp;quot; series. The translation preserves the author&#39;s first-person voice. In the previous article, we gave a fairly detailed derivation and analysis of the original Sinusoidal position encoding. The overall impression is that Sinusoidal position encoding..."
             }
         </script>
@@ -267,26 +267,128 @@ Plot[f[m], {m, 0, 256}, AxesLabel -&gt; {Relative Distance, Relative Magnitude}]
 <p><strong>RoFormer: <a href="https://github.com/ZhuiyiTechnology/roformer">https://github.com/ZhuiyiTechnology/roformer</a></strong></p>
 </blockquote>
 <p>In brief, RoFormer is a <a href="https://github.com/ZhuiyiTechnology/WoBERT">WoBERT</a> model with its absolute position encoding replaced by RoPE. Its structural comparison with other models is as follows:</p>
-<p>|  | BERT | WoBERT | NEZHA | RoFormer |
-|</p><hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
-| Token unit | Character | Word | Character | Word |
-| Position encoding | Absolute | Absolute | Classical relative | RoPE |<p></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>BERT</th>
+<th>WoBERT</th>
+<th>NEZHA</th>
+<th>RoFormer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token unit</td>
+<td>Character</td>
+<td>Word</td>
+<td>Character</td>
+<td>Word</td>
+</tr>
+<tr>
+<td>Position encoding</td>
+<td>Absolute</td>
+<td>Absolute</td>
+<td>Classical relative</td>
+<td>RoPE</td>
+</tr>
+</tbody>
+</table>
 <p>For pre-training, we used WoBERT Plus as the base and adopted an alternating training strategy with multiple sequence lengths and batch sizes, allowing the model to adapt to different training scenarios in advance:</p>
-<p>| Stage | maxlen | batch size | Training steps | Final loss | Final acc |
-|</p><hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
-| 1 | 512 | 256 | 200k | 1.73 | 65.0% |
-| 2 | 1536 | 256 | 12.5k | 1.61 | 66.8% |
-| 3 | 256 | 256 | 120k | 1.75 | 64.6% |
-| 4 | 128 | 512 | 80k | 1.83 | 63.4% |
-| 5 | 1536 | 256 | 10k | 1.58 | 67.4% |
-| 6 | 512 | 512 | 30k | 1.66 | 66.2% |<p></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>maxlen</th>
+<th>batch size</th>
+<th>Training steps</th>
+<th>Final loss</th>
+<th>Final acc</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>512</td>
+<td>256</td>
+<td>200k</td>
+<td>1.73</td>
+<td>65.0%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1536</td>
+<td>256</td>
+<td>12.5k</td>
+<td>1.61</td>
+<td>66.8%</td>
+</tr>
+<tr>
+<td>3</td>
+<td>256</td>
+<td>256</td>
+<td>120k</td>
+<td>1.75</td>
+<td>64.6%</td>
+</tr>
+<tr>
+<td>4</td>
+<td>128</td>
+<td>512</td>
+<td>80k</td>
+<td>1.83</td>
+<td>63.4%</td>
+</tr>
+<tr>
+<td>5</td>
+<td>1536</td>
+<td>256</td>
+<td>10k</td>
+<td>1.58</td>
+<td>67.4%</td>
+</tr>
+<tr>
+<td>6</td>
+<td>512</td>
+<td>512</td>
+<td>30k</td>
+<td>1.66</td>
+<td>66.2%</td>
+</tr>
+</tbody>
+</table>
 <p>From the table, we can also see that increasing the sequence length actually improves pre-training accuracy, which indirectly demonstrates RoFormer's effectiveness at handling long-text semantics and reflects the good extrapolation capability of RoPE. On short-text tasks, RoFormer performs similarly to WoBERT; the main strength of RoFormer is its ability to directly handle text of arbitrary length. Below are our experimental results on the <a href="https://arxiv.org/abs/1911.08962">CAIL2019-SCM</a> task:</p>
-<p>|  | Validation set | Test set |
-|</p><hr class="section-divider">|<hr class="section-divider">|<hr class="section-divider">|
-| BERT-512 | 64.13% | 67.77% |
-| WoBERT-512 | 64.07% | 68.10% |
-| RoFormer-512 | 64.13% | 68.29% |
-| RoFormer-1024 | <strong>66.07%</strong> | <strong>69.79%</strong> |<p></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Validation set</th>
+<th>Test set</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>BERT-512</td>
+<td>64.13%</td>
+<td>67.77%</td>
+</tr>
+<tr>
+<td>WoBERT-512</td>
+<td>64.07%</td>
+<td>68.10%</td>
+</tr>
+<tr>
+<td>RoFormer-512</td>
+<td>64.13%</td>
+<td>68.29%</td>
+</tr>
+<tr>
+<td>RoFormer-1024</td>
+<td><strong>66.07%</strong></td>
+<td><strong>69.79%</strong></td>
+</tr>
+</tbody>
+</table>
 <p>The number after the hyphen is the maxlen used during fine-tuning. We can see that RoFormer does handle long-text semantics well. As for hardware requirements, on a 24GB GPU, running maxlen=1024, the batch_size can reach 8 or above. Among Chinese tasks, this is the only one I found that is suitable as a test of long-text capability, so long-text evaluation was limited to this task. Readers are welcome to run tests or recommend other evaluation tasks.</p>
 <p>Of course, although RoFormer can theoretically handle sequences of arbitrary length, the current version still has quadratic complexity. We are also training a linear Attention-based RoFormer model, which will be open-sourced once the experiments are complete.</p>
 <p>(Note: RoPE and RoFormer have been compiled into the paper <a href="https://arxiv.org/abs/2104.09864"><em>RoFormer: Enhanced Transformer with Rotary Position Embedding</em></a> and submitted to arXiv. Feel free to use and cite it!)</p>
@@ -296,6 +398,7 @@ Plot[f[m], {m, 0, 256}, AxesLabel -&gt; {Relative Distance, Relative Magnitude}]
 <p>This article introduced our self-developed Rotary Position Embedding (RoPE) and the corresponding pre-trained model RoFormer. From a theoretical perspective, RoPE shares some commonalities with Sinusoidal position encoding, but RoPE does not rely on Taylor expansion and is more rigorous and interpretable. From the results of the pre-trained RoFormer model, RoPE exhibits good extrapolation properties, and when applied to Transformers, it demonstrates strong long-text processing capability. Furthermore, RoPE is currently the only relative position encoding that can be used with linear Attention.</p>
 <hr class="section-divider">
 <p><em>Citation: Su, J. (2021, March 23). Transformer升级之路：2、博采众长的旋转式位置编码 [Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds]. Scientific Spaces. <a href="https://kexue.fm/archives/8265">https://kexue.fm/archives/8265</a></em></p>
+<p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
         </article>
