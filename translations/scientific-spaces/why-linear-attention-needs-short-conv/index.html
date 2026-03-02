@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Why Does Linear Attention Need Short Conv?</title>
+<meta name="author" content="Tyler Romero">
+<meta name="description" content="Translated from 为什么线性注意力要加Short Conv？ by Jianlin Su (苏剑林)">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+<link rel="canonical" href="https://www.tylerromero.com/translations/scientific-spaces/why-linear-attention-needs-short-conv/">
+<link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
+<!-- Open Graph -->
+<meta property="og:title" content="Why Does Linear Attention Need Short Conv?">
+<meta property="og:description" content="Translated from 为什么线性注意力要加Short Conv？ by Jianlin Su (苏剑林)">
+<meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/why-linear-attention-needs-short-conv/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Why Does Linear Attention Need Short Conv?">
+<meta name="twitter:description" content="Translated from 为什么线性注意力要加Short Conv？ by Jianlin Su (苏剑林)">
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/assets/tufte.min.css">
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+        
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Why Does Linear Attention Need Short Conv?",
+            "description": "Translated from [为什么线性注意力要加Short Conv？](https://kexue.fm/archives/11320) by Jianlin Su (苏剑林)",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2025-10-04T16:00:00.000Z",
+            "dateModified": "2026-03-02T23:14:38.273Z",
+            "url": "https://www.tylerromero.com/translations/scientific-spaces/why-linear-attention-needs-short-conv/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/translations/scientific-spaces/why-linear-attention-needs-short-conv/"
+            },
+            "keywords": "translation, linear-attention, rnn, attention",
+            "wordCount": "1422",
+            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of 为什么线性注意力要加Short Conv？ by Jianlin Su (苏剑林), originally published on October 5, 2025 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back) all add a short convolution to &#92;(&#92;boldsymbol{Q},..."
+            }
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/translations" class="no-tufte-underline">Translations</a>
+
+                </div>
+            </nav>
+        </header>
+        <article>
+            
+            <div class="post-header">
+                <h1>Why Does Linear Attention Need Short Conv?</h1>
+                <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11320">为什么线性注意力要加Short Conv？</a> by Jianlin Su (苏剑林)</p>
+                <p class="date">Oct 4, 2025</p>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
+            </script>
+
+            <section>
+<p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11320">为什么线性注意力要加Short Conv？</a> by Jianlin Su (苏剑林), originally published on October 5, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
+<hr class="section-divider">
+<p>If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see <a href="https://kexue.fm/archives/11033"><em>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</em></a>) all add a short convolution to \(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}\). For example, here is the architecture of <a href="https://arxiv.org/abs/2406.06484"><em>DeltaNet</em></a>:</p>
+<p><picture><source type="image/webp" srcset="/assets/img/X-gglKthBk-300.webp 300w, /assets/img/X-gglKthBk-600.webp 600w, /assets/img/X-gglKthBk-900.webp 900w, /assets/img/X-gglKthBk-946.webp 946w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/X-gglKthBk-300.png" alt="Short Conv in DeltaNet" width="946" height="753" srcset="/assets/img/X-gglKthBk-300.png 300w, /assets/img/X-gglKthBk-600.png 600w, /assets/img/X-gglKthBk-900.png 900w, /assets/img/X-gglKthBk-946.png 946w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p>Why add this short convolution? An intuitive explanation might be that it increases model depth, enhances the model's token-mixing ability, and so on — in plain terms, it compensates for the drop in expressiveness caused by linearization. This explanation is roughly correct, but it is a &quot;one-size-fits-all template&quot; answer. We would like a more precise understanding of the mechanism by which it works.</p>
+<p>In what follows, I will present my own understanding (or more accurately, my conjecture).</p>
+</section>
+<section>
+<h2 id="test-time-training" tabindex="-1">Test-Time Training</h2>
+<p>From <a href="https://kexue.fm/archives/11033"><em>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</em></a>, we know that the core idea behind current new-style linear attention is <a href="https://arxiv.org/abs/2407.04620"><em>TTT (Test-Time Training)</em></a>, or equivalently, online learning. TTT exploits the similarity between optimizer updates and RNN iterations, using optimizers to construct (not necessarily linear) RNN models. Models such as DeltaNet, GDN, and Comba can all be seen as special cases of this framework.</p>
+<p>Specifically, TTT treats \(\boldsymbol{K}, \boldsymbol{V}\) as paired training data \((\boldsymbol{k}_1, \boldsymbol{v}_1), (\boldsymbol{k}_2, \boldsymbol{v}_2), \cdots, (\boldsymbol{k}_t, \boldsymbol{v}_t)\). We use this data to train a model \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{k})\), and then output \(\boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{q}_t)\), where \(\boldsymbol{S}_t\) denotes the model parameters, updated via SGD:</p>
+<p>\[
+\boldsymbol{S}_t = \boldsymbol{S}_{t-1} - \eta_t \nabla_{\boldsymbol{S}_{t-1}} \mathcal{L}(\boldsymbol{f}(\boldsymbol{S}_{t-1}; \boldsymbol{k}_t), \boldsymbol{v}_t) \tag{1}
+\]</p>
+<p>Of course, if we wish, we can also consider other optimizers — for example, <a href="https://arxiv.org/abs/2505.23884"><em>Test-Time Training Done Right</em></a> experimented with the Muon optimizer. Beyond the choice of optimizer, other flexible design choices include the model architecture \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{k})\) and the loss function \(\mathcal{L}(\boldsymbol{f}(\boldsymbol{S}_{t-1}; \boldsymbol{k}_t), \boldsymbol{v}_t)\). Additionally, we can consider chunk-based mini-batch TTT.</p>
+<p>It is easy to imagine that TTT is theoretically highly flexible and can construct arbitrarily complex RNN models. When the architecture is a linear model \(\boldsymbol{v} = \boldsymbol{S}_t \boldsymbol{k}\) and the loss function is squared error, the result corresponds to DeltaNet; if we add some regularization terms, we can derive variants such as GDN.</p>
+</section>
+<section>
+<h2 id="the-hard-question" tabindex="-1">The Hard Question</h2>
+<p>The reason for presenting TTT first is to make clear that the underlying logic of mainstream linear attention today is the same as TTT: at its core, it is online learning over the data pairs \((\boldsymbol{k}_1, \boldsymbol{v}_1), (\boldsymbol{k}_2, \boldsymbol{v}_2), \cdots, (\boldsymbol{k}_t, \boldsymbol{v}_t)\). This naturally raises a question: why do it this way? What does this actually learn?</p>
+<p>To answer this, we first need to reflect on what we actually want. Following the characteristics of softmax attention, what we want is to compute an \(\boldsymbol{o}_t\) from \((\boldsymbol{k}_1, \boldsymbol{v}_1), (\boldsymbol{k}_2, \boldsymbol{v}_2), \cdots, (\boldsymbol{k}_t, \boldsymbol{v}_t)\) and \(\boldsymbol{q}_t\) — a process that should ideally depend on all the \((\boldsymbol{k}, \boldsymbol{v})\) pairs. At the same time, we want to achieve this in constant complexity, so a natural idea is to first compress the \((\boldsymbol{k}, \boldsymbol{v})\) pairs into a fixed-size state (independent of \(t\)), and then read from that state.</p>
+<p>How do we achieve this compression? TTT's idea is: design a model \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{k})\), then &quot;train&quot; this model on the \((\boldsymbol{k}, \boldsymbol{v})\) pairs. After training, the model has in some sense &quot;memorized&quot; these \((\boldsymbol{k}, \boldsymbol{v})\) pairs — this is equivalent to compressing all the \((\boldsymbol{k}, \boldsymbol{v})\) pairs into the fixed-size model weights \(\boldsymbol{S}_t\). As for how \(\boldsymbol{q}_t\) uses \(\boldsymbol{S}_t\), directly substituting it into the model to get \(\boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{q}_t)\) is a fairly natural choice, but in principle we could also design other ways to use it.</p>
+<p>In other words, the core task of TTT is to leverage the fact that &quot;training a model&quot; approximately equals &quot;memorizing the training set&quot; in order to compress \(\boldsymbol{K}, \boldsymbol{V}\). However, the claim that &quot;training a model&quot; approximately equals &quot;memorizing the training set&quot; is not trivial — it has some preconditions.</p>
+</section>
+<section>
+<h2 id="keys-and-values-from-the-same-source" tabindex="-1">Keys and Values from the Same Source</h2>
+<p>Consider an example: if we set \(\boldsymbol{K} = \boldsymbol{V}\), the TTT framework theoretically breaks down. This is because the optimal solution for the model \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{k})\) would simply be the identity map — a trivial solution that amounts to memorizing nothing. Online-update methods like DeltaNet might still salvage the situation to some extent, while exact-solution methods like <a href="https://arxiv.org/abs/2506.05233"><em>MesaNet</em></a> would literally output the identity matrix \(\boldsymbol{I}\).</p>
+<p>Some readers might object: why would we ever consider the unnatural choice \(\boldsymbol{K} = \boldsymbol{V}\)? Indeed, \(\boldsymbol{K} = \boldsymbol{V}\) is an extreme case — it serves here only as an example to show that &quot;training a model&quot; approximately equaling &quot;memorizing the training set&quot; does not hold unconditionally. Furthermore, we verified in <a href="https://kexue.fm/archives/10907"><em>Transformer Upgrade Path 20: What Makes MLA Good? (Part 1)</em></a> that for softmax attention, \(\boldsymbol{K} = \boldsymbol{V}\) can still produce decent results.</p>
+<p>This tells us that \(\boldsymbol{K} = \boldsymbol{V}\) is not a fundamental obstacle for the attention mechanism, but within the TTT framework it can cause model failure. The reason is that if \(\boldsymbol{K}\) and \(\boldsymbol{V}\) completely overlap, there is nothing to learn from regressing one on the other. By analogy, the greater the information overlap between \(\boldsymbol{K}\) and \(\boldsymbol{V}\), the less there is to learn between them — in other words, the less TTT memorizes the &quot;training set.&quot;</p>
+<p>In standard attention mechanisms, \(\boldsymbol{q}_t, \boldsymbol{k}_t, \boldsymbol{v}_t\) are all obtained from the same input \(\boldsymbol{x}_t\) via different linear projections. In other words, \(\boldsymbol{k}_t\) and \(\boldsymbol{v}_t\) share the same source \(\boldsymbol{x}_t\), which always has the feel of &quot;predicting yourself from yourself&quot; — and there is limited value in that.</p>
+</section>
+<section>
+<h2 id="convolution-to-the-rescue" tabindex="-1">Convolution to the Rescue</h2>
+<p>How do we make TTT learn something valuable even when keys and values share the same source, or even when \(\boldsymbol{K} = \boldsymbol{V}\)? The answer actually dates back a long way — to Word2Vec and even earlier — and it is simply: don't &quot;predict yourself,&quot; instead &quot;predict your neighbors.&quot;</p>
+<p>Take <a href="https://arxiv.org/abs/1301.3781"><em>Word2Vec</em></a> as an example: its training method is &quot;center word predicts context.&quot; The previously popular <a href="https://arxiv.org/abs/1810.04805"><em>BERT</em></a> uses MLM for pretraining, which masks certain words and predicts them — this can be described as &quot;context predicts center word.&quot; Today's mainstream LLMs use NTP (Next Token Prediction), predicting the next word from the preceding context. Clearly, the common thread is that none of them predict themselves — they all predict their surroundings.</p>
+<p>So, to improve TTT, we need to change the \((\boldsymbol{k}_t, \boldsymbol{v}_t)\) pairing pattern of &quot;predicting yourself from yourself.&quot; Given that current LLMs primarily use NTP, we can adopt the same approach within TTT: for example, using \((\boldsymbol{k}_{t-1}, \boldsymbol{v}_t)\) to construct the training pairs, meaning we use \(\boldsymbol{k}_{t-1}\) to predict \(\boldsymbol{v}_t\). This way, even if \(\boldsymbol{K} = \boldsymbol{V}\), the model can learn non-trivial results. In this setup, the TTT inner loop and the outer LLM training loop both perform NTP — a beautifully consistent design.</p>
+<p>However, using only \(\boldsymbol{k}_{t-1}\) to predict \(\boldsymbol{v}_t\) seems to waste \(\boldsymbol{k}_t\), so a further idea is to mix \(\boldsymbol{k}_{t-1}\) and \(\boldsymbol{k}_t\) together in some way before predicting \(\boldsymbol{v}_t\). At this point, readers may have realized: &quot;mixing \(\boldsymbol{k}_{t-1}\) and \(\boldsymbol{k}_t\) together in some way&quot; — isn't that just a convolution with kernel_size=2! Therefore, adding a short convolution to \(\boldsymbol{K}\) transforms TTT's training objective from &quot;predicting yourself&quot; to NTP, giving TTT at least the ability to learn an n-gram model.</p>
+<p>As for adding short convolutions to \(\boldsymbol{Q}\) and \(\boldsymbol{V}\), that is entirely incidental. According to reports from the FLA community<label for="sn-fla" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-fla" class="margin-toggle"><span class="sidenote">FLA (Flash Linear Attention) is an open-source community and library for efficient linear attention implementations. The &quot;FLA group&quot; (飞来阁) refers to their discussion forum.</span>, adding them to \(\boldsymbol{Q}\) and \(\boldsymbol{V}\) helps a little, but far less than adding short conv to \(\boldsymbol{K}\) — which serves as supporting evidence for our conjecture.</p>
+</section>
+<section>
+<h2 id="summary" tabindex="-1">Summary</h2>
+<p>This article presents a speculative understanding (闭门造车, literally &quot;building a cart behind closed doors&quot;) of the question &quot;Why does linear attention need short conv?&quot;</p>
+<hr class="section-divider">
+<p><em>Citation: Su, J. (2025, October 5). 为什么线性注意力要加Short Conv？ [Why Does Linear Attention Need Short Conv?]. Scientific Spaces. <a href="https://kexue.fm/archives/11320">https://kexue.fm/archives/11320</a></em></p>
+<p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
+</section>
+
+        </article>
+        <footer>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
+
+        </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
+    </body>
+</html>
