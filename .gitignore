@@ -10,3 +10,17 @@ node_modules/
 
 # vscode
 .vscode/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
+*.pywz
+*.pyzw
+*.pyzwz
+.venv/
+uv.lock
+imggen/pipeline_artifacts/
