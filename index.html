@@ -54,7 +54,7 @@
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
-            "dateModified": "2026-03-03T00:17:34.603Z",
+            "dateModified": "2026-03-10T03:49:24.498Z",
             "url": "https://www.tylerromero.com/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -162,13 +162,26 @@
     <h2 id="publications">Publications & Preprints</h2>
     <ul class="post-list">
         <li>
+            <span class="post-date">Mar 2026</span>
+            <div class="post-info">
+                <a href="https://allenai.org/papers/olmo-hybrid"><strong>Olmo Hybrid</strong></a>
+                        <label for="mn-olmo-hybrid-fig3" class="margin-toggle">&#8853;</label>
+                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" checked="">
+                        <span class="marginnote marginnote-wide"><picture><source type="image/webp" srcset="/assets/img/GH-0xCZ5V8-300.webp 300w, /assets/img/GH-0xCZ5V8-600.webp 600w, /assets/img/GH-0xCZ5V8-900.webp 900w, /assets/img/GH-0xCZ5V8-1422.webp 1422w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/GH-0xCZ5V8-300.png" alt="Olmo Hybrid expressivity Venn diagram" width="1422" height="643" srcset="/assets/img/GH-0xCZ5V8-300.png 300w, /assets/img/GH-0xCZ5V8-600.png 600w, /assets/img/GH-0xCZ5V8-900.png 900w, /assets/img/GH-0xCZ5V8-1422.png 1422w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
+                <small>— William Merrill*, Yanhong Li*, Tyler Romero*, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.<br><em>Ai2 technical report</em>.</small>
+                <p class="item-description">
+                    <small>We provide evidence for the advantages of hybrid models (mixing attention and linear RNN layers) over pure transformers on several fronts: theoretically, we show that hybrid models can express tasks beyond both transformers and linear RNNs individually; empirically, we find that hybrids scale more efficiently. We train Olmo Hybrid, a 7B model with sliding window layers replaced by Gated DeltaNet layers, and show it outperforms Olmo 3 across standard pretraining and long context evaluations.</small>
+                </p>
+            </div>
+        </li>
+        <li>
             <span class="post-date">Nov 2025</span>
             <div class="post-info">
                 <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a>
                         <label for="mn-olmo3-loss" class="margin-toggle">&#8853;</label>
                         <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" checked="">
-                        <span class="marginnote marginnote-wide"><picture><source type="image/webp" srcset="/assets/img/fqEFQpUXWs-300.webp 300w, /assets/img/fqEFQpUXWs-600.webp 600w, /assets/img/fqEFQpUXWs-900.webp 900w, /assets/img/fqEFQpUXWs-3490.webp 3490w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/fqEFQpUXWs-300.png" alt="OLMo 3 32B training loss curve" width="3490" height="2341" srcset="/assets/img/fqEFQpUXWs-300.png 300w, /assets/img/fqEFQpUXWs-600.png 600w, /assets/img/fqEFQpUXWs-900.png 900w, /assets/img/fqEFQpUXWs-3490.png 3490w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
-                <small>— Team Olmo. <em>arXiv preprint arXiv:2512.13961</em>.</small>
+                        <span class="marginnote marginnote-wide"><picture><source type="image/webp" srcset="/assets/img/fqEFQpUXWs-300.webp 300w, /assets/img/fqEFQpUXWs-600.webp 600w, /assets/img/fqEFQpUXWs-900.webp 900w, /assets/img/fqEFQpUXWs-3490.webp 3490w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/fqEFQpUXWs-300.png" alt="Olmo 3 32B training loss curve" width="3490" height="2341" srcset="/assets/img/fqEFQpUXWs-300.png 300w, /assets/img/fqEFQpUXWs-600.png 600w, /assets/img/fqEFQpUXWs-900.png 900w, /assets/img/fqEFQpUXWs-3490.png 3490w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
+                <small>— Team Olmo (incl. Tyler Romero, core contributor).<br><em>arXiv preprint arXiv:2512.13961</em>.</small>
                 <p class="item-description">
                     <small>We introduce Olmo 3, a family of state-of-the-art, fully-open language models at the 7B and 32B parameter scales.
                         Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model,
@@ -227,7 +240,7 @@
                 <small>A great post by Horace He explaining how to speed up single-GPU training based on whether jobs are compute-, bandwidth-, or overhead-bound. See also <a href="https://www.thonking.ai/p/what-shapes-do-matrix-multiplications">What Shapes Do Matrix Multiplications Like?</a></small>
             </p>
         </li>
-        <li>
+<li>
             <a href="https://siboehm.com/">siboehm</a>
             <p class="item-description">
                 <small>An excellent ML engineering blog by Simon Boehm, and a large part of the inspiration for this site. I especially recommend Simon’s posts on <a href="https://siboehm.com/articles/22/Fast-MMM-on-CPU">optimizing multidimensional matrix multiplication on CPU</a> and <a href="https://siboehm.com/articles/22/pipeline-parallel-training">pipeline parallelism for distributed training</a>.</small>
