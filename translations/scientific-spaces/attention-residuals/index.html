@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Attention Residuals</title>
+<meta name="author" content="Tyler Romero">
+<meta name="description" content="Translated from Attention Residuals 回忆录 by Jianlin Su (苏剑林)">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+<link rel="canonical" href="https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/">
+<link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
+<!-- Open Graph -->
+<meta property="og:title" content="Attention Residuals">
+<meta property="og:description" content="Translated from Attention Residuals 回忆录 by Jianlin Su (苏剑林)">
+<meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Attention Residuals">
+<meta name="twitter:description" content="Translated from Attention Residuals 回忆录 by Jianlin Su (苏剑林)">
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/assets/tufte.min.css">
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+        
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Attention Residuals",
+            "description": "Translated from [Attention Residuals 回忆录](https://kexue.fm/archives/11664) by Jianlin Su (苏剑林)",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2026-03-18T16:00:00.000Z",
+            "dateModified": "2026-03-19T17:37:28.032Z",
+            "url": "https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/"
+            },
+            "keywords": "translation, attention, residual-connections, model-architecture, depth",
+            "wordCount": "2518",
+            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of Attention Residuals 回忆录 by Jianlin Su (苏剑林), originally published on March 19, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. This article introduces our latest work, Attention Residuals (AttnRes) — as the name suggests, this uses the idea of Attention to improve Residuals. Many readers have probably heard of the Pre Norm vs. Post Norm debate, but at the end of the day that is just an..."
+            }
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/translations" class="no-tufte-underline">Translations</a>
+
+                </div>
+            </nav>
+        </header>
+        <article>
+            
+            <div class="post-header">
+                <h1>Attention Residuals</h1>
+                <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11664">Attention Residuals 回忆录</a> by Jianlin Su (苏剑林)</p>
+                <p class="date">Mar 18, 2026</p>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
+            </script>
+
+            <section>
+<p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11664">Attention Residuals 回忆录</a> by Jianlin Su (苏剑林), originally published on March 19, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
+<hr class="section-divider">
+<p>This article introduces our latest work, <a href="https://arxiv.org/abs/2603.15031"><em>Attention Residuals (AttnRes)</em></a> — as the name suggests, this uses the idea of Attention to improve Residuals.</p>
+<p>Many readers have probably heard of the Pre Norm vs. Post Norm debate, but at the end of the day that is just an &quot;internal dispute&quot; within Residuals themselves, and many subsequent Normalization variants are the same story. A more interesting development was <a href="https://arxiv.org/abs/2409.19606"><em>HC (Hyper-Connections)</em></a>, which began exploring the route of expanding the residual stream, though perhaps due to unstable results it did not attract much attention. The later part of the story is probably well-known: at the end of last year, DeepSeek's <a href="https://arxiv.org/abs/2512.24880"><em>mHC</em></a> improved upon HC and validated its effectiveness at larger scales.</p>
+<p>Rather than further expanding the residual stream, we chose a more radical route: directly performing Attention across layers to replace Residuals. Of course, making the full pipeline work still involved many details and much effort — here I will briefly recall the journey.</p>
+<p><picture><source type="image/webp" srcset="/assets/img/RBDwosuCcP-300.webp 300w, /assets/img/RBDwosuCcP-600.webp 600w, /assets/img/RBDwosuCcP-900.webp 900w, /assets/img/RBDwosuCcP-2742.webp 2742w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/RBDwosuCcP-300.png" alt="AttnRes diagram" width="2742" height="1262" srcset="/assets/img/RBDwosuCcP-300.png 300w, /assets/img/RBDwosuCcP-600.png 600w, /assets/img/RBDwosuCcP-900.png 900w, /assets/img/RBDwosuCcP-2742.png 2742w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+</section>
+<section>
+<h2 id="inter-layer-attention" tabindex="-1">Inter-Layer Attention</h2>
+<p>As usual, let us start from <a href="https://arxiv.org/abs/1512.03385"><em>Residuals</em></a>, which everyone should be very familiar with. They take the form:</p>
+<p>\[
+\boldsymbol{x}_t = \boldsymbol{x}_{t-1} + \boldsymbol{f}_t(\boldsymbol{x}_{t-1}) \tag{1}
+\]</p>
+<p>Here we adopt a different notation that reveals something deeper. Let \(\boldsymbol{y}_t = \boldsymbol{f}_t(\boldsymbol{x}_{t-1})\), so that \(\boldsymbol{x}_t = \boldsymbol{x}_{t-1} + \boldsymbol{y}_t\). Setting \(\boldsymbol{y}_0 = \boldsymbol{x}_0\), we easily get \(\boldsymbol{x}_t = \boldsymbol{y}_0 + \boldsymbol{y}_1 + \cdots + \boldsymbol{y}_t\), and so this can be equivalently written as:</p>
+<p>\[
+\boldsymbol{y}_{t+1} = \boldsymbol{f}_{t+1}(\boldsymbol{y}_0 + \boldsymbol{y}_1 + \cdots + \boldsymbol{y}_t) \tag{2}
+\]</p>
+<p>That is, from the \(\boldsymbol{y}\) perspective, Residuals compute the equal-weight sum of \(\boldsymbol{y}_0, \boldsymbol{y}_1, \ldots, \boldsymbol{y}_t\) as the input to \(\boldsymbol{f}_{t+1}\) to produce \(\boldsymbol{y}_{t+1}\). A natural generalization is to replace this with a weighted sum:</p>
+<p>\[
+\boldsymbol{y}_{t+1} = \boldsymbol{f}_{t+1}\!\left(\sum_{s=0}^{t} a_{t+1,s}\,\boldsymbol{y}_s\right) \qquad \text{where} \quad a_{t,s} \geq 0,\quad \sum_{s=0}^{t} a_{t+1,s} = 1 \tag{3}
+\]</p>
+<p>This is the seed of AttnRes. The formula adds two extra constraints on \(a_{t,s}\); let us discuss why they are necessary:</p>
+<blockquote>
+<ol>
+<li>
+<p>The constraint \(a_{t,s} \geq 0\) ensures that the same \(\boldsymbol{y}_s\) always contributes in the same direction across different layers, avoiding the inconsistency where one layer wants to increase \(\boldsymbol{y}_s\) while another wants to decrease it — intuitively more learning-friendly.</p>
+</li>
+<li>
+<p>Our \(\boldsymbol{f}\) uses In Norm, which applies \(\text{RMSNorm}\) to the input first. Since \(\text{RMSNorm}(\boldsymbol{x}) = \text{RMSNorm}(c\boldsymbol{x})\) holds for all \(c > 0\), weighted averaging and weighted summation are entirely equivalent, so the constraint \(\sum_{s=0}^{t} a_{t+1,s} = 1\) does not reduce expressiveness.</p>
+</li>
+</ol>
+</blockquote>
+</section>
+<section>
+<h2 id="hyper-connections" tabindex="-1">Hyper-Connections</h2>
+<p>Before diving into AttnRes, let us briefly review HC (Hyper-Connections) and prove that it too can be understood as inter-layer Attention — thereby showing that inter-layer Attention is indeed a more fundamental route. HC modifies Residuals to:</p>
+<p>\[
+\boldsymbol{X}_t = \boldsymbol{H}_t^{res}\boldsymbol{X}_{t-1} + \boldsymbol{H}_t^{post}\,\boldsymbol{f}_t(\boldsymbol{H}_t^{pre}\boldsymbol{X}_{t-1}) \tag{4}
+\]</p>
+<p>where \(\boldsymbol{X} \in \mathbb{R}^{k \times d}\), \(\boldsymbol{H}^{res} \in \mathbb{R}^{k \times k}\), \(\boldsymbol{H}^{pre} \in \mathbb{R}^{1 \times k}\), \(\boldsymbol{H}^{post} \in \mathbb{R}^{k \times 1}\), with the classic choice being \(k = 4\). In short, the state variable is expanded to \(k\) times its size; before feeding into \(\boldsymbol{f}_t\), a matrix \(\boldsymbol{H}_t^{pre}\) reduces it back to \(1\times\); after the output, \(\boldsymbol{H}_t^{post}\) expands it back to \(k\times\); finally it is added to \(\boldsymbol{x}_{t-1}\) adjusted by \(\boldsymbol{H}_t^{res}\). Without restricting the form of \(\boldsymbol{H}_t^{res}, \boldsymbol{H}_t^{pre}, \boldsymbol{H}_t^{post}\), both Post Norm and <a href="https://arxiv.org/abs/1505.00387"><em>Highway Networks</em></a> are special cases of HC.</p>
+<p>Similarly, let \(\boldsymbol{y}_t = \boldsymbol{f}_t(\boldsymbol{H}_t^{pre}\boldsymbol{X}_{t-1})\), so \(\boldsymbol{X}_t = \boldsymbol{H}_t^{res}\boldsymbol{X}_{t-1} + \boldsymbol{H}_t^{post}\,\boldsymbol{y}_t\). Setting \(\boldsymbol{X}_0 = \boldsymbol{H}_0^{post}\boldsymbol{y}_0\), this can also be expanded as \(\boldsymbol{X}_t = \boldsymbol{H}_{t \leftarrow 1}^{res}\boldsymbol{H}_0^{post}\boldsymbol{y}_0 + \boldsymbol{H}_{t \leftarrow 2}^{res}\boldsymbol{H}_1^{post}\boldsymbol{y}_1 + \cdots + \boldsymbol{H}_{t \leftarrow t}^{res}\boldsymbol{H}_{t-1}^{post}\boldsymbol{y}_{t-1} + \boldsymbol{H}_t^{post}\boldsymbol{y}_t\), where \(\boldsymbol{H}_{t \leftarrow s}^{res}\) is defined as \(\boldsymbol{H}_t^{res}\boldsymbol{H}_{t-1}^{res}\cdots\boldsymbol{H}_{s+1}^{res}\boldsymbol{H}_s^{res}\). Further setting \(\boldsymbol{H}_{t \leftarrow t+1}^{res} = \boldsymbol{I}\), we can write:</p>
+<p>\[
+\boldsymbol{y}_{t+1} = \boldsymbol{f}_{t+1}(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{x}_t) = \boldsymbol{f}_{t+1}\!\left(\sum_{s=0}^{t} \underbrace{\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_{t \leftarrow s+1}^{res}\boldsymbol{H}_s^{post}}_{a_{t+1,s}}\,\boldsymbol{y}_s\right) \tag{5}
+\]</p>
+<p>Note that each \(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_{t \leftarrow s+1}^{res}\boldsymbol{H}_s^{post}\) is a \(1 \times 1\) matrix, i.e., a scalar, so this is also an inter-layer Attention form as in Equation (3). Readers familiar with <a href="https://kexue.fm/archives/11033">linear attention</a> should quickly see the connection — HC is essentially DeltaNet &quot;rotated 90 degrees.&quot; In practice, the three \(\boldsymbol{H}\) matrices are computed by simple linear layers with \(\tanh\) activation, which means the chained product \(\boldsymbol{H}_{t \leftarrow s}^{res}\) risks explosion or collapse, and non-negativity of \(a_{t+1,s}\) cannot be guaranteed.</p>
+<p>Later, mHC made improvements: it switched all three \(\boldsymbol{H}\) matrices to Sigmoid activation, ensuring \(a_{t+1,s} \geq 0\); it then alternately normalized \(\boldsymbol{H}_t^{res}\) to be doubly stochastic, leveraging the closure of doubly stochastic matrices under multiplication to stabilize \(\boldsymbol{H}_{t \leftarrow s}^{res}\); and experiments validated the effectiveness of these changes. However, some newer experiments such as <a href="/translations/zhihu/your-deepseek-mhc-might-not-need-the-m/"><em>&quot;Your DeepSeek mHC Might Not Need the 'm'&quot;</em></a> show that simply setting \(\boldsymbol{H}_t^{res}\) to the identity matrix works well enough.</p>
+</section>
+<section>
+<h2 id="many-hands-make-light-work" tabindex="-1">Many Hands Make Light Work</h2>
+<p>Let us return to AttnRes. After recognizing its feasibility, the next question was: what form should \(a_{t+1,s}\) take? A natural idea is to follow standard <a href="https://kexue.fm/archives/4765">Scaled Dot-Product Attention</a>, but at the time I wanted to try something quickly, so I chose a simpler form:</p>
+<p>\[
+a_{t+1,s} \propto \exp(\boldsymbol{w}_{t+1} \cdot \boldsymbol{y}_s) \tag{6}
+\]</p>
+<p>where \(\boldsymbol{w}_t\) is a trainable vector parameter — that is, using a data-independent static vector as the Query, with both Keys and Values being \(\boldsymbol{y}_s\), and applying Softmax Attention. This was the first version of AttnRes. To our pleasant surprise, even this simple design already showed very significant improvements over standard Residuals!</p>
+<p>After I shared the preliminary AttnRes results within the team, <a href="https://x.com/yzhang_cs">@Zhang Yu</a> and <a href="https://x.com/nathancgy4">@Guangyu</a> showed tremendous interest and joined in, beginning to validate on larger-scale models, with results that were consistently encouraging. Along the way, we also tried some more complex designs, finding that most of them actually performed worse than this simple version — only adding an extra \(\text{RMSNorm}\) to the Keys yielded stable gains. This gave us the final form of AttnRes:</p>
+<p>\[
+a_{t+1,s} \propto \exp(\boldsymbol{w}_{t+1} \cdot \text{RMSNorm}(\boldsymbol{y}_s)) \tag{7}
+\]</p>
+<p>However, AttnRes is after all a dense inter-layer connection scheme — is training and inference feasible at K2 scale or even larger? Encouragingly, <a href="https://zhuanlan.zhihu.com/p/2017528295286133070">@V-ge</a> performed an elegant analysis and first confirmed feasibility for inference. The &quot;stroke of genius&quot; (点睛之笔) was precisely the static Query design that was originally chosen for convenience! This meant that once we computed \(\boldsymbol{y}_s\), we could precompute the attention \(a_{t,s}\) for all \(t > s\), giving the infrastructure team enough room to maneuver.</p>
+<p>Unfortunately, the training engineers — such as <a href="https://www.zhihu.com/question/2016993095078684011/answer/2017381145474508331">@Wang-ge</a> — after careful analysis, judged that under our current training environment, Full AttnRes was still not practical enough (to put it bluntly, we were resource-constrained). We needed a scheme that further reduced communication and memory costs, which led to the Block version below. The earlier version was accordingly renamed the Full version.</p>
+</section>
+<section>
+<h2 id="the-block-version" tabindex="-1">The Block Version</h2>
+<p>Going from Full AttnRes to Block AttnRes is analogous to the classic process of linearizing quadratic Attention — all sorts of existing Efficient Attention ideas can be tried. The first thing we attempted was SWA (Sliding Window Attention), but it turned out to perform terribly in practice, even worse than plain Residuals.</p>
+<p>After reflecting on this, I believe it can be understood as follows: Residuals are already a very strong baseline — they correspond to equal-weight summation of all state vectors. Any new design that wants to beat them must, at minimum, be able to subsume them in its formulation. Full AttnRes clearly satisfies this condition, but adding SWA does not: it discards some states and can no longer represent &quot;equal-weight summation of all state vectors&quot; as a special case.</p>
+<p>This led us to realize that for AttnRes, &quot;compression&quot; is likely more effective than &quot;sparsity,&quot; and the compression doesn't even need to be fine-grained — simple weighted summation may suffice. After some brainstorming and refinement, <a href="https://x.com/yzhang_cs">@Zhang Yu</a> and <a href="https://x.com/nathancgy4">@Guangyu</a> proposed the Block AttnRes design presented in the paper, combining block-wise processing with summation-based compression to achieve performance close to the Full version.</p>
+<p>The idea behind Block AttnRes is roughly as follows: first, the Embedding layer is treated as its own block — because by observing the Full version's attention matrix (this is one benefit of the Attention concept: you can visualize attention patterns at any time), we found that the model tends to allocate substantial attention to the Embedding layer, so it makes sense to separate it out. The remaining layers are grouped into blocks of \(m\) layers each; within each block, states are compressed via summation, and inter-block Attention is computed over these compressed representations.</p>
+<p>Experiments show that simply fixing the number of blocks at around 8 is enough to capture most of AttnRes's benefits. After evaluation, the training and inference engineers agreed that Block AttnRes's extra overhead is small, and entirely worthwhile relative to its gains (for detailed analysis, see the posts by <a href="https://www.zhihu.com/question/2016993095078684011/answer/2017381145474508331">@Wang-ge</a> and <a href="https://zhuanlan.zhihu.com/p/2017528295286133070">@V-ge</a> — in rough numbers, under 5% overhead for 25% gains). Everyone then pushed full steam ahead to integrate it into the mainline, which was another fulfilling and enjoyable experience that I won't go into here.</p>
+</section>
+<section>
+<h2 id="the-matrix-view" tabindex="-1">The Matrix View</h2>
+<p>It is worth noting that we can use the attention matrix to unify Residuals, HC/mHC, Full AttnRes, and Block AttnRes — a rather interesting perspective. Below are examples, where \(\phi(\boldsymbol{q}, \boldsymbol{k}) = \exp(\boldsymbol{q} \cdot \text{RMSNorm}(\boldsymbol{k}))\), the Block AttnRes version corresponds to \(m = 3\), and \(\boldsymbol{y}_{s:t} = \sum_{i=s}^{t} \boldsymbol{y}_i\) (a notation we also used in <a href="https://kexue.fm/archives/11494"><em>Making Alchemy More Scientific (Part 4): New Identities, New Learning Rates</em></a>).</p>
+<h3 id="residuals" tabindex="-1">Residuals</h3>
+<p>\[
+\boldsymbol{A} = \begin{pmatrix} 1 \\ 1 & 1 \\ 1 & 1 & 1 \\ 1 & 1 & 1 & 1 \\ 1 & 1 & 1 & 1 & 1 \\ 1 & 1 & 1 & 1 & 1 & 1 \\ 1 & 1 & 1 & 1 & 1 & 1 & 1 \end{pmatrix}
+\]</p>
+<h3 id="hc%2Fmhc" tabindex="-1">HC/mHC</h3>
+<p>\[
+\boldsymbol{A} = \begin{pmatrix}
+\boldsymbol{H}_1^{pre}\boldsymbol{H}_0^{post} \\
+\boldsymbol{H}_2^{pre}\boldsymbol{H}_{1\leftarrow 1}^{res}\boldsymbol{H}_0^{post} & \boldsymbol{H}_2^{pre}\boldsymbol{H}_1^{post} \\
+\boldsymbol{H}_3^{pre}\boldsymbol{H}_{2\leftarrow 1}^{res}\boldsymbol{H}_0^{post} & \boldsymbol{H}_3^{pre}\boldsymbol{H}_{2\leftarrow 2}^{res}\boldsymbol{H}_1^{post} & \boldsymbol{H}_3^{pre}\boldsymbol{H}_2^{post} \\
+\boldsymbol{H}_4^{pre}\boldsymbol{H}_{3\leftarrow 1}^{res}\boldsymbol{H}_0^{post} & \boldsymbol{H}_4^{pre}\boldsymbol{H}_{3\leftarrow 2}^{res}\boldsymbol{H}_1^{post} & \boldsymbol{H}_4^{pre}\boldsymbol{H}_{3\leftarrow 3}^{res}\boldsymbol{H}_2^{post} & \boldsymbol{H}_4^{pre}\boldsymbol{H}_3^{post} \\
+\boldsymbol{H}_5^{pre}\boldsymbol{H}_{4\leftarrow 1}^{res}\boldsymbol{H}_0^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_{4\leftarrow 2}^{res}\boldsymbol{H}_1^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_{4\leftarrow 3}^{res}\boldsymbol{H}_2^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_{4\leftarrow 4}^{res}\boldsymbol{H}_3^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_4^{post} \\
+\boldsymbol{H}_6^{pre}\boldsymbol{H}_{5\leftarrow 1}^{res}\boldsymbol{H}_0^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_{5\leftarrow 2}^{res}\boldsymbol{H}_1^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_{5\leftarrow 3}^{res}\boldsymbol{H}_2^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_{5\leftarrow 4}^{res}\boldsymbol{H}_3^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_{5\leftarrow 4}^{res}\boldsymbol{H}_4^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_5^{post} \\
+\boldsymbol{H}_7^{pre}\boldsymbol{H}_{6\leftarrow 1}^{res}\boldsymbol{H}_0^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_{6\leftarrow 2}^{res}\boldsymbol{H}_1^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_{6\leftarrow 3}^{res}\boldsymbol{H}_2^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_{6\leftarrow 4}^{res}\boldsymbol{H}_3^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_{6\leftarrow 5}^{res}\boldsymbol{H}_4^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_{6\leftarrow 6}^{res}\boldsymbol{H}_5^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_6^{post}
+\end{pmatrix}
+\]</p>
+<h3 id="identity-hc" tabindex="-1">Identity HC</h3>
+<p>Setting \(\boldsymbol{H}_t^{res} = \boldsymbol{I}\) for all layers<label for="sn-idhc" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-idhc" class="margin-toggle"><span class="sidenote">This matrix is not from the original article — it is the special case proposed in <a href="/translations/zhihu/your-deepseek-mhc-might-not-need-the-m/"><em>&quot;Your DeepSeek mHC Might Not Need the 'm'&quot;</em></a>.</span> gives \(\boldsymbol{H}_{t \leftarrow s}^{res} = \boldsymbol{I}\), and every entry simplifies to \(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_s^{post}\):</p>
+<p>\[
+\boldsymbol{A} = \begin{pmatrix}
+\boldsymbol{H}_1^{pre}\boldsymbol{H}_0^{post} \\
+\boldsymbol{H}_2^{pre}\boldsymbol{H}_0^{post} & \boldsymbol{H}_2^{pre}\boldsymbol{H}_1^{post} \\
+\boldsymbol{H}_3^{pre}\boldsymbol{H}_0^{post} & \boldsymbol{H}_3^{pre}\boldsymbol{H}_1^{post} & \boldsymbol{H}_3^{pre}\boldsymbol{H}_2^{post} \\
+\boldsymbol{H}_4^{pre}\boldsymbol{H}_0^{post} & \boldsymbol{H}_4^{pre}\boldsymbol{H}_1^{post} & \boldsymbol{H}_4^{pre}\boldsymbol{H}_2^{post} & \boldsymbol{H}_4^{pre}\boldsymbol{H}_3^{post} \\
+\boldsymbol{H}_5^{pre}\boldsymbol{H}_0^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_1^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_2^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_3^{post} & \boldsymbol{H}_5^{pre}\boldsymbol{H}_4^{post} \\
+\boldsymbol{H}_6^{pre}\boldsymbol{H}_0^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_1^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_2^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_3^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_4^{post} & \boldsymbol{H}_6^{pre}\boldsymbol{H}_5^{post} \\
+\boldsymbol{H}_7^{pre}\boldsymbol{H}_0^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_1^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_2^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_3^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_4^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_5^{post} & \boldsymbol{H}_7^{pre}\boldsymbol{H}_6^{post}
+\end{pmatrix}
+\]</p>
+<h3 id="full-attnres" tabindex="-1">Full AttnRes</h3>
+<p>\[
+\boldsymbol{A} = \begin{pmatrix}
+\phi(\boldsymbol{w}_1, \boldsymbol{y}_0) \\
+\phi(\boldsymbol{w}_2, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_2, \boldsymbol{y}_1) \\
+\phi(\boldsymbol{w}_3, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_3, \boldsymbol{y}_1) & \phi(\boldsymbol{w}_3, \boldsymbol{y}_2) \\
+\phi(\boldsymbol{w}_4, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_4, \boldsymbol{y}_1) & \phi(\boldsymbol{w}_4, \boldsymbol{y}_2) & \phi(\boldsymbol{w}_4, \boldsymbol{y}_3) \\
+\phi(\boldsymbol{w}_5, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_1) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_2) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_3) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_4) \\
+\phi(\boldsymbol{w}_6, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_1) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_2) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_3) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_4) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_5) \\
+\phi(\boldsymbol{w}_7, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_1) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_2) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_3) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_4) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_5) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_6)
+\end{pmatrix}
+\]</p>
+<h3 id="block-attnres" tabindex="-1">Block AttnRes</h3>
+<p>In Block AttnRes (shown here with \(m = 3\)), the Embedding layer forms its own block, then every \(m\) layers are grouped together. Within each block, past layers are compressed into a single summed representation:</p>
+<p>\[
+\boldsymbol{A} = \left(\begin{array}{c:ccc:ccc}
+\phi(\boldsymbol{w}_1, \boldsymbol{y}_0) \\
+\hdashline
+\phi(\boldsymbol{w}_2, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_2, \boldsymbol{y}_1) \\
+\phi(\boldsymbol{w}_3, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_3, \boldsymbol{y}_{1:2}) & \phi(\boldsymbol{w}_3, \boldsymbol{y}_{1:2}) \\
+\phi(\boldsymbol{w}_4, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_4, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_4, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_4, \boldsymbol{y}_{1:3}) \\
+\hdashline
+\phi(\boldsymbol{w}_5, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_5, \boldsymbol{y}_4) \\
+\phi(\boldsymbol{w}_6, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_{4:5}) & \phi(\boldsymbol{w}_6, \boldsymbol{y}_{4:5}) \\
+\phi(\boldsymbol{w}_7, \boldsymbol{y}_0) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_{1:3}) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_{4:6}) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_{4:6}) & \phi(\boldsymbol{w}_7, \boldsymbol{y}_{4:6})
+\end{array}\right)
+\]</p>
+</section>
+<section>
+<h2 id="related-work" tabindex="-1">Related Work</h2>
+<p>From the moment we decided to pursue AttnRes, my collaborators and I were immersed in the process of polishing, validating, and accelerating. Some readers may know that my research style is to first push as hard as I can on derivations and solutions, only searching for related literature once I hit a wall or finish completely. I happened to find a group of like-minded collaborators, and this time the AttnRes exploration went fairly smoothly overall, so it was not until all tests had basically passed and we began preparing the technical report that we started surveying the literature.</p>
+<p>But precisely because of this, &quot;you don't know what you don't know until you look&quot; (不查不知道，一查吓一跳) — it turned out that there was already an enormous body of work on Dense Connections and Depth Attention. Beyond the classic <a href="https://arxiv.org/abs/1608.06993"><em>DenseNet</em></a>, we found <a href="https://arxiv.org/abs/2402.02622"><em>DenseFormer</em></a>, <a href="https://arxiv.org/abs/2602.09009"><em>ANCRe</em></a>, <a href="https://arxiv.org/abs/2502.12170"><em>MUDDFormer</em></a>, <a href="https://arxiv.org/abs/2302.03985"><em>MRLA</em></a>, <a href="https://arxiv.org/abs/2601.21582"><em>Dreamer</em></a>, and even <a href="https://arxiv.org/abs/1802.05365"><em>ELMo</em></a> from before BERT, which partially applied similar designs — all of which we included in our references.</p>
+<p>After releasing the technical report, we gradually received reader comments pointing out additional related works we had not included, such as <a href="https://arxiv.org/abs/1903.06586"><em>SKNets</em></a>, <a href="https://arxiv.org/abs/2502.09245"><em>LIMe</em></a>, <a href="https://arxiv.org/abs/2502.06785"><em>DCA</em></a>, etc. We apologize for the omissions and are grateful for the pointers, and we promise to add them in subsequent revisions. But whether reader or author, please remain reasonable about this — literature surveys are not easy, some omissions are inevitable, and we hold the highest respect for all related work.</p>
+<p>At the same time, we encourage everyone to look beyond the &quot;Depth Attention&quot; concept and appreciate the engineering effort behind AttnRes. We fully agree that in 2026, &quot;Depth Attention&quot; or &quot;Layer Attention&quot; is by no means a novel idea. But making it work for sufficiently large models, as a strong enough replacement for Residuals while meeting training and inference efficiency requirements, is not a trivial undertaking. To the best of our knowledge, AttnRes is the first work to achieve this.</p>
+</section>
+<section>
+<h2 id="conclusion" tabindex="-1">Conclusion</h2>
+<p>This article introduced our latest result on model architecture: Attention Residuals (AttnRes). It replaces naive Residuals with inter-layer Attention, and through careful design ensures it meets training and inference efficiency requirements, ultimately scaling it successfully to sufficiently large models.</p>
+<hr class="section-divider">
+<p><em>Citation: Su, J. (2026, March 19). Attention Residuals 回忆录 [Attention Residuals]. Scientific Spaces. <a href="https://kexue.fm/archives/11664">https://kexue.fm/archives/11664</a></em></p>
+<p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/2.5/cn/">CC BY-NC-ND 2.5 CN</a>. This translation is shared under the same license.</em></p>
+</section>
+
+        </article>
+        <footer>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
+
+        </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
+    </body>
+</html>
