@@ -28,9 +28,17 @@
 {% endblock %}
 
 {% block article_header %}
-            <h1>{{ title | markdownInline | safe }}</h1>
-            {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
-            {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
+            {% if hero_image %}
+            <div class="post-hero" aria-hidden="true">
+                <img src="{{ hero_image }}" alt="" />
+                <div class="post-hero-fade"></div>
+            </div>
+            {% endif %}
+            <div class="post-header{% if hero_image %} post-header--hero{% endif %}">
+                <h1>{{ title | markdownInline | safe }}</h1>
+                {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
+                {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
+            </div>
             <nav class="toc"></nav>
             <script>
                 (function() {
@@ -66,6 +74,17 @@
                         });
                         toc.appendChild(ol);
                     }
+                })();
+            </script>
+            <script>
+                (function() {
+                    var hero = document.querySelector('.post-hero');
+                    if (!hero) return;
+                    var h = hero.offsetHeight;
+                    window.addEventListener('scroll', function() {
+                        var t = Math.min(window.scrollY / (h * 0.8), 1);
+                        hero.style.opacity = 1 - t;
+                    }, { passive: true });
                 })();
             </script>
             <script>
