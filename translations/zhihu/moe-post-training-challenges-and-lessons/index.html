@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Post-Training Challenges and Lessons Learned with MoE Architectures</title>
+<meta name="author" content="Tyler Romero">
+<meta name="description" content="Translated from moe架构的post-training难点与经验分享 by 燕雄飞的一天">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+<link rel="canonical" href="https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/">
+<link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
+<!-- Open Graph -->
+<meta property="og:title" content="Post-Training Challenges and Lessons Learned with MoE Architectures">
+<meta property="og:description" content="Translated from moe架构的post-training难点与经验分享 by 燕雄飞的一天">
+<meta property="og:url" content="https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Post-Training Challenges and Lessons Learned with MoE Architectures">
+<meta name="twitter:description" content="Translated from moe架构的post-training难点与经验分享 by 燕雄飞的一天">
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/assets/tufte.min.css">
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+        
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Post-Training Challenges and Lessons Learned with MoE Architectures",
+            "description": "Translated from [moe架构的post-training难点与经验分享](https://zhuanlan.zhihu.com/p/2018018879109091590) by [燕雄飞的一天](https://www.zhihu.com/people/yan-xiong-fei-19)",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2026-03-18T18:56:00.000Z",
+            "dateModified": "2026-03-30T21:49:20.269Z",
+            "url": "https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/"
+            },
+            "keywords": "translation, mixture-of-experts, post-training, reinforcement-learning, load-balancing",
+            "wordCount": "1441",
+            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of moe架构的post-training难点与经验分享 by 燕雄飞的一天, originally published on March 19, 2026 on Zhihu (知乎). The translation preserves the author&#39;s informal, first-person voice. Whether in open-source or top-tier commercial models, MoE architectures have become the dominant paradigm. How does post-training differ from dense models during the SFT and RL stages? What unique challenges arise, and how can we address them? This post starts from first..."
+            }
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/translations" class="no-tufte-underline">Translations</a>
+
+                </div>
+            </nav>
+        </header>
+        <article>
+            
+            <div class="post-header">
+                <h1>Post-Training Challenges and Lessons Learned with MoE Architectures</h1>
+                <p class="subtitle">Translated from <a href="https://zhuanlan.zhihu.com/p/2018018879109091590">moe架构的post-training难点与经验分享</a> by <a href="https://www.zhihu.com/people/yan-xiong-fei-19">燕雄飞的一天</a></p>
+                <p class="date">Mar 18, 2026</p>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
+            </script>
+
+            <section>
+<p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://zhuanlan.zhihu.com/p/2018018879109091590">moe架构的post-training难点与经验分享</a> by <a href="https://www.zhihu.com/people/yan-xiong-fei-19">燕雄飞的一天</a>, originally published on March 19, 2026 on <a href="https://www.zhihu.com">Zhihu (知乎)</a>. The translation preserves the author's informal, first-person voice.</em></p>
+<hr class="section-divider">
+<p>Whether in open-source or top-tier commercial models, MoE architectures have become the dominant paradigm. How does post-training differ from dense models during the SFT and RL stages? What unique challenges arise, and how can we address them? This post starts from first principles and works through how to train MoE architectures.</p>
+</section>
+<section>
+<h2 id="tl%3Bdr" tabindex="-1">TL;DR</h2>
+<ol>
+<li><strong>Load balancing vs. model performance</strong>: the <code>aux_loss</code> hyperparameter requires ablation experiments to tune properly.</li>
+<li><strong>RL training instability</strong>: Routing Replay effectively mitigates train–inference discrepancy and policy staleness.</li>
+<li><strong>Expert parallelism</strong>: use EP and ETP together as needed.</li>
+</ol>
+</section>
+<section>
+<h2 id="fundamentals" tabindex="-1">Fundamentals</h2>
+<h3 id="how-moe-works" tabindex="-1">How MoE Works</h3>
+<p>In 2017, Noam Shazeer<label for="sn-shazeer" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-shazeer" class="margin-toggle"><span class="sidenote">Shazeer, N., et al. (2017). <a href="https://arxiv.org/abs/1701.06538"><em>Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer</em></a>. arXiv:1701.06538.</span> and colleagues at Google Brain proposed the MoE (Sparsely-Gated Mixture-of-Experts) architecture. The core idea is a <strong>trainable gating network</strong> that decides, for each input, which &quot;experts&quot; should process it. The MoE architecture stems from the concept of <em>conditional computation</em> — for different inputs, only a subset of the network is activated while the rest stays &quot;silent&quot; (i.e., does not participate in the computation).</p>
+<p>The MoE architecture has remained largely unchanged since then, so the original paper's figures and formulas are still current.</p>
+<p><picture><source type="image/webp" srcset="/assets/img/_Vf0sOvYbi-300.webp 300w, /assets/img/_Vf0sOvYbi-600.webp 600w, /assets/img/_Vf0sOvYbi-900.webp 900w, /assets/img/_Vf0sOvYbi-1244.webp 1244w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/_Vf0sOvYbi-300.jpeg" alt="MoE architecture overview: a gating network routes inputs to a sparse subset of expert networks" width="1244" height="593" srcset="/assets/img/_Vf0sOvYbi-300.jpeg 300w, /assets/img/_Vf0sOvYbi-600.jpeg 600w, /assets/img/_Vf0sOvYbi-900.jpeg 900w, /assets/img/_Vf0sOvYbi-1244.jpeg 1244w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p><strong>Overall architecture:</strong> A Mixture-of-Experts layer consists of a set of \(n\) expert networks and a gating network, where the gating network's output is a sparse \(n\)-dimensional vector. Each expert is itself a neural network with its own independent parameters, and all experts must accept the same input size and produce the same output size.</p>
+<p><strong>Formal definition:</strong> For a given input \(x\), let \(G(x)\) denote the gating network's output and \(E_i(x)\) denote the output of the \(i\)-th expert network. The MoE module's output \(y\) takes the form:</p>
+<p>\[
+y = \sum_{i=1}^{n} G(x)_i \cdot E_i(x)
+\]</p>
+<p>The gating network works as follows: retain the top-\(k\) outputs, set the rest to \(-\infty\), and after softmax the remaining weights become zero:</p>
+<p>\[
+G(x) = \text{Softmax}(\text{TopK}(x \cdot W_g))
+\]</p>
+<h3 id="load-balancing" tabindex="-1">Load Balancing</h3>
+<p>Load balancing is one of the most critical challenges in MoE training. During early training, the gating network tends to assign high weights to a handful of specific experts. If an expert gets selected more often, it receives more training, its performance improves faster than the other &quot;idle&quot; experts, and the gating network becomes even more inclined to select it next time. The end result: only a few experts are doing work while thousands of others never get a chance to train, becoming &quot;zombie experts&quot; — an enormous waste of parameter capacity.</p>
+<p>There are currently two load-balancing strategies validated in top-tier open-source models: <strong>aux_loss</strong> (used in the Qwen series, among others) and <strong>aux_loss_free</strong> (used in the DeepSeek series).</p>
+<p><strong>Auxiliary loss (aux_loss):</strong> In 2022, Noam Shazeer (again at Google) proposed the highly influential Switch Transformer<label for="sn-switch" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-switch" class="margin-toggle"><span class="sidenote">Fedus, W., Zoph, B., &amp; Shazeer, N. (2022). <a href="https://arxiv.org/abs/2101.03961"><em>Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity</em></a>. JMLR, 23(120), 1–39.</span>, whose load-balancing strategy remains in use today. The core idea is an auxiliary loss that ensures all experts process roughly equal numbers of tokens:</p>
+<p>\[
+\mathcal{L}_{\text{aux}} = N \cdot \sum_{i=1}^{N} f_i \cdot P_i
+\]</p>
+<p>where \(f_i\) (the <em>actual allocation ratio</em>) is the proportion of tokens in the current batch that were assigned to the \(i\)-th expert, and \(P_i\) (the <em>predicted probability ratio</em>) is the gating network's average preference for the \(i\)-th expert.</p>
+<p>The goal — for both actual allocation and predicted probability — is for each expert to receive \(\frac{1}{N}\) of the tokens. The minimum value of this loss is therefore 1.</p>
+<p><strong>Loss-free balancing (aux_loss_free):</strong> In 2024, the DeepSeek team introduced loss-free balancing as a core component of DeepSeek-V3. It requires no auxiliary term in the loss function, and therefore does not affect model performance.</p>
+<p>\[
+g_i'(x) = g_i(x) + b_i
+\]</p>
+<p>Here, \(g_i(x)\) is the \(i\)-th expert's original gating score (before top-\(k\) selection), and \(g_i'(x)\) is the bias-adjusted score. The key insight: <strong>top-\(k\) selection uses the biased scores, but the output computation still uses the original gating scores.</strong> The bias \(b_i\) is dynamically updated based on load statistics from the previous batch.</p>
+</section>
+<section>
+<h2 id="training-challenges" tabindex="-1">Training Challenges</h2>
+<h3 id="challenge-1%3A-balancing-load-vs.-performance" tabindex="-1">Challenge 1: Balancing Load vs. Performance</h3>
+<p>In MoE training, tuning the auxiliary loss weight is a core challenge. While increasing <code>aux_loss</code> can force a more uniform expert load distribution, its gradient interferes with the main task's learning signal — too much weight leads to a significant drop in model performance (eval loss).</p>
+<p><strong>Model performance:</strong> Experimental data shows that smaller <code>aux_loss</code> weights yield better model convergence.</p>
+<p><picture><source type="image/webp" srcset="/assets/img/ydOFIzydla-300.webp 300w, /assets/img/ydOFIzydla-600.webp 600w, /assets/img/ydOFIzydla-900.webp 900w, /assets/img/ydOFIzydla-1440.webp 1440w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/ydOFIzydla-300.jpeg" alt="aux_loss weight vs. eval loss and load balance: lower weights improve convergence but reduce balance" width="1440" height="422" srcset="/assets/img/ydOFIzydla-300.jpeg 300w, /assets/img/ydOFIzydla-600.jpeg 600w, /assets/img/ydOFIzydla-900.jpeg 900w, /assets/img/ydOFIzydla-1440.jpeg 1440w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p><strong>Load balance:</strong> Measured by a relative load-balance metric, the data shows that smaller <code>aux_loss</code> weights lead to more imbalanced models (some experts overloaded, others idle).</p>
+<p><picture><source type="image/webp" srcset="/assets/img/3zd3XGf_Sg-300.webp 300w, /assets/img/3zd3XGf_Sg-600.webp 600w, /assets/img/3zd3XGf_Sg-900.webp 900w, /assets/img/3zd3XGf_Sg-1280.webp 1280w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/3zd3XGf_Sg-300.jpeg" alt="Load balance heatmap across experts" width="1280" height="446" srcset="/assets/img/3zd3XGf_Sg-300.jpeg 300w, /assets/img/3zd3XGf_Sg-600.jpeg 600w, /assets/img/3zd3XGf_Sg-900.jpeg 900w, /assets/img/3zd3XGf_Sg-1280.jpeg 1280w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<ul>
+<li><strong>Actual expert load:</strong> the number of tokens an expert processes on the training set.</li>
+<li><strong>Theoretical balanced load:</strong> the number of tokens each expert should process under uniform distribution (total tokens / number of experts).</li>
+</ul>
+<p><strong>Balancing the two, a weight of 0.001 is a reasonable sweet spot.</strong></p>
+<h3 id="challenge-2%3A-rl-training-instability" tabindex="-1">Challenge 2: RL Training Instability</h3>
+<p>RL training commonly faces the &quot;reward–gradient mismatch&quot; problem (sequence-level rewards vs. token-level updates). As shown by Zheng et al.<label for="sn-zheng" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zheng" class="margin-toggle"><span class="sidenote">Zheng, C., et al. (2025). <a href="https://arxiv.org/abs/2512.01374"><em>Stabilizing Reinforcement Learning with LLMs: Formulation and Practices</em></a>. arXiv:2512.01374.</span>, this fundamentally stems from two sources of discrepancy:</p>
+<ol>
+<li><strong>Train–inference discrepancy:</strong> Numerical errors caused by differing infrastructure between training and inference (different compute kernels, batch-invariant kernels disabled at inference for throughput, FP8 inference vs. BF16 training).</li>
+<li><strong>Policy staleness:</strong> The gap between the rollout policy and the current optimization policy, typically caused by off-policy updates (splitting a large batch into mini-batches for multiple updates).</li>
+</ol>
+<p>For MoE models, these small discrepancies are <strong>dramatically amplified</strong>:</p>
+<ol>
+<li><strong>Routing inconsistency:</strong> Even with identical inputs, tiny numerical differences between training and inference engines can cause completely different experts to be selected, massively amplifying train–inference discrepancy.</li>
+<li><strong>Expert drift:</strong> Policy updates not only change parameters but also change routing decisions, exacerbating policy staleness.</li>
+</ol>
+<p><strong>Solution: Routing Replay</strong></p>
+<p><strong>Vanilla Routing Replay (R2):</strong></p>
+<p>During gradient updates, replay the experts that were selected by the rollout policy in the training engine. This primarily reduces <strong>policy staleness</strong>.</p>
+<p><strong>Rollout Routing Replay (R3):</strong></p>
+<p>In the training engine, replay the experts that were selected in the inference engine. This primarily reduces <strong>train–inference discrepancy</strong>.</p>
+<p><strong>Best practices</strong> (see Zheng et al.<label for="sn-zheng" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-zheng" class="margin-toggle"><span class="sidenote">Zheng, C., et al. (2025). <a href="https://arxiv.org/abs/2512.01374"><em>Stabilizing Reinforcement Learning with LLMs: Formulation and Practices</em></a>. arXiv:2512.01374.</span> for detailed experiments):</p>
+<ul>
+<li><strong>On-policy / light off-policy:</strong> Use MiniRL + R2 (Vanilla Routing Replay). The bias is small, and R2 is sufficient to stabilize training.</li>
+<li><strong>Heavy off-policy:</strong> Use MiniRL + R3 (Rollout Routing Replay). Stability is paramount, and R3 more effectively eliminates discrepancies.</li>
+</ul>
+<h3 id="challenge-3%3A-expert-parallelism" tabindex="-1">Challenge 3: Expert Parallelism</h3>
+<p>Referring to the Megatron-Bridge documentation on expert parallelism<label for="sn-megatron" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-megatron" class="margin-toggle"><span class="sidenote">NVIDIA. <a href="https://docs.nvidia.com/nemo/megatron-bridge/latest/parallelisms.html">Megatron-Bridge Parallelisms Documentation</a>.</span><label for="sn-swift" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-swift" class="margin-toggle"><span class="sidenote"><a href="https://swift.readthedocs.io/en/latest/Megatron-SWIFT/Command-line-parameters.html">Megatron-SWIFT Command-Line Parameters</a>.</span>, <strong>Expert Parallelism (EP)</strong> and <strong>Expert Tensor Parallelism (ETP)</strong> are parallel strategies designed specifically for MoE models.</p>
+<p><strong>EP:</strong> Distributes different experts across different GPUs.</p>
+<p><strong>ETP:</strong> Further shards each individual expert's weights across multiple GPUs.</p>
+<p><picture><source type="image/webp" srcset="/assets/img/-HJemF7VU9-300.webp 300w, /assets/img/-HJemF7VU9-600.webp 600w, /assets/img/-HJemF7VU9-900.webp 900w, /assets/img/-HJemF7VU9-960.webp 960w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/-HJemF7VU9-300.jpeg" alt="Expert Parallelism (EP) distributes experts across GPUs; Expert Tensor Parallelism (ETP) shards each expert's weights" width="960" height="540" srcset="/assets/img/-HJemF7VU9-300.jpeg 300w, /assets/img/-HJemF7VU9-600.jpeg 600w, /assets/img/-HJemF7VU9-900.jpeg 900w, /assets/img/-HJemF7VU9-960.jpeg 960w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p><strong>Rule of thumb:</strong> If you find that a single expert (with a large hidden size) doesn't fit on one GPU, increase ETP. If you have too many experts (say 256), increase EP.</p>
+</section>
+<section>
+<h2 id="recommended-tool" tabindex="-1">Recommended Tool</h2>
+<p><a href="https://github.com/direction-yxf/moe_patch">MOE-Patch</a> is a monitoring tool designed specifically for MoE models. Using a monkey-patching mechanism, it captures and analyzes routing distributions, expert load, token drop rates, and other key metrics in real time — without modifying the source code of training or inference frameworks (such as verl, ms-swift, vllm, etc.)<label for="sn-moepatch" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-moepatch" class="margin-toggle"><span class="sidenote"><a href="https://github.com/direction-yxf/moe_patch">MOE-Patch</a> — Fine-grained MoE monitoring tool.</span>. It fills the gap in fine-grained MoE monitoring that current frameworks lack.</p>
+<p><picture><source type="image/webp" srcset="/assets/img/XUZmnO4-EW-300.webp 300w, /assets/img/XUZmnO4-EW-598.webp 598w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/XUZmnO4-EW-300.jpeg" alt="MOE-Patch monitoring dashboard showing expert load distribution" width="598" height="208" srcset="/assets/img/XUZmnO4-EW-300.jpeg 300w, /assets/img/XUZmnO4-EW-598.jpeg 598w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<hr class="section-divider">
+<p><em>Citation: 燕雄飞的一天. (2026, March 19). moe架构的post-training难点与经验分享 [Post-Training Challenges and Lessons Learned with MoE Architectures]. Zhihu. <a href="https://zhuanlan.zhihu.com/p/2018018879109091590">https://zhuanlan.zhihu.com/p/2018018879109091590</a></em></p>
+</section>
+
+        </article>
+        <footer>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
+
+        </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
+    </body>
+</html>
