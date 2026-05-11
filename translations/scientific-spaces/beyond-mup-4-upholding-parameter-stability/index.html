@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Beyond MuP 4: Upholding Parameter Stability</title>
+<meta name="author" content="Tyler Romero">
+<meta name="description" content="Translated from MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林)">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+<link rel="canonical" href="https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/">
+<link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
+<!-- Open Graph -->
+<meta property="og:title" content="Beyond MuP 4: Upholding Parameter Stability">
+<meta property="og:description" content="Translated from MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林)">
+<meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Beyond MuP 4: Upholding Parameter Stability">
+<meta name="twitter:description" content="Translated from MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林)">
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/assets/tufte.min.css">
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+        
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Beyond MuP 4: Upholding Parameter Stability",
+            "description": "Translated from [MuP之上：4. 坚守参数的稳定性](https://kexue.fm/archives/11729) by Jianlin Su (苏剑林)",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2026-04-23T16:00:00.000Z",
+            "dateModified": "2026-05-11T18:38:23.353Z",
+            "url": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/"
+            },
+            "keywords": "translation, mup, muon, optimizer, stability",
+            "wordCount": "3078",
+            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林), originally published on April 24, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. Through the derivations and computations of the previous articles, we can observe that the three stability indicators proposed in the first article Beyond MuP 1: Three Characteristics of Good Models can generally be divided into &amp;quot;parameter stability&amp;quot; and..."
+            }
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/translations" class="no-tufte-underline">Translations</a>
+
+                </div>
+            </nav>
+        </header>
+        <article>
+            
+            <div class="post-header">
+                <h1>Beyond MuP 4: Upholding Parameter Stability</h1>
+                <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11729">MuP之上：4. 坚守参数的稳定性</a> by Jianlin Su (苏剑林)</p>
+                <p class="date">Apr 23, 2026</p>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
+            </script>
+
+            <section>
+<p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11729">MuP之上：4. 坚守参数的稳定性</a> by Jianlin Su (苏剑林), originally published on April 24, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
+<hr class="section-divider">
+<p>Through the derivations and computations of the previous articles, we can observe that the three stability indicators proposed in the first article <a href="https://kexue.fm/archives/11340"><em>Beyond MuP 1: Three Characteristics of Good Models</em></a> can generally be divided into &quot;parameter stability&quot; and &quot;increment stability.&quot; In <a href="https://kexue.fm/archives/11605"><em>Beyond MuP 2: Linear Layers and Steepest Descent</em></a> and <a href="https://kexue.fm/archives/11647"><em>Beyond MuP 3: Special Cases, Special Treatment</em></a>, we demonstrated the process of combining increment stability with steepest descent to derive new update rules (optimizers).</p>
+<p>However, for parameter stability, we previously only addressed initialization. The task of this article is precisely to explore how to maintain parameter stability throughout the entire training process, completing the theoretical framework in practice.</p>
+</section>
+<section>
+<h2 id="problem-background" tabindex="-1">Problem Background</h2>
+<p>Taking <a href="https://kexue.fm/archives/11605"><em>Beyond MuP 2: Linear Layers and Steepest Descent</em></a> as an example, the three stability indicators are:</p>
+<p>\[
+\begin{aligned}
+&\text{Forward stability:}\quad\max_{\Vert\boldsymbol{x}\Vert_{RMS}=1} \Vert \boldsymbol{x}\boldsymbol{W}\Vert_{RMS} = \sqrt{\frac{d_{in}}{d_{out}}}\Vert\boldsymbol{W}\Vert_2 \\[5pt]
+&\text{Dependence stability:}\quad\max_{\Vert\boldsymbol{x}_1\Vert_{RMS}=\Vert\boldsymbol{x}_2\Vert_{RMS}=1} \frac{\Vert \boldsymbol{x}_1\boldsymbol{W} - \boldsymbol{x}_2\boldsymbol{W}\Vert_{RMS}}{\Vert \boldsymbol{x}_1 - \boldsymbol{x}_2\Vert_{RMS}} = \sqrt{\frac{d_{in}}{d_{out}}}\Vert\boldsymbol{W}\Vert_2 \\[5pt]
+&\text{Update stability:}\quad\max_{\Vert\boldsymbol{x}\Vert_{RMS}=1} \Vert \boldsymbol{x}(\boldsymbol{W} + \Delta\boldsymbol{W}) - \boldsymbol{x}\boldsymbol{W}\Vert_{RMS} = \sqrt{\frac{d_{in}}{d_{out}}}\Vert\Delta\boldsymbol{W}\Vert_2
+\end{aligned}
+\]</p>
+<p>where \(\boldsymbol{W}\in\mathbb{R}^{d_{in}\times d_{out}}\) is the linear layer's parameter. We want all three indicators to be \(\Theta(1)\), which means we want the parameter and its increment to satisfy \(\Vert\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\) and \(\Vert\Delta\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\), respectively. In <a href="https://kexue.fm/archives/11647"><em>Beyond MuP 3: Special Cases, Special Treatment</em></a>, we performed computations for layers like Embedding and LM Head, and the conclusions were similar — only the corresponding norms differed.</p>
+<p>For the increment condition, we treat it as a stability indicator, and based on the &quot;stability first, speed second&quot; steepest descent principle, we derive the theoretically optimal update rule. For example, the linear layer corresponds to the Muon optimizer:</p>
+<p>\[
+\operatorname*{argmin}_{\Vert\Delta\boldsymbol{W}\Vert_2\leq\eta\sqrt{\frac{d_{out}}{d_{in}}}} \operatorname{tr}(\boldsymbol{G}^{\top}\Delta\boldsymbol{W}) \qquad \Rightarrow \qquad \Delta\boldsymbol{W} = -\eta\sqrt{\frac{d_{out}}{d_{in}}}\operatorname{msign}(\boldsymbol{G})
+\]</p>
+<p>As for the parameter stability part, we previously only required that the initialization satisfy \(\Vert\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\). How to ensure the model maintains the same parameter stability throughout the entire training process remained unknown.</p>
+</section>
+<section>
+<h2 id="general-framework" tabindex="-1">General Framework</h2>
+<p>How can we ensure that \(\boldsymbol{W}\) maintains \(\Vert\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\)? More generally, given a parameter \(\boldsymbol{\omega}\) — which could be a vector, matrix, or even a higher-order tensor — along with a norm \(\Vert\cdot\Vert\) (typically induced by forward stability or dependence stability) and a specified scale \(\tau\), the question is: how can we ensure that \(\boldsymbol{\omega}\) maintains \(\Vert\boldsymbol{\omega}\Vert=\Theta(\tau)\) throughout training?</p>
+<h3 id="initial-thoughts" tabindex="-1">Initial Thoughts</h3>
+<p>A naive idea is to directly enforce \(\Vert\boldsymbol{\omega}\Vert=\tau\) (one could replace \(\tau\) with a constant multiple, but this does not affect the following discussion). The simplest implementation is to rescale the norm back to \(\tau\) via normalization after each optimization step (e.g., <a href="https://whenwen.github.io/wd_blog/public/hyperball-part-1.html">Hyperball</a> and <a href="https://papers.cool/arxiv/2511.18890">Nemotron-Flash</a>). Another approach is to reparameterize the original model using normalization, i.e., change \(\boldsymbol{f}(\boldsymbol{x};\boldsymbol{\omega})\) to \(\boldsymbol{f}(\boldsymbol{x};\tau\boldsymbol{\omega}/\Vert\boldsymbol{\omega}\Vert)\), which theoretically achieves a similar effect.</p>
+<p>A more advanced approach combines the steepest descent idea to adjust the update rule, as discussed in <a href="https://kexue.fm/archives/11196"><em>Steepest Descent on Manifolds 1: SGD + Hypersphere</em></a>, <a href="https://kexue.fm/archives/11241"><em>Steepest Descent on Manifolds 4: Muon + Spectral Sphere</em></a>, and the paper <a href="https://papers.cool/arxiv/2601.08393"><em>Controlled LLM Training on Spectral Sphere</em></a>. This approach is more elegant methodologically, but more complex in practice — it typically requires solving a nonlinear equation to obtain the exact update.</p>
+<p>However, should we really constrain a parameter's norm strictly to some fixed value? Intuitively, the parameter's norm should be determined by the training process itself; at most, we set a prior range for it. Although some works show that fixing the parameter norm to a preset value does not affect performance when done properly, this still disrupts the original training dynamics and may require more effort to understand and adapt to.</p>
+<p>Therefore, the viewpoint this article proposes is: we only need to ensure \(\Vert\boldsymbol{\omega}\Vert = \mathcal{O}(\tau)\). Specifically, we aim to guarantee that every step satisfies \(\Vert\boldsymbol{\omega}\Vert \leq \tau\), while the exact value — and whether it achieves \(\Theta(\tau)\) — is left for the training algorithm itself to decide, with no further intervention.</p>
+<h3 id="post-clip" tabindex="-1">Post Clip</h3>
+<p>The next natural question is: how do we implement \(\Vert\boldsymbol{\omega}\Vert \leq \tau\)? More specifically, suppose \(\boldsymbol{\omega}\)'s original update rule is</p>
+<p>\[
+\boldsymbol{\omega}_t = \boldsymbol{\omega}_{t-1} - \eta \boldsymbol{\phi}_t \tag{1}
+\]</p>
+<p>How should we modify it to ensure \(\boldsymbol{\omega}_t\) always satisfies \(\Vert\boldsymbol{\omega}_t\Vert\leq\tau\)? There are of course many methods — for instance, the normalization mentioned in the previous section is also a valid approach. Given this, we want to select the approach with the <strong>least impact</strong> on the optimization process. That is, given a parameter \(\boldsymbol{\omega}\) and a norm \(\Vert\cdot\Vert\), we want to reduce its norm to at most \(\tau\) with minimal modification, formally defined as:</p>
+<p>\[
+\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert\leq\tau} = \operatorname*{argmin}_{\Vert\tilde{\boldsymbol{\omega}}\Vert\leq\tau} \Vert \boldsymbol{\omega} - \tilde{\boldsymbol{\omega}}\Vert_{RMS} \tag{2}
+\]</p>
+<p>Readers familiar with convex optimization will readily recognize this as the projection of \(\boldsymbol{\omega}\) onto the ball of radius \(\tau\) under a certain norm. The key point here is that we want to achieve the goal of norm not exceeding \(\tau\), while minimizing the impact on the original parameter \(\boldsymbol{\omega}\), hence we minimize the discrepancy metric \(\Vert \boldsymbol{\omega} - \tilde{\boldsymbol{\omega}}\Vert_{RMS}\), which induces a specific projection or clipping operation.</p>
+<p>As for how to compute \(\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert\leq\tau}\), this requires case-by-case analysis for specific norms, which we will expand on shortly. With this operation in hand, one approach we can consider is to clip the parameter norm after each update step, i.e., modify equation (1) to:</p>
+<p>\[
+\boldsymbol{\omega}_t = \lfloor\boldsymbol{\omega}_{t-1} - \eta \boldsymbol{\phi}_t\rfloor_{\Vert\cdot\Vert\leq\tau}
+\]</p>
+<p>We tentatively call this approach &quot;Post Clip.&quot; Its characteristic is simplicity and intuitiveness, but it may give a sense of &quot;non-smoothness.&quot; This is easy to understand: suppose we initialize with a radius smaller than \(\tau\), and as training begins the parameter radius slowly increases; once it reaches \(\tau\), clipping &quot;suddenly&quot; kicks in. Although this process is continuous, it is not smooth — similar to the \(\max(x,0)\) function.</p>
+<h3 id="pre-decay" tabindex="-1">Pre Decay</h3>
+<p>If this non-smoothness is concerning, we can consider mimicking weight decay by distributing the penalty across each update step. Starting again from the update rule (1), suppose \(\boldsymbol{\phi}_t\) satisfies \(\Vert\boldsymbol{\phi}_t\Vert\leq\tau\). Then by the triangle inequality, \(\Vert\boldsymbol{\omega}_t\Vert = \Vert\boldsymbol{\omega}_{t-1} - \eta \boldsymbol{\phi}_t\Vert\leq \Vert\boldsymbol{\omega}_{t-1}\Vert + \eta \tau\). That is, in the extreme case the norm increases by \(\eta\tau\) per step, which accumulates over time and eventually &quot;loses control.&quot;</p>
+<p>To prevent this, we can preprocess \(\boldsymbol{\omega}_{t-1}\) before adding \(- \eta \boldsymbol{\phi}_t\), reducing its norm just enough to offset the growth from the update. Drawing on the experience of weight decay, we can consider:</p>
+<p>\[
+\boldsymbol{\omega}_t = \lfloor\boldsymbol{\omega}_{t-1}\rfloor_{\Vert\cdot\Vert\leq (1-\eta)\Vert\boldsymbol{\omega}_{t-1}\Vert} - \eta \boldsymbol{\phi}_t \tag{3}
+\]</p>
+<p>That is, first reduce the norm of \(\boldsymbol{\omega}_{t-1}\) to \(1-\eta\) times its original value, then perform the update. This gives:</p>
+<p>\[
+\Vert\boldsymbol{\omega}_t\Vert \leq (1-\eta)\Vert\boldsymbol{\omega}_{t-1}\Vert + \eta \tau \leq \max(\Vert\boldsymbol{\omega}_{t-1}\Vert,\tau)
+\]</p>
+<p>Propagating this forward: \(\Vert\boldsymbol{\omega}_t\Vert \leq \max(\Vert\boldsymbol{\omega}_{t-1}\Vert,\tau) \leq \cdots \leq \max(\Vert\boldsymbol{\omega}_0\Vert,\tau)\). As long as the initialization satisfies \(\Vert\boldsymbol{\omega}_0\Vert\leq\tau\), the entire update chain automatically satisfies \(\Vert\boldsymbol{\omega}_t\Vert\leq \tau\). This conclusion is independent of the specific norm — it relies only on the triangle inequality. And the minimal-modification operation for reducing the norm is precisely the clipping operator defined in equation (2), so using it to reduce the norm is a natural choice.</p>
+<p>We call this approach &quot;Pre Decay.&quot; The difference from Post Clip is that the latter's threshold is the static \(\tau\) (so clipping does not necessarily trigger), while the former's threshold is the dynamic \((1-\eta)\Vert\boldsymbol{\omega}_{t-1}\Vert\), and clipping always triggers. This process is smoother, which is why we call it &quot;decay&quot; rather than &quot;clipping&quot; — it is a generalization of weight decay.</p>
+</section>
+<section>
+<h2 id="basic-results" tabindex="-1">Basic Results</h2>
+<p>So far we have established a general framework for constraining parameter norms, with two approaches: Post Clip and Pre Decay. The core operation in both is the clipping operator \(\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert\leq\tau}\) defined in equation (2), which currently only has a formal definition. In practice, it must be computed on a case-by-case basis for specific norms. Below we present some basic results.</p>
+<h3 id="a-simple-example" tabindex="-1">A Simple Example</h3>
+<p>In this section we first compute a simple example where the chosen norm is \(\Vert\cdot\Vert_{RMS}\), which for vectors is equivalent to the L2 norm and for matrices is equivalent to the Frobenius norm. It is not hard to obtain:</p>
+<p>\[
+\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert_{RMS}\leq\tau} = \operatorname*{argmin}_{\Vert\tilde{\boldsymbol{\omega}}\Vert_{RMS}\leq\tau} \Vert \boldsymbol{\omega} - \tilde{\boldsymbol{\omega}}\Vert_{RMS} = \min\left(1,\,\frac{\tau}{\Vert\boldsymbol{\omega}\Vert_{RMS}}\right)\boldsymbol{\omega}
+\]</p>
+<p>The proof is left to the reader (if you really cannot figure it out, you can ask Kimi). In particular, substituting \(\tau = (1 - \eta) \Vert\omega\Vert_{RMS}\):</p>
+<p>\[
+\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert_{RMS}\leq (1 - \eta) \Vert\omega\Vert_{RMS}} = \min\left(1,\,\frac{(1 - \eta) \Vert\omega\Vert_{RMS}}{\Vert\boldsymbol{\omega}\Vert_{RMS}}\right)\boldsymbol{\omega} = (1-\eta)\boldsymbol{\omega}
+\]</p>
+<p>Then substituting into equation (3):</p>
+<p>\[
+\boldsymbol{\omega}_t = (1-\eta)\boldsymbol{\omega}_{t-1} - \eta \boldsymbol{\phi}_t
+\]</p>
+<p>It is easy to see that this is simply conventional weight decay. In other words, Pre Decay under the RMS norm is our familiar weight decay — it is the Pre Decay scheme with minimal modification to the original parameter under the constraint of maintaining the RMS norm (equivalently, the L2 norm of a vector or the Frobenius norm of a matrix).</p>
+<h3 id="singular-value-clipping" tabindex="-1">Singular Value Clipping</h3>
+<p>Now we enter this article's &quot;main event&quot; — matrix parameters and Muon. Here we return to the notation \(\boldsymbol{W}\), and write Muon's original update rule as:</p>
+<p>\[
+\boldsymbol{W}_t = \boldsymbol{W}_{t-1} - \eta\lambda\boldsymbol{\Phi}_t,\quad \boldsymbol{\Phi}_t=\frac{1}{\lambda}\sqrt{\frac{d_{out}}{d_{in}}}\operatorname{msign}(\boldsymbol{G}_t)
+\]</p>
+<p>Let \(\tau = \frac{1}{\lambda}\sqrt{\frac{d_{out}}{d_{in}}}\), so that \(\Vert\boldsymbol{\Phi}_t\Vert_2=\tau\). The two approaches for ensuring \(\boldsymbol{W}_t\) satisfies \(\Vert\boldsymbol{W}_t\Vert_2\leq\tau\) are:</p>
+<p>\[
+\begin{aligned}
+\text{Post Clip:}\quad\boldsymbol{W}_t =&\, \lfloor\boldsymbol{W}_{t-1} - \eta\lambda\boldsymbol{\Phi}_t\rfloor_{\Vert\cdot\Vert_2\leq\tau} \\[5pt]
+\text{Pre Decay:}\quad\boldsymbol{W}_t =&\, \lfloor\boldsymbol{W}_{t-1}\rfloor_{\Vert\cdot\Vert_2\leq(1-\eta\lambda)\Vert\boldsymbol{W}_{t-1}\Vert_2}  - \eta\lambda\boldsymbol{\Phi}_t \\
+\end{aligned}
+\]</p>
+<p>The next task is to compute \(\lfloor\boldsymbol{W}\rfloor_{\Vert\cdot\Vert_2\leq\tau}\). Using the equivalence between RMS and Frobenius norms, this equals:</p>
+<p>\[
+\lfloor\boldsymbol{W}\rfloor_{\Vert\cdot\Vert_2\leq\tau} = \operatorname*{argmin}_{\Vert\tilde{\boldsymbol{W}}\Vert_2\leq\tau} \Vert\boldsymbol{W} - \tilde{\boldsymbol{W}}\Vert_F \tag{4}
+\]</p>
+<p>The optimal solution to this problem should be familiar to some readers — it is the &quot;Singular Value Clipping (SVC)&quot; that we mentioned in <a href="https://kexue.fm/archives/10795"><em>Higher-Order MuP: A Simpler Yet More Sophisticated Spectral Scaling Condition</em></a>, and which was called \(\operatorname{mclip}\) in <a href="https://kexue.fm/archives/11006"><em>Computing Singular Value Clipping mclip via msign (Part 1)</em></a> and <a href="https://kexue.fm/archives/11059"><em>Computing Singular Value Clipping mclip via msign (Part 2)</em></a>:</p>
+<p>\[
+\lfloor\boldsymbol{W}\rfloor_{\Vert\cdot\Vert_2\leq\tau} = \operatorname{mclip}(\boldsymbol{W};\tau) = \boldsymbol{U}\min(\boldsymbol{\Sigma},\tau)\boldsymbol{V}^{\top} \tag{5}
+\]</p>
+<p>where \(\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}\) is the SVD of \(\boldsymbol{W}\), and \(\min(\boldsymbol{\Sigma},\tau)\) clips the singular values to not exceed \(\tau\). We will demonstrate the proof in the next section. With this notation, the two approaches can be written as:</p>
+<p>\[
+\begin{aligned}
+\text{Post Clip:}\quad\boldsymbol{W}_t =&\, \operatorname{mclip}(\boldsymbol{W}_{t-1} - \eta\lambda\boldsymbol{\Phi}_t;\tau) \\[5pt]
+\text{Pre Decay:}\quad\boldsymbol{W}_t =&\, \operatorname{mclip}(\boldsymbol{W}_{t-1};(1-\eta\lambda)\Vert\boldsymbol{W}_{t-1}\Vert_2)  - \eta\lambda\boldsymbol{\Phi}_t \\
+\end{aligned}
+\]</p>
+<h3 id="derivation" tabindex="-1">Derivation</h3>
+<p>In this section we prove result (5). Let the SVD of \(\boldsymbol{W}\) be \(\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top}\), where \(\boldsymbol{U}\in\mathbb{R}^{d_{in}\times d_{in}}\), \(\boldsymbol{\Sigma}\in\mathbb{R}^{d_{in}\times d_{out}}\), \(\boldsymbol{V}\in\mathbb{R}^{d_{out}\times d_{out}}\). Then:</p>
+<p>\[
+\Vert\boldsymbol{W} - \tilde{\boldsymbol{W}}\Vert_F = \Vert\boldsymbol{U}\boldsymbol{\Sigma}\boldsymbol{V}^{\top} - \tilde{\boldsymbol{W}}\Vert_F = \Vert\boldsymbol{U}(\boldsymbol{\Sigma} - \boldsymbol{U}^{\top}\tilde{\boldsymbol{W}}\boldsymbol{V})\boldsymbol{V}^{\top}\Vert_F = \Vert\boldsymbol{\Sigma} - \boldsymbol{U}^{\top}\tilde{\boldsymbol{W}}\boldsymbol{V}\Vert_F
+\]</p>
+<p>The last equality holds because orthogonal matrices do not change the Frobenius norm. Similarly, orthogonal matrices do not change the spectral norm, so letting \(\tilde{\boldsymbol{\Sigma}}=\boldsymbol{U}^{\top}\tilde{\boldsymbol{W}}\boldsymbol{V}\), the objective (4) can be equivalently simplified to:</p>
+<p>\[
+\operatorname*{argmin}_{\Vert\tilde{\boldsymbol{\Sigma}}\Vert_2\leq\tau} \Vert\boldsymbol{\Sigma} - \tilde{\boldsymbol{\Sigma}}\Vert_F
+\]</p>
+<p>Note that \(\boldsymbol{\Sigma}\) here is a diagonal matrix with diagonal entries \(\sigma_1,\sigma_2,\cdots \geq 0\), but \(\tilde{\boldsymbol{\Sigma}}\) is initially undetermined — for the proof we treat it as a general matrix. Writing in component form:</p>
+<p>\[
+\Vert\boldsymbol{\Sigma} - \tilde{\boldsymbol{\Sigma}}\Vert_F^2 = \sum_i \sigma_i^2 + \sum_{i,j} \tilde{\Sigma}_{i,j}^2 - 2\sum_i \sigma_i \tilde{\Sigma}_{i,i} \geq \sum_i \sigma_i^2 + \sum_i (\tilde{\Sigma}_{i,i}^2 - 2 \sigma_i \tilde{\Sigma}_{i,i})
+\]</p>
+<p>Term by term, \(\tilde{\Sigma}_{i,i}^2 - 2 \sigma_i \tilde{\Sigma}_{i,i}\) is simply a quadratic function of \(\tilde{\Sigma}_{i,i}\), minimized at \(\tilde{\Sigma}_{i,i}=\sigma_i\). But we also have the constraint \(\Vert\tilde{\boldsymbol{\Sigma}}\Vert_2\leq\tau\). Since the spectral norm is at least as large as the absolute value of any matrix entry, we have at least the constraint \(\tilde{\Sigma}_{i,i}\leq\tau\). Under this constraint, \(\tilde{\Sigma}_{i,i}^2 - 2 \sigma_i \tilde{\Sigma}_{i,i}\) is minimized at \(\tilde{\Sigma}_{i,i}^* = \min(\sigma_i,\tau)\).</p>
+<p>Considering that all equalities hold simultaneously, we get \(\tilde{\Sigma}_{i,j}^*=0\) for \(i\neq j\). Thus \(\tilde{\boldsymbol{\Sigma}}^*\) is also a diagonal matrix, which can be written succinctly as \(\tilde{\boldsymbol{\Sigma}}^*=\min(\boldsymbol{\Sigma},\tau)\), corresponding to \(\tilde{\boldsymbol{W}}^*=\boldsymbol{U}\min(\boldsymbol{\Sigma},\tau)\boldsymbol{V}^{\top}\). This completes the proof of result (5).</p>
+<h3 id="clipping-the-leading-term" tabindex="-1">Clipping the Leading Term</h3>
+<p>So how can \(\operatorname{mclip}\) be computed efficiently? Performing a full SVD at every training step is obviously too expensive. In the articles <a href="https://kexue.fm/archives/11006"><em>Computing Singular Value Clipping mclip via msign (Part 1)</em></a> and <a href="https://kexue.fm/archives/11059"><em>Computing Singular Value Clipping mclip via msign (Part 2)</em></a>, we actually explored this problem systematically. The approach there was to use \(\operatorname{msign}\) to implement it, but this requires 2–3 applications of \(\operatorname{msign}\), which is costly. For example, one identity discovered in Part 2 is:</p>
+<p>\[
+\operatorname{mclip}(\boldsymbol{W};\tau)
+=\frac{1}{2}\Bigl\{\boldsymbol{W}+\tau\operatorname{msign}(\boldsymbol{W})-(\tau\boldsymbol{I}-\boldsymbol{W}\operatorname{msign}(\boldsymbol{W})^{\top})\operatorname{msign}(\tau\operatorname{msign}(\boldsymbol{W})-\boldsymbol{W})\Bigr\}
+\]</p>
+<p>This requires two applications of \(\operatorname{msign}\). Since parameter computations are typically done in FP32, executing two \(\operatorname{msign}\) operations is quite expensive, making this not yet particularly practical.</p>
+<p>Here we primarily consider the element-wise clipping approach discussed in <a href="https://kexue.fm/archives/11719"><em>Streaming Power Iteration for Muon 5: Extensions</em></a>. Specifically, \(\operatorname{mclip}\) clips all singular values exceeding \(\tau\) down to \(\tau\). The necessary operation is to clip the leading singular value to \(\tau\) (if it exceeds \(\tau\)). After clipping the leading singular value, if there still exist singular values exceeding \(\tau\), the largest among them becomes the new leading singular value. So by repeatedly &quot;clipping the leading singular value to \(\tau\),&quot; we can implement \(\operatorname{mclip}\).</p>
+<p>Since the leading singular value and singular vectors can be efficiently obtained via power iteration (denoted \(\mathop{\text{SVD1}}\)), clipping the leading singular value can be considered efficient. Furthermore, we assume training is sufficiently smooth so that each step only needs one leading singular value clip, which can approximately achieve the same effect. Based on this strategy, the two approaches for constraining singular values can be further written as:</p>
+<p>\[
+\begin{aligned}
+\text{Post Clip:}\quad\boldsymbol{W}_t =&\, \tilde{\boldsymbol{W}}_t - \max(\sigma_1 - \tau, 0) \boldsymbol{u}_1 \boldsymbol{v}_1^{\top},\quad\sigma_1, \boldsymbol{u}_1, \boldsymbol{v}_1 = \mathop{\text{SVD1}}(\tilde{\boldsymbol{W}}_t),\quad\tilde{\boldsymbol{W}}_t = \boldsymbol{W}_{t-1} - \eta \boldsymbol{\Phi}_t \\[5pt]
+\text{Pre Decay:}\quad\boldsymbol{W}_t =&\, \boldsymbol{W}_{t-1} - \lambda\eta\sigma_1 \boldsymbol{u}_1 \boldsymbol{v}_1^{\top} - \eta \boldsymbol{\Phi}_t,\quad\sigma_1, \boldsymbol{u}_1, \boldsymbol{v}_1 = \mathop{\text{SVD1}}(\boldsymbol{W}_{t-1})
+\end{aligned}
+\]</p>
+<p>The &quot;Pre Decay&quot; version is precisely the spectral weight decay introduced in <a href="https://kexue.fm/archives/10648"><em>From Spectral Norm Gradients to a New Form of Weight Decay</em></a> — after more than a year, we have arrived at the same result via a different path. As for the &quot;Post Clip&quot; version, <a href="https://x.com/_arohan_/status/1929945590366122037">@<em>arohan</em></a> mentioned it on X, calling it &quot;Wion&quot; at the time. In practice, since only one singular value is clipped per step, there may be some particularly &quot;ambitious&quot; matrices whose spectral norm noticeably deviates from the set threshold — this is normal and will gradually decrease during the LR decay phase.</p>
+<h3 id="other-details" tabindex="-1">Other Details</h3>
+<p>For more precise clipping, we can also use power iteration to simultaneously compute the top-\(k\) singular values and singular vectors, clipping at most \(k\) singular values per step. The cost is that the L2 normalization in power iteration must be replaced with QR decomposition, and QR decomposition also has acceleration techniques. The relevant principles can be found in the streaming power iteration series, such as <a href="https://kexue.fm/archives/11654"><em>Streaming Power Iteration for Muon 1: First Encounter</em></a>.</p>
+<p>Beyond the spectral norm of linear layer matrices, in <a href="https://kexue.fm/archives/11647"><em>Beyond MuP 3: Special Cases, Special Treatment</em></a> we encountered different norms for other layers. For example, Embedding and LM Head correspond to the maximum row and column RMS respectively, while the gamma parameter of RMS Norm corresponds to the maximum absolute value, also known as the infinity norm of a vector.</p>
+<p>Fortunately, the clipping operator \(\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert\leq\tau}\) under these norms is relatively easy to compute. For example, the Embedding layer's norm is the maximum row RMS, so the clipping operator simply clips each row vector's RMS to not exceed \(\tau\). The LM Head is analogous, just with rows replaced by columns. As for the gamma parameter, it is even simpler — it is directly the element-wise clip \(\mathop{\text{clip}}(\boldsymbol{\gamma};-\tau,\tau) = \max(\min(\boldsymbol{\gamma},\tau),-\tau)\).</p>
+<p>These conclusions are all quite intuitive, and their proofs are relatively simple, so we will not expand on them — consider them exercises for the reader.</p>
+</section>
+<section>
+<h2 id="the-necessity-of-guarantees" tabindex="-1">The Necessity of Guarantees</h2>
+<p>Some readers may wonder: does it really need to be this complicated? Can't we just use ordinary weight decay like in <a href="https://papers.cool/arxiv/2502.07529"><em>Training Deep Learning Models with Norm-Constrained LMOs</em></a>? For example:</p>
+<p>\[
+\boldsymbol{W}_t = (1-\eta\lambda)\boldsymbol{W}_{t-1}  - \eta\sqrt{\frac{d_{out}}{d_{in}}}\operatorname{msign}(\boldsymbol{G}_t) \tag{6}
+\]</p>
+<p>This can also constrain the spectral norm to within \(\tau = \frac{1}{\lambda}\sqrt{\frac{d_{out}}{d_{in}}}\) — so why not use this simpler form?</p>
+<p>The answer is: to avoid excessive intervention. From definition (2), our clipping operator is the operation that achieves the same effect with minimal modification to the original parameter. For the spectral norm, directly multiplying by \(1-\eta\lambda\) can also reduce the spectral norm of \(\boldsymbol{W}_{t-1}\) to at most \((1-\eta\lambda)\Vert\boldsymbol{W}_{t-1}\Vert_2\), but since it differs from the minimal-modification \(\operatorname{mclip}\), it inevitably involves some degree of &quot;excessive intervention.&quot;</p>
+<p>The consequences of excessive intervention come in two forms: either we choose a small \(\lambda\) to preserve performance, in which case \(\tau\) is too large and we cannot guarantee the spectral norm stays within our desired range; or we choose a large \(\lambda\) to control the spectral norm, but this significantly degrades performance. For instance, in the case \(d_{in}=d_{out}\) where we want the spectral norm not to exceed 5, the formula gives \(\lambda=0.2\). For Muon with equation (6), a weight decay coefficient of 0.2 is extremely large (the typical value is around 0.01).</p>
+<p>Note that we have repeatedly emphasized &quot;guarantee&quot; — this is crucial. Suppose we use weight decay with a coefficient of 0.01; theoretically the spectral norm could reach up to 100, but experiments on small models might show it never even reaches 5. This is very common. However, safety on small models does not mean safety on large models. As we have said before, large models are powerful — powerful enough to amplify any subtle bug. If the theoretical upper bound is 100, a small model may never reach it, but a large model truly can.</p>
+<p>Therefore, ensuring that critical parameter norms have a reasonable theoretical bound is absolutely necessary — this is the embodiment of &quot;stability&quot; in the &quot;stability first, speed second&quot; principle. And the clipping operator defined in equation (2) is the most &quot;lightweight&quot; operation that guarantees boundedness. In other words, it is likely the operation that minimizes performance loss while guaranteeing the same bounds.</p>
+</section>
+<section>
+<h2 id="summary" tabindex="-1">Summary</h2>
+<p>This article, based on the minimal-modification principle, proposes a general framework for maintaining parameter stability throughout training, comprising two approaches: Post Clip and Pre Decay. Under the spectral norm, these further specialize to singular value clipping and spectral weight decay. These operations aim to guarantee that critical parameter norms remain bounded while minimizing intervention in the training dynamics.</p>
+<hr class="section-divider">
+<p><em>Citation: Su, J. (2026, April 24). MuP之上：4. 坚守参数的稳定性 [Beyond MuP 4: Upholding Parameter Stability]. Scientific Spaces. <a href="https://kexue.fm/archives/11729">https://kexue.fm/archives/11729</a></em></p>
+<p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
+</section>
+
+        </article>
+        <footer>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
+
+        </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
+    </body>
+</html>
