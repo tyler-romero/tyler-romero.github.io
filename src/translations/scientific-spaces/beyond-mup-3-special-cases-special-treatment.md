@@ -11,7 +11,7 @@ math: true
 
 <hr class="section-divider">
 
-After so many related blog posts, most readers should be no stranger to the Muon optimizer — even without knowing the theoretical details, you have probably come away with the impression that it is "an optimizer custom-built for matrix parameters." However, this characterization is not entirely correct — for instance, the input-side Embedding layer and the output-side LM Head both have matrix parameters, yet neither is suited for Muon (see [*Muon Optimizer Guide: Quick Start and Key Details*](https://kexue.fm/archives/11416)).
+After so many related blog posts, most readers should be no stranger to the Muon optimizer — even without knowing the theoretical details, you have probably come away with the impression that it is "an optimizer custom-built for matrix parameters." However, this characterization is not entirely correct — for instance, the input-side Embedding layer and the output-side LM Head both have matrix parameters, yet neither is suited for Muon (see [*Muon Optimizer Guide: Quick Start and Key Details*](/translations/scientific-spaces/muon-optimizer-guide-quick-start-and-key-details/)).
 
 Why must they be "treated differently"? This article will continue using the three stability metrics proposed in the first installment, exploring the initialization rules and corresponding steepest descent directions for different types of layers, thereby answering this question.
 
