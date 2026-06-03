@@ -11,7 +11,7 @@ math: true
 
 <hr class="section-divider">
 
-If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see [*A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back*](https://kexue.fm/archives/11033)) all add a short convolution to \(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}\). For example, here is the architecture of [*DeltaNet*](https://arxiv.org/abs/2406.06484):
+If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see [*A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back*](/translations/scientific-spaces/a-brief-history-of-linear-attention/)) all add a short convolution to \(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}\). For example, here is the architecture of [*DeltaNet*](https://arxiv.org/abs/2406.06484):
 
 ![Short Conv in DeltaNet](/assets/img/deltanet-short-conv.png)
 
@@ -21,7 +21,7 @@ In what follows, I will present my own understanding (or more accurately, my con
 
 ## Test-Time Training
 
-From [*A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back*](https://kexue.fm/archives/11033), we know that the core idea behind current new-style linear attention is [*TTT (Test-Time Training)*](https://arxiv.org/abs/2407.04620), or equivalently, online learning. TTT exploits the similarity between optimizer updates and RNN iterations, using optimizers to construct (not necessarily linear) RNN models. Models such as DeltaNet, GDN, and Comba can all be seen as special cases of this framework.
+From [*A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back*](/translations/scientific-spaces/a-brief-history-of-linear-attention/), we know that the core idea behind current new-style linear attention is [*TTT (Test-Time Training)*](https://arxiv.org/abs/2407.04620), or equivalently, online learning. TTT exploits the similarity between optimizer updates and RNN iterations, using optimizers to construct (not necessarily linear) RNN models. Models such as DeltaNet, GDN, and Comba can all be seen as special cases of this framework.
 
 Specifically, TTT treats \(\boldsymbol{K}, \boldsymbol{V}\) as paired training data \((\boldsymbol{k}_1, \boldsymbol{v}_1), (\boldsymbol{k}_2, \boldsymbol{v}_2), \cdots, (\boldsymbol{k}_t, \boldsymbol{v}_t)\). We use this data to train a model \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{k})\), and then output \(\boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{q}_t)\), where \(\boldsymbol{S}_t\) denotes the model parameters, updated via SGD:
 

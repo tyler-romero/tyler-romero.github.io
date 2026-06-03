@@ -143,7 +143,7 @@ Second, its increment \(\Delta\boldsymbol{W}\) should take the following form
 \Delta\boldsymbol{W} = -\eta\sqrt{\frac{d_{\text{out}}}{d_{\text{in}}}}\,\text{msign}(\boldsymbol{G}) \tag{13}
 \]
 
-This is precisely the MuP version of Muon (for the differences between several versions, see [*Muon Optimizer Guide: Quick Start and Key Details*](https://kexue.fm/archives/11416); the standard Muon replaces \(\boldsymbol{G}\) with its momentum, which can be viewed as a smoother gradient estimate). Additionally, we still have some work to do regarding constraints on \(\boldsymbol{W}\), which we will explore in later articles.
+This is precisely the MuP version of Muon (for the differences between several versions, see [*Muon Optimizer Guide: Quick Start and Key Details*](/translations/scientific-spaces/muon-optimizer-guide-quick-start-and-key-details/); the standard Muon replaces \(\boldsymbol{G}\) with its momentum, which can be viewed as a smoother gradient estimate). Additionally, we still have some work to do regarding constraints on \(\boldsymbol{W}\), which we will explore in later articles.
 
 Since we have already written extensively about MuP and Muon in previous blog posts, neither of these results is new at this point. This article serves only as the first case study, demonstrating the reasonableness of metrics \((1)\), \((2)\), and \((3)\). They provide a unified stability metric formula for the parameters of any layer and their increments, thereby generalizing Muon's conclusions.
 

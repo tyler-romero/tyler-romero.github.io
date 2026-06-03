@@ -11,13 +11,13 @@ math: true
 
 <hr class="section-divider">
 
-Through the derivations and computations of the previous articles, we can observe that the three stability indicators proposed in the first article [*Beyond MuP 1: Three Characteristics of Good Models*](https://kexue.fm/archives/11340) can generally be divided into "parameter stability" and "increment stability." In [*Beyond MuP 2: Linear Layers and Steepest Descent*](https://kexue.fm/archives/11605) and [*Beyond MuP 3: Special Cases, Special Treatment*](https://kexue.fm/archives/11647), we demonstrated the process of combining increment stability with steepest descent to derive new update rules (optimizers).
+Through the derivations and computations of the previous articles, we can observe that the three stability indicators proposed in the first article [*Beyond MuP 1: Three Characteristics of Good Models*](/translations/scientific-spaces/beyond-mup-1-three-characteristics-of-good-models/) can generally be divided into "parameter stability" and "increment stability." In [*Beyond MuP 2: Linear Layers and Steepest Descent*](/translations/scientific-spaces/beyond-mup-2-linear-layers-and-steepest-descent/) and [*Beyond MuP 3: Special Cases, Special Treatment*](/translations/scientific-spaces/beyond-mup-3-special-cases-special-treatment/), we demonstrated the process of combining increment stability with steepest descent to derive new update rules (optimizers).
 
 However, for parameter stability, we previously only addressed initialization. The task of this article is precisely to explore how to maintain parameter stability throughout the entire training process, completing the theoretical framework in practice.
 
 ## Problem Background
 
-Taking [*Beyond MuP 2: Linear Layers and Steepest Descent*](https://kexue.fm/archives/11605) as an example, the three stability indicators are:
+Taking [*Beyond MuP 2: Linear Layers and Steepest Descent*](/translations/scientific-spaces/beyond-mup-2-linear-layers-and-steepest-descent/) as an example, the three stability indicators are:
 
 \[
 \begin{aligned}
@@ -27,7 +27,7 @@ Taking [*Beyond MuP 2: Linear Layers and Steepest Descent*](https://kexue.fm/arc
 \end{aligned}
 \]
 
-where \(\boldsymbol{W}\in\mathbb{R}^{d_{in}\times d_{out}}\) is the linear layer's parameter. We want all three indicators to be \(\Theta(1)\), which means we want the parameter and its increment to satisfy \(\Vert\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\) and \(\Vert\Delta\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\), respectively. In [*Beyond MuP 3: Special Cases, Special Treatment*](https://kexue.fm/archives/11647), we performed computations for layers like Embedding and LM Head, and the conclusions were similar — only the corresponding norms differed.
+where \(\boldsymbol{W}\in\mathbb{R}^{d_{in}\times d_{out}}\) is the linear layer's parameter. We want all three indicators to be \(\Theta(1)\), which means we want the parameter and its increment to satisfy \(\Vert\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\) and \(\Vert\Delta\boldsymbol{W}\Vert_2 = \Theta(\sqrt{d_{out}/d_{in}})\), respectively. In [*Beyond MuP 3: Special Cases, Special Treatment*](/translations/scientific-spaces/beyond-mup-3-special-cases-special-treatment/), we performed computations for layers like Embedding and LM Head, and the conclusions were similar — only the corresponding norms differed.
 
 For the increment condition, we treat it as a stability indicator, and based on the "stability first, speed second" steepest descent principle, we derive the theoretically optimal update rule. For example, the linear layer corresponds to the Muon optimizer:
 
@@ -211,7 +211,7 @@ The "Pre Decay" version is precisely the spectral weight decay introduced in [*F
 
 For more precise clipping, we can also use power iteration to simultaneously compute the top-\(k\) singular values and singular vectors, clipping at most \(k\) singular values per step. The cost is that the L2 normalization in power iteration must be replaced with QR decomposition, and QR decomposition also has acceleration techniques. The relevant principles can be found in the streaming power iteration series, such as [*Streaming Power Iteration for Muon 1: First Encounter*](https://kexue.fm/archives/11654).
 
-Beyond the spectral norm of linear layer matrices, in [*Beyond MuP 3: Special Cases, Special Treatment*](https://kexue.fm/archives/11647) we encountered different norms for other layers. For example, Embedding and LM Head correspond to the maximum row and column RMS respectively, while the gamma parameter of RMS Norm corresponds to the maximum absolute value, also known as the infinity norm of a vector.
+Beyond the spectral norm of linear layer matrices, in [*Beyond MuP 3: Special Cases, Special Treatment*](/translations/scientific-spaces/beyond-mup-3-special-cases-special-treatment/) we encountered different norms for other layers. For example, Embedding and LM Head correspond to the maximum row and column RMS respectively, while the gamma parameter of RMS Norm corresponds to the maximum absolute value, also known as the infinity norm of a vector.
 
 Fortunately, the clipping operator \(\lfloor\boldsymbol{\omega}\rfloor_{\Vert\cdot\Vert\leq\tau}\) under these norms is relatively easy to compute. For example, the Embedding layer's norm is the maximum row RMS, so the clipping operator simply clips each row vector's RMS to not exceed \(\tau\). The LM Head is analogous, just with rows replaced by columns. As for the gamma parameter, it is even simpler — it is directly the element-wise clip \(\mathop{\text{clip}}(\boldsymbol{\gamma};-\tau,\tau) = \max(\min(\boldsymbol{\gamma},\tau),-\tau)\).
 
