@@ -59,7 +59,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-10-04T16:00:00.000Z",
-            "dateModified": "2026-05-11T18:38:23.353Z",
+            "dateModified": "2026-06-03T21:50:43.079Z",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/why-linear-attention-needs-short-conv/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -119,14 +119,14 @@
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11320">为什么线性注意力要加Short Conv？</a> by Jianlin Su (苏剑林), originally published on October 5, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
-<p>If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see <a href="https://kexue.fm/archives/11033"><em>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</em></a>) all add a short convolution to \(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}\). For example, here is the architecture of <a href="https://arxiv.org/abs/2406.06484"><em>DeltaNet</em></a>:</p>
+<p>If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see <a href="/translations/scientific-spaces/a-brief-history-of-linear-attention/"><em>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</em></a>) all add a short convolution to \(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}\). For example, here is the architecture of <a href="https://arxiv.org/abs/2406.06484"><em>DeltaNet</em></a>:</p>
 <p><picture><source type="image/webp" srcset="/assets/img/X-gglKthBk-300.webp 300w, /assets/img/X-gglKthBk-600.webp 600w, /assets/img/X-gglKthBk-900.webp 900w, /assets/img/X-gglKthBk-946.webp 946w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/X-gglKthBk-300.png" alt="Short Conv in DeltaNet" width="946" height="753" srcset="/assets/img/X-gglKthBk-300.png 300w, /assets/img/X-gglKthBk-600.png 600w, /assets/img/X-gglKthBk-900.png 900w, /assets/img/X-gglKthBk-946.png 946w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
 <p>Why add this short convolution? An intuitive explanation might be that it increases model depth, enhances the model's token-mixing ability, and so on — in plain terms, it compensates for the drop in expressiveness caused by linearization. This explanation is roughly correct, but it is a &quot;one-size-fits-all template&quot; answer. We would like a more precise understanding of the mechanism by which it works.</p>
 <p>In what follows, I will present my own understanding (or more accurately, my conjecture).</p>
 </section>
 <section>
 <h2 id="test-time-training" tabindex="-1">Test-Time Training</h2>
-<p>From <a href="https://kexue.fm/archives/11033"><em>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</em></a>, we know that the core idea behind current new-style linear attention is <a href="https://arxiv.org/abs/2407.04620"><em>TTT (Test-Time Training)</em></a>, or equivalently, online learning. TTT exploits the similarity between optimizer updates and RNN iterations, using optimizers to construct (not necessarily linear) RNN models. Models such as DeltaNet, GDN, and Comba can all be seen as special cases of this framework.</p>
+<p>From <a href="/translations/scientific-spaces/a-brief-history-of-linear-attention/"><em>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</em></a>, we know that the core idea behind current new-style linear attention is <a href="https://arxiv.org/abs/2407.04620"><em>TTT (Test-Time Training)</em></a>, or equivalently, online learning. TTT exploits the similarity between optimizer updates and RNN iterations, using optimizers to construct (not necessarily linear) RNN models. Models such as DeltaNet, GDN, and Comba can all be seen as special cases of this framework.</p>
 <p>Specifically, TTT treats \(\boldsymbol{K}, \boldsymbol{V}\) as paired training data \((\boldsymbol{k}_1, \boldsymbol{v}_1), (\boldsymbol{k}_2, \boldsymbol{v}_2), \cdots, (\boldsymbol{k}_t, \boldsymbol{v}_t)\). We use this data to train a model \(\boldsymbol{v} = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{k})\), and then output \(\boldsymbol{o}_t = \boldsymbol{f}(\boldsymbol{S}_t; \boldsymbol{q}_t)\), where \(\boldsymbol{S}_t\) denotes the model parameters, updated via SGD:</p>
 <p>\[
 \boldsymbol{S}_t = \boldsymbol{S}_{t-1} - \eta_t \nabla_{\boldsymbol{S}_{t-1}} \mathcal{L}(\boldsymbol{f}(\boldsymbol{S}_{t-1}; \boldsymbol{k}_t), \boldsymbol{v}_t) \tag{1}

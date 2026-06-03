@@ -59,7 +59,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-03-18T16:00:00.000Z",
-            "dateModified": "2026-05-11T18:38:23.353Z",
+            "dateModified": "2026-06-03T21:50:43.079Z",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -161,7 +161,7 @@
 <p>\[
 \boldsymbol{y}_{t+1} = \boldsymbol{f}_{t+1}(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{x}_t) = \boldsymbol{f}_{t+1}\!\left(\sum_{s=0}^{t} \underbrace{\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_{t \leftarrow s+1}^{res}\boldsymbol{H}_s^{post}}_{a_{t+1,s}}\,\boldsymbol{y}_s\right) \tag{5}
 \]</p>
-<p>Note that each \(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_{t \leftarrow s+1}^{res}\boldsymbol{H}_s^{post}\) is a \(1 \times 1\) matrix, i.e., a scalar, so this is also an inter-layer Attention form as in Equation (3). Readers familiar with <a href="https://kexue.fm/archives/11033">linear attention</a> should quickly see the connection — HC is essentially DeltaNet &quot;rotated 90 degrees.&quot; In practice, the three \(\boldsymbol{H}\) matrices are computed by simple linear layers with \(\tanh\) activation, which means the chained product \(\boldsymbol{H}_{t \leftarrow s}^{res}\) risks explosion or collapse, and non-negativity of \(a_{t+1,s}\) cannot be guaranteed.</p>
+<p>Note that each \(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_{t \leftarrow s+1}^{res}\boldsymbol{H}_s^{post}\) is a \(1 \times 1\) matrix, i.e., a scalar, so this is also an inter-layer Attention form as in Equation (3). Readers familiar with <a href="/translations/scientific-spaces/a-brief-history-of-linear-attention/">linear attention</a> should quickly see the connection — HC is essentially DeltaNet &quot;rotated 90 degrees.&quot; In practice, the three \(\boldsymbol{H}\) matrices are computed by simple linear layers with \(\tanh\) activation, which means the chained product \(\boldsymbol{H}_{t \leftarrow s}^{res}\) risks explosion or collapse, and non-negativity of \(a_{t+1,s}\) cannot be guaranteed.</p>
 <p>Later, mHC made improvements: it switched all three \(\boldsymbol{H}\) matrices to Sigmoid activation, ensuring \(a_{t+1,s} \geq 0\); it then alternately normalized \(\boldsymbol{H}_t^{res}\) to be doubly stochastic, leveraging the closure of doubly stochastic matrices under multiplication to stabilize \(\boldsymbol{H}_{t \leftarrow s}^{res}\); and experiments validated the effectiveness of these changes. However, some newer experiments such as <a href="/translations/zhihu/your-deepseek-mhc-might-not-need-the-m/"><em>&quot;Your DeepSeek mHC Might Not Need the 'm'&quot;</em></a> show that simply setting \(\boldsymbol{H}_t^{res}\) to the identity matrix works well enough.</p>
 </section>
 <section>
