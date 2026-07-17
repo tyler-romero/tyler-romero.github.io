@@ -1,8 +1,8 @@
 ---
-title: NanoGPT Speedrun Living Worklog
-subtitle: How fast can I train GPT-2 on two RTX 4090 GPUs?
+title: NanoGPT Speedrun Worklog
+subtitle: Experiments in training GPT-2 to 3.28 validation loss on two RTX 4090 GPUs
 date: 2025-03-08T00:00:00-08:00
-blurb: How fast can I train GPT-2 on two RTX 4090 GPUs?
+blurb: A worklog of cutting GPT-2 training time from 8.13 hours to 2.55 hours on two RTX 4090 GPUs.
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 math: true
 code: true
@@ -10,15 +10,13 @@ hero_image: /assets/img/golden-gardens.png
 featured_image: /assets/img/golden-gardens-social.jpg
 ---
 
-I've seen [some](https://x.com/kellerjordan0/status/1859331370268623321) [really](https://x.com/kellerjordan0/status/1842300916864844014) [awesome](https://x.com/kellerjordan0/status/1876048851158880624) [GPT-2](https://x.com/hi_tysam/status/1879687807678959729) speedrun results from people like [Keller Jordan](https://x.com/kellerjordan0), [Fern](https://x.com/hi_tysam), [Braden Koszarsky](https://x.com/KoszarskyB), and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware.
+I saw [some](https://x.com/kellerjordan0/status/1859331370268623321) [really](https://x.com/kellerjordan0/status/1842300916864844014) [awesome](https://x.com/kellerjordan0/status/1876048851158880624) [GPT-2](https://x.com/hi_tysam/status/1879687807678959729) speedrun results from people like [Keller Jordan](https://x.com/kellerjordan0), [Fern](https://x.com/hi_tysam), [Braden Koszarsky](https://x.com/KoszarskyB), and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware.
 
-Technically, [the NanoGPT speedrun](https://x.com/kellerjordan0/status/1798863559243513937) is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. [Keller Jordan maintains a leaderboard here](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history). At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!).
+Technically, [the NanoGPT speedrun](https://x.com/kellerjordan0/status/1798863559243513937) is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. [Keller Jordan maintains a leaderboard here](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history). When I started this experiment on January 16, 2025, the record was 3.14 minutes (!).
 
-I have access to **2xRTX 4090 GPUs** and I want to see how fast I can train GPT-2 on them by following the same rules as the NanoGPT speedrun. If I see some success, I may try to transfer my methods to an 8xH100 node for comparison with the main leaderboard.
+I had access to **2xRTX 4090 GPUs**, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from **8.13 hours to 2.55 hours**. This worklog records the changes that produced that result; the code and run logs are available in [the project repository](https://github.com/tyler-romero/nanogpt-speedrun).
 
-I'll be documenting my progress here and updating this post as I go. Code can be found in [this GitHub repo](https://github.com/tyler-romero/nanogpt-speedrun).
-
-## Progress so far
+## Results
 | #                                                      | Description              | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
 | :----------------------------------------------------- | :----------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
 | [1](#1-initial-setup-and-baseline)                     | Initial baseline         | 8.13 hours  | 6.44B           | 221k          | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
@@ -30,27 +28,25 @@ I'll be documenting my progress here and updating this post as I go. Code can be
 
 ## 1. Initial setup and baseline
 
-Part of the goal of this project is for me to learn as I go, so I am going to start at the beginning - with Andrej Karpathy's [PyTorch GPT-2 trainer](https://github.com/karpathy/llm.c/blob/7b929300217ff1a974b63791a228928b39b26409/train_gpt2.py) from [llm.c](https://github.com/karpathy/llm.c). This is the script that Keller Jordan used for [his initial baseline](https://github.com/KellerJordan/modded-nanogpt/tree/master?tab=readme-ov-file#modded-nanogpt). This trainer is very similar to the NanoGPT trainer with some minor modifications / simplifications (such as no dropout).
+Part of the goal of this project was to learn as I went, so I started at the beginning—with Andrej Karpathy's [PyTorch GPT-2 trainer](https://github.com/karpathy/llm.c/blob/7b929300217ff1a974b63791a228928b39b26409/train_gpt2.py) from [llm.c](https://github.com/karpathy/llm.c). This is the script that Keller Jordan used for [his initial baseline](https://github.com/KellerJordan/modded-nanogpt/tree/master?tab=readme-ov-file#modded-nanogpt). The trainer is very similar to NanoGPT with some minor modifications and simplifications, such as removing dropout.
 
-I have upstreamed some QOL improvements and basic tweaks to the training script from Keller's fork, but have not changed any of the core training / modeling logic. Specifically:
+I upstreamed some QOL improvements and basic tweaks to the training script from Keller's fork, but did not change any of the core training or modeling logic. Specifically:
 1. Implemented gradient accumulation so that my 2x24GB GPUs simulate the training experience of an 8xH100 machine.
 2. Increased learning rate to 0.0015 and halved the batch size (total batch size is 262144 - that is bs of `32/device * 2 devices * 1024 sequence length * 4 gradient accum steps`).
 3. Improved learning rate schedule (linear warmup then linear decay).
 4. Removed all affine scale/bias parameters and switched to RMSNorm.
 5. Padded the vocab size from 50257 to 50304 to make it a multiple of 128 (for better tensor core utilization).
-6. Using Pytorch 2.5.1 (the switch from 2.4 to 2.5 gave ~9% speedup on the 8xH100 leaderboard).
+6. Used PyTorch 2.5.1 (the switch from 2.4 to 2.5 gave ~9% speedup on the 8xH100 leaderboard).
 
-Additionally, I added `wandb` logging for easy tracking of training progress - optimistically I may need to remove this one day as it slightly increases step time.
+Additionally, I added `wandb` logging to make it easier to track the training runs.
 
 Commit with the initial setup is here: [`b3c32f8`](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt).
 
-The baseline run time on my 2xRTX 4090 setup is **8.13 hours**.
-
-<!-- TODO: plot -->
+The baseline run time on my 2xRTX 4090 setup was **8.13 hours**.
 
 ## 2. Implementing major improvements from the 8xH100 leaderboard
 
-Waiting 8 hours for a result is too slow for effective experimentation, so I'm going to begin by implementing some of the notable improvements from the 8xH100 leaderboard. I'll start with the most impactful/easiest changes first:
+Waiting 8 hours for a result was too slow for effective experimentation, so I began by implementing some of the notable improvements from the 8xH100 leaderboard. I started with the most impactful and easiest changes:
 1. Architectural changes and training tweaks
 2. Muon optimizer
 3. Dataloading tweaks
@@ -60,46 +56,46 @@ Waiting 8 hours for a result is too slow for effective experimentation, so I'm g
 There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:
 1. [RoPE (Rotary Positional Embeddings)](https://arxiv.org/abs/2104.09864). There are [many](https://www.jitx.io/posts/rope-embeddings) [good](https://blog.eleuther.ai/rotary-embeddings/) explanations of RoPE out there so I won't go into detail here.
 2. [ReLU^2 Activation](https://arxiv.org/pdf/2109.08668)[^relu2]. Many activations that are better than GeLU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.
-3. No gradient clipping. Gradient clipping can help stabilize training but it also slows down training. Since we are speed-running, we will remove gradient clipping. This also eliminates a hyperparameter that needs to be tuned.
+3. No gradient clipping. Gradient clipping can help stabilize training, but it also slows down training. Since this was a speedrun, I removed it. This also eliminated a hyperparameter that needed to be tuned.
 4. [Trapezoidal learning rate schedule](https://arxiv.org/abs/2405.18392). While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been shown to match the performance of cosine schedules.
 
 [^relu2]: ReLU^2 activation function. ![Relu Activation plot](/assets/img/relu2.png)
 
-In addition, learning rate and batch size have been tuned.
+In addition, I tuned the learning rate and batch size.
 
-Once again, many of these changes are [downstreamed](https://en.wikipedia.org/wiki/Downstream_(software_development)) from the [modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt) repository / 8xH100 speedrun. It's not efficient to reinvent the wheel, and I want to get training time down as fast as possible in the beginning.
+Once again, many of these changes were [downstreamed](https://en.wikipedia.org/wiki/Downstream_(software_development)) from the [modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt) repository / 8xH100 speedrun. It wasn't efficient to reinvent the wheel, and I wanted to reduce training time quickly before doing more targeted experiments.
 
-After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340)), the new run time is **7.51 hours**. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second decreased, likely due to the larger batch size (more gradient accumulation steps which tends to translate to lower throughput) and the architectural changes, such as the inclusion of RoPE. Once I have a shorter run time, I will be able to tune more effectively and see if I can remove gradient accumulation.
+After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340)), the new run time was **7.51 hours**. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second decreased, likely due to the larger batch size (more gradient accumulation steps tends to translate to lower throughput) and architectural changes such as the inclusion of RoPE. The shorter run time made further experimentation more practical.
 
 ![Section 2.1 loss plot](/assets/img/2p1_loss_plot.png)
 
 ### 2.2 Muon Optimizer
-The [Muon Optimizer](https://kellerjordan.github.io/posts/muon/) is a new optimizer developed with and for the NanoGPT speedrun by Jordan et al. It is a variant of SGD with Momentum that applies a postprocessing step to the gradient updates to approximately orthogonalize each update matrix. Muon has [some](https://kellerjordan.github.io/posts/muon/#why-is-it-good-to-orthogonalize-the-update) [connections](https://x.com/leloykun/status/1846842883967692926) to approximate second-order optimizers[^steepest] like [Shampoo](https://arxiv.org/abs/1802.09568).
+The [Muon Optimizer](https://kellerjordan.github.io/posts/muon/) was developed with and for the NanoGPT speedrun by Jordan et al. It is a variant of SGD with Momentum that applies a postprocessing step to the gradient updates to approximately orthogonalize each update matrix. Muon has [some](https://kellerjordan.github.io/posts/muon/#why-is-it-good-to-orthogonalize-the-update) [connections](https://x.com/leloykun/status/1846842883967692926) to approximate second-order optimizers[^steepest] like [Shampoo](https://arxiv.org/abs/1802.09568).
 
 [^steepest]: But are these approximate second-order methods actually second-order? [New research](https://arxiv.org/abs/2409.20325v1) suggests that methods like Shampoo and Adam can be viewed as variants of steepest descent under specific norms, and thus are actually first-order methods.
 
 I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put together [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers). For those interested in a more step-by-step walkthrough of Muon, check out [this excellent post](https://jeremybernste.in/writing/deriving-muon) by Jeremy Bernstein.
 
-Muon is designed to work on *Linear* layers, so it is not quite a drop-in replacement for AdamW (e.g. it isn't meant to optimize Embedding layers). However it can be used to optimize all of the hidden layers of our GPT-2 model. The output `lm_head` layer and the token embeddings will still be optimized with AdamW.
+Muon is designed to work on *Linear* layers, so it is not quite a drop-in replacement for AdamW (e.g. it isn't meant to optimize Embedding layers). However, it can be used to optimize all of the hidden layers of our GPT-2 model. The output `lm_head` layer and token embeddings were still optimized with AdamW.
 
-Just like on the 8xH100 leaderboard, we observe a massive speedup when switching to Muon. The new run time is **4.53 hours**, requiring only 3.04B tokens. The tokens/second is also very similar to the previous run, which is a good sign that we are not losing throughput by switching optimizers.
+Just like on the 8xH100 leaderboard, I observed a massive speedup after switching to Muon. The new run time was **4.53 hours**, requiring only 3.04B tokens. The tokens/second remained very similar to the previous run, indicating that the optimizer change did not sacrifice throughput.
 
 ![Section 2.2 loss plot](/assets/img/2p2_loss_plot.png)
 
 ### 2.3 Dataloading Tweaks
-As we have improved our data efficiency via architecture tweaks and an optimizer change, our training throughput has dropped from 221k tokens/second to 187k tokens/second. That is a ~15% drop in throughput. Recovering most of that throughput could provide a significant improvement to our run time. An obvious place to start is with our dataloading and gradient accumulation logic.
+The architecture and optimizer changes improved data efficiency, but training throughput dropped from 221k tokens/second to 187k tokens/second—a decrease of roughly 15%. Recovering that throughput offered another path to a shorter run time, so I turned to the dataloading and gradient accumulation logic.
 
-Up until now, we have loaded a full-batch of data on each device and then split that full batch into smaller chunks (micro-batches) for each gradient accumulation step (recall that we are doing 8 accumulation steps per gradient update). We can instead make a minor tweak to our logic to load only the next micro-batch at each step of the dataloader, and then step the dataloader for each gradient accumulation step.
+Up to this point, I had loaded a full batch of data on each device and then split it into smaller chunks (micro-batches) for each gradient accumulation step. I changed the logic to load only the next micro-batch and advance the dataloader for each accumulation step.
 
-We also increase our torch version from `2.5` to `2.6` (which was recently released), and, in accordance with the [new official rules](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#timing-change-after-record-21) designated on 2025/02/01, we have removed the use of `torch._inductor.config.coordinate_descent_tuning`.
+I also upgraded PyTorch from `2.5` to `2.6`, which had recently been released, and removed `torch._inductor.config.coordinate_descent_tuning` in accordance with the [official rules introduced on February 1, 2025](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#timing-change-after-record-21).
 
-These tweaks bring our throughput back up to 216k tokens/second. In order to make runs more consistently hit the 3.28 validation loss target[^variance], we have also slightly increased the total number of training steps, so now 3.31B tokens are consumed. The new run time is **4.26 hours**, and the changes can be found at [`d59944d`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5).
+These tweaks brought throughput back up to 216k tokens/second. To make runs more consistently hit the 3.28 validation loss target[^variance], I also slightly increased the total number of training steps, bringing consumption to 3.31B tokens. The new run time was **4.26 hours**, and the changes can be found at [`d59944d`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5).
 
-[^variance]: Note that there is some variance in the amount of time it takes for a speedrun candidate to run. For a speedrun to be an official record, it must attain a *mean* validation loss of less than 3.28. I have been a bit lax about this so far because the time difference between runs has been large, and variance relatively small.
+[^variance]: There is some variance in how long a speedrun candidate takes to reach the target. An official record must attain a *mean* validation loss below 3.28. I treated this somewhat loosely in the early experiments because the differences between runs were much larger than the observed variance.
 
 ![Section 2.3 loss plot](/assets/img/2p3_loss_plot.png)
 
-At this point, we have code that can train GPT-2 almost twice as fast as the baseline.
+At this point, the training time was almost half the baseline.
 
 ### 2.4 Logit Soft-capping
 Logit soft-capping is a technique popularized by [Gemma 2](https://storage.googleapis.com/deepmind-media/gemma/gemma-2-report.pdf) and initially used to improve the NanoGPT speedrun by [@Grad62304977](https://x.com/Grad62304977).
@@ -111,31 +107,31 @@ Soft-capping is essentially a smooth and differentiable version of clipping[^sof
 
 [^softcap]: {-} Soft-capping vs Clipping at ±5: ![Soft-capping](/assets/img/softcap.png)
 
-Logit soft-capping prevents logits from growing excessively large by scaling them to a fixed range, which seems to help improve training dynamics. One could argue that this is imposing an inductive bias - and since we're in a relatively small model/low-data regime, this is helpful.
+Logit soft-capping prevents logits from growing excessively large by scaling them to a fixed range, which seems to help improve training dynamics. One could argue that this imposes an inductive bias—and in this relatively small-model, low-data regime, that bias appeared to be helpful.
 
-After implementing logit soft-capping with a cap of 30 (and doing some learning-rate tuning), the new run time is **4.01 hours**, requiring 3.15B tokens (commit [`12eab44`](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e)). Throughput remained steady at ~218k tokens/second.
+After implementing logit soft-capping with a cap of 30 (and doing some learning-rate tuning), the new run time was **4.01 hours**, requiring 3.15B tokens (commit [`12eab44`](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e)). Throughput remained steady at ~218k tokens/second.
 
 ![Section 2.4 loss plot](/assets/img/2p4_loss_plot.png)
 
-## 3 Longer Training and Evaluation Sequence Length
+## 3. Longer Training and Evaluation Sequence Length
 
-So far, we've been training and evaluating on sequences of 1024 tokens. We also haven't been particularly clever about how those sequences are processed. At each step, we simply load the next 1024 tokens into an element of the batch without regard for where the document starts or stops. That means much of the time we are starting in the middle of a document and cutting that document off before it reaches its end. We are also attending to tokens *across documents* since we're just using a simple causal mask.
+Up to this point, I had trained and evaluated on sequences of 1024 tokens without being particularly clever about how those sequences were constructed. At each step, the dataloader simply placed the next 1024 tokens into an element of the batch without regard for document boundaries. That meant frequently starting in the middle of a document, cutting it off before its end, and attending to tokens *across documents* through a simple causal mask.
 
 Cutting off documents in the middle is an especially large issue. See this plot of average loss vs sequence position:
 ![Average Loss vs Sequence Position](/assets/img/avg_loss_vs_seq_position.png)
 
-Notice how the first twenty-five or so positions have a much higher average loss than the later positions. This is because at the beginning of the sequence the LLM has much less information with which to make informed predictions about the next token in the sequence. We want to avoid needlessly restarting documents/sequences in order to avoid this loss penalty!
+Notice how the first twenty-five or so positions have a much higher average loss than later positions. At the beginning of a sequence, the model has much less context with which to predict the next token. Avoiding needless sequence restarts offered a way to reduce this loss penalty.
 
 A natural question to ask at this point is: how long are sequences in our dataset, on average?
 ![Sequence Length CDF Plot](/assets/img/sequence_length_cdf.png)
 
-The data reveals that approximately 20% of documents exceed our current 1024 token sequence length. By increasing the sequence length to >=8192 tokens, we can accommodate virtually all documents in our dataset without truncation.
+The data revealed that approximately 20% of documents exceeded the 1024-token sequence length. Increasing the sequence length to >=8192 tokens would accommodate virtually all documents in the dataset without truncation.
 
-To address the issues identified above, we'll implement two key improvements. First, we'll extend our sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, we'll eliminate the traditional batch dimension entirely and instead maximize sequence length (effectively using a "batch size" of 1 that contains multiple concatenated documents). Second, we'll implement sophisticated attention masking that prevents cross-document attention while simultaneously leveraging the computational efficiency of sparse attention patterns.
+To address these issues, I made two key changes. First, I extended the sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, I eliminated the traditional batch dimension and effectively used a "batch size" of 1 containing multiple concatenated documents. Second, I added attention masking that prevented cross-document attention while retaining the computational efficiency of sparse attention patterns.
 
 Fortunately, [FlexAttention](https://pytorch.org/blog/flexattention/) provides an elegant solution that maintains the performance benefits of [FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) while enabling these improvements. One of FlexAttention's primary strengths is its ability to efficiently handle sparse, custom attention masks, making it ideal for our use case.
 
-To implement FlexAttention, we need to define an appropriate attention mask that handles our specific requirements:
+To implement FlexAttention, I defined a mask that handled the specific requirements of the dataset:
 ```python
 def make_attn_mask(idx, eot_token, window_size=1024):
     # Create a causal mask (only attend to past tokens)
@@ -164,18 +160,24 @@ Let's break down each mask:
 
 3. **Sliding Window Mask**: This limits attention to a fixed window of tokens before the current position. This approach balances efficiency with context retention with a clear tradeoff: smaller windows are more efficient but may miss long-range dependencies, while larger windows capture more context at the expense of resources.
 
-In order to build intuition about the individual component masks, we visualize them below:
+The individual component masks are visualized below:
 ![Causal, Document, Sliding Window Attention Masks](/assets/img/attention_masks.svg)
 
 When combined with the `and_masks` function, these three masks[^redundant] work together to create an efficient attention pattern that respects document boundaries, maintains causality, and limits computational overhead for long sequences.
 
 [^redundant]: Note that the causal mask is actually redundant to the sliding window mask, as the sliding window mask already ensures that tokens can only attend to previous tokens in the sequence. The causal mask is included here for clarity.
 
-After incorporating FlexAttention with these masks, and increasing our sequence length to 32768 tokens, we observe a massive speedup[^hack]. The new run time is **2.55 hours**, requiring only 1.88B tokens (a huge data-efficiency improvement). Our throughput dropped slightly to ~205k tokens/second. See commit [`d982ed5`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) for the full details.
+After incorporating FlexAttention with these masks and increasing the sequence length to 32768 tokens, I observed another massive speedup[^hack]. The final run time was **2.55 hours**, requiring only 1.88B tokens—a large data-efficiency improvement. Throughput dropped slightly to ~205k tokens/second. See commit [`d982ed5`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) for the full details.
 
 [^hack]: This speedup is a bit of a hack against the target metric. Supporting longer sequences is a straightforward way to drop the loss on the validation set, but is unlikely to provide a meaningful improvement to the overall performance of the model on practical benchmarks.
 
 ![Section 3 loss plot](/assets/img/3_loss_plot.png)
+
+## Summary
+
+The final 2.55-hour run was **3.2x faster** than the 8.13-hour baseline and used 1.88B training tokens instead of 6.44B. Muon produced the largest improvement that was independent of the evaluation setup. The final reduction came from longer, document-aware sequences and was more specific to the validation-loss target.
+
+This post records the completed 2025 round of experiments, with 2.55 hours as the last measured result. I may revisit the speedrun in the future, either on the same GPUs or on different hardware. The numbers here are specific to the two-RTX-4090 setup and are not directly comparable to the 8xH100 leaderboard times.
 
 ## References
 <textarea id="bibtex_input" style="display:none;">
