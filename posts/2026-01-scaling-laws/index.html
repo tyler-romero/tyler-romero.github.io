@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -70,7 +72,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["scaling-laws","chinchilla","llms"],
-            "wordCount": 1574,
+            "wordCount": 1576,
             "articleBody": "Note: This post is a work in progress. I will continue to update and expand it over time. Scaling laws are one of the few tools we have for predicting model performance before committing serious compute. When a single training run can cost millions of dollars and take months, the ability to extrapolate from small-scale experiments becomes invaluable. In this post, I want to explore how we can use scaling laws not just as descriptive summaries, but as decision-making frameworks for comparing..."
             }
         </script>
@@ -98,9 +100,11 @@
             <div class="post-header">
                 <h1>Thinking about Scaling Laws</h1>
                 <p class="subtitle">How can we use scaling laws to train stronger LLMs?</p>
+                
                 <p class="date">Jan 10, 2026</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#the-chinchilla-scaling-law">The Chinchilla Scaling Law</a></li><li><a href="#decision-making-with-scaling-laws">Decision Making with Scaling Laws</a><ol><li><a href="#scaling-behavior%3A-efficiency-vs.-scalability">Scaling Behavior: Efficiency vs. Scalability</a></li><li><a href="#targeting-specific-model-and-dataset-sizes">Targeting Specific Model and Dataset Sizes</a></li></ol></li><li><a href="#getting-strong-scaling-law-fits">Getting strong scaling law fits</a></li><li><a href="#recommended-reading">Recommended Reading</a></li></ol></nav>
+
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');
@@ -137,6 +141,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Note: This post is a work in progress. I will continue to update and expand it over time.</em></p>
@@ -295,7 +300,7 @@ N_{opt} \propto C^{a}, \quad D_{opt} \propto C^{b}
 </table>
 <h3 id="targeting-specific-model-and-dataset-sizes" tabindex="-1">Targeting Specific Model and Dataset Sizes</h3>
 <p>When pretraining models, there are essentially a set of model families of roughly the same size. For example, there are many 7B, 32B, and 70B parameter models. Additionally, labs know how many useful tokens they have available for pretraining (or roughly how many GPU hours can be allotted to a specific run).</p>
-<p>Using a chosen model and dataset size (e.g., N=32B, D=10T), we can use our formula to predict the final training loss of a given model architecture based on our empirical scaling law fit. This makes decision-making straightforward: whichever intervention predicts the lowest loss at the target scale is the one we should use<label for="sn-considerations" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-considerations" class="margin-toggle"><span class="sidenote">However, this is still ignoring other important considerations, such as inference-time efficiency, long-context performance, training throughput, and training stability. A complete evaluation framework would need to weigh these factors alongside the raw scaling predictions. For example, faster inference-time efficiency is critical for scaling up RL post-training and directly impacts the end-user experience.</span>.</p>
+<p>Using a chosen model and dataset size (e.g., N=32B, D=10T), we can use our formula to predict the final training loss of a given model architecture based on our empirical scaling law fit. This makes decision-making straightforward: whichever intervention predicts the lowest loss at the target scale is the one we should use<label for="sn-considerations" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-considerations" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">However, this is still ignoring other important considerations, such as inference-time efficiency, long-context performance, training throughput, and training stability. A complete evaluation framework would need to weigh these factors alongside the raw scaling predictions. For example, faster inference-time efficiency is critical for scaling up RL post-training and directly impacts the end-user experience.</span>.</p>
 </section>
 <section>
 <h2 id="getting-strong-scaling-law-fits" tabindex="-1">Getting strong scaling law fits</h2>

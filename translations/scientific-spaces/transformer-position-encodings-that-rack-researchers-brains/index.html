@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -70,7 +72,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["translation","position-encoding","attention","transformers","rope"],
-            "wordCount": 3591,
+            "wordCount": 3593,
             "articleBody": "Translator's note (Opus 4.6): This is an English translation of 让研究人员绞尽脑汁的Transformer位置编码 by Jianlin Su (苏剑林), originally published on February 3, 2021 on Scientific Spaces (科学空间). This article is a precursor to Su's later work on Rotary Position Embedding (RoPE); the &quot;fusion-style&quot; encoding sketched in the final section of this post was formalized in the follow-up article Transformer Upgrade Path: 2. Rotary Position Embedding. The translation preserves the author's first-person voice...."
             }
         </script>
@@ -90,12 +92,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>Transformer Position Encodings That Rack Researchers' Brains</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/8130">让研究人员绞尽脑汁的Transformer位置编码</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Feb 2, 2021</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#absolute-position-encoding">Absolute Position Encoding</a><ol><li><a href="#trainable">Trainable</a></li><li><a href="#sinusoidal">Sinusoidal</a></li><li><a href="#recurrent">Recurrent</a></li><li><a href="#multiplicative">Multiplicative</a></li></ol></li><li><a href="#relative-position-encoding">Relative Position Encoding</a><ol><li><a href="#classic">Classic</a></li><li><a href="#xlnet-style">XLNet-Style</a></li><li><a href="#t5-style">T5-Style</a></li><li><a href="#deberta-style">DeBERTa-Style</a></li></ol></li><li><a href="#other-position-encodings">Other Position Encodings</a><ol><li><a href="#cnn-style">CNN-Style</a></li><li><a href="#complex-valued">Complex-Valued</a></li><li><a href="#fusion-style">Fusion-Style</a></li></ol></li><li><a href="#summary">Summary</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -121,6 +126,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/8130">让研究人员绞尽脑汁的Transformer位置编码</a> by Jianlin Su (苏剑林), originally published on February 3, 2021 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. This article is a precursor to Su's later work on Rotary Position Embedding (RoPE); the &quot;fusion-style&quot; encoding sketched in the final section of this post was formalized in the follow-up article <a href="/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">Transformer Upgrade Path: 2. Rotary Position Embedding</a>. The translation preserves the author's first-person voice.</em></p>
@@ -332,7 +338,7 @@ a_{i,j} = \text{softmax}\left(\boldsymbol{x}_i \boldsymbol{W}_Q (\boldsymbol{x}_
 <p>represent three sets of word vectors for word \(j\). You read that right -- it indeed assumes each word has three sets of position-independent word vectors (of course, parameter sharing can reduce them to two or even one set), and the position-dependent word vector for position \(k\) is computed according to the formula above.</p>
 <p>You might think introducing multiple sets of word vectors is its most iconoclastic aspect? Not so! We see that Eq. (12) is still in complex form -- and guess what it does next? Convert it to real numbers? No! It uses it directly in a <strong>complex-valued model</strong>! That is, it takes the complex model route: not only is the input Embedding layer complex, but every Transformer layer inside is complex. It even implements and compares complex versions of FastText, LSTM, CNN, and other models! The first author of this paper is Benyou Wang, whose related work is basically all centered around complex models -- a die-hard fan of complex models indeed.</p>
 <h3 id="fusion-style" tabindex="-1">Fusion-Style</h3>
-<p>By a fortunate coincidence, using the complex number formalism, I have also conceived a rather clever position encoding that can <strong>fuse absolute and relative position encoding into one</strong>. I share it here; interested readers are welcome to discuss and explore together.<label for="sn-rope-followup" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-rope-followup" class="margin-toggle"><span class="sidenote">This &quot;fusion-style&quot; encoding was later formalized as Rotary Position Embedding (RoPE) in the follow-up article <a href="/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">Transformer Upgrade Path: 2. Rotary Position Embedding</a>.</span></p>
+<p>By a fortunate coincidence, using the complex number formalism, I have also conceived a rather clever position encoding that can <strong>fuse absolute and relative position encoding into one</strong>. I share it here; interested readers are welcome to discuss and explore together.<label for="sn-rope-followup" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-rope-followup" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">This &quot;fusion-style&quot; encoding was later formalized as Rotary Position Embedding (RoPE) in the follow-up article <a href="/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">Transformer Upgrade Path: 2. Rotary Position Embedding</a>.</span></p>
 <p>For simplicity, let us first assume that \(\boldsymbol{q}_m\) and \(\boldsymbol{k}_n\) are two-dimensional row vectors at positions \(m\) and \(n\) respectively. Since they are two-dimensional, we can treat them as complex numbers. We know that the key operation in Attention is the inner product, which in complex notation is:</p>
 <p>\[
 \langle \boldsymbol{q}_m, \boldsymbol{k}_n \rangle = \text{Re}\left[\boldsymbol{q}_m \boldsymbol{k}_n^*\right] \tag{14}

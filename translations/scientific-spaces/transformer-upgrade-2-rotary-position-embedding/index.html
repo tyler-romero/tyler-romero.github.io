@@ -47,8 +47,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -77,7 +79,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["translation","rope","position-encoding","attention","transformers"],
-            "wordCount": 2589,
+            "wordCount": 2591,
             "articleBody": "Translator's note (Opus 4.6): This is an English translation of Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林), originally published on March 23, 2021 on Scientific Spaces (科学空间). It is the second article in the &quot;Transformer Upgrade Path&quot; series. The translation preserves the author's first-person voice. In the previous article, we gave a fairly detailed derivation and analysis of the original Sinusoidal position encoding. The overall impression is that Sinusoidal position encoding..."
             }
         </script>
@@ -97,12 +99,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/8265">Transformer升级之路：2、博采众长的旋转式位置编码</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Mar 22, 2021</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#basic-idea">Basic Idea</a></li><li><a href="#derivation">Derivation</a></li><li><a href="#encoding-form">Encoding Form</a></li><li><a href="#long-range-decay">Long-Range Decay</a></li><li><a href="#linear-attention-setting">Linear Attention Setting</a></li><li><a href="#open-source-model">Open-Source Model</a></li><li><a href="#summary">Summary</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -128,6 +133,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/8265">Transformer升级之路：2、博采众长的旋转式位置编码</a> by Jianlin Su (苏剑林), originally published on March 23, 2021 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. It is the second article in the &quot;Transformer Upgrade Path&quot; series. The translation preserves the author's first-person voice.</em></p>
@@ -246,7 +252,7 @@ f[m_] = Sum[
     Norm[Sum[Exp[I*m*\[Theta][i]], {i, 0, j}]], {j, 0, d/2 - 1}]/(d/2);
 Plot[f[m], {m, 0, 256}, AxesLabel -&gt; {Relative Distance, Relative Magnitude}]
 </code></pre>
-<p>From the resulting plot<label for="sn-decay-plot" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-decay-plot" class="margin-toggle"><span class="sidenote">Long-range decay of RoPE with \(\theta_i = 10000^{-2i/d}\) and \(d = 128\). <picture><source type="image/webp" srcset="/assets/img/5FIdFKQ0G0-300.webp 300w, /assets/img/5FIdFKQ0G0-600.webp 600w, /assets/img/5FIdFKQ0G0-900.webp 900w, /assets/img/5FIdFKQ0G0-1100.webp 1100w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5FIdFKQ0G0-300.png" alt="RoPE long-range decay plot" width="1100" height="700" srcset="/assets/img/5FIdFKQ0G0-300.png 300w, /assets/img/5FIdFKQ0G0-600.png 600w, /assets/img/5FIdFKQ0G0-900.png 900w, /assets/img/5FIdFKQ0G0-1100.png 1100w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>, we can see that as the relative distance increases, the inner product result exhibits a decaying trend. Therefore, the choice \(\theta_i = 10000^{-2i/d}\) does indeed provide a degree of long-range decay. Of course, as mentioned in the previous article, this is not the only choice that yields long-range decay — almost any smooth monotonic function will do. We simply follow the existing convention. I also tried initializing with \(\theta_i = 10000^{-2i/d}\) and treating \(\theta_i\) as trainable parameters, but after training for a while found that \(\theta_i\) did not update significantly, so I simply fixed \(\theta_i = 10000^{-2i/d}\).</p>
+<p>From the resulting plot<label for="sn-decay-plot" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-decay-plot" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">Long-range decay of RoPE with \(\theta_i = 10000^{-2i/d}\) and \(d = 128\). <picture><source type="image/webp" srcset="/assets/img/5FIdFKQ0G0-300.webp 300w, /assets/img/5FIdFKQ0G0-600.webp 600w, /assets/img/5FIdFKQ0G0-900.webp 900w, /assets/img/5FIdFKQ0G0-1100.webp 1100w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5FIdFKQ0G0-300.png" alt="RoPE long-range decay plot" width="1100" height="700" srcset="/assets/img/5FIdFKQ0G0-300.png 300w, /assets/img/5FIdFKQ0G0-600.png 600w, /assets/img/5FIdFKQ0G0-900.png 900w, /assets/img/5FIdFKQ0G0-1100.png 1100w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>, we can see that as the relative distance increases, the inner product result exhibits a decaying trend. Therefore, the choice \(\theta_i = 10000^{-2i/d}\) does indeed provide a degree of long-range decay. Of course, as mentioned in the previous article, this is not the only choice that yields long-range decay — almost any smooth monotonic function will do. We simply follow the existing convention. I also tried initializing with \(\theta_i = 10000^{-2i/d}\) and treating \(\theta_i\) as trainable parameters, but after training for a while found that \(\theta_i\) did not update significantly, so I simply fixed \(\theta_i = 10000^{-2i/d}\).</p>
 </section>
 <section>
 <h2 id="linear-attention-setting" tabindex="-1">Linear Attention Setting</h2>

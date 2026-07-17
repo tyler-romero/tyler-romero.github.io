@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -70,7 +72,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["translation","linear-attention","rnn","attention"],
-            "wordCount": 1422,
+            "wordCount": 1424,
             "articleBody": "Translator's note (Opus 4.6): This is an English translation of 为什么线性注意力要加Short Conv？ by Jianlin Su (苏剑林), originally published on October 5, 2025 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. If you have been following developments in model architecture, you will have noticed that the newer linear attention models (see A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back) all add a short convolution to \\(\\boldsymbol{Q},..."
             }
         </script>
@@ -90,12 +92,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>Why Does Linear Attention Need Short Conv?</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11320">为什么线性注意力要加Short Conv？</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Oct 4, 2025</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#test-time-training">Test-Time Training</a></li><li><a href="#the-hard-question">The Hard Question</a></li><li><a href="#keys-and-values-from-the-same-source">Keys and Values from the Same Source</a></li><li><a href="#convolution-to-the-rescue">Convolution to the Rescue</a></li><li><a href="#summary">Summary</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -121,6 +126,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11320">为什么线性注意力要加Short Conv？</a> by Jianlin Su (苏剑林), originally published on October 5, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
@@ -160,7 +166,7 @@
 <p>Take <a href="https://arxiv.org/abs/1301.3781"><em>Word2Vec</em></a> as an example: its training method is &quot;center word predicts context.&quot; The previously popular <a href="https://arxiv.org/abs/1810.04805"><em>BERT</em></a> uses MLM for pretraining, which masks certain words and predicts them — this can be described as &quot;context predicts center word.&quot; Today's mainstream LLMs use NTP (Next Token Prediction), predicting the next word from the preceding context. Clearly, the common thread is that none of them predict themselves — they all predict their surroundings.</p>
 <p>So, to improve TTT, we need to change the \((\boldsymbol{k}_t, \boldsymbol{v}_t)\) pairing pattern of &quot;predicting yourself from yourself.&quot; Given that current LLMs primarily use NTP, we can adopt the same approach within TTT: for example, using \((\boldsymbol{k}_{t-1}, \boldsymbol{v}_t)\) to construct the training pairs, meaning we use \(\boldsymbol{k}_{t-1}\) to predict \(\boldsymbol{v}_t\). This way, even if \(\boldsymbol{K} = \boldsymbol{V}\), the model can learn non-trivial results. In this setup, the TTT inner loop and the outer LLM training loop both perform NTP — a beautifully consistent design.</p>
 <p>However, using only \(\boldsymbol{k}_{t-1}\) to predict \(\boldsymbol{v}_t\) seems to waste \(\boldsymbol{k}_t\), so a further idea is to mix \(\boldsymbol{k}_{t-1}\) and \(\boldsymbol{k}_t\) together in some way before predicting \(\boldsymbol{v}_t\). At this point, readers may have realized: &quot;mixing \(\boldsymbol{k}_{t-1}\) and \(\boldsymbol{k}_t\) together in some way&quot; — isn't that just a convolution with kernel_size=2! Therefore, adding a short convolution to \(\boldsymbol{K}\) transforms TTT's training objective from &quot;predicting yourself&quot; to NTP, giving TTT at least the ability to learn an n-gram model.</p>
-<p>As for adding short convolutions to \(\boldsymbol{Q}\) and \(\boldsymbol{V}\), that is entirely incidental. According to reports from the FLA community<label for="sn-fla" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-fla" class="margin-toggle"><span class="sidenote">FLA (Flash Linear Attention) is an open-source community and library for efficient linear attention implementations. The &quot;FLA group&quot; (飞来阁) refers to their discussion forum.</span>, adding them to \(\boldsymbol{Q}\) and \(\boldsymbol{V}\) helps a little, but far less than adding short conv to \(\boldsymbol{K}\) — which serves as supporting evidence for our conjecture.</p>
+<p>As for adding short convolutions to \(\boldsymbol{Q}\) and \(\boldsymbol{V}\), that is entirely incidental. According to reports from the FLA community<label for="sn-fla" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-fla" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">FLA (Flash Linear Attention) is an open-source community and library for efficient linear attention implementations. The &quot;FLA group&quot; (飞来阁) refers to their discussion forum.</span>, adding them to \(\boldsymbol{Q}\) and \(\boldsymbol{V}\) helps a little, but far less than adding short conv to \(\boldsymbol{K}\) — which serves as supporting evidence for our conjecture.</p>
 </section>
 <section>
 <h2 id="summary" tabindex="-1">Summary</h2>

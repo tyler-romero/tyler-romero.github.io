@@ -47,8 +47,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
 <script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -77,7 +79,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["post","grpo","ppo","logprobs","logits","log-softmax","log_softmax","logsumexp","log-probabilities"],
-            "wordCount": 1720,
+            "wordCount": 1729,
             "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
             }
         </script>
@@ -105,9 +107,11 @@
             <div class="post-header">
                 <h1>Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax</h1>
                 <p class="subtitle">Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest</p>
+                
                 <p class="date">Feb 6, 2025</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#ablation-analysis">Ablation Analysis</a></li><li><a href="#numerical-stability">Numerical Stability</a></li><li><a href="#efficient-solution">Efficient Solution</a></li><li><a href="#a-note-on-torch.compile">A note on <code>torch.compile</code></a></li></ol></nav>
+
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');
@@ -145,14 +149,15 @@
                 });
             </script>
 
+
             <section>
-<p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM<label for="sn-vram" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vram" class="margin-toggle"><span class="sidenote">VRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span>. This is the code you might see:</p>
+<p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM<label for="sn-vram" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vram" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">VRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span>. This is the code you might see:</p>
 <pre><code class="language-python">def naive_selective_log_softmax(logits, index):
     logprobs = logits.log_softmax(dim=-1)  # shape: (batch_size, seq_len, vocab_size)
     return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
 </code></pre>
 <p>For example, with a modest vocabulary size of 32768, sequence length of 1024, and batch size of 16, computing <code>log_softmax</code> naively can consume <strong>2.1GB</strong> of VRAM! And that is in addition to the 2.1GB required to hold the logits in the first place. <strong>However, in many cases, we only need the log probabilities for specific tokens</strong> - usually the ones that were actually generated or appear in the training data.</p>
-<p>This optimization is especially valuable for reinforcement learning algorithms like PPO and GRPO that fine-tune language models. These methods only require log probabilities for the tokens that were actually generated in the model's output, not for every possible token in the vocabulary. Additionally, for a typical implementation of one of these algorithms, <strong>peak VRAM consumption occurs from materializing these log probabilities!</strong> So optimizing<label for="sn-optimized" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-optimized" class="margin-toggle"><span class="sidenote"><a href="#efficient-solution">To jump to the optimized solution, click here</a>.</span> this operation can directly allow us to train with a larger batch size.</p>
+<p>This optimization is especially valuable for reinforcement learning algorithms like PPO and GRPO that fine-tune language models. These methods only require log probabilities for the tokens that were actually generated in the model's output, not for every possible token in the vocabulary. Additionally, for a typical implementation of one of these algorithms, <strong>peak VRAM consumption occurs from materializing these log probabilities!</strong> So optimizing<label for="sn-optimized" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-optimized" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote"><a href="#efficient-solution">To jump to the optimized solution, click here</a>.</span> this operation can directly allow us to train with a larger batch size.</p>
 <p>Let's remind ourselves what <code>log_softmax</code> is actually computing for every input logit \(x_i\):</p>
 <p>\[
 \log \text{softmax}(x_i) = \log\left(\frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}\right) \\
@@ -246,7 +251,7 @@ print(f&quot;Logits memory: {logit_mem / 1e6:.2f} MB&quot;)
 for name, (_, t, mem) in results.items():
     print(f&quot;{name:10s} time: {t:.6f} sec, peak: {mem / 1e6:.2f} MB&quot;)
 </code></pre>
-<p>Running this benchmark<label for="mn-benchmark" class="margin-toggle">&#8853;</label><input type="checkbox" id="mn-benchmark" class="margin-toggle"><span class="marginnote">Memory usage vs. vocabulary size. <code>take1</code> is obscured by <code>naive</code> because they have the same memory requirements. <picture><source type="image/webp" srcset="/assets/img/5CQHH5jD6T-300.webp 300w, /assets/img/5CQHH5jD6T-600.webp 600w, /assets/img/5CQHH5jD6T-900.webp 900w, /assets/img/5CQHH5jD6T-2400.webp 2400w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5CQHH5jD6T-300.png" alt="Memory usage vs vocabulary size for different selective log softmax implementations" width="2400" height="1800" srcset="/assets/img/5CQHH5jD6T-300.png 300w, /assets/img/5CQHH5jD6T-600.png 600w, /assets/img/5CQHH5jD6T-900.png 900w, /assets/img/5CQHH5jD6T-2400.png 2400w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> script with logits stored in <code>float32</code> gives the following output:</p>
+<p>Running this benchmark<label for="mn-benchmark" class="margin-toggle">&#8853;</label><input type="checkbox" id="mn-benchmark" class="margin-toggle" aria-label="Toggle margin note"><span class="marginnote">Memory usage vs. vocabulary size. <code>take1</code> is obscured by <code>naive</code> because they have the same memory requirements. <picture><source type="image/webp" srcset="/assets/img/5CQHH5jD6T-300.webp 300w, /assets/img/5CQHH5jD6T-600.webp 600w, /assets/img/5CQHH5jD6T-900.webp 900w, /assets/img/5CQHH5jD6T-2400.webp 2400w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5CQHH5jD6T-300.png" alt="Memory usage vs vocabulary size for different selective log softmax implementations" width="2400" height="1800" srcset="/assets/img/5CQHH5jD6T-300.png 300w, /assets/img/5CQHH5jD6T-600.png 600w, /assets/img/5CQHH5jD6T-900.png 900w, /assets/img/5CQHH5jD6T-2400.png 2400w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> script with logits stored in <code>float32</code> gives the following output:</p>
 <pre><code class="language-text">Logits Dtype: torch.float32
 Max abs diff (Naive vs Take1): 1.9073486328125e-06
 Max abs diff (Naive vs Take2): 1.9073486328125e-06
@@ -339,7 +344,7 @@ def compiled_selective_log_softmax(logits, index):
 <pre><code class="language-text">Max absolute difference (naive and compiled): 9.5367431640625e-07
 Compiled method time:  0.000073 sec, Memory peak: 2147.94 MB
 </code></pre>
-<p>And these results when logits are in <code>bfloat16</code><label for="sn-exact" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-exact" class="margin-toggle"><span class="sidenote">Interestingly, <code>torch.compile</code> generates a kernel that maintains exact numerical equivalence for half-precision dtypes.</span>:</p>
+<p>And these results when logits are in <code>bfloat16</code><label for="sn-exact" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-exact" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">Interestingly, <code>torch.compile</code> generates a kernel that maintains exact numerical equivalence for half-precision dtypes.</span>:</p>
 <pre><code class="language-text">Max absolute difference (naive and compiled): 0.0
 Compiled method time:  0.000129 sec, Memory peak: 1074.04 MB
 </code></pre>

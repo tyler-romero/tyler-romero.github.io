@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -90,12 +92,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>Beyond MuP: 3. Special Cases, Special Treatment</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11647">MuP之上：3. 特殊情况特殊处理</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Mar 1, 2026</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#recap">Recap</a></li><li><a href="#the-embedding-layer">The Embedding Layer</a></li><li><a href="#the-output-head">The Output Head</a><ol><li><a href="#accountable-to-the-loss">Accountable to the Loss</a></li><li><a href="#forward-stability">Forward Stability</a></li><li><a href="#a-key-inequality">A Key Inequality</a></li><li><a href="#dependency-stability">Dependency Stability</a></li><li><a href="#update-stability">Update Stability</a></li></ol></li><li><a href="#other-modules">Other Modules</a><ol><li><a href="#the-hadamard-product">The Hadamard Product</a></li><li><a href="#linear-bias-terms">Linear Bias Terms</a></li><li><a href="#attention-scaling">Attention Scaling</a></li></ol></li><li><a href="#summary">Summary</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -121,6 +126,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11647">MuP之上：3. 特殊情况特殊处理</a> by Jianlin Su (苏剑林), originally published on March 2, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. It is the third article in the &quot;Beyond MuP&quot; series. The translation preserves the author's first-person voice.</em></p>

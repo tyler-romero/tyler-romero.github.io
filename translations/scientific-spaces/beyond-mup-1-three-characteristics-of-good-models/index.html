@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -70,7 +72,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["translation","mup","muon","optimization","scaling"],
-            "wordCount": 1822,
+            "wordCount": 1824,
             "articleBody": "Translator's note (Opus 4.6): This is an English translation of MuP之上：1. 好模型的三个特征 by Jianlin Su (苏剑林), originally published on October 21, 2025 on Scientific Spaces (科学空间). It is the first article in the &quot;Beyond MuP&quot; series. The translation preserves the author's first-person voice. I wonder if anyone else has noticed an interesting detail: both Muon and MuP start with &quot;Mu,&quot; yet the two &quot;Mu&quot;s have completely different origins. The former stands for &quot;MomentUm..."
             }
         </script>
@@ -90,12 +92,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>Beyond MuP: 1. Three Characteristics of Good Models</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11340">MuP之上：1. 好模型的三个特征</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Oct 20, 2025</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#preface">Preface</a></li><li><a href="#stable-yet-fast">Stable yet Fast</a></li><li><a href="#three-conditions">Three Conditions</a></li><li><a href="#related-thoughts">Related Thoughts</a></li><li><a href="#conclusion">Conclusion</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -122,6 +127,7 @@
                 });
             </script>
 
+
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11340">MuP之上：1. 好模型的三个特征</a> by Jianlin Su (苏剑林), originally published on October 21, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. It is the first article in the &quot;Beyond MuP&quot; series. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
@@ -139,7 +145,7 @@
 <section>
 <h2 id="stable-yet-fast" tabindex="-1">Stable yet Fast</h2>
 <p>Let me get back to the main topic. As the first article in this series, the goal here is to establish the core objective. More specifically, we want to think clearly about &quot;what kind of model do we actually want?&quot; and &quot;how can we train such a model?&quot;</p>
-<p>Intuitively, as long as the model shows no signs of collapse, we can keep training until it converges to a satisfactory result. On top of that, we look for ways to make convergence faster. So really, it all comes down to two things — &quot;stability&quot; and &quot;speed&quot; — or rather, one thing: <strong>being stable yet fast</strong> (稳中求快). How do we determine whether a model is stable? Naturally, we need to monitor various &quot;internal metrics&quot;<label for="sn-internal-metrics" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-internal-metrics" class="margin-toggle"><span class="sidenote">The term &quot;internal metrics&quot; (内科指标, literally &quot;internal medicine indicators&quot;) comes from a <a href="https://www.zhihu.com/question/1946325762161483910/answer/1946691536009036242">Zhihu question</a> about a concept Yang Zhilin (杨植麟) mentioned in a recent interview. In his answer, Su Jianlin explains: these are monitoring indicators that tell you whether the model is training normally — analogous to vital signs in medicine. Simple ones like heart rate and blood pressure correspond to <strong>Loss</strong> and <strong>Grad Norm</strong> in training. If either suddenly spikes, it may indicate a data problem or even a hardware issue, and you try to locate the cause. More specialized indicators exist too — for example, K2's MuonClip optimizer targets <strong>MaxLogit</strong>, an important Attention mechanism indicator that is considered harmful when too large. The more metrics you monitor, the more problems you can expose, and the better model you can train by addressing them. Of course, even if some indicators show anomalies, it doesn't necessarily mean training will fail — an occasional Loss spike can still yield a useful model. Which metrics to monitor and which problems to address partly reflects the values of the training team.</span> — the more we monitor, the more problems we can expose.</p>
+<p>Intuitively, as long as the model shows no signs of collapse, we can keep training until it converges to a satisfactory result. On top of that, we look for ways to make convergence faster. So really, it all comes down to two things — &quot;stability&quot; and &quot;speed&quot; — or rather, one thing: <strong>being stable yet fast</strong> (稳中求快). How do we determine whether a model is stable? Naturally, we need to monitor various &quot;internal metrics&quot;<label for="sn-internal-metrics" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-internal-metrics" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">The term &quot;internal metrics&quot; (内科指标, literally &quot;internal medicine indicators&quot;) comes from a <a href="https://www.zhihu.com/question/1946325762161483910/answer/1946691536009036242">Zhihu question</a> about a concept Yang Zhilin (杨植麟) mentioned in a recent interview. In his answer, Su Jianlin explains: these are monitoring indicators that tell you whether the model is training normally — analogous to vital signs in medicine. Simple ones like heart rate and blood pressure correspond to <strong>Loss</strong> and <strong>Grad Norm</strong> in training. If either suddenly spikes, it may indicate a data problem or even a hardware issue, and you try to locate the cause. More specialized indicators exist too — for example, K2's MuonClip optimizer targets <strong>MaxLogit</strong>, an important Attention mechanism indicator that is considered harmful when too large. The more metrics you monitor, the more problems you can expose, and the better model you can train by addressing them. Of course, even if some indicators show anomalies, it doesn't necessarily mean training will fail — an occasional Loss spike can still yield a useful model. Which metrics to monitor and which problems to address partly reflects the values of the training team.</span> — the more we monitor, the more problems we can expose.</p>
 <p>However, rather than listing every possible metric, I want to identify the most essential conditions. To do so, let us first define a concept — <strong>RMS (Root Mean Square)</strong>: for \(x = (x_1, x_2, \dots, x_d) \in \mathbb{R}^d\), we define</p>
 <p>\[
 \|x\|_{\text{RMS}} = \sqrt{\frac{1}{d} \sum_{i=1}^{d} x_i^2} = \frac{\|x\|_2}{\sqrt{d}} \tag{1}

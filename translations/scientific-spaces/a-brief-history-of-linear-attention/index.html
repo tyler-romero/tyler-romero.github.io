@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -90,12 +92,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11033">线性注意力简史：从模仿、创新到反哺</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Jun 19, 2025</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#quadratic-complexity">Quadratic Complexity</a></li><li><a href="#the-original-form">The Original Form</a></li><li><a href="#fancy-forget-gates">Fancy Forget Gates</a></li><li><a href="#test-time-training">Test-Time Training</a></li><li><a href="#out-with-the-old%2C-in-with-the-new">Out with the Old, In with the New</a></li><li><a href="#inversion-and-generalizations">Inversion and Generalizations</a></li><li><a href="#feeding-back-in-progress">Feeding Back in Progress</a></li><li><a href="#hardcore-position-encoding">Hardcore Position Encoding</a></li><li><a href="#the-joy-of-simplification">The Joy of Simplification</a></li><li><a href="#an-unconventional-approach">An Unconventional Approach</a></li><li><a href="#a-path-still-unfolding">A Path Still Unfolding</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -121,6 +126,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11033">线性注意力简史：从模仿、创新到反哺</a> by Jianlin Su (苏剑林), originally published on June 20, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>

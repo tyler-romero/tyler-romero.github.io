@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -35,8 +35,7 @@
 
 
 
-<!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -58,7 +57,7 @@
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
-            "dateModified": "2026-07-08T16:43:01-07:00",
+            "dateModified": "2026-07-17T11:17:56-07:00",
             "url": "https://www.tylerromero.com/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -99,7 +98,7 @@
     <p>
         Before Ai2, I was Lead ML Engineer at <a href="https://www.groundlight.ai/">Groundlight</a>, a startup building multimodal question-answering systems. Prior to that, I worked on large-scale recommender systems at Twitter, where I developed the ML and ran the A/B tests for the experimentally-successful yet short-lived <a href="https://techcrunch.com/2021/07/21/twitter-tests-reddit-style-upvote-and-downvote-buttons/">downvote button</a>. I also researched, trained, and shipped model architecture improvements for ranking Twitter's home timeline and conversation reply trees.
         <label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label>
-        <input type="checkbox" id="sd-less-than-a-href" class="margin-toggle">
+        <input type="checkbox" id="sd-less-than-a-href" class="margin-toggle" aria-label="Toggle sidenote">
         <span class="sidenote"><a href="https://github.com/twitter/the-algorithm-ml/tree/main/projects/home/recap">And some of my work at Twitter is now open-source!</a> Although the git-blame has been sanitized.</span> Earlier in my career, I also worked as a Research Scientist at Microsoft, where I built greenfield ML projects.
     </p>
     <p>
@@ -110,15 +109,15 @@
 <hr class="section-divider">
 <section>
     <h2 id="posts">Posts</h2>
-    <ul class="post-list">
+    <ul class="post-list" role="list">
         
-            <li>
+            <li role="listitem">
                 <span class="post-date">Mar 8, 2025</span>
                 <div class="post-info">
                     <a href="/posts/nanogpt-speedrun-worklog/">NanoGPT Speedrun Living Worklog</a>
                     
                         <label for="sn-nanogpt-loss" class="margin-toggle sidenote-number"></label>
-                        <input type="checkbox" id="sn-nanogpt-loss" class="margin-toggle" checked="">
+                        <input type="checkbox" id="sn-nanogpt-loss" class="margin-toggle" aria-label="Toggle sidenote" checked="">
                         <span class="sidenote marginnote-wide"><picture><source type="image/webp" srcset="/assets/img/k6VycAKAlz-300.webp 300w, /assets/img/k6VycAKAlz-600.webp 600w, /assets/img/k6VycAKAlz-900.webp 900w, /assets/img/k6VycAKAlz-2562.webp 2562w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/k6VycAKAlz-300.png" alt="NanoGPT speedrun loss plot" width="2562" height="1612" srcset="/assets/img/k6VycAKAlz-300.png 300w, /assets/img/k6VycAKAlz-600.png 600w, /assets/img/k6VycAKAlz-900.png 900w, /assets/img/k6VycAKAlz-2562.png 2562w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
                     
                     <p class="item-description">
@@ -127,7 +126,7 @@
                 </div>
             </li>
         
-            <li>
+            <li role="listitem">
                 <span class="post-date">Feb 6, 2025</span>
                 <div class="post-info">
                     <a href="/posts/2025-02-selective-log-softmax/">Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax</a>
@@ -138,7 +137,7 @@
                 </div>
             </li>
         
-            <li>
+            <li role="listitem">
                 <span class="post-date">Jan 5, 2025</span>
                 <div class="post-info">
                     <a href="/posts/2025-01-badge-extension/">An Extension to BADGE Active Learning for Variable-Sized Batches</a>
@@ -149,7 +148,7 @@
                 </div>
             </li>
         
-            <li>
+            <li role="listitem">
                 <span class="post-date">Apr 13, 2024</span>
                 <div class="post-info">
                     <a href="/posts/2024-04-dpo/">Direct Preference Optimization Explained In-depth</a>
@@ -165,8 +164,8 @@
 <hr class="section-divider">
 <section>
     <h2 id="publications">Publications & Preprints</h2>
-    <ul class="post-list">
-        <li>
+    <ul class="post-list" role="list">
+        <li role="listitem">
             <span class="post-date">Jun 2026</span>
             <div class="post-info">
                 <a href="https://microsoft.ai/wp-content/uploads/2026/06/main_20260602_2.pdf"><strong>MAI-Thinking-1</strong></a>
@@ -176,12 +175,12 @@
                 </p>
             </div>
         </li>
-        <li>
+        <li role="listitem">
             <span class="post-date">Mar 2026</span>
             <div class="post-info">
                 <a href="https://arxiv.org/abs/2604.03444"><strong>Olmo Hybrid</strong></a>
                         <label for="mn-olmo-hybrid-fig3" class="margin-toggle">&#8853;</label>
-                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" checked="">
+                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" aria-label="Toggle margin note" checked="">
                         <span class="marginnote marginnote-wide"><picture><source type="image/webp" srcset="/assets/img/GH-0xCZ5V8-300.webp 300w, /assets/img/GH-0xCZ5V8-600.webp 600w, /assets/img/GH-0xCZ5V8-900.webp 900w, /assets/img/GH-0xCZ5V8-1422.webp 1422w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/GH-0xCZ5V8-300.png" alt="Olmo Hybrid expressivity Venn diagram" width="1422" height="643" srcset="/assets/img/GH-0xCZ5V8-300.png 300w, /assets/img/GH-0xCZ5V8-600.png 600w, /assets/img/GH-0xCZ5V8-900.png 900w, /assets/img/GH-0xCZ5V8-1422.png 1422w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
                 <small>— William Merrill*, Yanhong Li*, Tyler Romero*, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.<br><em>arXiv preprint arXiv:2604.03444</em>.</small>
                 <p class="item-description">
@@ -189,12 +188,12 @@
                 </p>
             </div>
         </li>
-        <li>
+        <li role="listitem">
             <span class="post-date">Nov 2025</span>
             <div class="post-info">
                 <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a>
                         <label for="mn-olmo3-loss" class="margin-toggle">&#8853;</label>
-                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" checked="">
+                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" aria-label="Toggle margin note" checked="">
                         <span class="marginnote marginnote-wide"><picture><source type="image/webp" srcset="/assets/img/fqEFQpUXWs-300.webp 300w, /assets/img/fqEFQpUXWs-600.webp 600w, /assets/img/fqEFQpUXWs-900.webp 900w, /assets/img/fqEFQpUXWs-3490.webp 3490w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/fqEFQpUXWs-300.png" alt="Olmo 3 32B training loss curve" width="3490" height="2341" srcset="/assets/img/fqEFQpUXWs-300.png 300w, /assets/img/fqEFQpUXWs-600.png 600w, /assets/img/fqEFQpUXWs-900.png 900w, /assets/img/fqEFQpUXWs-3490.png 3490w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>
                 <small>— Team Olmo (incl. Tyler Romero, core contributor).<br><em>arXiv preprint arXiv:2512.13961</em>.</small>
                 <p class="item-description">
@@ -209,23 +208,23 @@
 <hr class="section-divider">
 <section>
     <h2 id="projects">Projects</h2>
-    <ul class="item-list">
-        <li>
+    <ul class="item-list" role="list">
+        <li role="listitem">
             <a href="https://github.com/tyler-romero/greyhound">greyhound</a>
             <p class="item-description">
                 <small>I've been using greyhound as a place to build and experiment with CuTe DSL kernels for PyTorch, with an eye toward making training and inference workloads faster and easier to hack on. So far it includes kernels for cross-entropy and chunked linear losses, selective log-softmax, and causal Conv1D; there are <a href="https://www.tylerromero.com/greyhound/">docs and benchmarks here</a>.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://github.com/linkedin/Liger-Kernel">Liger-Kernel</a>
             <p class="item-description">
                 <small>Recently I've been contributing to Liger-Kernel, a collection of custom Triton Kernels for efficient LLM training.
                     <label for="sd-liger-kernel" class="margin-toggle sidenote-number"></label>
-                    <input type="checkbox" id="sd-liger-kernel" class="margin-toggle">
+                    <input type="checkbox" id="sd-liger-kernel" class="margin-toggle" aria-label="Toggle sidenote">
                     <span class="sidenote">I've found these kernels very useful for training LLMs/VLMs on my RTX 4090.</span> My contributions, as well as those of other top collaborators, were recently featured in <a href="https://www.linkedin.com/blog/engineering/open-source/liger-kernel-open-source-ecosystem-for-efficient-llm-training">a post on the LinkedIn Engineering Blog</a>.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://github.com/tyler-romero/microR1">microR1</a>
             <p class="item-description">
                 <small>A micro-scale DeepSeek-R1 reproduction in the style of Karpathy's <a href="https://github.com/karpathy/nanoGPT">nanoGPT</a>. Intended to be easy to understand and to hack on top of.</small>
@@ -236,56 +235,56 @@
 <hr class="section-divider">
 <section>
     <h2 id="reading-list">Favorite Reads</h2>
-    <ul class="item-list">
-        <li>
+    <ul class="item-list" role="list">
+        <li role="listitem">
             <a href="/translations">AI/ML Translations</a>
             <p class="item-description">
                 <small>English translations of selected posts from Chinese-language AI/ML blogs and forums.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://yumoxu.notion.site/multi-teacher-on-policy-distillation">Multi-Teacher On-Policy Distillation</a>
             <p class="item-description">
                 <small>Yumo Xu on combining on-policy distillation with multiple teacher models — a clear walkthrough of the method and tradeoffs.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://huggingface.co/spaces/nanotron/ultrascale-playbook">The Ultra-Scale Playbook: Training LLMs on GPU Clusters</a>
             <p class="item-description">
                 <small>A detailed guide to large-scale training of LLMs, covering 1D through 5D training parallelism, GPU fusing and threading, and more.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://jax-ml.github.io/scaling-book/">How to Scale Your Model: A Systems View of LLMs on TPUs</a>
             <p class="item-description">
                 <small>An online book that explains how TPU and GPU hardware works and how the Transformer architecture has evolved to perform well on current hardware.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://horace.io/brrr_intro.html">Making Deep Learning Go Brrrr From First Principles</a>
             <p class="item-description">
                 <small>A great post by Horace He explaining how to speed up single-GPU training based on whether jobs are compute-, bandwidth-, or overhead-bound. See also <a href="https://www.thonking.ai/p/what-shapes-do-matrix-multiplications">What Shapes Do Matrix Multiplications Like?</a></small>
             </p>
         </li>
-<li>
+<li role="listitem">
             <a href="https://siboehm.com/">siboehm</a>
             <p class="item-description">
                 <small>An excellent ML engineering blog by Simon Boehm, and a large part of the inspiration for this site. I especially recommend Simon’s posts on <a href="https://siboehm.com/articles/22/Fast-MMM-on-CPU">optimizing multidimensional matrix multiplication on CPU</a> and <a href="https://siboehm.com/articles/22/pipeline-parallel-training">pipeline parallelism for distributed training</a>.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://blog.ezyang.com/">ezyang’s blog</a>
             <p class="item-description">
                 <small>Edward Yang's insightful blog on distributed ML systems. I especially like <a href="https://blog.ezyang.com/2026/01/computing-sharding-with-einsum/">Computing sharding with einsum</a>.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://simonwillison.net/">Simon Willison’s Weblog</a>
             <p class="item-description">
                 <small>An insightful collection of links, quotes, and short blog posts that helps navigate the firehose of ML news.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://www.interconnects.ai/">Interconnects</a>
             <p class="item-description">
                 <small>A substack with long-form technical posts about AI R&D by Nathan Lambert. Also check out Nathan's <a href="https://rlhfbook.com/">rlhfbook.com</a>.</small>
@@ -296,14 +295,14 @@
 <hr class="section-divider">
 <section>
     <h2 id="fun">Fun Stuff</h2>
-    <ul class="item-list">
-        <li>
+    <ul class="item-list" role="list">
+        <li role="listitem">
             <a href="/recipe-box">Recipe Box</a>
             <p class="item-description">
                 <small>I find great joy in the process of cooking and I like to keep a recipe box of my favorite dishes.</small>
             </p>
         </li>
-        <li>
+        <li role="listitem">
             <a href="https://www.geekwire.com/2024/how-this-startup-used-ai-to-keep-raccoons-from-invading-my-house/">How this startup used AI to keep raccoons from invading my house</a>
             <p class="item-description">
                 <small>My friends and I help a Seattle tech reporter keep some curious raccoons out of his living room. Related: <a href="https://www.geekwire.com/2024/found-a-raccoon-in-the-living-room-now-seeking-a-tech-solution-so-it-doesnt-happen-again/">Found a raccoon in the living room — now seeking a tech solution so it doesn’t happen again</a></small>

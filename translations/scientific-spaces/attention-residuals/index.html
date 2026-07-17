@@ -16,7 +16,7 @@
 <link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
 <link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
 <link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
@@ -40,8 +40,10 @@
 <script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
 
 
+
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
 <!-- Goat Counter for basic view counting w/o cookies -->
@@ -70,7 +72,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["translation","attention","residual-connections","model-architecture","depth"],
-            "wordCount": 2518,
+            "wordCount": 2520,
             "articleBody": "Translator's note (Opus 4.6): This is an English translation of Attention Residuals 回忆录 by Jianlin Su (苏剑林), originally published on March 19, 2026 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. This article introduces our latest work, Attention Residuals (AttnRes) — as the name suggests, this uses the idea of Attention to improve Residuals. Many readers have probably heard of the Pre Norm vs. Post Norm debate, but at the end of the day that is just an..."
             }
         </script>
@@ -90,12 +92,15 @@
         </header>
         <article>
             
+            
             <div class="post-header">
                 <h1>Attention Residuals</h1>
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11664">Attention Residuals 回忆录</a> by Jianlin Su (苏剑林)</p>
+                
                 <p class="date">Mar 18, 2026</p>
+                
             </div>
-            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#inter-layer-attention">Inter-Layer Attention</a></li><li><a href="#hyper-connections">Hyper-Connections</a></li><li><a href="#many-hands-make-light-work">Many Hands Make Light Work</a></li><li><a href="#the-block-version">The Block Version</a></li><li><a href="#the-matrix-view">The Matrix View</a><ol><li><a href="#residuals">Residuals</a></li><li><a href="#hc%2Fmhc">HC/mHC</a></li><li><a href="#identity-hc">Identity HC</a></li><li><a href="#full-attnres">Full AttnRes</a></li><li><a href="#block-attnres">Block AttnRes</a></li></ol></li><li><a href="#related-work">Related Work</a></li><li><a href="#conclusion">Conclusion</a></li></ol></nav>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
@@ -121,6 +126,7 @@
                     headings.forEach(function(h) { observer.observe(h); });
                 });
             </script>
+
 
             <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11664">Attention Residuals 回忆录</a> by Jianlin Su (苏剑林), originally published on March 19, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
@@ -212,7 +218,7 @@ a_{t+1,s} \propto \exp(\boldsymbol{w}_{t+1} \cdot \text{RMSNorm}(\boldsymbol{y}_
 \end{pmatrix}
 \]</p>
 <h3 id="identity-hc" tabindex="-1">Identity HC</h3>
-<p>Setting \(\boldsymbol{H}_t^{res} = \boldsymbol{I}\) for all layers<label for="sn-idhc" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-idhc" class="margin-toggle"><span class="sidenote">This matrix is not from the original article — it is the special case proposed in <a href="/translations/zhihu/your-deepseek-mhc-might-not-need-the-m/"><em>&quot;Your DeepSeek mHC Might Not Need the 'm'&quot;</em></a>.</span> gives \(\boldsymbol{H}_{t \leftarrow s}^{res} = \boldsymbol{I}\), and every entry simplifies to \(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_s^{post}\):</p>
+<p>Setting \(\boldsymbol{H}_t^{res} = \boldsymbol{I}\) for all layers<label for="sn-idhc" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-idhc" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">This matrix is not from the original article — it is the special case proposed in <a href="/translations/zhihu/your-deepseek-mhc-might-not-need-the-m/"><em>&quot;Your DeepSeek mHC Might Not Need the 'm'&quot;</em></a>.</span> gives \(\boldsymbol{H}_{t \leftarrow s}^{res} = \boldsymbol{I}\), and every entry simplifies to \(\boldsymbol{H}_{t+1}^{pre}\boldsymbol{H}_s^{post}\):</p>
 <p>\[
 \boldsymbol{A} = \begin{pmatrix}
 \boldsymbol{H}_1^{pre}\boldsymbol{H}_0^{post} \\
