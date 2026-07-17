@@ -1,0 +1,4 @@
+interface:
+  display_name: "Translate Chinese Post"
+  short_description: "Translate Chinese AI/ML posts for this site"
+  default_prompt: "Use $translate-chinese-post to translate this Chinese AI/ML post into a publish-ready page."

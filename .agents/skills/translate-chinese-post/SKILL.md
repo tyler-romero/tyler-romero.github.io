@@ -1,18 +1,11 @@
 ---
 name: translate-chinese-post
 description: "Translate a Chinese-language AI/ML blog post into English for the translations section of this site. Use when the user provides a Chinese post (URL, pasted text, or file) and wants to generate a translated markdown file for Scientific Spaces or Zhihu. Handles frontmatter, translator's notes, LaTeX math, citations, and licensing footers."
-argument-hint: 'Paste Chinese post content or provide the source URL'
 ---
 
 # Translate Chinese AI/ML Post to English
 
 Translate a Chinese-language AI/ML blog post into a publish-ready English markdown file for the `src/translations/` section of this Eleventy site.
-
-## When to Use
-
-- User provides a Chinese blog post (pasted text, URL, or file) and asks for an English translation
-- User says "translate this post", "add a new translation", or similar
-- User wants to create a new Scientific Spaces or Zhihu translation page
 
 ## Procedure
 
