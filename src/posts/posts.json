@@ -1,3 +1,4 @@
 {
-    "layout": "posts"
+  "layout": "posts",
+  "roughAnnotations": true
 }

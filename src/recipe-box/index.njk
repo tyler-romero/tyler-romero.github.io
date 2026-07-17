@@ -17,14 +17,14 @@ tags: ["home-cooking", "recipe-box"]
         I keep an old-school recipe box filled with note cards of recipes that I enjoyed making and that turned out well. So I thought
         a good way to start this page would be to describe
         <label for="sd-recipe-box" class="margin-toggle sidenote-number"></label>
-        <input type="checkbox" id="sd-recipe-box" class="margin-toggle" />
+        <input type="checkbox" id="sd-recipe-box" class="margin-toggle" aria-label="Toggle sidenote" />
         <span class="sidenote">With attribution provided as appropriate.</span> some of those recipes here the next time I decide to make them.
     </p>
 </section>
 <hr class="section-divider" style="margin-top: 1rem; clear: none;" />
 <section>
     <h2 id="recipes">Recipes</h2>
-    <ul class="item-list">
+    <ul class="item-list" role="list">
         {% for p in collections.recipe | sort(attribute='data.title') %}
             <li>
                 <a href="{{ p.url }}">{{ p.data.title }}</a>

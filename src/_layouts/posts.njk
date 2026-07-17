@@ -5,18 +5,7 @@
 {% endblock %}
 
 {% block article_header %}
-            {% if hero_image %}
-            <div class="post-hero" aria-hidden="true">
-                <img src="{{ hero_image }}" alt="" />
-                <div class="post-hero-fade"></div>
-            </div>
-            {% endif %}
-            <div class="post-header{% if hero_image %} post-header--hero{% endif %}">
-                <h1>{{ title | markdownInline | safe }}</h1>
-                {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
-                {% if date %}<p class="date">{{ date | postDate }}</p>{% endif %}
-            </div>
-            <nav class="toc" aria-label="Table of contents"></nav>
+{% include "article-header.njk" %}
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');
@@ -28,29 +17,5 @@
                     }, { passive: true });
                 })();
             </script>
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    if (typeof RoughNotation === 'undefined') return;
-                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                    var headings = document.querySelectorAll('article h2');
-                    var observer = new IntersectionObserver(function(entries) {
-                        entries.forEach(function(entry) {
-                            if (entry.isIntersecting) {
-                                var annotation = RoughNotation.annotate(entry.target, {
-                                    type: 'bracket',
-                                    brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
-                                    strokeWidth: 2,
-                                    padding: [2, 0, 2, 8],
-                                    animationDuration: 600,
-                                    animate: !reduceMotion
-                                });
-                                annotation.show();
-                                observer.unobserve(entry.target);
-                            }
-                        });
-                    }, { threshold: 0.5 });
-                    headings.forEach(function(h) { observer.observe(h); });
-                });
-            </script>
+{% include "rough-annotations.njk" %}
 {% endblock %}

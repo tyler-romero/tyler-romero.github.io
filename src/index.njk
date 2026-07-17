@@ -16,7 +16,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
     <p>
         Before Ai2, I was Lead ML Engineer at <a href="https://www.groundlight.ai/">Groundlight</a>, a startup building multimodal question-answering systems. Prior to that, I worked on large-scale recommender systems at Twitter, where I developed the ML and ran the A/B tests for the experimentally-successful yet short-lived <a href="https://techcrunch.com/2021/07/21/twitter-tests-reddit-style-upvote-and-downvote-buttons/">downvote button</a>. I also researched, trained, and shipped model architecture improvements for ranking Twitter's home timeline and conversation reply trees.
         <label for="sd-less-than-a-href" class="margin-toggle sidenote-number"></label>
-        <input type="checkbox" id="sd-less-than-a-href" class="margin-toggle" />
+        <input type="checkbox" id="sd-less-than-a-href" class="margin-toggle" aria-label="Toggle sidenote" />
         <span class="sidenote"><a href="https://github.com/twitter/the-algorithm-ml/tree/main/projects/home/recap">And some of my work at Twitter is now open-source!</a> Although the git-blame has been sanitized.</span> Earlier in my career, I also worked as a Research Scientist at Microsoft, where I built greenfield ML projects.
     </p>
     <p>
@@ -27,7 +27,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
 <hr class="section-divider" />
 <section>
     <h2 id="posts">Posts</h2>
-    <ul class="post-list">
+    <ul class="post-list" role="list">
         {% for p in collections.post | reverse %}
             <li>
                 <span class="post-date">{{ p.data.date | postDate }}</span>
@@ -35,7 +35,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
                     <a href="{{ p.url }}">{{ p.data.title }}</a>
                     {% if p.url == "/posts/nanogpt-speedrun-worklog/" %}
                         <label for="sn-nanogpt-loss" class="margin-toggle sidenote-number"></label>
-                        <input type="checkbox" id="sn-nanogpt-loss" class="margin-toggle" checked />
+                        <input type="checkbox" id="sn-nanogpt-loss" class="margin-toggle" aria-label="Toggle sidenote" checked />
                         <span class="sidenote marginnote-wide"><img src="/assets/img/2p3_loss_plot.png" alt="NanoGPT speedrun loss plot" /></span>
                     {% endif %}
                     <p class="item-description">
@@ -49,7 +49,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
 <hr class="section-divider" />
 <section>
     <h2 id="publications">Publications & Preprints</h2>
-    <ul class="post-list">
+    <ul class="post-list" role="list">
         <li>
             <span class="post-date">Jun 2026</span>
             <div class="post-info">
@@ -65,7 +65,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://arxiv.org/abs/2604.03444"><strong>Olmo Hybrid</strong></a>
                         <label for="mn-olmo-hybrid-fig3" class="margin-toggle">&#8853;</label>
-                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" checked />
+                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" aria-label="Toggle margin note" checked />
                         <span class="marginnote marginnote-wide"><img src="/assets/img/olmo-hybrid-fig3.png" alt="Olmo Hybrid expressivity Venn diagram" /></span>
                 <small>— William Merrill*, Yanhong Li*, Tyler Romero*, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.<br/><em>arXiv preprint arXiv:2604.03444</em>.</small>
                 <p class="item-description">
@@ -78,7 +78,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://arxiv.org/abs/2512.13961"><strong>Olmo 3</strong></a>
                         <label for="mn-olmo3-loss" class="margin-toggle">&#8853;</label>
-                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" checked />
+                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" aria-label="Toggle margin note" checked />
                         <span class="marginnote marginnote-wide"><img src="/assets/img/olmo3-32b-loss-curve.png" alt="Olmo 3 32B training loss curve" /></span>
                 <small>— Team Olmo (incl. Tyler Romero, core contributor).<br/><em>arXiv preprint arXiv:2512.13961</em>.</small>
                 <p class="item-description">
@@ -93,7 +93,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
 <hr class="section-divider" />
 <section>
     <h2 id="projects">Projects</h2>
-    <ul class="item-list">
+    <ul class="item-list" role="list">
         <li>
             <a href="https://github.com/tyler-romero/greyhound">greyhound</a>
             <p class="item-description">
@@ -105,7 +105,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <p class="item-description">
                 <small>Recently I've been contributing to Liger-Kernel, a collection of custom Triton Kernels for efficient LLM training.
                     <label for="sd-liger-kernel" class="margin-toggle sidenote-number"></label>
-                    <input type="checkbox" id="sd-liger-kernel" class="margin-toggle" />
+                    <input type="checkbox" id="sd-liger-kernel" class="margin-toggle" aria-label="Toggle sidenote" />
                     <span class="sidenote">I've found these kernels very useful for training LLMs/VLMs on my RTX 4090.</span> My contributions, as well as those of other top collaborators, were recently featured in <a href="https://www.linkedin.com/blog/engineering/open-source/liger-kernel-open-source-ecosystem-for-efficient-llm-training">a post on the LinkedIn Engineering Blog</a>.</small>
             </p>
         </li>
@@ -120,7 +120,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
 <hr class="section-divider" />
 <section>
     <h2 id="reading-list">Favorite Reads</h2>
-    <ul class="item-list">
+    <ul class="item-list" role="list">
         <li>
             <a href="/translations">AI/ML Translations</a>
             <p class="item-description">
@@ -180,7 +180,7 @@ tags: ["ML", "Research", "Blog", "LLMs"]
 <hr class="section-divider" />
 <section>
     <h2 id="fun">Fun Stuff</h2>
-    <ul class="item-list">
+    <ul class="item-list" role="list">
         <li>
             <a href="/recipe-box">Recipe Box</a>
             <p class="item-description">

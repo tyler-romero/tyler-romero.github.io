@@ -120,12 +120,12 @@ function sidenoteRefRule(state, silent) {
   if (isMarginNote) {
     token.content =
       `<label for="${noteId}" class="margin-toggle">&#8853;</label>` +
-      `<input type="checkbox" id="${noteId}" class="margin-toggle" />` +
+      `<input type="checkbox" id="${noteId}" class="margin-toggle" aria-label="Toggle margin note" />` +
       `<span class="marginnote">${rendered}</span>`;
   } else {
     token.content =
       `<label for="${noteId}" class="margin-toggle sidenote-number"></label>` +
-      `<input type="checkbox" id="${noteId}" class="margin-toggle" />` +
+      `<input type="checkbox" id="${noteId}" class="margin-toggle" aria-label="Toggle sidenote" />` +
       `<span class="sidenote">${rendered}</span>`;
   }
 

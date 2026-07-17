@@ -17,7 +17,7 @@ tags: ["translations"]
     <p>
         <a href="https://www.zhihu.com">Zhihu</a> (知乎, "Do you know?" in classical Chinese) is China's largest Q&A platform. Like Quora, but with a stronger culture of long-form technical writing.
     </p>
-    <ul class="post-list">
+    <ul class="post-list" role="list">
         {% for p in collections.translation | reverse %}
             {% if "/translations/zhihu/" in p.url %}
             <li>
@@ -40,7 +40,7 @@ tags: ["translations"]
         <a href="https://kexue.fm">Scientific Spaces</a> (科学空间) is a Chinese-language AI/ML blog by Jianlin Su (苏剑林). Jianlin's blog is well-regarded in the Chinese ML community.
         <em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>; translations shared under the same license.</em>
     </p>
-    <ul class="post-list">
+    <ul class="post-list" role="list">
         {% for p in collections.translation | reverse %}
             {% if "/translations/scientific-spaces/" in p.url %}
             <li>

@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700{% if code %}&family=JetBrains+Mono:wght@400;700{% endif %}&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" />
 <link rel="preload"
       as="font"
       type="font/woff"
@@ -34,7 +34,7 @@
 <meta property="og:title" content="{{ metaTitle | markdownInline | striptags }}" />
 <meta property="og:description" content="{{ metaDescription | markdownInline | striptags }}" />
 <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
-<meta property="og:type" content="{% if layout == 'posts' or layout == 'scientific-spaces' or layout == 'zhihu' or layout == 'recipes' %}article{% else %}website{% endif %}" />
+<meta property="og:type" content="{% if layout == 'posts' or layout == 'translation' or layout == 'recipes' %}article{% else %}website{% endif %}" />
 <meta property="og:site_name" content="{{ site.title }}" />
 {% if socialImage %}<meta property="og:image" content="{{ site.url }}{{ socialImage }}" />{% endif %}
 <!-- Twitter Card -->
@@ -73,9 +73,11 @@
 <script defer
         src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
 {% endif %}
+{% if roughAnnotations %}
 <!-- Rough Notation — hand-drawn annotations -->
 <script defer
-        src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+        src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+{% endif %}
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css" />
 <!-- Goat Counter for basic view counting w/o cookies -->

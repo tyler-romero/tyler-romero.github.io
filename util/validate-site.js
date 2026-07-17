@@ -3,7 +3,9 @@ import path from "node:path";
 import process from "node:process";
 
 const outputDir = path.resolve("_site");
+const siteOrigin = "https://www.tylerromero.com";
 const failures = new Set();
+const checkedPassthroughUrls = new Set();
 
 function walk(directory) {
   return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -49,6 +51,28 @@ function outputPathForUrl(url, sourceFile) {
   return candidate;
 }
 
+function isPassthroughFile(url) {
+  const pathname = new URL(url, siteOrigin).pathname.toLowerCase();
+  return pathname.endsWith(".ico") || pathname.endsWith(".webm");
+}
+
+function validatePassthroughUrl(file, url, description) {
+  if (!url) {
+    fail(file, `${description} URL is missing`);
+    return;
+  }
+
+  const resolved = new URL(url, siteOrigin);
+  if (resolved.origin !== siteOrigin) return;
+  if (checkedPassthroughUrls.has(resolved.href)) return;
+  checkedPassthroughUrls.add(resolved.href);
+
+  const target = outputPathForUrl(resolved.pathname, file);
+  if (!fs.existsSync(target)) {
+    fail(file, `${description} is not passthrough copied: ${url}`);
+  }
+}
+
 function validateInternalLinks(file, html) {
   for (const match of html.matchAll(
     /<(?:a|link)\b[^>]*\bhref=(['"])(.*?)\1/gi,
@@ -62,10 +86,57 @@ function validateInternalLinks(file, html) {
     ) {
       continue;
     }
+    if (isPassthroughFile(href)) continue;
 
     const target = outputPathForUrl(href, file);
     if (!fs.existsSync(target)) {
       fail(file, `broken internal link: ${href}`);
+    }
+  }
+}
+
+function validateInternalAssets(file, html) {
+  const urls = [];
+  for (const match of html.matchAll(
+    /<(?:img|script|source|video)\b[^>]*\bsrc=(['"])(.*?)\1/gi,
+  )) {
+    urls.push(match[2]);
+  }
+  for (const match of html.matchAll(/\bsrcset=(['"])(.*?)\1/gi)) {
+    for (const candidate of match[2].split(",")) {
+      urls.push(candidate.trim().split(/\s+/)[0]);
+    }
+  }
+
+  for (const url of urls) {
+    if (!url || url.startsWith("//") || /^(?:https?:|data:)/i.test(url)) {
+      continue;
+    }
+    if (isPassthroughFile(url)) continue;
+
+    const target = outputPathForUrl(url, file);
+    if (!fs.existsSync(target)) {
+      fail(file, `missing local asset: ${url}`);
+    }
+  }
+}
+
+function validatePassthroughReferences(file, html) {
+  for (const match of html.matchAll(/\b(?:href|src)=(['"])(.*?)\1/gi)) {
+    const url = match[2];
+    if (isPassthroughFile(url)) {
+      validatePassthroughUrl(file, url, "ICO/WebM asset");
+    }
+  }
+
+  for (const match of html.matchAll(/<meta\b[^>]*>/gi)) {
+    const key = attribute(match[0], "property") || attribute(match[0], "name");
+    if (key === "og:image" || key === "twitter:image") {
+      validatePassthroughUrl(
+        file,
+        attribute(match[0], "content"),
+        `${key} social image`,
+      );
     }
   }
 }
@@ -85,6 +156,9 @@ function validateJsonLd(file, html) {
       }
       if (data.image === "https://www.tylerromero.com") {
         fail(file, "JSON-LD image points to the site root");
+      }
+      if (typeof data.image === "string") {
+        validatePassthroughUrl(file, data.image, "JSON-LD social image");
       }
     } catch (error) {
       fail(file, `invalid JSON-LD: ${error.message}`);
@@ -116,18 +190,35 @@ function validateAccessibilityBasics(file, html) {
     ) {
       fail(file, `input #${id} has no associated label`);
     }
+    if (
+      match[0].includes('class="margin-toggle"') &&
+      attribute(match[0], "aria-label") === undefined
+    ) {
+      fail(file, `margin toggle #${id} has no accessible name`);
+    }
+  }
+
+  for (const match of html.matchAll(
+    /(<ul\b[^>]*class=(['"])(?:post-list|item-list)\2[^>]*>)([\s\S]*?)<\/ul>/gi,
+  )) {
+    if (attribute(match[1], "role") !== "list") {
+      fail(file, "styled list is missing role=list");
+    }
+    for (const item of match[3].matchAll(/<li\b[^>]*>/gi)) {
+      if (attribute(item[0], "role") !== "listitem") {
+        fail(file, "styled list entry is missing role=listitem");
+      }
+    }
   }
 }
 
-function validateToc(file, html) {
-  const toc = html.match(
-    /<nav class="toc" aria-label="Table of contents">([\s\S]*?)<\/nav>/i,
+function validateConditionalAssets(file, html) {
+  const hasAnnotations = html.includes("RoughNotation.annotate");
+  const hasRoughNotation = html.includes(
+    "rough-notation@0.5.1/lib/rough-notation.iife.js",
   );
-  if (!toc) return;
-
-  const headingCount = (html.match(/<h[23]\b/gi) || []).length;
-  if (headingCount >= 3 && !/<a\s+href="#.+?">/i.test(toc[1])) {
-    fail(file, `TOC is empty despite ${headingCount} section headings`);
+  if (hasAnnotations !== hasRoughNotation) {
+    fail(file, "Rough Notation script does not match page behavior");
   }
 }
 
@@ -153,15 +244,23 @@ for (const file of htmlFiles) {
   }
 
   validateInternalLinks(file, html);
+  validateInternalAssets(file, html);
+  validatePassthroughReferences(file, html);
   validateJsonLd(file, html);
   validateAccessibilityBasics(file, html);
-  validateToc(file, html);
+  validateConditionalAssets(file, html);
 }
 
 const sitemapPath = path.join(outputDir, "sitemap.xml");
 const sitemap = fs.readFileSync(sitemapPath, "utf8");
 if (sitemap.includes("/404.html")) fail(sitemapPath, "includes the 404 page");
 if (sitemap.includes("/feed.xml")) fail(sitemapPath, "includes the Atom feed");
+
+const manifestPath = path.join(outputDir, "manifest.json");
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+for (const icon of manifest.icons || []) {
+  validatePassthroughUrl(manifestPath, icon.src, "Manifest icon");
+}
 
 if (failures.size > 0) {
   console.error(`Site validation failed with ${failures.size} issue(s):`);

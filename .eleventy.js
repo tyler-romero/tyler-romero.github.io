@@ -37,49 +37,29 @@ function getLastModifiedDate(filepath) {
   return modified;
 }
 
-function renderTableOfContents(content) {
-  const placeholder = /<nav class="toc" aria-label="Table of contents"><\/nav>/;
-  if (!placeholder.test(content)) return content;
-
-  const headings = Array.from(
-    content.matchAll(/<h([23])\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/h\1>/gi),
-    ([, level, id, label]) => ({ level: Number(level), id, label }),
+function addStyledListRoles(content) {
+  return content.replace(
+    /(<ul class="(?:item-list|post-list)" role="list">)([\s\S]*?)(<\/ul>)/g,
+    (_match, openingTag, listItems, closingTag) =>
+      openingTag +
+      listItems.replace(/<li(?![^>]*\brole=)/g, '<li role="listitem"') +
+      closingTag,
   );
-
-  if (headings.length < 3) return content;
-
-  const items = [];
-  let currentH2;
-  for (const heading of headings) {
-    if (heading.level === 2) {
-      currentH2 = { ...heading, children: [] };
-      items.push(currentH2);
-    } else if (currentH2) {
-      currentH2.children.push(heading);
-    } else {
-      items.push({ ...heading, children: [] });
-    }
-  }
-
-  const toc = `<nav class="toc" aria-label="Table of contents"><ol>${items
-    .map((item) => {
-      const children = item.children.length
-        ? `<ol>${item.children
-            .map(
-              (child) => `<li><a href="#${child.id}">${child.label}</a></li>`,
-            )
-            .join("")}</ol>`
-        : "";
-      return `<li><a href="#${item.id}">${item.label}</a>${children}</li>`;
-    })
-    .join("")}</ol></nav>`;
-
-  return content.replace(placeholder, toc);
 }
 
 export default function (eleventyConfig) {
-  // Copy `src/assets` to `_site/assets`
-  eleventyConfig.addPassthroughCopy("src/assets");
+  // Copy assets that are not handled by the image transform plugin.
+  eleventyConfig.addPassthroughCopy({
+    "src/assets/fonts": "assets/fonts",
+    "src/assets/et-book": "assets/et-book",
+    "src/assets/img/favicon.ico": "assets/img/favicon.ico",
+    "src/assets/img/badge_selection_order.webm":
+      "assets/img/badge_selection_order.webm",
+    // Social preview images need stable, unhashed URLs.
+    "src/assets/img/headshot_2.jpg": "assets/img/headshot_2.jpg",
+    "src/assets/img/golden-gardens-social.jpg":
+      "assets/img/golden-gardens-social.jpg",
+  });
 
   // Copy some more files to `_site`
   eleventyConfig.addPassthroughCopy("src/CNAME");
@@ -153,7 +133,7 @@ export default function (eleventyConfig) {
     sharpOptions: {
       animated: true, // Enable animated GIF and WebP support
     },
-    widths: [300, 600, 900, "auto"], // mobile, tablet, desktop viewport widths, and original size
+    widths: [300, 600, 900, "auto"],
     defaultAttributes: {
       loading: "lazy",
       decoding: "async",
@@ -194,9 +174,9 @@ export default function (eleventyConfig) {
     return content.replace(regex, `<div class="bibliography">${html}</div>`);
   });
 
-  eleventyConfig.addTransform("tableOfContents", function (content) {
+  eleventyConfig.addTransform("styledListRoles", function (content) {
     if (!this.page.outputPath?.endsWith(".html")) return content;
-    return renderTableOfContents(content);
+    return addStyledListRoles(content);
   });
 
   return {

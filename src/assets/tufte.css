@@ -764,59 +764,6 @@ pre[class*="language-"] > code {
   color: #9a7640;
 }
 
-/* Table of Contents */
-.toc {
-  width: 55%;
-  border-left: none;
-  padding: 0.8em 1.2em 0.8em 1.4em;
-  margin-bottom: 1.5rem;
-  color: #555;
-  font-size: 1.2rem;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='100' preserveAspectRatio='none' fill='none'%3E%3Cpath d='M2 0 C3 10, 1 20, 2.5 30 S3 45, 1.5 55 S0.8 70, 2.8 80 S3 90, 2 100' stroke='%23568259' stroke-opacity='0.3' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E") left top / 4px 100% repeat-y;
-}
-
-.toc:has(ol)::before {
-  content: "Contents";
-  font-family: "Virgil", cursive;
-  font-size: 1.1rem;
-  color: var(--warm-accent);
-  display: block;
-  margin-bottom: 0.4em;
-}
-
-.toc:empty {
-  display: none;
-}
-
-.toc ol {
-  list-style: decimal;
-  margin: 0;
-  padding-left: 1.5em;
-}
-
-.toc ol ol {
-  list-style: lower-alpha;
-  margin-top: 0.2em;
-}
-
-.toc li {
-  margin-top: 0.3em;
-  line-height: 1.5;
-}
-
-.toc a,
-.toc a:link,
-.toc a:visited {
-  text-decoration: none;
-  color: #555;
-}
-
-.toc a:hover {
-  text-decoration: underline;
-  color: var(--link-color);
-}
-
-
 /* Bibliography (citation-js output) */
 .bibliography {
   width: 55%;
@@ -890,6 +837,24 @@ pre[class*="language-"] > code {
     display: inline;
   }
 
+  input.margin-toggle {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  label.margin-toggle:has(+ input.margin-toggle:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
   .sidenote,
   .marginnote {
     display: none;
@@ -955,6 +920,11 @@ pre[class*="language-"] > code {
     width: auto;
   }
 
+  .post-date,
+  .date {
+    font-size: 1.2rem;
+  }
+
   .hero-banner {
     width: 100%;
   }
@@ -984,10 +954,6 @@ pre[class*="language-"] > code {
     background-size: 200px 8px;
   }
 
-  .toc {
-    width: 100%;
-  }
-
   .bibliography {
     width: 100%;
   }
@@ -1004,7 +970,6 @@ pre[class*="language-"] > code {
 @media print {
   nav,
   footer,
-  .toc,
   .post-hero,
   label.margin-toggle {
     display: none !important;
