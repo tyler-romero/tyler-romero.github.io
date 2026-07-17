@@ -71,7 +71,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2026-02-25T13:55:58-08:00",
+            "dateModified": "2026-07-17T12:02:48-07:00",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -79,8 +79,8 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["post","grpo","ppo","logprobs","logits","log-softmax","log_softmax","logsumexp","log-probabilities"],
-            "wordCount": 1729,
-            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
+            "wordCount": 1966,
+            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax, which computes a log probability for every token in the vocabulary at every position in the sequence: def naive_selective_log_softmax(logits, index): logprobs = logits.log_softmax(dim=-1) # (batch_size, seq_len, vocab_size) return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1) For a vocabulary size of 32768, sequence length of..."
             }
         </script>
 
@@ -151,207 +151,253 @@
 
 
             <section>
-<p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code> which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAM<label for="sn-vram" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vram" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">VRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span>. This is the code you might see:</p>
+<p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code>, which computes a log probability for every token in the vocabulary at every position in the sequence:</p>
 <pre><code class="language-python">def naive_selective_log_softmax(logits, index):
-    logprobs = logits.log_softmax(dim=-1)  # shape: (batch_size, seq_len, vocab_size)
+    logprobs = logits.log_softmax(dim=-1)  # (batch_size, seq_len, vocab_size)
     return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
 </code></pre>
-<p>For example, with a modest vocabulary size of 32768, sequence length of 1024, and batch size of 16, computing <code>log_softmax</code> naively can consume <strong>2.1GB</strong> of VRAM! And that is in addition to the 2.1GB required to hold the logits in the first place. <strong>However, in many cases, we only need the log probabilities for specific tokens</strong> - usually the ones that were actually generated or appear in the training data.</p>
-<p>This optimization is especially valuable for reinforcement learning algorithms like PPO and GRPO that fine-tune language models. These methods only require log probabilities for the tokens that were actually generated in the model's output, not for every possible token in the vocabulary. Additionally, for a typical implementation of one of these algorithms, <strong>peak VRAM consumption occurs from materializing these log probabilities!</strong> So optimizing<label for="sn-optimized" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-optimized" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote"><a href="#efficient-solution">To jump to the optimized solution, click here</a>.</span> this operation can directly allow us to train with a larger batch size.</p>
-<p>Let's remind ourselves what <code>log_softmax</code> is actually computing for every input logit \(x_i\):</p>
+<p>For a vocabulary size of 32768, sequence length of 1024, and batch size of 16, the full <code>log_softmax</code> output consumes another <strong>2.1GB</strong> of VRAM<label for="sn-vram" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vram" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">VRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span> on top of the 2.1GB already occupied by the logits.</p>
+<p>However, in many workloads, we only need the log probability of one token at each position. PPO and GRPO are good examples: they need the log probabilities of the tokens that were actually generated, not every possible token in the vocabulary. In typical implementations of these algorithms, materializing the full log-probability tensor can determine peak VRAM usage.</p>
+<p>Let's remind ourselves what <code>log_softmax</code> computes for each input logit (x_i):</p>
 <p>\[
 \log \text{softmax}(x_i) = \log\left(\frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}\right) \\
-= \log(e^{x_i}) - \log\left(\sum_{j=1}^n e^{x_j}\right) \\
 = x_i - \log \sum_{j=1}^n e^{x_j}
 \]</p>
-<p>Essentially it is just taking every individual logit and subtracting the <a href="https://pytorch.org/docs/stable/generated/torch.logsumexp.html#torch-logsumexp"><code>logsumexp</code></a> over the full logit distribution.</p>
-<p>We can optimize this by:</p>
+<p>If we only care about one selected token (i), then the operation we actually want is:</p>
+<p>\[
+\text{output} = x_i - \text{logsumexp}(x)
+\]</p>
+<p>This is an important shift in perspective. Selective log-softmax does not need to be implemented as a full <code>log_softmax</code> followed by a gather. It is a row-wise reduction plus one selected logit. That observation tells us what an ideal GPU implementation should do:</p>
 <ol>
-<li>Computing the <code>logsumexp</code> values over the full logit distribution</li>
-<li>Gathering just the logits for the tokens we care about</li>
-<li>Subtracting the <code>logsumexp</code> values from our gathered logits to get the final log probabilities</li>
+<li>Stream over the vocabulary once.</li>
+<li>Compute a numerically stable log-sum-exp for each row.</li>
+<li>Load the selected logit.</li>
+<li>Write one scalar instead of a full vocabulary-sized row.</li>
 </ol>
-<p>Here's what this looks like in code:</p>
+<h3 id="a-dedicated-kernel" tabindex="-1">A Dedicated Kernel</h3>
+<p>I initially approached this as a PyTorch memory optimization. The same operation can also be implemented directly as a CUDA kernel. I wrote <a href="https://www.tylerromero.com/greyhound/kernels/selective_log_softmax/">one implementation using CuTe DSL</a> as part of Greyhound. It is useful here because it makes the reduction strategy and memory traffic explicit.</p>
+<p>The kernel flattens every leading dimension into rows and assigns one CUDA thread block to each row. In pseudocode:</p>
+<pre><code class="language-text"># One thread block per row
+row = block_id
+m, s = -infinity, 0.0
+
+# Each thread scans a strided slice of the vocabulary
+for col = thread_id; col &lt; vocab_size; col += block_size:
+    x = fp32(logits[row, col])
+    new_m = max(m, x)
+    s = s * exp(m - new_m) + exp(x - new_m)
+    m = new_m
+
+# Warp reductions followed by one cross-warp reduction
+m, s = block_reduce(merge, (m, s))
+
+if thread_id == 0:
+    logsumexp = m + log(s)
+    out[row] = logits[row, index[row]] - logsumexp
+</code></pre>
+<p>The <code>block_reduce</code> step uses the online, numerically stable form of log-sum-exp.<label for="sn-online-softmax" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-online-softmax" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">This is the online softmax recurrence described by Milakov and Gimelshein in <a href="https://arxiv.org/abs/1805.02867"><em>Online normalizer calculation for softmax</em></a> (2018). Their elementwise update is the singleton case of the pairwise merge used here for parallel reduction.</span> Suppose one partial reduction has maximum \(m\) and normalized exponential sum \(s = \sum_i e^{x_i-m}\), while another has state \((m', s')\). We can merge them using:</p>
+<p>\[
+m_{new} = \max(m, m')
+\]</p>
+<p>\[
+s_{new} = s e^{m-m_{new}} + s' e^{m'-m_{new}}
+\]</p>
+<p>This implementation performs the accumulation in FP32 even when the input is <code>float16</code> or <code>bfloat16</code>. It supports contiguous <code>float16</code>, <code>bfloat16</code>, and <code>float32</code> logits with <code>int32</code> or <code>int64</code> indices. Because it writes only the selected result, it does not materialize the full log-probability tensor or an intermediate exponential tensor.</p>
+<p><code>torch.compile</code> can eliminate the full log-probability allocation, but it does not currently recover this exact reduction strategy. In the PyTorch 2.10 generated kernel I inspected, Inductor disabled its online-softmax path after splitting the reduction: the emitted Triton kernel made one pass to find the row maximum and a second pass to compute the exponential sum. The dedicated kernel instead maintains <code>(max, sum)</code> together in one streaming pass. This is a limitation of the current lowering, not something fundamentally impossible for a compiler to generate.</p>
+<h3 id="benchmarks" tabindex="-1">Benchmarks</h3>
+<p>I benchmarked three implementations over multiple sequence lengths, vocabulary sizes, and GPUs. The <a href="https://www.tylerromero.com/greyhound/kernels/selective_log_softmax/#benchmarks">complete benchmark sweep is available with the kernel implementation</a>.</p>
+<ul>
+<li>Eager PyTorch: <code>log_softmax</code> followed by <code>gather</code></li>
+<li><code>torch.compile</code>: the same PyTorch expression compiled by Inductor</li>
+<li>CuTe DSL: the dedicated reduction kernel described above</li>
+</ul>
+<p>Here is one representative point using <code>bfloat16</code> logits with batch size 8, sequence length 4096, and vocabulary size 128256:</p>
+<table>
+<thead>
+<tr>
+<th>GPU</th>
+<th style="text-align:right">Eager</th>
+<th style="text-align:right">Compiled</th>
+<th style="text-align:right">CuTe DSL</th>
+<th style="text-align:right">Speedup vs. compiled</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RTX 4090</td>
+<td style="text-align:right">23.564 ms</td>
+<td style="text-align:right">12.545 ms</td>
+<td style="text-align:right">8.819 ms</td>
+<td style="text-align:right">1.42x faster</td>
+</tr>
+<tr>
+<td>H100 80GB HBM3</td>
+<td style="text-align:right">10.619 ms</td>
+<td style="text-align:right">7.368 ms</td>
+<td style="text-align:right">3.123 ms</td>
+<td style="text-align:right">2.36x faster</td>
+</tr>
+<tr>
+<td>B200</td>
+<td style="text-align:right">5.105 ms</td>
+<td style="text-align:right">6.196 ms</td>
+<td style="text-align:right">2.301 ms</td>
+<td style="text-align:right">2.69x faster</td>
+</tr>
+</tbody>
+</table>
+<p>At this shape, the input logits occupy roughly 8.0 GiB. Eager PyTorch uses about twice that much peak allocated memory because it materializes another vocabulary-sized tensor. Both <code>torch.compile</code> and the CuTe kernel remain close to the size of the input logits. The CuTe kernel is 1.4--2.7x faster at this particular benchmark point across the three GPUs.</p>
+<h3 id="practical-tradeoffs" tabindex="-1">Practical Tradeoffs</h3>
+<p>The CuTe implementation is currently forward-only. It can be used for scoring, evaluation, reward-model traces, and other paths that do not differentiate through the selected log probabilities, but it is not yet a drop-in replacement inside PPO or GRPO training.</p>
+<p>That leaves three practical cases:</p>
+<ul>
+<li><strong>Forward-only workloads:</strong> a dedicated kernel can avoid relying on compiler fusion.</li>
+<li><strong>Training with autograd:</strong> the compiled PyTorch expression below is the most practical option here.</li>
+<li><strong>Eager-only environments:</strong> the looped PyTorch workaround in the appendix reduces memory at the cost of additional kernel launches.</li>
+</ul>
+<p>For the training case, <code>torch.compile</code> can fuse the naive <code>log_softmax</code> and <code>gather</code> expression into a memory-efficient generated kernel:</p>
+<pre><code class="language-python">@torch.compile(dynamic=True)
+def compiled_selective_log_softmax(logits, index):
+    logprobs = logits.log_softmax(dim=-1)
+    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+</code></pre>
+<p>The benchmarks above confirm that the compiled expression avoids the full log-probability allocation. It also supports autograd, while the dedicated kernel described above does not yet have a backward implementation. The <code>dynamic=True</code> flag allows sequence length to vary without specializing a new graph for every value, although changes to the vocabulary dimension can still require new generated code.</p>
+<h3 id="impact-in-ppo-and-grpo-training" tabindex="-1">Impact in PPO and GRPO Training</h3>
+<p>Before the dedicated kernel existed, I contributed the eager PyTorch workaround from the appendix to several popular open-source RLHF libraries, including <a href="https://github.com/huggingface/trl">huggingface/TRL</a> (<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>), <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> (<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>), <a href="https://github.com/volcengine/verl">Verl</a> (<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>), and <a href="https://github.com/allenai/open-instruct">allenai/open-instruct</a> (<a href="https://github.com/allenai/open-instruct/pull/584">PR 5</a>). It was also incorporated into <a href="https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47">PrimeIntellect-ai/prime-rl</a> for training the <a href="https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf">INTELLECT-2</a> model.</p>
+<p>Here is the actual GPU memory usage on an RTX 4090 before and after implementing selective log-softmax in TRL's <code>GRPOTrainer</code>:</p>
+<p><picture><source type="image/webp" srcset="/assets/img/C4oDMth8kH-300.webp 300w, /assets/img/C4oDMth8kH-600.webp 600w, /assets/img/C4oDMth8kH-900.webp 900w, /assets/img/C4oDMth8kH-1922.webp 1922w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/C4oDMth8kH-300.png" alt="Memory usage reduction from selective log-softmax in TRL" width="1922" height="1310" srcset="/assets/img/C4oDMth8kH-300.png 300w, /assets/img/C4oDMth8kH-600.png 600w, /assets/img/C4oDMth8kH-900.png 900w, /assets/img/C4oDMth8kH-1922.png 1922w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
+<p>A 10% reduction in total peak VRAM is a meaningful improvement for changing one operation. It can translate directly into a larger batch size or longer sequence length.</p>
+</section>
+<section>
+<h2 id="appendix%3A-the-eager-pytorch-experiments" tabindex="-1">Appendix: The Eager PyTorch Experiments</h2>
+<p>The rest of this post preserves the thought process that led me to the kernel. These implementations are useful for understanding where the memory goes, but they are workarounds rather than ideal GPU programs.</p>
+<h3 id="take-1%3A-decompose-the-operation" tabindex="-1">Take 1: Decompose the Operation</h3>
+<p>The algebra suggests computing <code>logsumexp</code>, gathering the selected logits, and subtracting:</p>
 <pre><code class="language-python">def selective_log_softmax_take1(logits, index):
-    logsumexp_values = torch.logsumexp(logits, dim=-1)  # shape: (batch_size, seq_len)
-    token_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(
-        -1
-    )  # shape: (batch_size, seq_len)
-    token_logprobs = token_logits - logsumexp_values  # shape: (batch_size, seq_len)
-    return token_logprobs
+    logsumexp_values = torch.logsumexp(logits, dim=-1)
+    token_logits = torch.gather(
+        logits, dim=-1, index=index.unsqueeze(-1)
+    ).squeeze(-1)
+    return token_logits - logsumexp_values
 </code></pre>
-<p>On the surface, it looks like this should decrease the memory requirements of the selective log-softmax operation -- we are now only outputting tensors of size <code>batch_size * sequence_length</code> rather than <code>batch_size * sequence_length * vocab_size</code>. However, there is a catch. Internally, <code>torch.logsumexp()</code> allocates a tensor of size <code>batch_size * sequence_length * vocab_size</code> in order to exponentiate the logits. So, unfortunately, our peak memory consumption has not decreased at all.</p>
-<p>What can we do to improve this situation?</p>
-<p>Well, we could just compute the logsumexp values one-by-one for each sequence in the batch. That would mean that <code>torch.logsumexp()</code> only materializes a <code>sequence_length * vocab_size</code> tensor internally.</p>
+<p>On the surface, this looks like it should solve the problem because the output has shape <code>(batch_size, sequence_length)</code> instead of <code>(batch_size, sequence_length, vocab_size)</code>. However, eager <code>torch.logsumexp()</code> internally materializes a vocabulary-sized exponential tensor. Peak memory therefore remains essentially unchanged.</p>
+<h3 id="take-2%3A-limit-the-temporary-size" tabindex="-1">Take 2: Limit the Temporary Size</h3>
+<p>Well, we could compute <code>logsumexp</code> one batch row at a time. The largest temporary would then have shape <code>(sequence_length, vocab_size)</code> instead of <code>(batch_size, sequence_length, vocab_size)</code>:</p>
 <pre><code class="language-python">def selective_log_softmax_take2(logits, index):
-    logsumexp_values = torch.stack([torch.logsumexp(l, dim=-1) for l in logits])
-    token_logits = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
-    token_logprobs = token_logits - logsumexp_values
-    return token_logprobs
+    logsumexp_values = torch.stack(
+        [torch.logsumexp(logits_row, dim=-1) for logits_row in logits]
+    )
+    token_logits = torch.gather(
+        logits, dim=-1, index=index.unsqueeze(-1)
+    ).squeeze(-1)
+    return token_logits - logsumexp_values
 </code></pre>
-<p>This approach should effectively reduce peak memory usage by only allocating tensors that are proportional to <code>batch_size * sequence_length</code> and <code>sequence_length * vocab_size</code> rather than <code>batch_size * sequence_length * vocab_size</code>.</p>
-<p>Let's run a benchmark to see if we are correct. We'll also include the following ablation that simply computes <code>log_softmax</code> in a loop over the batch dimension.</p>
-<pre><code class="language-python">def selective_log_softmax_ablation1(logits, index):
+<p>For comparison, we can also loop over <code>log_softmax</code> itself:</p>
+<pre><code class="language-python">def selective_log_softmax_ablation(logits, index):
     token_logprobs = []
     for logits_row, index_row in zip(logits, index):
-        logprobs_row = logits_row.log_softmax(dim=-1)  # (seq_len, vocab_size)
+        logprobs_row = logits_row.log_softmax(dim=-1)
         token_logprobs_row = torch.gather(
             logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
         ).squeeze(-1)
         token_logprobs.append(token_logprobs_row)
     return torch.stack(token_logprobs)
 </code></pre>
-<p>Here is the benchmark script:</p>
+<p>Both approaches limit the large temporary to one batch row, but they require many separate kernel launches. That is the fundamental weakness of trying to express this operation as a Python loop over eager PyTorch primitives.</p>
+<h3 id="reproducing-the-eager-benchmark" tabindex="-1">Reproducing the Eager Benchmark</h3>
+<p>Here is the benchmark helper. The CUDA synchronizations are important because GPU operations are asynchronous:</p>
 <pre><code class="language-python">import time
 import torch
 
 
 def measure_memory_and_time(func, logits, index, n_runs=100):
+    # Warm up one-time CUDA work before measuring.
+    func(logits, index)
+    torch.cuda.synchronize()
+
     torch.cuda.reset_peak_memory_stats()
     result = func(logits, index)
+    torch.cuda.synchronize()
     mem_peak = torch.cuda.max_memory_allocated()
+
     start_time = time.perf_counter()
     for _ in range(n_runs):
         func(logits, index)
+    torch.cuda.synchronize()
     avg_time = (time.perf_counter() - start_time) / n_runs
     return result, avg_time, mem_peak
 
 
-# Simulated data
 torch.manual_seed(42)
 vocab_size = 32768
 seq_len = 1024
 batch_size = 16
 
-device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
 logits = torch.randn(
-    batch_size, seq_len, vocab_size, device=device, dtype=torch.float32
+    batch_size,
+    seq_len,
+    vocab_size,
+    device=&quot;cuda&quot;,
+    dtype=torch.float32,
 )
-index = torch.randint(0, vocab_size, (batch_size, seq_len), device=device)
-logit_mem = torch.cuda.max_memory_allocated()
+index = torch.randint(0, vocab_size, (batch_size, seq_len), device=&quot;cuda&quot;)
 
-# Run all methods
 funcs = {
     &quot;Naive&quot;: naive_selective_log_softmax,
     &quot;Take1&quot;: selective_log_softmax_take1,
     &quot;Take2&quot;: selective_log_softmax_take2,
-    &quot;Ablation1&quot;: selective_log_softmax_ablation1,
+    &quot;Ablation&quot;: selective_log_softmax_ablation,
 }
-results = {}
-for name, fn in funcs.items():
-    results[name] = measure_memory_and_time(fn, logits, index)
-
-# Check equivalence
-print(&quot;Logits Dtype:&quot;, logits.dtype)
-for name in [&quot;Take1&quot;, &quot;Take2&quot;, &quot;Ablation1&quot;]:
-    diff = (results[&quot;Naive&quot;][0] - results[name][0]).abs().max().item()
-    print(f&quot;Max abs diff (Naive vs {name}): {diff}&quot;)
-
-print(f&quot;Logits memory: {logit_mem / 1e6:.2f} MB&quot;)
-for name, (_, t, mem) in results.items():
-    print(f&quot;{name:10s} time: {t:.6f} sec, peak: {mem / 1e6:.2f} MB&quot;)
+results = {name: measure_memory_and_time(fn, logits, index) for name, fn in funcs.items()}
 </code></pre>
-<p>Running this benchmark<label for="mn-benchmark" class="margin-toggle">&#8853;</label><input type="checkbox" id="mn-benchmark" class="margin-toggle" aria-label="Toggle margin note"><span class="marginnote">Memory usage vs. vocabulary size. <code>take1</code> is obscured by <code>naive</code> because they have the same memory requirements. <picture><source type="image/webp" srcset="/assets/img/5CQHH5jD6T-300.webp 300w, /assets/img/5CQHH5jD6T-600.webp 600w, /assets/img/5CQHH5jD6T-900.webp 900w, /assets/img/5CQHH5jD6T-2400.webp 2400w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/5CQHH5jD6T-300.png" alt="Memory usage vs vocabulary size for different selective log softmax implementations" width="2400" height="1800" srcset="/assets/img/5CQHH5jD6T-300.png 300w, /assets/img/5CQHH5jD6T-600.png 600w, /assets/img/5CQHH5jD6T-900.png 900w, /assets/img/5CQHH5jD6T-2400.png 2400w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> script with logits stored in <code>float32</code> gives the following output:</p>
+<p>Running this benchmark<label for="sn-benchmark" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-benchmark" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">These results were rerun on July 17, 2026, using an RTX 4090 and <code>torch==2.10.0+cu128</code>. The original version of this post did not synchronize CUDA before reading the timer, which understated execution time.</span> with <code>float32</code> logits gives:</p>
 <pre><code class="language-text">Logits Dtype: torch.float32
 Max abs diff (Naive vs Take1): 1.9073486328125e-06
 Max abs diff (Naive vs Take2): 1.9073486328125e-06
-Max abs diff (Naive vs Ablation1): 0.0
-Logits memory: 2147.61 MB
-Naive      time: 0.000018 sec, peak: 4295.16 MB
-Take1      time: 0.000965 sec, peak: 4295.29 MB
-Take2      time: 0.012608 sec, peak: 2282.03 MB
-Ablation1  time: 0.004153 sec, peak: 2416.31 MB
+Max abs diff (Naive vs Ablation): 0.0
+Logits memory: 2147.48 MB
+Naive      time: 0.004702 sec, peak: 4295.23 MB
+Take1      time: 0.013805 sec, peak: 4295.43 MB
+Take2      time: 0.013911 sec, peak: 2282.16 MB
+Ablation   time: 0.004778 sec, peak: 2282.16 MB
 </code></pre>
-<p>In this benchmark setting, <strong>peak VRAM usage for this operation was reduced by 47% (from 4295MB to 2282MB)</strong> while maintaining numerical stability. And <strong>most of the memory consumed now is due to the size of the input logits (2147MB)</strong>. The proposed method is notably slower than the naive method, although, in practice (for LLM post-training), the speed of this operation is not very consequential.</p>
-<h3 id="ablation-analysis" tabindex="-1">Ablation Analysis</h3>
-<p>One might note that the ablation method also only allocates tensors proportional to <code>sequence_length * vocab_size</code>, so why does it consume more memory than <code>selective_log_softmax_take2</code>? This is because of the gradient formulas for <code>log_softmax()</code> and <code>logsumexp()</code> require different intermediate values to be stored for the backward computation.</p>
-<p>For <code>log_softmax</code>, the gradient formula is:
-\[
-\frac{\partial \text{log\_softmax}(x_i)}{\partial x_j} = \delta_{ij} - \text{softmax}(x_j)
-\]</p>
-<p>For <code>logsumexp</code>, the gradient formula is:
-\[
-\frac{\partial \text{logsumexp}(x)}{\partial x_i} = \text{softmax}(x_i)
-\]</p>
-<p>For the backward pass through <code>logsumexp</code>, we need:</p>
-<ul>
-<li>Softmax of input: <code>(sequence_length, vocab_size)</code></li>
-</ul>
-<p>For the backward pass through <code>log_softmax</code>, we need:</p>
-<ul>
-<li>Softmax of input: <code>(sequence_length, vocab_size)</code></li>
-<li>Original <code>log_softmax</code> output: <code>(sequence_length, vocab_size)</code></li>
-</ul>
-<p>So while both methods avoid allocating additional <code>vocab_size</code>-scale tensors during the forward pass, <code>selective_log_softmax_ablation1</code> needs to store the full <code>log_softmax</code> output for the backward pass, leading to higher memory usage.</p>
-<h3 id="numerical-stability" tabindex="-1">Numerical Stability</h3>
-<p>It is important to note that the <code>selective_log_softmax_take2</code> is not numerically stable when logits are cast to <code>bfloat16</code> or <code>float16</code>:</p>
+<p>Peak VRAM drops by 47%, from 4295MB to 2282MB, and almost all of the remaining memory is the 2147MB input. But the looped <code>logsumexp</code> implementation is about 3x slower than the naive operation. The looped <code>log_softmax</code> ablation reaches the same memory footprint and is much faster.</p>
+<h3 id="half-precision-numerical-behavior" tabindex="-1">Half-Precision Numerical Behavior</h3>
+<p>The decomposed <code>logsumexp</code> implementation also does not exactly match PyTorch's <code>log_softmax</code> result for <code>bfloat16</code> and <code>float16</code> inputs:</p>
 <pre><code class="language-text">Logits Dtype: torch.bfloat16
 Max abs diff (Naive vs Take1): 0.0625
-Max abs diff (Naive vs Take2): 0.0625  # &lt;- this is the issue
-Max abs diff (Naive vs Ablation1): 0.0
-Logits memory: 1073.87 MB
-Naive      time: 0.000018 sec, peak: 2147.65 MB
-Take1      time: 0.000474 sec, peak: 2147.75 MB
-Take2      time: 0.005142 sec, peak: 1141.11 MB
-Ablation1  time: 0.002016 sec, peak: 1208.22 MB
+Max abs diff (Naive vs Take2): 0.0625
+Max abs diff (Naive vs Ablation): 0.0
+Logits memory: 1073.74 MB
+Naive      time: 0.002378 sec, peak: 2147.68 MB
+Take1      time: 0.006921 sec, peak: 2147.78 MB
+Take2      time: 0.005678 sec, peak: 1141.15 MB
+Ablation   time: 0.002429 sec, peak: 1141.15 MB
 </code></pre>
-<p>Therefore, we should use <code>selective_log_softmax_take2</code> when working with full precision (<code>torch.float32</code> and <code>torch.float64</code>) tensors, and fall back to <code>selective_log_softmax_ablation1</code> when using reduced precision (<code>torch.bfloat16</code> and <code>torch.float16</code>) tensors to maintain accuracy.</p>
-<h3 id="efficient-solution" tabindex="-1">Efficient Solution</h3>
-<p>The complete code snippet is as follows:</p>
+<p>This is a rounding difference rather than the classic overflow problem that stable log-sum-exp avoids, but it matters when exact agreement with PyTorch is expected. The eager workaround therefore uses looped <code>logsumexp</code> for full-precision inputs and looped <code>log_softmax</code> for reduced-precision inputs:</p>
 <pre><code class="language-python">def selective_log_softmax(logits, index):
-    &quot;&quot;&quot;Compute log softmax probabilities for selected tokens.
+    &quot;&quot;&quot;Compute log-softmax probabilities for selected tokens.&quot;&quot;&quot;
+    if logits.dtype in (torch.float32, torch.float64):
+        lse = torch.stack(
+            [torch.logsumexp(logits_row, dim=-1) for logits_row in logits]
+        )
+        selected = torch.gather(
+            logits, dim=-1, index=index.unsqueeze(-1)
+        ).squeeze(-1)
+        return selected - lse
 
-    Args:
-        logits (`torch.Tensor`):
-            Logits tensor of shape `(..., num_classes)`.
-        index (`torch.Tensor`):
-            Index tensor of shape `(...)`, specifying the positions
-            to gather from the log-softmax output.
-    Returns:
-        `torch.Tensor`:
-            Gathered log probabilities with the same shape as `index`.
-    &quot;&quot;&quot;
-    if logits.dtype in [torch.float32, torch.float64]:
-        # Loop to reduce peak memory consumption
-        lse = torch.stack([torch.logsumexp(lg, dim=-1) for lg in logits])
-        selected = torch.gather(logits, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
-        # log_softmax(x_i) = x_i - logsumexp(x)
-        token_logprobs = selected - lse
-    else:
-        # logsumexp is unstable with bfloat16; use log_softmax instead
-        # Loop to reduce peak memory consumption
-        token_logprobs = []
-        for logits_row, index_row in zip(logits, index):
-            logprobs_row = logits_row.log_softmax(dim=-1)
-            token_logprobs_row = torch.gather(
-                logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
-            ).squeeze(-1)
-            token_logprobs.append(token_logprobs_row)
-        token_logprobs = torch.stack(token_logprobs)
-    return token_logprobs
+    token_logprobs = []
+    for logits_row, index_row in zip(logits, index):
+        logprobs_row = logits_row.log_softmax(dim=-1)
+        token_logprobs_row = torch.gather(
+            logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
+        ).squeeze(-1)
+        token_logprobs.append(token_logprobs_row)
+    return torch.stack(token_logprobs)
 </code></pre>
-<p>I have contributed this optimization to several popular open-source RLHF libraries, including <a href="https://github.com/huggingface/trl">huggingface/TRL</a> (<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>), <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> (<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>), <a href="https://github.com/volcengine/verl">Verl</a> (<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>), and <a href="https://github.com/allenai/open-instruct">allenai/open-instruct</a> (<a href="https://github.com/allenai/open-instruct/pull/584">PR 5</a>). This implementation was also incorporated into <a href="https://github.com/PrimeIntellect-ai/prime-rl">PrimeIntellect-ai/prime-rl</a> (<a href="https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47">here</a>) for the training of the <a href="https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf">INTELLECT-2</a> model.</p>
-<p>Here is the actual GPU memory usage on an RTX 4090 (24GB VRAM) before and after implementing selective log-softmax in TRL's <code>GRPOTrainer</code>: <picture><source type="image/webp" srcset="/assets/img/C4oDMth8kH-300.webp 300w, /assets/img/C4oDMth8kH-600.webp 600w, /assets/img/C4oDMth8kH-900.webp 900w, /assets/img/C4oDMth8kH-1922.webp 1922w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/C4oDMth8kH-300.png" alt="Memory usage reduction from selective log-softmax in TRL" width="1922" height="1310" srcset="/assets/img/C4oDMth8kH-300.png 300w, /assets/img/C4oDMth8kH-600.png 600w, /assets/img/C4oDMth8kH-900.png 900w, /assets/img/C4oDMth8kH-1922.png 1922w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
-<p>A 10% reduction in peak VRAM requirements is a great improvement for such a simple change!</p>
-<h3 id="a-note-on-torch.compile" tabindex="-1">A note on <code>torch.compile</code></h3>
-<p>When using <code>torch.compile()</code>, PyTorch will attempt to fuse operations and generate optimized CUDA kernels using <a href="https://github.com/openai/triton">Triton</a>. For our selective log-softmax implementation, this means PyTorch may be able to take the naive implementation and fuse the <code>log_softmax</code> and <code>gather</code> operations into a single kernel, potentially reducing memory consumption.</p>
-<pre><code class="language-python">@torch.compile(dynamic=True)
-def compiled_selective_log_softmax(logits, index):
-    logprobs = logits.log_softmax(dim=-1)
-    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
-</code></pre>
-<p>If we benchmark this method using <code>torch==2.6.0</code> and <code>triton==3.2.0</code>, we see these results when logits are in <code>float32</code>:</p>
-<pre><code class="language-text">Max absolute difference (naive and compiled): 9.5367431640625e-07
-Compiled method time:  0.000073 sec, Memory peak: 2147.94 MB
-</code></pre>
-<p>And these results when logits are in <code>bfloat16</code><label for="sn-exact" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-exact" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">Interestingly, <code>torch.compile</code> generates a kernel that maintains exact numerical equivalence for half-precision dtypes.</span>:</p>
-<pre><code class="language-text">Max absolute difference (naive and compiled): 0.0
-Compiled method time:  0.000129 sec, Memory peak: 1074.04 MB
-</code></pre>
-<p>Very impressive! This is both faster and more memory efficient than our hand-rolled solution, while being numerically stable. And the <code>dynamic=True</code> flag means that we shouldn't need to recompile every time a new sequence length is used.</p>
-<p>The only reason not to use this method is if you are in a setting where <code>torch.compile</code> usage is supposed to be enabled/disabled via a user-passed flag. Which is the case for most open-source libraries that use <code>torch</code>. For your own projects, the compiled version is recommended!</p>
+<p>This workaround is still useful when <code>torch.compile</code> and custom kernels are unavailable. But after following the operation all the way down, the right abstraction is clear: selective log-softmax wants to be a single streaming reduction kernel.</p>
 <hr class="section-divider">
-<p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the initial benchmarking script and suggesting to pull <code>gather</code> out of the loop over <code>logsumexp</code> to improve performance.</p>
+<p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the initial benchmarking script and suggesting that I pull <code>gather</code> out of the loop over <code>logsumexp</code> to improve performance.</p>
 </section>
 
         </article>
