@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Direct Preference Optimization Explained In-depth</title>
@@ -24,12 +25,12 @@
 <meta property="og:url" content="https://www.tylerromero.com/posts/2024-04-dpo/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Direct Preference Optimization Explained In-depth">
 <meta name="twitter:description" content="Simpler preference-tuning without reinforcement learning">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,6 +48,8 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -59,18 +62,19 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2024-04-13T08:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.372Z",
+            "dateModified": "2026-02-25T13:35:38-08:00",
             "url": "https://www.tylerromero.com/posts/2024-04-dpo/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/posts/2024-04-dpo/"
             },
-            "image": "https://www.tylerromero.com",
-            "keywords": "post, machine-learning, nlp, language-models, dpo, rlhf, ai-alignment",
-            "wordCount": "7713",
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["post","machine-learning","nlp","language-models","dpo","rlhf","ai-alignment"],
+            "wordCount": 7713,
             "articleBody": "With my first blog post, I want to cover an excellent paper that was published last year: Direct Preference Optimization: Your Language Model is Secretly a Reward Model by Rafailov et al. Commonly referred to as DPO, this method of preference tuning is an alternative to Reinforcement Learning from Human Feedback (RLHF) that avoids the actual reinforcement learning. In this blog post, I will explain DPO from first principles; readers do not need an understanding of RLHF. However, fair warning..."
             }
         </script>
+
 
     </head>
     <body>
@@ -96,43 +100,7 @@
                 <p class="subtitle">Simpler preference-tuning without reinforcement learning</p>
                 <p class="date">Apr 13, 2024</p>
             </div>
-            <nav class="toc"></nav>
-            <script>
-                (function() {
-
-                    var headings = document.querySelectorAll('article h2, article h3');
-                    if (headings.length >= 3) {
-                        var toc = document.querySelector('.toc');
-                        var ol = document.createElement('ol');
-                        var currentH2Item = null;
-                        var nestedOl = null;
-                        headings.forEach(function(h) {
-                            var li = document.createElement('li');
-                            var a = document.createElement('a');
-                            a.href = '#' + h.id;
-                            a.textContent = h.textContent;
-                            li.appendChild(a);
-                            if (h.tagName === 'H2') {
-                                currentH2Item = li;
-                                nestedOl = null;
-                                ol.appendChild(li);
-                            } else {
-                                if (!nestedOl) {
-                                    nestedOl = document.createElement('ol');
-                                    if (currentH2Item) {
-                                        currentH2Item.appendChild(nestedOl);
-                                    } else {
-                                        ol.appendChild(li);
-                                        return;
-                                    }
-                                }
-                                nestedOl.appendChild(li);
-                            }
-                        });
-                        toc.appendChild(ol);
-                    }
-                })();
-            </script>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#training%2C-tuning%2C-and-aligning-llms">Training, tuning, and aligning LLMs</a></li><li><a href="#tuning-llms-on-preference-data">Tuning LLMs on preference data</a><ol><li><a href="#the-bradley-terry-model">The Bradley-Terry Model</a></li><li><a href="#applying-the-bradley-terry-model-to-llms">Applying the Bradley-Terry Model to LLMs</a></li><li><a href="#the-probability-of-a-completion">The probability of a completion</a></li></ol></li><li><a href="#optimizing-our-llm-based-on-preferences">Optimizing our LLM based on preferences</a><ol><li><a href="#direct-preference-optimization">Direct Preference Optimization</a></li><li><a href="#properties-and-caveats-of-dpo">Properties and Caveats of DPO</a></li></ol></li><li><a href="#interested-in-learning-more%3F">Interested in learning more?</a></li><li><a href="#references">References</a></li></ol></nav>
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');

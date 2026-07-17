@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>NanoGPT Speedrun Living Worklog</title>
@@ -24,12 +25,12 @@
 <meta property="og:url" content="https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/golden-gardens.png">
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="NanoGPT Speedrun Living Worklog">
 <meta name="twitter:description" content="How fast can I train GPT-2 on two RTX 4090 GPUs?">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/golden-gardens.png">
 
 
 
@@ -54,6 +55,8 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -66,18 +69,19 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-03-08T08:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.372Z",
+            "dateModified": "2026-03-30T14:49:09-07:00",
             "url": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/"
             },
-            "image": "https://www.tylerromero.com",
-            "keywords": "post, llm, gpt2, speedrun, nanogpt, worklog, muon",
-            "wordCount": "3525",
-            "articleBody": "I&#39;ve seen some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!). I have access to 2xRTX 4090 GPUs and..."
+            "image": "https://www.tylerromero.com/assets/img/golden-gardens.png",
+            "keywords": ["post","llm","gpt2","speedrun","nanogpt","worklog","muon"],
+            "wordCount": 3525,
+            "articleBody": "I've seen some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and wanted to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. At the time of writing (Jan 16, 2025), the record is 3.14 minutes (!). I have access to 2xRTX 4090 GPUs and..."
             }
         </script>
+
 
     </head>
     <body>
@@ -108,43 +112,7 @@
                 <p class="subtitle">How fast can I train GPT-2 on two RTX 4090 GPUs?</p>
                 <p class="date">Mar 8, 2025</p>
             </div>
-            <nav class="toc"></nav>
-            <script>
-                (function() {
-
-                    var headings = document.querySelectorAll('article h2, article h3');
-                    if (headings.length >= 3) {
-                        var toc = document.querySelector('.toc');
-                        var ol = document.createElement('ol');
-                        var currentH2Item = null;
-                        var nestedOl = null;
-                        headings.forEach(function(h) {
-                            var li = document.createElement('li');
-                            var a = document.createElement('a');
-                            a.href = '#' + h.id;
-                            a.textContent = h.textContent;
-                            li.appendChild(a);
-                            if (h.tagName === 'H2') {
-                                currentH2Item = li;
-                                nestedOl = null;
-                                ol.appendChild(li);
-                            } else {
-                                if (!nestedOl) {
-                                    nestedOl = document.createElement('ol');
-                                    if (currentH2Item) {
-                                        currentH2Item.appendChild(nestedOl);
-                                    } else {
-                                        ol.appendChild(li);
-                                        return;
-                                    }
-                                }
-                                nestedOl.appendChild(li);
-                            }
-                        });
-                        toc.appendChild(ol);
-                    }
-                })();
-            </script>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#progress-so-far">Progress so far</a></li><li><a href="#1.-initial-setup-and-baseline">1. Initial setup and baseline</a></li><li><a href="#2.-implementing-major-improvements-from-the-8xh100-leaderboard">2. Implementing major improvements from the 8xH100 leaderboard</a><ol><li><a href="#2.1-architectural-changes-and-training-tweaks">2.1 Architectural changes and training tweaks</a></li><li><a href="#2.2-muon-optimizer">2.2 Muon Optimizer</a></li><li><a href="#2.3-dataloading-tweaks">2.3 Dataloading Tweaks</a></li><li><a href="#2.4-logit-soft-capping">2.4 Logit Soft-capping</a></li></ol></li><li><a href="#3-longer-training-and-evaluation-sequence-length">3 Longer Training and Evaluation Sequence Length</a></li><li><a href="#references">References</a></li></ol></nav>
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');

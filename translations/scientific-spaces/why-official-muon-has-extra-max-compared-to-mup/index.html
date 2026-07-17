@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Why Does the Official Muon Have an Extra max(1, ·) Compared to the MuP Version?</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Why Does the Official Muon Have an Extra max(1, ·) Compared to the MuP Version?">
 <meta property="og:description" content="Translated from 为什么官方版Muon比MuP版多出一个max(1, ⋅)？ by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/why-official-muon-has-extra-max-compared-to-mup/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Why Does the Official Muon Have an Extra max(1, ·) Compared to the MuP Version?">
 <meta name="twitter:description" content="Translated from 为什么官方版Muon比MuP版多出一个max(1, ⋅)？ by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Why Does the Official Muon Have an Extra max(1, ·) Compared to the MuP Version?",
-            "description": "Translated from [为什么官方版Muon比MuP版多出一个max(1, ⋅)？](https://kexue.fm/archives/11772) by Jianlin Su (苏剑林)",
+            "description": "Translated from 为什么官方版Muon比MuP版多出一个max(1, ⋅)？ by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-06-02T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.375Z",
+            "dateModified": "2026-06-03T14:50:29-07:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/why-official-muon-has-extra-max-compared-to-mup/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/why-official-muon-has-extra-max-compared-to-mup/"
             },
-            "keywords": "translation, muon, optimization, mup",
-            "wordCount": "999",
-            "articleBody": "Translator&#39;s note (Opus 4.7): This is an English translation of 为什么官方版Muon比MuP版多出一个max(1, ⋅)？ by Jianlin Su (苏剑林), originally published on June 3, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. In the post Muon Optimizer Guide: Quick Start and Key Details, we listed several versions of Muon. They differ only in the matrix-shape-dependent scaling factor of the learning rate, where the &amp;quot;official version (KellerJordan version)&amp;quot; is just the..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","muon","optimization","mup"],
+            "wordCount": 999,
+            "articleBody": "Translator's note (Opus 4.7): This is an English translation of 为什么官方版Muon比MuP版多出一个max(1, ⋅)？ by Jianlin Su (苏剑林), originally published on June 3, 2026 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. In the post Muon Optimizer Guide: Quick Start and Key Details, we listed several versions of Muon. They differ only in the matrix-shape-dependent scaling factor of the learning rate, where the &quot;official version (KellerJordan version)&quot; is just the..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11772">为什么官方版Muon比MuP版多出一个max(1, ⋅)？</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Jun 2, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#the-variants">The Variants</a></li><li><a href="#feature-increment">Feature Increment</a></li><li><a href="#the-isotropic-case">The Isotropic Case</a></li><li><a href="#the-anisotropic-case">The Anisotropic Case</a></li><li><a href="#summary">Summary</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

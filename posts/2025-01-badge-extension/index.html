@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>An Extension to BADGE Active Learning for Variable-Sized Batches</title>
@@ -24,12 +25,12 @@
 <meta property="og:url" content="https://www.tylerromero.com/posts/2025-01-badge-extension/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="An Extension to BADGE Active Learning for Variable-Sized Batches">
 <meta name="twitter:description" content="BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -54,6 +55,8 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -66,18 +69,19 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.372Z",
+            "dateModified": "2026-02-26T11:40:11-08:00",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/posts/2025-01-badge-extension/"
             },
-            "image": "https://www.tylerromero.com",
-            "keywords": "post, machine-learning, active-learning, BADGE, batch-active-learning, k-means++, MNIST, multidimensional-scaling, uncertainty-sampling",
-            "wordCount": "3062",
-            "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model&#39;s uncertainty (through gradient magnitude) and the data&#39;s semantic content (through gradient direction). By choosing points with diverse,..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["post","machine-learning","active-learning","BADGE","batch-active-learning","k-means++","MNIST","multidimensional-scaling","uncertainty-sampling"],
+            "wordCount": 3062,
+            "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse,..."
             }
         </script>
+
 
     </head>
     <body>
@@ -103,43 +107,7 @@
                 <p class="subtitle">BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data</p>
                 <p class="date">Jan 5, 2025</p>
             </div>
-            <nav class="toc"></nav>
-            <script>
-                (function() {
-
-                    var headings = document.querySelectorAll('article h2, article h3');
-                    if (headings.length >= 3) {
-                        var toc = document.querySelector('.toc');
-                        var ol = document.createElement('ol');
-                        var currentH2Item = null;
-                        var nestedOl = null;
-                        headings.forEach(function(h) {
-                            var li = document.createElement('li');
-                            var a = document.createElement('a');
-                            a.href = '#' + h.id;
-                            a.textContent = h.textContent;
-                            li.appendChild(a);
-                            if (h.tagName === 'H2') {
-                                currentH2Item = li;
-                                nestedOl = null;
-                                ol.appendChild(li);
-                            } else {
-                                if (!nestedOl) {
-                                    nestedOl = document.createElement('ol');
-                                    if (currentH2Item) {
-                                        currentH2Item.appendChild(nestedOl);
-                                    } else {
-                                        ol.appendChild(li);
-                                        return;
-                                    }
-                                }
-                                nestedOl.appendChild(li);
-                            }
-                        });
-                        toc.appendChild(ol);
-                    }
-                })();
-            </script>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#badge-overview">BADGE Overview</a><ol><li><a href="#1.-compute-gradient-embeddings">1. Compute Gradient Embeddings</a></li><li><a href="#2.-select-diverse-and-informative-points">2. Select Diverse and Informative Points</a></li><li><a href="#a-demonstration-with-mnist">A Demonstration with MNIST</a></li></ol></li><li><a href="#extending-badge-to-variable-sized-batches">Extending BADGE to Variable-Sized Batches</a><ol><li><a href="#when-are-variable-sized-batches-helpful%3F">When Are Variable-Sized Batches Helpful?</a></li><li><a href="#generating-a-prioritized-ordering">Generating a Prioritized Ordering</a></li><li><a href="#demonstrating-on-mnist-(continued-from-above)">Demonstrating on MNIST (Continued from above)</a></li><li><a href="#computing-k-means%2B%2B-ordering-efficiently">Computing K-means++ Ordering Efficiently</a></li></ol></li><li><a href="#can-other-popular-batch-active-learning-methods-be-similarly-extended%3F">Can Other Popular Batch Active Learning Methods Be Similarly Extended?</a><ol><li><a href="#yes%3A-coreset-and-other-greedy-selection-algorithms">Yes: CORESET and other Greedy-Selection Algorithms</a></li><li><a href="#no%3A-batchbald-and-other-methods-that-require-a-global-view">No: BatchBALD and Other Methods That Require a Global View</a></li></ol></li><li><a href="#thanks-for-reading!">Thanks for Reading!</a></li><li><a href="#references">References</a></li></ol></nav>
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');

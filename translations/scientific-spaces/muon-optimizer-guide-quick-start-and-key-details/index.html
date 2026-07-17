@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Muon Optimizer Guide: Quick Start and Key Details</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Muon Optimizer Guide: Quick Start and Key Details">
 <meta property="og:description" content="Translated from Muon优化器指南：快速上手与关键细节 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/muon-optimizer-guide-quick-start-and-key-details/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Muon Optimizer Guide: Quick Start and Key Details">
 <meta name="twitter:description" content="Translated from Muon优化器指南：快速上手与关键细节 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -54,29 +55,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Muon Optimizer Guide: Quick Start and Key Details",
-            "description": "Translated from [Muon优化器指南：快速上手与关键细节](https://kexue.fm/archives/11416) by Jianlin Su (苏剑林)",
+            "description": "Translated from Muon优化器指南：快速上手与关键细节 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-11-18T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-03-02T13:57:46-08:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/muon-optimizer-guide-quick-start-and-key-details/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/muon-optimizer-guide-quick-start-and-key-details/"
             },
-            "keywords": "translation, muon, optimization, adam",
-            "wordCount": "1833",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of Muon优化器指南：快速上手与关键细节 by Jianlin Su (苏剑林), originally published on November 19, 2025 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. By now, many readers have likely come across news about the Muon optimizer. Muon was originally proposed around October of last year by Keller Jordan on Twitter — barely over a year ago. Yet in that single year, Muon has already been tested on models with tens of..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","muon","optimization","adam"],
+            "wordCount": 1833,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of Muon优化器指南：快速上手与关键细节 by Jianlin Su (苏剑林), originally published on November 19, 2025 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. By now, many readers have likely come across news about the Muon optimizer. Muon was originally proposed around October of last year by Keller Jordan on Twitter — barely over a year ago. Yet in that single year, Muon has already been tested on models with tens of..."
             }
         </script>
+
 
     </head>
     <body>
@@ -97,6 +102,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11416">Muon优化器指南：快速上手与关键细节</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Nov 18, 2025</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#brief-introduction">Brief Introduction</a></li><li><a href="#four-variants">Four Variants</a></li><li><a href="#the-two-dimensions">The Two Dimensions</a></li><li><a href="#hyperparameter-settings">Hyperparameter Settings</a></li><li><a href="#other-parameters">Other Parameters</a></li><li><a href="#expected-results">Expected Results</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

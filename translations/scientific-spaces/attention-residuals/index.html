@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Attention Residuals</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Attention Residuals">
 <meta property="og:description" content="Translated from Attention Residuals 回忆录 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Attention Residuals">
 <meta name="twitter:description" content="Translated from Attention Residuals 回忆录 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Attention Residuals",
-            "description": "Translated from [Attention Residuals 回忆录](https://kexue.fm/archives/11664) by Jianlin Su (苏剑林)",
+            "description": "Translated from Attention Residuals 回忆录 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-03-18T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-06-03T14:50:29-07:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/attention-residuals/"
             },
-            "keywords": "translation, attention, residual-connections, model-architecture, depth",
-            "wordCount": "2518",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of Attention Residuals 回忆录 by Jianlin Su (苏剑林), originally published on March 19, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. This article introduces our latest work, Attention Residuals (AttnRes) — as the name suggests, this uses the idea of Attention to improve Residuals. Many readers have probably heard of the Pre Norm vs. Post Norm debate, but at the end of the day that is just an..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","attention","residual-connections","model-architecture","depth"],
+            "wordCount": 2518,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of Attention Residuals 回忆录 by Jianlin Su (苏剑林), originally published on March 19, 2026 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. This article introduces our latest work, Attention Residuals (AttnRes) — as the name suggests, this uses the idea of Attention to improve Residuals. Many readers have probably heard of the Pre Norm vs. Post Norm debate, but at the end of the day that is just an..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11664">Attention Residuals 回忆录</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Mar 18, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#inter-layer-attention">Inter-Layer Attention</a></li><li><a href="#hyper-connections">Hyper-Connections</a></li><li><a href="#many-hands-make-light-work">Many Hands Make Light Work</a></li><li><a href="#the-block-version">The Block Version</a></li><li><a href="#the-matrix-view">The Matrix View</a><ol><li><a href="#residuals">Residuals</a></li><li><a href="#hc%2Fmhc">HC/mHC</a></li><li><a href="#identity-hc">Identity HC</a></li><li><a href="#full-attnres">Full AttnRes</a></li><li><a href="#block-attnres">Block AttnRes</a></li></ol></li><li><a href="#related-work">Related Work</a></li><li><a href="#conclusion">Conclusion</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

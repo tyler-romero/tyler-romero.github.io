@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax</title>
@@ -24,12 +25,12 @@
 <meta property="og:url" content="https://www.tylerromero.com/posts/2025-02-selective-log-softmax/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax">
 <meta name="twitter:description" content="Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -54,6 +55,8 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -66,18 +69,19 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-02-06T08:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.372Z",
+            "dateModified": "2026-02-25T13:55:58-08:00",
             "url": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/posts/2025-02-selective-log-softmax/"
             },
-            "image": "https://www.tylerromero.com",
-            "keywords": "post, grpo, ppo, logprobs, logits, log-softmax, log_softmax, logsumexp, log-probabilities",
-            "wordCount": "1720",
-            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU&#39;s fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["post","grpo","ppo","logprobs","logits","log-softmax","log_softmax","logsumexp","log-probabilities"],
+            "wordCount": 1720,
+            "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax which requires computing probabilities for every token in the vocabulary at every position in the sequence. For large vocabulary sizes, this can consume significant VRAMVRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training..."
             }
         </script>
+
 
     </head>
     <body>
@@ -103,43 +107,7 @@
                 <p class="subtitle">Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest</p>
                 <p class="date">Feb 6, 2025</p>
             </div>
-            <nav class="toc"></nav>
-            <script>
-                (function() {
-
-                    var headings = document.querySelectorAll('article h2, article h3');
-                    if (headings.length >= 3) {
-                        var toc = document.querySelector('.toc');
-                        var ol = document.createElement('ol');
-                        var currentH2Item = null;
-                        var nestedOl = null;
-                        headings.forEach(function(h) {
-                            var li = document.createElement('li');
-                            var a = document.createElement('a');
-                            a.href = '#' + h.id;
-                            a.textContent = h.textContent;
-                            li.appendChild(a);
-                            if (h.tagName === 'H2') {
-                                currentH2Item = li;
-                                nestedOl = null;
-                                ol.appendChild(li);
-                            } else {
-                                if (!nestedOl) {
-                                    nestedOl = document.createElement('ol');
-                                    if (currentH2Item) {
-                                        currentH2Item.appendChild(nestedOl);
-                                    } else {
-                                        ol.appendChild(li);
-                                        return;
-                                    }
-                                }
-                                nestedOl.appendChild(li);
-                            }
-                        });
-                        toc.appendChild(ol);
-                    }
-                })();
-            </script>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#ablation-analysis">Ablation Analysis</a></li><li><a href="#numerical-stability">Numerical Stability</a></li><li><a href="#efficient-solution">Efficient Solution</a></li><li><a href="#a-note-on-torch.compile">A note on <code>torch.compile</code></a></li></ol></nav>
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');

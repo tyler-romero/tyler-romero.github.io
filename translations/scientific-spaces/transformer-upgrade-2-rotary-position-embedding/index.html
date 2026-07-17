@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds">
 <meta property="og:description" content="Translated from Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds">
 <meta name="twitter:description" content="Translated from Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -54,29 +55,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Transformer Upgrade Path: 2. Rotary Position Embedding, the Best of Both Worlds",
-            "description": "Translated from [Transformer升级之路：2、博采众长的旋转式位置编码](https://kexue.fm/archives/8265) by Jianlin Su (苏剑林)",
+            "description": "Translated from Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2021-03-22T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-03-02T13:57:46-08:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/"
             },
-            "keywords": "translation, rope, position-encoding, attention, transformers",
-            "wordCount": "2589",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林), originally published on March 23, 2021 on Scientific Spaces (科学空间). It is the second article in the &amp;quot;Transformer Upgrade Path&amp;quot; series. The translation preserves the author&#39;s first-person voice. In the previous article, we gave a fairly detailed derivation and analysis of the original Sinusoidal position encoding. The overall impression is that Sinusoidal position encoding..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","rope","position-encoding","attention","transformers"],
+            "wordCount": 2589,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of Transformer升级之路：2、博采众长的旋转式位置编码 by Jianlin Su (苏剑林), originally published on March 23, 2021 on Scientific Spaces (科学空间). It is the second article in the &quot;Transformer Upgrade Path&quot; series. The translation preserves the author's first-person voice. In the previous article, we gave a fairly detailed derivation and analysis of the original Sinusoidal position encoding. The overall impression is that Sinusoidal position encoding..."
             }
         </script>
+
 
     </head>
     <body>
@@ -97,6 +102,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/8265">Transformer升级之路：2、博采众长的旋转式位置编码</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Mar 22, 2021</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#basic-idea">Basic Idea</a></li><li><a href="#derivation">Derivation</a></li><li><a href="#encoding-form">Encoding Form</a></li><li><a href="#long-range-decay">Long-Range Decay</a></li><li><a href="#linear-attention-setting">Linear Attention Setting</a></li><li><a href="#open-source-model">Open-Source Model</a></li><li><a href="#summary">Summary</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

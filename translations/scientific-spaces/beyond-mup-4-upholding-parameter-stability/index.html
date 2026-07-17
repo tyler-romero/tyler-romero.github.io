@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Beyond MuP 4: Upholding Parameter Stability</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Beyond MuP 4: Upholding Parameter Stability">
 <meta property="og:description" content="Translated from MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Beyond MuP 4: Upholding Parameter Stability">
 <meta name="twitter:description" content="Translated from MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Beyond MuP 4: Upholding Parameter Stability",
-            "description": "Translated from [MuP之上：4. 坚守参数的稳定性](https://kexue.fm/archives/11729) by Jianlin Su (苏剑林)",
+            "description": "Translated from MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-04-23T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-06-03T14:50:29-07:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-4-upholding-parameter-stability/"
             },
-            "keywords": "translation, mup, muon, optimizer, stability",
-            "wordCount": "3078",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林), originally published on April 24, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. Through the derivations and computations of the previous articles, we can observe that the three stability indicators proposed in the first article Beyond MuP 1: Three Characteristics of Good Models can generally be divided into &amp;quot;parameter stability&amp;quot; and..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","mup","muon","optimizer","stability"],
+            "wordCount": 3078,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of MuP之上：4. 坚守参数的稳定性 by Jianlin Su (苏剑林), originally published on April 24, 2026 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. Through the derivations and computations of the previous articles, we can observe that the three stability indicators proposed in the first article Beyond MuP 1: Three Characteristics of Good Models can generally be divided into &quot;parameter stability&quot; and..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11729">MuP之上：4. 坚守参数的稳定性</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Apr 23, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#problem-background">Problem Background</a></li><li><a href="#general-framework">General Framework</a><ol><li><a href="#initial-thoughts">Initial Thoughts</a></li><li><a href="#post-clip">Post Clip</a></li><li><a href="#pre-decay">Pre Decay</a></li></ol></li><li><a href="#basic-results">Basic Results</a><ol><li><a href="#a-simple-example">A Simple Example</a></li><li><a href="#singular-value-clipping">Singular Value Clipping</a></li><li><a href="#derivation">Derivation</a></li><li><a href="#clipping-the-leading-term">Clipping the Leading Term</a></li><li><a href="#other-details">Other Details</a></li></ol></li><li><a href="#the-necessity-of-guarantees">The Necessity of Guarantees</a></li><li><a href="#summary">Summary</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Beyond MuP: 2. Linear Layers and Steepest Descent</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Beyond MuP: 2. Linear Layers and Steepest Descent">
 <meta property="og:description" content="Translated from MuP之上：2. 线性层与最速下降 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-2-linear-layers-and-steepest-descent/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Beyond MuP: 2. Linear Layers and Steepest Descent">
 <meta name="twitter:description" content="Translated from MuP之上：2. 线性层与最速下降 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Beyond MuP: 2. Linear Layers and Steepest Descent",
-            "description": "Translated from [MuP之上：2. 线性层与最速下降](https://kexue.fm/archives/11605) by Jianlin Su (苏剑林)",
+            "description": "Translated from MuP之上：2. 线性层与最速下降 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-02-14T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-06-03T14:50:29-07:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-2-linear-layers-and-steepest-descent/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-2-linear-layers-and-steepest-descent/"
             },
-            "keywords": "translation, mup, muon, optimization, scaling",
-            "wordCount": "1621",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of MuP之上：2. 线性层与最速下降 by Jianlin Su (苏剑林), originally published on February 15, 2026 on Scientific Spaces (科学空间). It is the second article in the &amp;quot;Beyond MuP&amp;quot; series. The translation preserves the author&#39;s first-person voice. In the previous article Beyond MuP: 1. Three Characteristics of Good Models, we proposed three core metrics — forward stability, dependency stability, and update stability — and gave their mathematical..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","mup","muon","optimization","scaling"],
+            "wordCount": 1621,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of MuP之上：2. 线性层与最速下降 by Jianlin Su (苏剑林), originally published on February 15, 2026 on Scientific Spaces (科学空间). It is the second article in the &quot;Beyond MuP&quot; series. The translation preserves the author's first-person voice. In the previous article Beyond MuP: 1. Three Characteristics of Good Models, we proposed three core metrics — forward stability, dependency stability, and update stability — and gave their mathematical..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11605">MuP之上：2. 线性层与最速下降</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Feb 14, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#linear-transformation">Linear Transformation</a></li><li><a href="#initial-variance">Initial Variance</a></li><li><a href="#steepest-descent">Steepest Descent</a></li><li><a href="#solving-the-problem">Solving the Problem</a></li><li><a href="#summary-of-results">Summary of Results</a></li><li><a href="#remaining-questions">Remaining Questions</a></li><li><a href="#conclusion">Conclusion</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

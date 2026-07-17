@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back">
 <meta property="og:description" content="Translated from 线性注意力简史：从模仿、创新到反哺 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/a-brief-history-of-linear-attention/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back">
 <meta name="twitter:description" content="Translated from 线性注意力简史：从模仿、创新到反哺 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back",
-            "description": "Translated from [线性注意力简史：从模仿、创新到反哺](https://kexue.fm/archives/11033) by Jianlin Su (苏剑林)",
+            "description": "Translated from 线性注意力简史：从模仿、创新到反哺 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-06-19T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.373Z",
+            "dateModified": "2026-03-02T15:14:26-08:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/a-brief-history-of-linear-attention/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/a-brief-history-of-linear-attention/"
             },
-            "keywords": "translation, linear-attention, rnn, attention",
-            "wordCount": "5849",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of 线性注意力简史：从模仿、创新到反哺 by Jianlin Su (苏剑林), originally published on June 20, 2025 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. In the Chinese-language community, this blog was probably among the earlier ones to pay attention to linear attention. When I wrote the first related post Exploring Linear Attention: Must Attention Have a Softmax? in 2020, the community was still mainly discussing..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","linear-attention","rnn","attention"],
+            "wordCount": 5849,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of 线性注意力简史：从模仿、创新到反哺 by Jianlin Su (苏剑林), originally published on June 20, 2025 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. In the Chinese-language community, this blog was probably among the earlier ones to pay attention to linear attention. When I wrote the first related post Exploring Linear Attention: Must Attention Have a Softmax? in 2020, the community was still mainly discussing..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11033">线性注意力简史：从模仿、创新到反哺</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Jun 19, 2025</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#quadratic-complexity">Quadratic Complexity</a></li><li><a href="#the-original-form">The Original Form</a></li><li><a href="#fancy-forget-gates">Fancy Forget Gates</a></li><li><a href="#test-time-training">Test-Time Training</a></li><li><a href="#out-with-the-old%2C-in-with-the-new">Out with the Old, In with the New</a></li><li><a href="#inversion-and-generalizations">Inversion and Generalizations</a></li><li><a href="#feeding-back-in-progress">Feeding Back in Progress</a></li><li><a href="#hardcore-position-encoding">Hardcore Position Encoding</a></li><li><a href="#the-joy-of-simplification">The Joy of Simplification</a></li><li><a href="#an-unconventional-approach">An Unconventional Approach</a></li><li><a href="#a-path-still-unfolding">A Path Still Unfolding</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

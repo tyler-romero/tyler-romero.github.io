@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Thinking about Scaling Laws</title>
@@ -24,12 +25,12 @@
 <meta property="og:url" content="https://www.tylerromero.com/posts/2026-01-scaling-laws/">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Thinking about Scaling Laws">
 <meta name="twitter:description" content="How can we use scaling laws to train stronger LLMs?">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,6 +48,8 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
@@ -59,18 +62,19 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-01-10T08:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.372Z",
+            "dateModified": "2026-02-24T23:43:18-08:00",
             "url": "https://www.tylerromero.com/posts/2026-01-scaling-laws/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/posts/2026-01-scaling-laws/"
             },
-            "image": "https://www.tylerromero.com",
-            "keywords": "scaling-laws, chinchilla, llms",
-            "wordCount": "1574",
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["scaling-laws","chinchilla","llms"],
+            "wordCount": 1574,
             "articleBody": "Note: This post is a work in progress. I will continue to update and expand it over time. Scaling laws are one of the few tools we have for predicting model performance before committing serious compute. When a single training run can cost millions of dollars and take months, the ability to extrapolate from small-scale experiments becomes invaluable. In this post, I want to explore how we can use scaling laws not just as descriptive summaries, but as decision-making frameworks for comparing..."
             }
         </script>
+
 
     </head>
     <body>
@@ -96,43 +100,7 @@
                 <p class="subtitle">How can we use scaling laws to train stronger LLMs?</p>
                 <p class="date">Jan 10, 2026</p>
             </div>
-            <nav class="toc"></nav>
-            <script>
-                (function() {
-
-                    var headings = document.querySelectorAll('article h2, article h3');
-                    if (headings.length >= 3) {
-                        var toc = document.querySelector('.toc');
-                        var ol = document.createElement('ol');
-                        var currentH2Item = null;
-                        var nestedOl = null;
-                        headings.forEach(function(h) {
-                            var li = document.createElement('li');
-                            var a = document.createElement('a');
-                            a.href = '#' + h.id;
-                            a.textContent = h.textContent;
-                            li.appendChild(a);
-                            if (h.tagName === 'H2') {
-                                currentH2Item = li;
-                                nestedOl = null;
-                                ol.appendChild(li);
-                            } else {
-                                if (!nestedOl) {
-                                    nestedOl = document.createElement('ol');
-                                    if (currentH2Item) {
-                                        currentH2Item.appendChild(nestedOl);
-                                    } else {
-                                        ol.appendChild(li);
-                                        return;
-                                    }
-                                }
-                                nestedOl.appendChild(li);
-                            }
-                        });
-                        toc.appendChild(ol);
-                    }
-                })();
-            </script>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#the-chinchilla-scaling-law">The Chinchilla Scaling Law</a></li><li><a href="#decision-making-with-scaling-laws">Decision Making with Scaling Laws</a><ol><li><a href="#scaling-behavior%3A-efficiency-vs.-scalability">Scaling Behavior: Efficiency vs. Scalability</a></li><li><a href="#targeting-specific-model-and-dataset-sizes">Targeting Specific Model and Dataset Sizes</a></li></ol></li><li><a href="#getting-strong-scaling-law-fits">Getting strong scaling law fits</a></li><li><a href="#recommended-reading">Recommended Reading</a></li></ol></nav>
             <script>
                 (function() {
                     var hero = document.querySelector('.post-hero');

@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>The MoE Journey: 9. The Gate Normalization Debate</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="The MoE Journey: 9. The Gate Normalization Debate">
 <meta property="og:description" content="Translated from MoE环游记：9、门控归一化之争 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/the-moe-journey-9-the-gate-normalization-debate/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="The MoE Journey: 9. The Gate Normalization Debate">
 <meta name="twitter:description" content="Translated from MoE环游记：9、门控归一化之争 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "The MoE Journey: 9. The Gate Normalization Debate",
-            "description": "Translated from [MoE环游记：9、门控归一化之争](https://kexue.fm/archives/11782) by Jianlin Su (苏剑林)",
+            "description": "Translated from MoE环游记：9、门控归一化之争 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-06-16T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-07-17T09:46:56-07:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/the-moe-journey-9-the-gate-normalization-debate/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/the-moe-journey-9-the-gate-normalization-debate/"
             },
-            "keywords": "translation, mixture-of-experts, routing, gating, reinforce, straight-through-estimator",
-            "wordCount": "2011",
-            "articleBody": "Translator&#39;s note (GPT-5): This is an English translation of MoE环游记：9、门控归一化之争 by Jianlin Su (苏剑林), originally published on June 17, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. Looking back through the history of MoE, we find that in the early years, when the Router served as a Gate whose output multiplied the Experts, it was almost always activated with Softmax. This remains one of the standard forms of MoE today. To work with Loss-Free load..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","mixture-of-experts","routing","gating","reinforce","straight-through-estimator"],
+            "wordCount": 2011,
+            "articleBody": "Translator's note (GPT-5): This is an English translation of MoE环游记：9、门控归一化之争 by Jianlin Su (苏剑林), originally published on June 17, 2026 on Scientific Spaces (科学空间). The translation preserves the author's first-person voice. Looking back through the history of MoE, we find that in the early years, when the Router served as a Gate whose output multiplied the Experts, it was almost always activated with Softmax. This remains one of the standard forms of MoE today. To work with Loss-Free load..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11782">MoE环游记：9、门控归一化之争</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Jun 16, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#problem-description">Problem Description</a></li><li><a href="#other-choices">Other Choices</a></li><li><a href="#design-principle">Design Principle</a></li><li><a href="#transforming-the-objective">Transforming the Objective</a></li><li><a href="#straight-through-estimation">Straight-Through Estimation</a></li><li><a href="#final-form">Final Form</a></li><li><a href="#to-sample-or-not-to-sample">To Sample or Not to Sample</a></li><li><a href="#related-work">Related Work</a></li><li><a href="#summary">Summary</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

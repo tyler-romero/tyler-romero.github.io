@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Post-Training Challenges and Lessons Learned with MoE Architectures</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Post-Training Challenges and Lessons Learned with MoE Architectures">
 <meta property="og:description" content="Translated from moe架构的post-training难点与经验分享 by 燕雄飞的一天">
 <meta property="og:url" content="https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Post-Training Challenges and Lessons Learned with MoE Architectures">
 <meta name="twitter:description" content="Translated from moe架构的post-training难点与经验分享 by 燕雄飞的一天">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Post-Training Challenges and Lessons Learned with MoE Architectures",
-            "description": "Translated from [moe架构的post-training难点与经验分享](https://zhuanlan.zhihu.com/p/2018018879109091590) by [燕雄飞的一天](https://www.zhihu.com/people/yan-xiong-fei-19)",
+            "description": "Translated from moe架构的post-training难点与经验分享 by 燕雄飞的一天",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-03-18T18:56:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.375Z",
+            "dateModified": "2026-03-30T14:49:09-07:00",
             "url": "https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/zhihu/moe-post-training-challenges-and-lessons/"
             },
-            "keywords": "translation, mixture-of-experts, post-training, reinforcement-learning, load-balancing",
-            "wordCount": "1441",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of moe架构的post-training难点与经验分享 by 燕雄飞的一天, originally published on March 19, 2026 on Zhihu (知乎). The translation preserves the author&#39;s informal, first-person voice. Whether in open-source or top-tier commercial models, MoE architectures have become the dominant paradigm. How does post-training differ from dense models during the SFT and RL stages? What unique challenges arise, and how can we address them? This post starts from first..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","mixture-of-experts","post-training","reinforcement-learning","load-balancing"],
+            "wordCount": 1441,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of moe架构的post-training难点与经验分享 by 燕雄飞的一天, originally published on March 19, 2026 on Zhihu (知乎). The translation preserves the author's informal, first-person voice. Whether in open-source or top-tier commercial models, MoE architectures have become the dominant paradigm. How does post-training differ from dense models during the SFT and RL stages? What unique challenges arise, and how can we address them? This post starts from first..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://zhuanlan.zhihu.com/p/2018018879109091590">moe架构的post-training难点与经验分享</a> by <a href="https://www.zhihu.com/people/yan-xiong-fei-19">燕雄飞的一天</a></p>
                 <p class="date">Mar 18, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#tl%3Bdr">TL;DR</a></li><li><a href="#fundamentals">Fundamentals</a><ol><li><a href="#how-moe-works">How MoE Works</a></li><li><a href="#load-balancing">Load Balancing</a></li></ol></li><li><a href="#training-challenges">Training Challenges</a><ol><li><a href="#challenge-1%3A-balancing-load-vs.-performance">Challenge 1: Balancing Load vs. Performance</a></li><li><a href="#challenge-2%3A-rl-training-instability">Challenge 2: RL Training Instability</a></li><li><a href="#challenge-3%3A-expert-parallelism">Challenge 3: Expert Parallelism</a></li></ol></li><li><a href="#recommended-tool">Recommended Tool</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;

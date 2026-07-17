@@ -4,6 +4,7 @@
         <!-- Required meta tags -->
 
 
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Beyond MuP: 3. Special Cases, Special Treatment</title>
@@ -22,14 +23,14 @@
 <meta property="og:title" content="Beyond MuP: 3. Special Cases, Special Treatment">
 <meta property="og:description" content="Translated from MuP之上：3. 特殊情况特殊处理 by Jianlin Su (苏剑林)">
 <meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-3-special-cases-special-treatment/">
-<meta property="og:type" content="website">
+<meta property="og:type" content="article">
 <meta property="og:site_name" content="Tyler&#39;s Technical Blog">
-
+<meta property="og:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Beyond MuP: 3. Special Cases, Special Treatment">
 <meta name="twitter:description" content="Translated from MuP之上：3. 特殊情况特殊处理 by Jianlin Su (苏剑林)">
-
+<meta name="twitter:image" content="https://www.tylerromero.com/assets/img/headshot_2.jpg">
 
 
 
@@ -47,29 +48,33 @@
 <script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
 
         
+
+
         <script type="application/ld+json">
             {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": "Beyond MuP: 3. Special Cases, Special Treatment",
-            "description": "Translated from [MuP之上：3. 特殊情况特殊处理](https://kexue.fm/archives/11647) by Jianlin Su (苏剑林)",
+            "description": "Translated from MuP之上：3. 特殊情况特殊处理 by Jianlin Su (苏剑林)",
             "author": {
                 "@type": "Person",
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2026-03-01T16:00:00.000Z",
-            "dateModified": "2026-07-17T16:58:09.374Z",
+            "dateModified": "2026-06-03T14:50:29-07:00",
             "url": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-3-special-cases-special-treatment/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/translations/scientific-spaces/beyond-mup-3-special-cases-special-treatment/"
             },
-            "keywords": "translation, mup, muon, optimization, scaling",
-            "wordCount": "2240",
-            "articleBody": "Translator&#39;s note (Opus 4.6): This is an English translation of MuP之上：3. 特殊情况特殊处理 by Jianlin Su (苏剑林), originally published on March 2, 2026 on Scientific Spaces (科学空间). It is the third article in the &amp;quot;Beyond MuP&amp;quot; series. The translation preserves the author&#39;s first-person voice. After so many related blog posts, most readers should be no stranger to the Muon optimizer — even without knowing the theoretical details, you have probably come away with the impression that it is &amp;quot;an..."
+            "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
+            "keywords": ["translation","mup","muon","optimization","scaling"],
+            "wordCount": 2240,
+            "articleBody": "Translator's note (Opus 4.6): This is an English translation of MuP之上：3. 特殊情况特殊处理 by Jianlin Su (苏剑林), originally published on March 2, 2026 on Scientific Spaces (科学空间). It is the third article in the &quot;Beyond MuP&quot; series. The translation preserves the author's first-person voice. After so many related blog posts, most readers should be no stranger to the Muon optimizer — even without knowing the theoretical details, you have probably come away with the impression that it is &quot;an..."
             }
         </script>
+
 
     </head>
     <body>
@@ -90,6 +95,7 @@
                 <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11647">MuP之上：3. 特殊情况特殊处理</a> by Jianlin Su (苏剑林)</p>
                 <p class="date">Mar 1, 2026</p>
             </div>
+            <nav class="toc" aria-label="Table of contents"><ol><li><a href="#recap">Recap</a></li><li><a href="#the-embedding-layer">The Embedding Layer</a></li><li><a href="#the-output-head">The Output Head</a><ol><li><a href="#accountable-to-the-loss">Accountable to the Loss</a></li><li><a href="#forward-stability">Forward Stability</a></li><li><a href="#a-key-inequality">A Key Inequality</a></li><li><a href="#dependency-stability">Dependency Stability</a></li><li><a href="#update-stability">Update Stability</a></li></ol></li><li><a href="#other-modules">Other Modules</a><ol><li><a href="#the-hadamard-product">The Hadamard Product</a></li><li><a href="#linear-bias-terms">Linear Bias Terms</a></li><li><a href="#attention-scaling">Attention Scaling</a></li></ol></li><li><a href="#summary">Summary</a></li></ol></nav>
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     if (typeof RoughNotation === 'undefined') return;
