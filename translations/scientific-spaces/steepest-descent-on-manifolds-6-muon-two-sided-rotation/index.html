@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation</title>
+<meta name="author" content="Tyler Romero">
+<meta name="description" content="Translated from 流形上的最速下降：6. Muon + 双旋转 by Jianlin Su (苏剑林)">
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/assets/img/favicon.ico" type="image/ico">
+<link rel="canonical" href="https://www.tylerromero.com/translations/scientific-spaces/steepest-descent-on-manifolds-6-muon-two-sided-rotation/">
+<link type="application/atom+xml" rel="alternate" href="https://www.tylerromero.com/feed.xml" title="Tyler&#39;s Technical Blog">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
+<link rel="preload" as="font" type="font/woff" crossorigin="" href="/assets/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff">
+<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
+<!-- Open Graph -->
+<meta property="og:title" content="Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation">
+<meta property="og:description" content="Translated from 流形上的最速下降：6. Muon + 双旋转 by Jianlin Su (苏剑林)">
+<meta property="og:url" content="https://www.tylerromero.com/translations/scientific-spaces/steepest-descent-on-manifolds-6-muon-two-sided-rotation/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tyler&#39;s Technical Blog">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation">
+<meta name="twitter:description" content="Translated from 流形上的最速下降：6. Muon + 双旋转 by Jianlin Su (苏剑林)">
+
+
+
+
+<!-- KaTeX Support -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" integrity="sha384-wcIxkf4k558AjM3Yz3BBFQUbk/zgIYC2R0QpeeYb+TwlBVMrlgLqwRjRtGZiK7ww" crossorigin="anonymous">
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js" integrity="sha384-hIoBPJpTUs74ddyc4bFZSM1TVlQDA60VBbJS0oA934VSz82sBx1X7kSx2ATBDIyd" crossorigin="anonymous"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/contrib/auto-render.min.js" integrity="sha384-43gviWU0YVjaDtb/GhzOouOXtZMP/7XUzwPTstBeZFe/+rCMvRwr4yROQP43s0Xk" crossorigin="anonymous" onload="renderMathInElement(document.body);"></script>
+
+
+<!-- Rough Notation — hand-drawn annotations -->
+<script defer="" src="https://unpkg.com/rough-notation/lib/rough-notation.iife.js"></script>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/assets/tufte.min.css">
+<!-- Goat Counter for basic view counting w/o cookies -->
+<script data-goatcounter="https://tylerromero.goatcounter.com/count" async="" src="//gc.zgo.at/count.js"></script>
+
+        
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": "Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation",
+            "description": "Translated from [流形上的最速下降：6. Muon + 双旋转](https://kexue.fm/archives/11777) by Jianlin Su (苏剑林)",
+            "author": {
+                "@type": "Person",
+                "name": "Tyler Romero",
+                "url": "https://www.tylerromero.com"
+            },
+            "datePublished": "2026-06-07T16:00:00.000Z",
+            "dateModified": "2026-07-17T16:58:09.374Z",
+            "url": "https://www.tylerromero.com/translations/scientific-spaces/steepest-descent-on-manifolds-6-muon-two-sided-rotation/",
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": "https://www.tylerromero.com/translations/scientific-spaces/steepest-descent-on-manifolds-6-muon-two-sided-rotation/"
+            },
+            "keywords": "translation, muon, optimization, manifold-optimization, singular-values",
+            "wordCount": "1596",
+            "articleBody": "Translator&#39;s note (GPT-5): This is an English translation of 流形上的最速下降：6. Muon + 双旋转 by Jianlin Su (苏剑林), originally published on June 8, 2026 on Scientific Spaces (科学空间). The translation preserves the author&#39;s first-person voice. We know that when matrix parameters are updated with optimizers such as Adam and Muon, their singular values and left and right singular vectors all change along with them, and these changes are usually coupled. It is precisely because of this coupling that we cannot..."
+            }
+        </script>
+
+    </head>
+    <body>
+        <header>
+            <nav class="topbar">
+                <div class="right-aligned-links">
+                    <a href="/" class="no-tufte-underline nav-brand">Tyler Romero</a>
+                    
+                    <a href="/translations" class="no-tufte-underline">Translations</a>
+
+                </div>
+            </nav>
+        </header>
+        <article>
+            
+            <div class="post-header">
+                <h1>Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation</h1>
+                <p class="subtitle">Translated from <a href="https://kexue.fm/archives/11777">流形上的最速下降：6. Muon + 双旋转</a> by Jianlin Su (苏剑林)</p>
+                <p class="date">Jun 7, 2026</p>
+            </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    if (typeof RoughNotation === 'undefined') return;
+                    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    var headings = document.querySelectorAll('article h2');
+                    var observer = new IntersectionObserver(function(entries) {
+                        entries.forEach(function(entry) {
+                            if (entry.isIntersecting) {
+                                var annotation = RoughNotation.annotate(entry.target, {
+                                    type: 'bracket',
+                                    brackets: ['left'],
+                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    strokeWidth: 2,
+                                    padding: [2, 0, 2, 8],
+                                    animationDuration: 600,
+                                    animate: !reduceMotion
+                                });
+                                annotation.show();
+                                observer.unobserve(entry.target);
+                            }
+                        });
+                    }, { threshold: 0.5 });
+                    headings.forEach(function(h) { observer.observe(h); });
+                });
+            </script>
+
+            <section>
+<p><em>Translator's note (GPT-5): This is an English translation of <a href="https://kexue.fm/archives/11777">流形上的最速下降：6. Muon + 双旋转</a> by Jianlin Su (苏剑林), originally published on June 8, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
+<hr class="section-divider">
+<p>We know that when matrix parameters are updated with optimizers such as Adam and Muon, their singular values and left and right singular vectors all change along with them, and these changes are usually coupled. It is precisely because of this coupling that we cannot easily control a matrix parameter's singular values. When the singular values grow abnormally, we therefore have no simple and effective way to stop them, which may cause training to fail.</p>
+<p>Inspired by <a href="https://papers.cool/arxiv/2605.12492"><em>Pion: A Spectrum-Preserving Optimizer via Orthogonal Equivalence Transformation</em></a> (hereafter abbreviated as Pion), this post proposes a Muon variant that updates a matrix's left and right singular vectors separately: &quot;Rotational Muon&quot; (MuonR). It can keep the matrix's singular-value distribution unchanged, thereby ensuring training stability.</p>
+</section>
+<section>
+<h2 id="review-of-previous-work" tabindex="-1">Review of Previous Work</h2>
+<p>Because the matrices formed by the left and right singular vectors must be orthogonal, let us first briefly review Muon under an orthogonality constraint. Let the parameter be \(\boldsymbol{W}\in\mathbb{R}^{n\times n}\), satisfying \(\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I}\), and let the update be \(\Delta\boldsymbol{W}=-\eta \boldsymbol{\Phi}\). We want the parameter to remain orthogonal after the update, so the corresponding spectral-norm steepest descent problem is</p>
+<p>\[
+\max_{\boldsymbol{\Phi}} \operatorname{tr}(\boldsymbol{G}^{\top}\boldsymbol{\Phi}) \qquad \text{s.t.}\qquad \Vert\boldsymbol{\Phi}\Vert_2 = 1,\quad(\boldsymbol{W} - \eta \boldsymbol{\Phi})^{\top}(\boldsymbol{W} - \eta \boldsymbol{\Phi})=\boldsymbol{I}
+\tag{1}
+\]</p>
+<p>The solution is \(\boldsymbol{\Phi} = \boldsymbol{W}\boldsymbol{O}\), where \(\boldsymbol{O}=\operatorname{msign}([\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}})\), and \([\boldsymbol{X}]_{\text{skew}} = (\boldsymbol{X} - \boldsymbol{X}^{\top})/2\) is the skew-symmetrization operator. Including the retraction operation, the complete update rule is</p>
+<p>\[
+\boldsymbol{W} \quad \leftarrow\quad \boldsymbol{W}(\boldsymbol{I} - \eta\boldsymbol{O})\left(\boldsymbol{I} - \boldsymbol{O}^{\top}\boldsymbol{O} + \frac{\boldsymbol{O}^{\top}\boldsymbol{O}}{\sqrt{1+\eta^2}}\right)
+\tag{2}
+\]</p>
+<p>In particular, if \([\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}\) is full rank, this simplifies to</p>
+<p>\[
+\boldsymbol{W} \quad \leftarrow\quad \frac{\boldsymbol{W}(\boldsymbol{I} - \eta\boldsymbol{O})}{\sqrt{1+\eta^2}}
+\tag{3}
+\]</p>
+<p>The derivation can be found in <a href="https://kexue.fm/archives/11215"><em>Steepest Descent on Manifolds: 2. Muon + Orthogonal</em></a>, so we will not expand on it here. Both (2) and (3) are fully analytic. They add only a few matrix multiplications on top of Muon, with no significant increase in complexity, so the result is entirely practical.</p>
+<p>Now consider a matrix \(\boldsymbol{W}\in\mathbb{R}^{n\times m}(n \geq m)\). If it also satisfies \(\boldsymbol{W}^{\top}\boldsymbol{W}=\boldsymbol{I}\), then we say that \(\boldsymbol{W}\) lies on the Stiefel manifold, which generalizes the concept of an orthogonal matrix. In principle, the result above can be extended to the Stiefel manifold, but for non-square matrices this requires solving a system of nonlinear equations, making it difficult to put into practice. For details, see <a href="https://kexue.fm/archives/11221"><em>Steepest Descent on Manifolds: 3. Muon + Stiefel</em></a>.</p>
+</section>
+<section>
+<h2 id="instantaneous-reparameterization" tabindex="-1">Instantaneous Reparameterization</h2>
+<p>Next, we turn our attention to an arbitrary parameter matrix \(\boldsymbol{W}\in\mathbb{R}^{n\times m}\). Our goal is to keep its singular values unchanged throughout the update process, thereby eliminating the possibility of abnormal singular-value growth.</p>
+<p>To achieve this, we use the idea of &quot;instantaneous reparameterization&quot;: before beginning the update, we reparameterize \(\boldsymbol{W}\) as \(\tilde{\boldsymbol{W}} = \boldsymbol{L}\boldsymbol{W}\boldsymbol{R}\), where \(\boldsymbol{L}\in\mathbb{R}^{n\times n},\boldsymbol{R}\in\mathbb{R}^{m\times m}\), both initialized to the identity. Thus, at initialization, \(\tilde{\boldsymbol{W}}=\boldsymbol{W}\). Writing \(\boldsymbol{G} = \nabla_{\boldsymbol{W}}\mathcal{L}\), we have</p>
+<p>\[
+\nabla_{\boldsymbol{L}}\mathcal{L} = \boldsymbol{G}\boldsymbol{W}^{\top},\qquad \nabla_{\boldsymbol{R}}\mathcal{L} = \boldsymbol{W}^{\top}\boldsymbol{G}
+\tag{4}
+\]</p>
+<p>We then freeze \(\boldsymbol{W}\) and update only \(\boldsymbol{L}\) and \(\boldsymbol{R}\), while maintaining their orthogonality throughout the update. The updated \(\tilde{\boldsymbol{W}}\) therefore has the same singular values as \(\boldsymbol{W}\). From the perspective of \(\boldsymbol{L}\) and \(\boldsymbol{R}\), the problem has once again become steepest descent on the orthogonal manifold. Moreover, both \(\boldsymbol{L}\) and \(\boldsymbol{R}\) are square matrices, so the corresponding steepest descent has a fully analytic solution. According to (3), we can directly write the update rules as</p>
+<p>\[
+\boldsymbol{L}\quad\leftarrow\quad (\boldsymbol{I} - \eta\boldsymbol{O}_L)\left(\boldsymbol{I} - \boldsymbol{O}_L^{\top}\boldsymbol{O}_L + \frac{\boldsymbol{O}_L^{\top}\boldsymbol{O}_L}{\sqrt{1+\eta^2}}\right)
+\tag{5}
+\]</p>
+<p>\[
+\boldsymbol{R}\quad\leftarrow\quad (\boldsymbol{I} - \eta\boldsymbol{O}_R)\left(\boldsymbol{I} - \boldsymbol{O}_R^{\top}\boldsymbol{O}_R + \frac{\boldsymbol{O}_R^{\top}\boldsymbol{O}_R}{\sqrt{1+\eta^2}}\right)
+\tag{6}
+\]</p>
+<p>where \(\boldsymbol{O}_L = \operatorname{msign}([\boldsymbol{G}\boldsymbol{W}^{\top}]_{\text{skew}})\) and \(\boldsymbol{O}_R = \operatorname{msign}([\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}})\). Multiplying the new \(\boldsymbol{L}\) and \(\boldsymbol{R}\) with \(\boldsymbol{W}\) gives the complete update rule</p>
+<p>\[
+\boldsymbol{W} \quad \leftarrow\quad \boldsymbol{L}\boldsymbol{W}\boldsymbol{R}
+\tag{7}
+\]</p>
+<p>This is &quot;Rotational Muon&quot; (Muon under Rotation, MuonR), derived through instantaneous reparameterization. In practice, momentum is usually present as well. We interpret it as a smoothed gradient, so we only need to replace the gradient \(\boldsymbol{G}\) with the momentum \(\boldsymbol{M}\).</p>
+</section>
+<section>
+<h2 id="some-details" tabindex="-1">Some Details</h2>
+<p>Because updating \(\boldsymbol{L}\) and \(\boldsymbol{R}\) each requires one \(\operatorname{msign}\) computation, MuonR takes twice as much computation as Muon even in the ideal case \(n=m\). For sufficiently large models, however, doubling this computation has only a minor effect on end-to-end training time and is usually acceptable. To reduce this overhead, one could update \(\boldsymbol{L}\) and \(\boldsymbol{R}\) alternately, spreading the computation across steps.</p>
+<p>In fact, MuonR's biggest problem is that it keeps every singular value of the matrix unchanged from beginning to end. This means that we must determine the full singular-value spectrum of every parameter at initialization. That is not easy, because matrices in different positions may require different scales, and forcing them all to use the same set of values will most likely be suboptimal.</p>
+<p>One feasible approach is to begin with a suitable random initialization and add, before or after each matrix, a vector that is multiplied elementwise to restore freedom over the scale. For matrices immediately following RMSNorm, RMSNorm's own gamma parameter already plays this role, so this extra operation can be omitted for those matrices.</p>
+<p>As for how to choose the initial singular values, we can use a conventional random initialization or construct them according to <a href="https://en.wikipedia.org/wiki/Zipf%27s_law">Zipf's law</a>. Going further, we could try adjusting the singular-value entropy to the optimum calculated in <a href="https://kexue.fm/archives/11767"><em>Is Higher Singular-Value Entropy Always Better for Matrix Parameters?</em></a>, in the hope of achieving better results.</p>
+<p>Of course, if we really can determine a matrix's singular values in advance—for example, if we already want a parameter somewhere in the model to remain orthogonal throughout training—then none of this needs to be considered, and we can simply apply MuonR directly.</p>
+</section>
+<section>
+<h2 id="switching-midway" tabindex="-1">Switching Midway</h2>
+<p>Another option is to &quot;switch midway,&quot; using MuonR only as a means of maintaining stability.</p>
+<p>Specifically, we begin with conventional Muon and monitor the matrix's spectral norm or Frobenius norm. Once the matrix norm exceeds our desired range, we switch to MuonR. Since both forms of Muon depend on the same gradient or momentum and differ only in their computation, this switch is valid. MuonR does not change the matrix's singular values, so neither its spectral norm nor its Frobenius norm will continue to grow, making it a natural stabilizing measure.</p>
+<p>However, we should align the update magnitudes before and after switching as closely as possible to avoid introducing a sudden jump. To do so, consider the first-order approximation of MuonR:</p>
+<p>\[
+\boldsymbol{L}\boldsymbol{W}\boldsymbol{R} \approx (\boldsymbol{I} - \eta\boldsymbol{O}_L) \boldsymbol{W} (\boldsymbol{I} - \eta\boldsymbol{O}_R) \approx \boldsymbol{W} - \eta(\boldsymbol{O}_L \boldsymbol{W} + \boldsymbol{W} \boldsymbol{O}_R)
+\tag{8}
+\]</p>
+<p>The singular values of \(\boldsymbol{O}_L\) and \(\boldsymbol{O}_R\) are no greater than 1. Note that we cannot guarantee that both \([\boldsymbol{G}\boldsymbol{W}^{\top}]_{\text{skew}}\) and \([\boldsymbol{W}^{\top}\boldsymbol{G}]_{\text{skew}}\) are full rank, so we cannot directly use the orthogonality of \(\boldsymbol{O}_L\) and \(\boldsymbol{O}_R\). Therefore, \(\Vert\boldsymbol{O}_L \boldsymbol{W}\Vert_F \leq \Vert \boldsymbol{W}\Vert_F\) and \(\Vert \boldsymbol{W}\boldsymbol{O}_R\Vert_F\leq \Vert\boldsymbol{W}\Vert_F\), giving</p>
+<p>\[
+\Vert\boldsymbol{O}_L \boldsymbol{W} + \boldsymbol{W} \boldsymbol{O}_R\Vert_F \leq \Vert\boldsymbol{O}_L \boldsymbol{W}\Vert_F + \Vert\boldsymbol{W} \boldsymbol{O}_R\Vert_F \leq 2\Vert\boldsymbol{W}\Vert_F
+\tag{9}
+\]</p>
+<p>Conventional Muon uses \(\boldsymbol{W} - \eta \operatorname{msign}(\boldsymbol{G})\), and the Frobenius norm of \(\operatorname{msign}(\boldsymbol{G})\) is generally \(\sqrt{\min(n,m)}\). Therefore, to align the Frobenius norm of the update when switching from Muon to MuonR, the learning rate should be multiplied by approximately \(\frac{\sqrt{\min(n,m)}}{2\Vert\boldsymbol{W}\Vert_F}\).</p>
+<p>In practice, the first inequality above may not be tight enough. \(\boldsymbol{O}_L \boldsymbol{W}\) and \(\boldsymbol{W} \boldsymbol{O}_R\) are more nearly orthogonal to each other, so by the Pythagorean theorem the result should be approximately \(\sqrt{2}\Vert\boldsymbol{W}\Vert_F\), and the multiplier should therefore include an additional factor of \(\sqrt{2}\). However, since the difference between \(\sqrt{2}\) and \(1\) is not especially large, and to ensure usability in extreme cases, I recommend retaining the form above.</p>
+</section>
+<section>
+<h2 id="comparison-and-contrast" tabindex="-1">Comparison and Contrast</h2>
+<p>As stated at the beginning, MuonR was inspired by <a href="https://papers.cool/arxiv/2605.12492">Pion</a>. Let us now examine their similarities and differences.</p>
+<p>First, the idea of restricting the update rule to a two-sided rotation consisting of left and right multiplication by orthogonal matrices comes mainly from Pion. Once this update form has been fixed, obtaining the corresponding gradients through instantaneous reparameterization is a fairly natural step. From there, Pion and MuonR begin to go their separate ways:</p>
+<blockquote>
+<ol>
+<li>
+<p>Pion achieves orthogonality through the matrix exponential \(\exp(\text{skew-symmetric matrix})\), approximated in practice by a second-order expansion.</p>
+</li>
+<li>
+<p>Pion follows the Adam route and separately takes moving averages of the gradients of \(\boldsymbol{L}\) and \(\boldsymbol{R}\), bringing its cached state to four groups.</p>
+</li>
+<li>
+<p>MuonR follows the Muon route and, like Muon, caches only momentum, allowing us to switch between Muon and MuonR at any time.</p>
+</li>
+<li>
+<p>MuonR is based on the analytic solution for steepest descent on the orthogonal manifold, requiring only a finite number of extra steps to achieve orthogonality exactly.</p>
+</li>
+</ol>
+</blockquote>
+<p>Overall, Pion's orthogonality design is relatively heuristic, and its four groups of cached variables are somewhat daunting. MuonR, by contrast, is a comparatively natural product of the line of work on Muon and steepest descent on the orthogonal manifold. In my view, its overall design adheres more closely to first principles.</p>
+</section>
+<section>
+<h2 id="summary" tabindex="-1">Summary</h2>
+<p>This post proposed MuonR, a Muon variant whose update is constrained to left and right rotation matrices. It can keep a matrix's singular-value distribution unchanged, providing a simple training scheme for maintaining stability.</p>
+<hr class="section-divider">
+<p><em>Citation: Su, J. (2026, June 8). 流形上的最速下降：6. Muon + 双旋转 [Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation]. Scientific Spaces. <a href="https://kexue.fm/archives/11777">https://kexue.fm/archives/11777</a></em></p>
+<p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
+</section>
+
+        </article>
+        <footer>
+                <hr class="section-divider">
+    <div class="colophon">
+        <p class="colophon-links">
+            <a href="https://github.com/tyler-romero">GitHub</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://linkedin.com/in/tylerromero">LinkedIn</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Scholar</a>
+            <span class="colophon-sep">/</span>
+            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <span class="colophon-sep">/</span>
+            <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
+            <span class="colophon-sep">/</span>
+            <a href="/feed.xml">RSS</a>
+        </p>
+        <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
+        <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
+    </div>
+
+        </footer>
+        <script>
+            (function() {
+                var header = document.querySelector('header');
+                var lastY = window.scrollY;
+                var offset = 0;
+                var headerH = header.offsetHeight;
+                window.addEventListener('scroll', function() {
+                    var y = window.scrollY;
+                    var delta = y - lastY;
+                    offset = Math.min(0, Math.max(-headerH, offset - delta));
+                    if (y <= 0) offset = 0;
+                    header.style.transform = 'translateY(' + offset + 'px)';
+                    lastY = y;
+                }, { passive: true });
+            })();
+        </script>
+    </body>
+</html>
