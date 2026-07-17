@@ -1,0 +1,25 @@
+{% set metaTitle = title or site.title %}
+{% set metaDescription = subtitle or description or site.description %}
+{% set socialImage = featured_image or hero_image or site.defaultSocialImage %}
+        <script type="application/ld+json">
+            {
+            "@context": "https://schema.org",
+            "@type": "{% if page.url == '/' %}WebSite{% else %}CollectionPage{% endif %}",
+            "name": {{ metaTitle | jsonLd | safe }},
+            "headline": {{ metaTitle | jsonLd | safe }},
+            "description": {{ metaDescription | markdownInline | striptags | jsonLd | safe }},
+            "author": {
+                "@type": "Person",
+                "name": {{ site.authorName | jsonLd | safe }},
+                "url": {{ site.url | jsonLd | safe }}
+            },
+            "dateModified": {{ page.inputPath | lastModifiedDate | jsonLd | safe }},
+            "url": {{ (site.url ~ page.url) | jsonLd | safe }},
+            "mainEntityOfPage": {
+                "@type": "WebPage",
+                "@id": {{ (site.url ~ page.url) | jsonLd | safe }}
+            },
+            {% if socialImage %}"image": {{ (site.url ~ socialImage) | jsonLd | safe }},{% endif %}
+            "keywords": {{ tags | jsonLd | safe }}
+            }
+        </script>

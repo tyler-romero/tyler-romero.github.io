@@ -7,8 +7,75 @@ import { feedPlugin } from "@11ty/eleventy-plugin-rss";
 import Cite from "citation-js";
 import CleanCSS from "clean-css";
 import { DateTime } from "luxon";
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import { tufteMdWrapper } from "./util/tufteMdWrapper.js";
+
+const lastModifiedCache = new Map();
+
+function getLastModifiedDate(filepath) {
+  if (lastModifiedCache.has(filepath)) {
+    return lastModifiedCache.get(filepath);
+  }
+
+  let modified;
+  try {
+    modified = execFileSync(
+      "git",
+      ["log", "-1", "--format=%cI", "--", filepath],
+      { encoding: "utf8" },
+    ).trim();
+  } catch {
+    // Fall back to the filesystem for untracked files or non-Git builds.
+  }
+
+  if (!modified) {
+    modified = fs.statSync(filepath).mtime.toISOString();
+  }
+
+  lastModifiedCache.set(filepath, modified);
+  return modified;
+}
+
+function renderTableOfContents(content) {
+  const placeholder = /<nav class="toc" aria-label="Table of contents"><\/nav>/;
+  if (!placeholder.test(content)) return content;
+
+  const headings = Array.from(
+    content.matchAll(/<h([23])\s+id="([^"]+)"[^>]*>([\s\S]*?)<\/h\1>/gi),
+    ([, level, id, label]) => ({ level: Number(level), id, label }),
+  );
+
+  if (headings.length < 3) return content;
+
+  const items = [];
+  let currentH2;
+  for (const heading of headings) {
+    if (heading.level === 2) {
+      currentH2 = { ...heading, children: [] };
+      items.push(currentH2);
+    } else if (currentH2) {
+      currentH2.children.push(heading);
+    } else {
+      items.push({ ...heading, children: [] });
+    }
+  }
+
+  const toc = `<nav class="toc" aria-label="Table of contents"><ol>${items
+    .map((item) => {
+      const children = item.children.length
+        ? `<ol>${item.children
+            .map(
+              (child) => `<li><a href="#${child.id}">${child.label}</a></li>`,
+            )
+            .join("")}</ol>`
+        : "";
+      return `<li><a href="#${item.id}">${item.label}</a>${children}</li>`;
+    })
+    .join("")}</ol></nav>`;
+
+  return content.replace(placeholder, toc);
+}
 
 export default function (eleventyConfig) {
   // Copy `src/assets` to `_site/assets`
@@ -38,8 +105,11 @@ export default function (eleventyConfig) {
     return dateObj.toFormat("MMM d, yyyy");
   });
   eleventyConfig.addFilter("lastModifiedDate", function (filepath) {
-    const stat = fs.statSync(filepath);
-    return stat.mtime.toISOString();
+    return getLastModifiedDate(filepath);
+  });
+
+  eleventyConfig.addFilter("jsonLd", function (value) {
+    return JSON.stringify(value);
   });
 
   // Add wordCount filter
@@ -121,10 +191,12 @@ export default function (eleventyConfig) {
       '<a href="$1">$1</a>',
     );
 
-    return content.replace(
-      regex,
-      `<div class="bibliography">${html}</div>`,
-    );
+    return content.replace(regex, `<div class="bibliography">${html}</div>`);
+  });
+
+  eleventyConfig.addTransform("tableOfContents", function (content) {
+    if (!this.page.outputPath?.endsWith(".html")) return content;
+    return renderTableOfContents(content);
   });
 
   return {

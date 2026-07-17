@@ -1,7 +1,8 @@
 {
-    "title": "Tyler's Technical Blog",
-    "description": "Notes on Machine Learning and related topics.",
-    "authorName": "Tyler Romero",
-    "url": "https://www.tylerromero.com",
-    "favicon": "/assets/img/favicon.ico"
+  "title": "Tyler's Technical Blog",
+  "description": "Notes on Machine Learning and related topics.",
+  "authorName": "Tyler Romero",
+  "url": "https://www.tylerromero.com",
+  "favicon": "/assets/img/favicon.ico",
+  "defaultSocialImage": "/assets/img/headshot_2.jpg"
 }

@@ -5,9 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "npx @11ty/eleventy",
+    "build": "npm run clean && npx @11ty/eleventy",
     "serve": "npx @11ty/eleventy --serve",
-    "clean": "rm -rf _site"
+    "clean": "rm -rf _site",
+    "validate": "node util/validate-site.js",
+    "check": "npm run build && npm run validate"
   },
   "author": "Tyler Romero",
   "license": "ISC",

@@ -2,7 +2,7 @@ name: Build & Deploy
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
 
 jobs:
   build:
@@ -10,26 +10,28 @@ jobs:
 
     strategy:
       matrix:
-        node-version: ['20.3.0']
+        node-version: ["20.3.0"]
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install packages
         run: npm ci
 
-      - name: Run npm build
-        run: npm run build
+      - name: Build and validate site
+        run: npm run check
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_site  # default: public
-          keep_files: false  # replace all files
+          publish_dir: ./_site # default: public
+          keep_files: false # replace all files

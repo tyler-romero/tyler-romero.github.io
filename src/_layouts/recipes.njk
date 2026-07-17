@@ -1,30 +1,7 @@
 {% extends "base.njk" %}
 
 {% block structured_data %}
-        <script type="application/ld+json">
-            {
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            "headline": "{{ title }}",
-            "description": "{{ subtitle or site.subtitle }}",
-            "author": {
-                "@type": "Person",
-                "name": "{{ site.authorName }}",
-                "url": "{{ site.url }}"
-            },
-            "datePublished": "{{ page.date.toISOString() }}",
-            "dateModified": "{{ page.inputPath | lastModifiedDate }}",
-            "url": "{{ site.url }}{{ page.url }}",
-            "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": "{{ site.url }}{{ page.url }}"
-            },
-            "image": "{{ site.url }}{{ featured_image }}",
-            "keywords": "{{ tags | join(', ') }}",
-            "wordCount": "{{ content | wordCount }}",
-            "articleBody": "{{ content | replace('<p>', '') | replace('</p>', ' ') | striptags | truncate(500) | escape }}"
-            }
-        </script>
+{% include "structured-data/article.njk" %}
 {% endblock %}
 
 {% block nav_links %}
@@ -35,4 +12,5 @@
             <h1>{{ title | markdownInline | safe }}</h1>
             {% if subtitle %}<p class="subtitle">{{ subtitle | markdownInline | safe }}</p>{% endif %}
             <p class="date">{{ page.inputPath | lastModifiedDate | postDate }}</p>
+            <nav class="toc" aria-label="Table of contents"></nav>
 {% endblock %}

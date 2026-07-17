@@ -1,6 +1,7 @@
 <!-- Required meta tags -->
 {% set metaTitle = title or site.title %}
-{% set metaDescription = subtitle or site.subtitle %}
+{% set metaDescription = subtitle or description or site.description %}
+{% set socialImage = featured_image or hero_image or site.defaultSocialImage %}
 <meta charset="utf-8" />
 <meta name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -33,14 +34,14 @@
 <meta property="og:title" content="{{ metaTitle | markdownInline | striptags }}" />
 <meta property="og:description" content="{{ metaDescription | markdownInline | striptags }}" />
 <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
-<meta property="og:type" content="{% if layout == 'posts' %}article{% else %}website{% endif %}" />
+<meta property="og:type" content="{% if layout == 'posts' or layout == 'scientific-spaces' or layout == 'zhihu' or layout == 'recipes' %}article{% else %}website{% endif %}" />
 <meta property="og:site_name" content="{{ site.title }}" />
-{% if featured_image %}<meta property="og:image" content="{{ site.url }}{{ featured_image }}" />{% endif %}
+{% if socialImage %}<meta property="og:image" content="{{ site.url }}{{ socialImage }}" />{% endif %}
 <!-- Twitter Card -->
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="{% if featured_image or hero_image %}summary_large_image{% else %}summary{% endif %}" />
 <meta name="twitter:title" content="{{ metaTitle | markdownInline | striptags }}" />
 <meta name="twitter:description" content="{{ metaDescription | markdownInline | striptags }}" />
-{% if featured_image %}<meta name="twitter:image" content="{{ site.url }}{{ featured_image }}" />{% endif %}
+{% if socialImage %}<meta name="twitter:image" content="{{ site.url }}{{ socialImage }}" />{% endif %}
 {% if attachments %}{{ attachments | linkToHead | safe }}{% endif %}
 {% if libraries %}{{ libraries | linkToHead | safe }}{% endif %}
 {% if math %}
