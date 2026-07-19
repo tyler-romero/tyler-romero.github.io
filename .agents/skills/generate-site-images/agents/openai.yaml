@@ -1,0 +1,4 @@
+interface:
+  display_name: "Generate Site Images"
+  short_description: "Generate and edit traceable site imagery"
+  default_prompt: "Use $generate-site-images to create or edit a traceable, site-consistent illustration for this page."

@@ -1,0 +1,18 @@
+{
+  "hero": {
+    "size": "1344x768",
+    "composition": "Create a wide landscape composition. Place the primary visual interest in the right half or lower-right third and preserve calm, low-detail negative space across the left and upper-left for a title. Make the edges easy to fade into a warm ivory page."
+  },
+  "article": {
+    "size": "1200x800",
+    "composition": "Create a landscape editorial illustration with one clear focal idea, a readable silhouette, generous breathing room, and details that remain coherent when displayed at approximately 600 pixels wide."
+  },
+  "social": {
+    "size": "1200x800",
+    "composition": "Create a crop-safe landscape preview with a strong central silhouette and meaningful details kept away from the extreme edges. Do not include text; the surrounding page supplies the title."
+  },
+  "square": {
+    "size": "1024x1024",
+    "composition": "Create a balanced square editorial illustration with a distinct central subject, quiet corners, and enough negative space to tolerate modest cropping."
+  }
+}

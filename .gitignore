@@ -1,6 +1,9 @@
 # artifacts
 _site/
 .cache/
+.env
+.env.*
+!.env.example
 
 # macos
 .DS_Store
