@@ -22,10 +22,10 @@
 /* Custom Properties */
 :root {
   --link-color: #568259;
-  --brand-color: #6B7FA3;
-  --warm-accent: #B07A65;
-  --warm-glow: #C49A6C;
-  --bg-color: #FEF9ED;
+  --brand-color: #6b7fa3;
+  --warm-accent: #b07a65;
+  --warm-glow: #c49a6c;
+  --bg-color: #fef9ed;
   --code-bg: #f3efe4;
   --text-color: #1a1a1a;
 }
@@ -474,51 +474,83 @@ label.margin-toggle:not(.sidenote-number)::after {
   display: block;
 }
 
-/* Post hero — atmospheric illustration behind the header text */
-.post-hero {
+/* Post hero — a contained atmospheric header illustration */
+.post-hero-wrapper {
   position: relative;
-  width: 91%;        /* -3% left to 88% right = aligned with sidenote right edge */
+  width: 91%; /* -3% left to 88% right = aligned with sidenote right edge */
   margin-left: -3%;
-  height: 55vh;
-  overflow: hidden;
   margin-top: -6rem;
-  z-index: -1;
+  margin-bottom: 2.5rem;
+  height: clamp(22rem, 34vh, 30rem);
+  overflow: hidden;
+}
+
+.post-hero {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.post-hero picture,
+.post-hero img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .post-hero img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
+  object-fit: contain;
+  object-position: right center;
+  filter: saturate(0.9) contrast(0.95);
 }
 
-.post-hero-fade {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background:
-    /* Bottom: fade to page background */
-    linear-gradient(to bottom, transparent 50%, var(--bg-color)),
-    /* Text column (0–64% of hero ≈ 0–55% of article): more opaque.
-       Sidenote area (64–100% of hero ≈ 55–88% of article): lighter. */
-    linear-gradient(
-      to right,
-      rgba(254, 249, 237, 0.6),
-      rgba(254, 249, 237, 0.6) 62%,
-      rgba(254, 249, 237, 0.25) 72%,
-      rgba(254, 249, 237, 0.25)
-    );
-  pointer-events: none;
-}
-
-/* Header text floats above the hero — pull up to roughly where it sits without a hero */
 .post-header--hero {
-  position: relative;
+  position: absolute;
+  top: clamp(6.5rem, 10vh, 9rem);
+  left: 3.3%;
   z-index: 1;
-  margin-top: calc(-55vh + 6rem);
+  width: 85%;
+  margin: 0;
+}
+
+.post-header--hero h1,
+.post-header--hero .subtitle {
+  position: relative;
+  isolation: isolate;
+}
+
+.post-header--hero h1 {
+  width: fit-content;
+  max-width: 100%;
+  --hero-text-fade-inset: -0.45rem -2.5rem -0.55rem -1.35rem;
+  --hero-text-fade-background: radial-gradient(
+    ellipse 42% 68% at 52% 50%,
+    rgba(254, 249, 237, 0.99) 0%,
+    rgba(254, 249, 237, 0.96) 55%,
+    rgba(254, 249, 237, 0.6) 82%,
+    rgba(254, 249, 237, 0) 100%
+  );
+}
+
+.post-header--hero .subtitle {
+  --hero-text-fade-inset: -0.55rem -3rem -0.65rem -1.5rem;
+  --hero-text-fade-background: radial-gradient(
+    ellipse 78% 62% at 35% 50%,
+    rgba(254, 249, 237, 0.97) 0%,
+    rgba(254, 249, 237, 0.93) 48%,
+    rgba(254, 249, 237, 0.5) 78%,
+    rgba(254, 249, 237, 0) 100%
+  );
+}
+
+.post-header--hero h1::before,
+.post-header--hero .subtitle::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: var(--hero-text-fade-inset);
+  background: var(--hero-text-fade-background);
+  pointer-events: none;
 }
 
 .profile-picture {
@@ -933,19 +965,18 @@ pre[class*="language-"] > code {
     border-radius: 2px;
   }
 
-  .post-hero {
-    height: 35vh;
+  .post-hero-wrapper {
+    width: 100%;
+    margin-left: 0;
     margin-top: -6rem;
-  }
-
-  .post-hero-fade {
-    background:
-      linear-gradient(to bottom, transparent 40%, var(--bg-color)),
-      rgba(254, 249, 237, 0.5);
+    margin-bottom: 2rem;
+    height: clamp(22rem, 32vh, 28rem);
   }
 
   .post-header--hero {
-    margin-top: calc(-35vh + 6rem);
+    top: 6.5rem;
+    left: 0;
+    width: 100%;
   }
 
   hr.section-divider {
@@ -975,6 +1006,23 @@ pre[class*="language-"] > code {
     display: none !important;
   }
 
+  .post-hero-wrapper {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+  }
+
+  .post-header--hero {
+    position: static;
+    width: 100%;
+  }
+
+  .post-header--hero h1::before,
+  .post-header--hero .subtitle::before {
+    display: none;
+  }
+
   /* Hide rough-notation bracket SVGs */
   svg.rough-annotation {
     display: none !important;
@@ -990,8 +1038,9 @@ pre[class*="language-"] > code {
     margin: 0;
     box-sizing: border-box;
     /* Add CJK fonts so Chinese characters render in print/PDF */
-    font-family: "Newsreader", "Noto Serif CJK SC", "Songti SC",
-      "Source Han Serif SC", "SimSun", Georgia, "Times New Roman", serif;
+    font-family:
+      "Newsreader", "Noto Serif CJK SC", "Songti SC", "Source Han Serif SC",
+      "SimSun", Georgia, "Times New Roman", serif;
   }
 
   article {

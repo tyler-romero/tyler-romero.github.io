@@ -6,7 +6,7 @@ blurb: A worklog of cutting GPT-2 training time from 8.13 hours to 2.55 hours on
 tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
 math: true
 code: true
-hero_image: /assets/img/golden-gardens.png
+hero_image: /assets/img/nanogpt-sailboat-race-hero.png
 featured_image: /assets/img/golden-gardens-social.jpg
 ---
 

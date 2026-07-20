@@ -1,8 +1,8 @@
             {% if hero_image %}
-            <div class="post-hero" aria-hidden="true">
-                <img src="{{ hero_image }}" alt="" />
-                <div class="post-hero-fade"></div>
-            </div>
+            <div class="post-hero-wrapper">
+                <div class="post-hero" aria-hidden="true">
+                    <img src="{{ hero_image }}" alt="" />
+                </div>
             {% endif %}
             <div class="post-header{% if hero_image %} post-header--hero{% endif %}">
                 <h1>{{ title | markdownInline | safe }}</h1>
@@ -13,3 +13,6 @@
                 <p class="date">{{ date | postDate }}</p>
                 {% endif %}
             </div>
+            {% if hero_image %}
+            </div>
+            {% endif %}
