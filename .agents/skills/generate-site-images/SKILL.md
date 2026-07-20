@@ -7,6 +7,18 @@ description: "Generate, edit, curate, and publish traceable illustrations for th
 
 Create illustrations with a consistent editorial, handmade visual language. Use the bundled script for every API call so prompts, dimensions, output handling, and provenance remain reproducible.
 
+## Context Safety (Mandatory)
+
+Treat generated image files as write-only artifacts by default. A request to generate or edit an image does not authorize reading the resulting pixels back into the Codex conversation.
+
+- After generation, do not open, read, decode, render, attach, embed, or inspect generated image files unless the user explicitly instructs you to inspect them.
+- Do not call `view_image` or an equivalent image-reading tool on generated outputs unless explicitly instructed.
+- Do not return image bytes, base64 data, or raw image-generation responses to the conversation. Report concise status, manifest details, and filesystem paths instead.
+- Reading text manifests and file metadata is allowed, provided they do not contain embedded image payloads.
+- If explicitly instructed to inspect generated images, load only the minimum number and smallest practical preview needed. Never load an entire candidate batch or full-resolution outputs into context at once.
+
+These rules prevent image payloads from exhausting the conversation request limit and causing an unrecoverable `413 Payload Too Large` error.
+
 ## Workflow
 
 1. Read the target page and `style_guide.md`. Identify the subject, purpose, and intended placement. If no target page is provided, ask for the page or a concrete visual brief.
@@ -18,9 +30,9 @@ Create illustrations with a consistent editorial, handmade visual language. Use 
 3. Write a concrete subject or edit prompt. Describe scene, objects, mood, lighting, composition, and what must remain unchanged; do not repeat the shared aesthetic language. Supply one or more `--input-image` values to edit instead of generating from scratch.
 4. Run `--dry-run` and inspect the composed prompt and request settings.
 5. Before a paid call, state the model, dimensions, quality, and candidate count. Confirm when the user has not already authorized that cost or when generating multiple candidates.
-6. Generate exploratory batches into the ignored `imggen/pipeline_artifacts/` directory. Accumulate at least 20 variations before final curation unless the user explicitly waives the site's guideline; confirm the cost before additional batches.
-7. Inspect candidates at full size. Reject malformed details, accidental text, generic AI gloss, or imagery that does not blend with the site background.
-8. Generate or select a final image, then save it into `src/assets/img/` using a descriptive kebab-case filename. For artwork that should dissolve into the page rather than retain a rectangular canvas, read [references/transparency.md](./references/transparency.md) and publish a separate RGBA derivative.
+6. Generate exploratory batches into the ignored `imggen/pipeline_artifacts/` directory. Accumulate at least 20 variations before final curation unless the user explicitly waives the site's guideline; confirm the cost before additional batches. Do not read the generated images back into context.
+7. Inspect candidates only when the user explicitly requests inspection or curation. Follow the context-safety rules above; reject malformed details, accidental text, generic AI gloss, or imagery that does not blend with the site background.
+8. Generate or select a final image based on the user's selection or explicitly authorized inspection, then save it into `src/assets/img/` using a descriptive kebab-case filename. For artwork that should dissolve into the page rather than retain a rectangular canvas, read [references/transparency.md](./references/transparency.md) and publish a separate RGBA derivative.
 9. Add descriptive alt text and wire the image into page frontmatter or Markdown. Use a separate compressed `featured_image` when the full hero source is unnecessarily large for social crawlers.
 10. Run `npm run check`.
 
