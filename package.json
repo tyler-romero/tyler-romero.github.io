@@ -9,9 +9,7 @@
     "serve": "npx @11ty/eleventy --serve",
     "clean": "rm -rf _site",
     "validate": "node util/validate-site.js",
-    "check": "npm run build && npm run validate",
-    "image:generate": "node .agents/skills/generate-site-images/scripts/generate-image.mjs",
-    "image:edit": "node .agents/skills/generate-site-images/scripts/generate-image.mjs"
+    "check": "npm run build && npm run validate"
   },
   "author": "Tyler Romero",
   "license": "ISC",

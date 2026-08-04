@@ -3,7 +3,6 @@ _site/
 .cache/
 .env
 .env.*
-!.env.example
 
 # macos
 .DS_Store
@@ -26,4 +25,3 @@ __pycache__/
 *.pyzwz
 .venv/
 uv.lock
-imggen/pipeline_artifacts/
