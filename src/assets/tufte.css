@@ -314,6 +314,17 @@ video {
   margin: 0;
 }
 
+.marginnote-compact picture {
+  display: block;
+}
+
+.marginnote-compact img {
+  display: block;
+  width: 100%;
+  max-width: 18rem;
+  margin-inline: auto;
+}
+
 .sidenote-number {
   counter-increment: sidenote-counter;
 }
@@ -904,6 +915,10 @@ pre[class*="language-"] > code {
   img,
   video {
     width: 100%;
+  }
+
+  .marginnote-compact img {
+    max-width: 100%;
   }
 
   .item-list,
