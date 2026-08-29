@@ -68,7 +68,7 @@ if thread_id == 0:
     out[row] = logits[row, index[row]] - logsumexp
 ```
 
-The `block_reduce` step uses the online, numerically stable form of log-sum-exp.<label for="sn-online-softmax" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-online-softmax" class="margin-toggle" aria-label="Toggle sidenote" /><span class="sidenote">This is the online softmax recurrence described by Milakov and Gimelshein in <a href="https://arxiv.org/abs/1805.02867"><em>Online normalizer calculation for softmax</em></a> (2018). Their elementwise update is the singleton case of the pairwise merge used here for parallel reduction.</span> Suppose one partial reduction has maximum \(m\) and normalized exponential sum \(s = \sum_i e^{x_i-m}\), while another has state \((m', s')\). We can merge them using:
+The `block_reduce` step uses the online, numerically stable form of log-sum-exp.<label for="sn-online-softmax" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-online-softmax" class="margin-toggle" aria-label="Online softmax reference note" /><span class="sidenote">This is the online softmax recurrence described by Milakov and Gimelshein in <a href="https://arxiv.org/abs/1805.02867"><em>Online normalizer calculation for softmax</em></a> (2018). Their elementwise update is the singleton case of the pairwise merge used here for parallel reduction.</span> Suppose one partial reduction has maximum \(m\) and normalized exponential sum \(s = \sum_i e^{x_i-m}\), while another has state \((m', s')\). We can merge them using:
 
 \[
 m_{new} = \max(m, m')

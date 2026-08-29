@@ -21,6 +21,11 @@
   --muted-text-color: #6a6864;
 }
 
+::selection {
+  background-color: rgba(196, 154, 108, 0.35);
+  color: var(--text-color);
+}
+
 /* ========================================================================
    Base Tufte CSS styles
    ======================================================================== */
@@ -289,6 +294,12 @@ a:visited {
 
 a:hover {
   text-decoration-color: var(--link-color);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .no-tufte-underline:link {
