@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Post-Training Challenges and Lessons Learned with MoE Architectures</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://zhuanlan.zhihu.com/p/2018018879109091590">moe架构的post-training难点与经验分享</a> by <a href="https://www.zhihu.com/people/yan-xiong-fei-19">燕雄飞的一天</a>, originally published on March 19, 2026 on <a href="https://www.zhihu.com">Zhihu (知乎)</a>. The translation preserves the author's informal, first-person voice.</em></p>
 <hr class="section-divider">
 <p>Whether in open-source or top-tier commercial models, MoE architectures have become the dominant paradigm. How does post-training differ from dense models during the SFT and RL stages? What unique challenges arise, and how can we address them? This post starts from first principles and works through how to train MoE architectures.</p>
@@ -220,7 +222,8 @@ g_i'(x) = g_i(x) + b_i
 <p><em>Citation: 燕雄飞的一天. (2026, March 19). moe架构的post-training难点与经验分享 [Post-Training Challenges and Lessons Learned with MoE Architectures]. Zhihu. <a href="https://zhuanlan.zhihu.com/p/2018018879109091590">https://zhuanlan.zhihu.com/p/2018018879109091590</a></em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

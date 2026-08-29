@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Why Does the Official Muon Have an Extra max(1, ·) Compared to the MuP Version?</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.7): This is an English translation of <a href="https://kexue.fm/archives/11772">为什么官方版Muon比MuP版多出一个max(1, ⋅)？</a> by Jianlin Su (苏剑林), originally published on June 3, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>In the post <a href="/translations/scientific-spaces/muon-optimizer-guide-quick-start-and-key-details/"><em>Muon Optimizer Guide: Quick Start and Key Details</em></a>, we listed several versions of Muon. They differ only in the matrix-shape-dependent scaling factor of the learning rate, where the &quot;official version (KellerJordan version)&quot; is just the &quot;MuP version&quot; plus an extra \(\max(1, \cdot)\) truncation. This post discusses where that truncation actually comes from.</p>
@@ -212,7 +214,8 @@ where \(\tau_t\) decays monotonically from 1 to 0. This produces a smooth transi
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

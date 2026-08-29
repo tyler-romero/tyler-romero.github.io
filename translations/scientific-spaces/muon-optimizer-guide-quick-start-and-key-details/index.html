@@ -87,6 +87,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -97,8 +98,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Muon Optimizer Guide: Quick Start and Key Details</h1>
@@ -119,7 +121,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -135,7 +137,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11416">Muon优化器指南：快速上手与关键细节</a> by Jianlin Su (苏剑林), originally published on November 19, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>By now, many readers have likely come across news about the Muon optimizer. Muon was originally proposed around October of last year by <a href="https://x.com/kellerjordan0/status/1842300916864844014">Keller Jordan</a> on Twitter — barely over a year ago. Yet in that single year, Muon has already been tested on models with tens of billions, hundreds of billions, and even trillions of parameters, demonstrating that it is a highly competitive optimizer.</p>
@@ -203,7 +205,8 @@
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

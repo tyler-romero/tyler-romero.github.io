@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Attention Residuals</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11664">Attention Residuals 回忆录</a> by Jianlin Su (苏剑林), originally published on March 19, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>This article introduces our latest work, <a href="https://arxiv.org/abs/2603.15031"><em>Attention Residuals (AttnRes)</em></a> — as the name suggests, this uses the idea of Attention to improve Residuals.</p>
@@ -273,7 +275,8 @@ a_{t+1,s} \propto \exp(\boldsymbol{w}_{t+1} \cdot \text{RMSNorm}(\boldsymbol{y}_
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/2.5/cn/">CC BY-NC-ND 2.5 CN</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

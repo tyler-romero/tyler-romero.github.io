@@ -87,6 +87,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -101,8 +102,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax</h1>
@@ -134,7 +136,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -150,7 +152,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code>, which computes a log probability for every token in the vocabulary at every position in the sequence:</p>
 <pre><code class="language-python">def naive_selective_log_softmax(logits, index):
     logprobs = logits.log_softmax(dim=-1)  # (batch_size, seq_len, vocab_size)
@@ -400,7 +402,8 @@ Ablation   time: 0.002429 sec, peak: 1141.15 MB
 <p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the initial benchmarking script and suggesting that I pull <code>gather</code> out of the loop over <code>logsumexp</code> to improve performance.</p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

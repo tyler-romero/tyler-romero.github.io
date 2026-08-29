@@ -87,6 +87,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -101,8 +102,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>An Extension to BADGE Active Learning for Variable-Sized Batches</h1>
@@ -134,7 +136,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -150,7 +152,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p>
 <p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sn-uncertainty" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-uncertainty" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model's uncertainty to select points for labeling. In a batch setting, this can degenerate into selecting points that are all very similar, leading to suboptimal performance. Take this example on MNIST, where uncertainty sampling selects eight similar-looking <code>1</code>s in a batch of nine: <picture><source type="image/webp" srcset="/assets/img/liBFvhav3n-300.webp 300w, /assets/img/liBFvhav3n-600.webp 600w, /assets/img/liBFvhav3n-900.webp 900w, /assets/img/liBFvhav3n-1131.webp 1131w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/liBFvhav3n-300.png" alt="Uncertainty sampling on MNIST" width="1131" height="1161" srcset="/assets/img/liBFvhav3n-300.png 300w, /assets/img/liBFvhav3n-600.png 600w, /assets/img/liBFvhav3n-900.png 900w, /assets/img/liBFvhav3n-1131.png 1131w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> This helps the model learn efficiently by focusing on challenging examples while maintaining good coverage of the dataset distribution.</p>
 <p>One limitation of BADGE is that it requires the user to specify the batch size in advance. This can be a problem in practice, as the user may not know how many data points to label in each batch. In this post, I will show how BADGE can be extended to support variable-sized batches to enable applications where the next batch size is unknown a priori.</p>
@@ -381,7 +383,8 @@ meaningful priority ordering, since selecting points one at a time would break t
   <div data-csl-entry-id="desilva2004sparse" class="csl-entry">Silva, V. D., &#38; Tenenbaum, J. B. (2004). <i>Sparse Multidimensional Scaling using Landmark Points</i> [Techreport]. Stanford University. <a href="https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf">https://graphics.stanford.edu/courses/cs468-05-winter/Papers/Landmarks/Silva_landmarks5.pdf</a></div>
 </div></div></section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

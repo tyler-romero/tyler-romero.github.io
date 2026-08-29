@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -94,8 +95,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Thinking about Scaling Laws</h1>
@@ -127,7 +129,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -143,7 +145,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Note: This post is a work in progress. I will continue to update and expand it over time.</em></p>
 <p>Scaling laws are one of the few tools we have for predicting model performance before committing serious compute. When a single training run can cost millions of dollars and take months, the ability to extrapolate from small-scale experiments becomes invaluable. In this post, I want to explore how we can use scaling laws not just as descriptive summaries, but as decision-making frameworks for comparing architectural choices and planning training runs.</p>
 <p>This post assumes familiarity with the seminal papers <a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models</a> (Kaplan et al.) and <a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models</a> (Hoffmann et al.). If you haven't read them, I'd recommend at least skimming Hoffmann et al. (the &quot;Chinchilla&quot; paper) first.</p>
@@ -328,7 +330,8 @@ N_{opt} \propto C^{a}, \quad D_{opt} \propto C^{b}
 <p><picture><source type="image/webp" srcset="/assets/img/UFnp5pZ7IP-300.webp 300w, /assets/img/UFnp5pZ7IP-600.webp 600w, /assets/img/UFnp5pZ7IP-900.webp 900w, /assets/img/UFnp5pZ7IP-2192.webp 2192w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/UFnp5pZ7IP-300.png" alt="From the xLSTM Scaling Laws paper." width="2192" height="996" srcset="/assets/img/UFnp5pZ7IP-300.png 300w, /assets/img/UFnp5pZ7IP-600.png 600w, /assets/img/UFnp5pZ7IP-900.png 900w, /assets/img/UFnp5pZ7IP-2192.png 2192w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

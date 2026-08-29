@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>A Brief History of Linear Attention: From Imitation and Innovation to Feeding Back</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11033">线性注意力简史：从模仿、创新到反哺</a> by Jianlin Su (苏剑林), originally published on June 20, 2025 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>In the Chinese-language community, this blog was probably among the earlier ones to pay attention to linear attention. When I wrote the first related post <a href="https://kexue.fm/archives/7546"><em>Exploring Linear Attention: Must Attention Have a Softmax?</em></a> in 2020, the community was still mainly discussing Softmax Attention in the context of BERT. In hindsight, thinking about linear attention during the BERT era was not particularly wise, because training lengths were short and models were primarily Encoders — linear attention offered essentially no advantage there. I also wrote <a href="https://kexue.fm/archives/8610"><em>The Linear Transformer Is Probably Not the Model You've Been Waiting For</em></a> to express this view.</p>
@@ -433,7 +435,8 @@ A_{i,j} = \boldsymbol{q}_i^{\top}\boldsymbol{R}_{i,j}\boldsymbol{k}_j = \boldsym
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

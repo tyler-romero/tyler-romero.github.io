@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Steepest Descent on Manifolds: 6. Muon + Two-Sided Rotation</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (GPT-5): This is an English translation of <a href="https://kexue.fm/archives/11777">流形上的最速下降：6. Muon + 双旋转</a> by Jianlin Su (苏剑林), originally published on June 8, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>We know that when matrix parameters are updated with optimizers such as Adam and Muon, their singular values and left and right singular vectors all change along with them, and these changes are usually coupled. It is precisely because of this coupling that we cannot easily control a matrix parameter's singular values. When the singular values grow abnormally, we therefore have no simple and effective way to stop them, which may cause training to fail.</p>
@@ -233,7 +235,8 @@
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

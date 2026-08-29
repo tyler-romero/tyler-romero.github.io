@@ -87,6 +87,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -101,8 +102,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>NanoGPT Speedrun Worklog</h1>
@@ -134,7 +136,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -150,7 +152,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p>I saw <a href="https://x.com/kellerjordan0/status/1859331370268623321">some</a> <a href="https://x.com/kellerjordan0/status/1842300916864844014">really</a> <a href="https://x.com/kellerjordan0/status/1876048851158880624">awesome</a> <a href="https://x.com/hi_tysam/status/1879687807678959729">GPT-2</a> speedrun results from people like <a href="https://x.com/kellerjordan0">Keller Jordan</a>, <a href="https://x.com/hi_tysam">Fern</a>, <a href="https://x.com/KoszarskyB">Braden Koszarsky</a>, and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware.</p>
 <p>Technically, <a href="https://x.com/kellerjordan0/status/1798863559243513937">the NanoGPT speedrun</a> is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. <a href="https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history">Keller Jordan maintains a leaderboard here</a>. When I started this experiment on January 16, 2025, the record was 3.14 minutes (!).</p>
 <p>I had access to <strong>2xRTX 4090 GPUs</strong>, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from <strong>8.13 hours to 2.55 hours</strong>. This worklog records the changes that produced that result; the code and run logs are available in <a href="https://github.com/tyler-romero/nanogpt-speedrun">the project repository</a>.</p>
@@ -364,7 +366,8 @@
   <div data-csl-entry-id="gemmateam2024gemma2improvingopen" class="csl-entry">Team, G., Riviere, M., Pathak, S., Sessa, P. G., Hardin, C., Bhupatiraju, S., Hussenot, L., Mesnard, T., Shahriari, B., Ramé, A., Ferret, J., Liu, P., Tafti, P., Friesen, A., Casbon, M., Ramos, S., Kumar, R., Lan, C. L., Jerome, S., … Andreev, A. (2024). <i>Gemma 2: Improving Open Language Models at a Practical Size</i>. <a href="https://arxiv.org/abs/2408.00118">https://arxiv.org/abs/2408.00118</a></div>
 </div></div></section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

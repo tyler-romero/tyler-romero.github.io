@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Transformer Position Encodings That Rack Researchers' Brains</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/8130">让研究人员绞尽脑汁的Transformer位置编码</a> by Jianlin Su (苏剑林), originally published on February 3, 2021 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. This article is a precursor to Su's later work on Rotary Position Embedding (RoPE); the &quot;fusion-style&quot; encoding sketched in the final section of this post was formalized in the follow-up article <a href="/translations/scientific-spaces/transformer-upgrade-2-rotary-position-embedding/">Transformer Upgrade Path: 2. Rotary Position Embedding</a>. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>Unlike RNN, CNN, and other models, for the Transformer model, adding position encoding is indispensable, because a pure Attention module cannot capture the order of its inputs -- it cannot distinguish Tokens at different positions. For this, we broadly have two choices: (1) find a way to incorporate position information into the input, which constitutes the general approach of <strong>absolute position encoding</strong>; (2) find a way to tweak the Attention structure so that it can distinguish Tokens at different positions, which constitutes the general approach of <strong>relative position encoding</strong>.</p>
@@ -371,7 +373,8 @@ a_{i,j} = \text{softmax}\left(\boldsymbol{x}_i \boldsymbol{W}_Q (\boldsymbol{x}_
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">

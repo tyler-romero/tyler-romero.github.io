@@ -80,6 +80,7 @@
 
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -90,8 +91,9 @@
                 </div>
             </nav>
         </header>
-        <article>
-            
+        <main id="main-content" tabindex="-1">
+            <article>
+                
             
             <div class="post-header">
                 <h1>Beyond MuP: 2. Linear Layers and Steepest Descent</h1>
@@ -112,7 +114,7 @@
                                 var annotation = RoughNotation.annotate(entry.target, {
                                     type: 'bracket',
                                     brackets: ['left'],
-                                    color: 'rgba(176, 122, 101, 0.55)',
+                                    color: 'rgba(148, 102, 85, 0.55)',
                                     strokeWidth: 2,
                                     padding: [2, 0, 2, 8],
                                     animationDuration: 600,
@@ -128,7 +130,7 @@
             </script>
 
 
-            <section>
+                <section>
 <p><em>Translator's note (Opus 4.6): This is an English translation of <a href="https://kexue.fm/archives/11605">MuP之上：2. 线性层与最速下降</a> by Jianlin Su (苏剑林), originally published on February 15, 2026 on <a href="https://kexue.fm">Scientific Spaces (科学空间)</a>. It is the second article in the &quot;Beyond MuP&quot; series. The translation preserves the author's first-person voice.</em></p>
 <hr class="section-divider">
 <p>In the previous article <a href="/translations/scientific-spaces/beyond-mup-1-three-characteristics-of-good-models/"><em>Beyond MuP: 1. Three Characteristics of Good Models</em></a>, we proposed three core metrics — forward stability, dependency stability, and update stability — and gave their mathematical definitions. We proposed using whether they satisfy \(\Theta(1)\) to characterize whether a model is &quot;good,&quot; and this serves as the theoretical cornerstone for our subsequent analysis and calculations. Next, we will combine these with the idea of steepest descent to design &quot;stable yet fast&quot; update rules tailored to each parameter.</p>
@@ -252,7 +254,8 @@
 <p><em>Original content licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>. This translation is shared under the same license.</em></p>
 </section>
 
-        </article>
+            </article>
+        </main>
         <footer>
                 <hr class="section-divider">
     <div class="colophon">
