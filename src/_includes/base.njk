@@ -5,6 +5,7 @@
         {% block structured_data %}{% endblock %}
     </head>
     <body>
+        <a class="skip-link" href="#main-content">Skip to content</a>
         <header>
             <nav class="topbar">
                 <div class="right-aligned-links">
@@ -20,10 +21,12 @@
                 </div>
             </nav>
         </header>
-        <article>
-            {% block article_header %}{% endblock %}
-            {{ content | safe }}
-        </article>
+        <main id="main-content" tabindex="-1">
+            <article>
+                {% block article_header %}{% endblock %}
+                {{ content | safe }}
+            </article>
+        </main>
         <footer>
             {% include "footer.njk" %}
         </footer>

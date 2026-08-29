@@ -26,6 +26,8 @@ The descriptive sections explain how the site should feel. Tables, measurements,
 
 ## Color Philosophy
 
+This section governs the manuscript layer, typography, links, interface elements, and hand-drawn annotations. It does **not** constrain the colors used inside illustrations; artwork follows the independent palette guidance in the Illustration Style section.
+
 ### Palette
 
 The manuscript layer uses warm neutrals — cream paper, soft charcoal ink. The hand-drawn layer introduces color from nature: golden hour skies, temperate forests, wildflower meadows. Colors should feel like places you've been, not places that exist only on screens.
@@ -43,13 +45,14 @@ Use these colors for interface and editorial components. Illustration and photog
 
 | Token           | Value     | Primary use                                   |
 | --------------- | --------- | --------------------------------------------- |
-| `--bg-color`    | `#FEF9ED` | Page background and paper-colored fades       |
-| `--text-color`  | `#1A1A1A` | Body copy and primary headings                |
-| `--link-color`  | `#568259` | Links and navigational actions                |
-| `--brand-color` | `#6B7FA3` | Site identity and selected structural accents |
-| `--warm-accent` | `#B07A65` | Dates, annotations, and small focal details   |
-| `--warm-glow`   | `#C49A6C` | Dividers, borders, and atmospheric highlights |
-| `--code-bg`     | `#F3EFE4` | Inline and block code backgrounds             |
+| `--bg-color`         | `#FEF9ED` | Page background and paper-colored fades       |
+| `--text-color`       | `#1A1A1A` | Body copy and primary headings                |
+| `--link-color`       | `#527C55` | Links and navigational actions                |
+| `--brand-color`      | `#5B6C8B` | Site identity and selected structural accents |
+| `--warm-accent`      | `#946655` | Dates, annotations, and small focal details   |
+| `--warm-glow`        | `#C49A6C` | Dividers, borders, and atmospheric highlights |
+| `--code-bg`          | `#F3EFE4` | Inline and block code backgrounds             |
+| `--muted-text-color` | `#6A6864` | Secondary notes and copyright text            |
 
 ### Rules
 
@@ -66,13 +69,49 @@ Use these colors for interface and editorial components. Illustration and photog
 
 ### General Direction
 
-When a post calls for an illustration — usually a conceptual diagram or occasional ambient figure — it should be **painterly, stylized, and slightly abstracted**. Think gouache, soft pastel, or risograph. It should feel deliberately made rather than mechanically polished.
+When a post calls for an illustration — usually a conceptual diagram or occasional ambient figure, and sometimes an editorially justified header image — it should be **painterly, stylized, and slightly abstracted**. The core treatment combines layered gouache or tempera, dry pastel or wax-crayon accents, and loose ink or colored-pencil contours on warm paper. It should resemble a confident page from an illustrated essay or mid-century picture book: tactile, observational, simplified, and intentionally imperfect.
+
+This is a visual treatment, not a subject category. It can depict technical concepts, tools, objects, people, interiors, landscapes, architecture, or abstract systems. The subject should remain recognizable and grounded.
+
+### Material and Mark-Making
+
+- Build forms from matte, opaque, slightly chalky areas of color rather than polished digital rendering.
+- Leave visible dry-brush streaks, uneven coverage, paper grain, and small unpainted gaps.
+- Use loose navy, charcoal, or colored-pencil contours selectively. Lines may wobble, break, or sit slightly outside the painted shapes.
+- Vary the density of marks. Keep focal areas descriptive and let secondary areas dissolve into broad strokes or shorthand.
+- Preserve evidence of the hand: overlapping strokes, imperfect registration, simplified geometry, and irregular painted edges.
+- Avoid airbrushed smoothness, vector-perfect contours, uniform texture, and seamless gradients.
+
+### Illustration Palette
+
+Ignore the site's general Color Philosophy when directing or curating illustrations. Do not force artwork to reuse the interface colors or color-grade it to match the manuscript layer.
+
+Instead, choose a limited palette of roughly four to six pigment-like colors based on the subject and composition. Color may be lively, clear, and high-contrast; the matte, chalky surface and uneven coverage should make it feel physical rather than synthetic.
+
+- **Paper ground**: warm ivory or cream, allowed to remain visible throughout the image.
+- **Blues**: clear sky blue, cerulean, powder blue, cobalt, and deep ink navy.
+- **Reds and oranges**: vermilion, tomato red, coral, salmon, and warm orange.
+- **Yellows**: lemon yellow, golden yellow, mustard, and ochre.
+- **Greens**: spring green, leaf green, grass green, and olive.
+- **Supporting tints**: blush pink, pale peach, cool gray, or another light tint drawn from the subject.
+- **Dark marks**: ink navy, deep blue-black, or warm charcoal rather than featureless digital black.
+
+These families describe the reference character, not a mandatory swatch set. Organize the image around two or three dominant color masses, then repeat stronger reds, yellows, or greens as small rhythmic accents. Create depth through overlap, scale, and color temperature; use hard shadows sparingly.
+
+### Drawing and Composition
+
+- Simplify perspective and anatomy without losing the identity of the subject. Slightly naïve or compressed space is welcome.
+- Establish one clear focal shape, then surround it with looser supporting marks.
+- Use overlapping foreground, middle-ground, and background shapes to suggest depth without fully rendering every plane.
+- Treat people, foliage, machinery, and distant details as gestural marks when they are not the focus.
+- Let the illustration end in an irregular painted vignette or dissolve naturally into the cream page rather than forcing a perfect rectangular frame.
+- Preserve generous quiet areas when typography or page content will sit nearby.
 
 ### Do
 
 - Use flat-to-semi-flat depth with soft, implied shadows rather than hard lighting.
 - Allow forms to dissolve at edges. Not everything needs to be sharply defined.
-- Favor landscapes, architecture, gardens, and natural subjects.
+- Use recognizable, grounded forms even when illustrating an abstract or technical idea.
 - Use visible texture — paper grain, brush strokes, ink bleed, slight imperfections.
 - Compose with generous negative space and clear focal hierarchy.
 
@@ -80,13 +119,14 @@ When a post calls for an illustration — usually a conceptual diagram or occasi
 
 - Don't attempt photorealistic rendering in illustrations.
 - Don't use visual clichés for AI: no neural networks, no glowing brains, no circuit boards, no floating holographic interfaces.
-- Don't use pure geometric abstraction. Every piece should contain at least one recognizable, grounded element (a tree, a building, water, sky).
+- Don't use pure geometric abstraction. Every piece should contain at least one recognizable, grounded element: an object, figure, tool, plant, building, material, or other physical anchor.
+- Don't render every area with equal detail or close every contour perfectly.
 - Don't publish telltale generated-image artifacts such as melted details, impossible geometry, or texture soup. Reject, redraw, or retouch the illustration instead.
 
 ### Typical Uses
 
-- **Post header images**: Not the default. Use one only when an original photograph or deliberately made illustration contributes editorial meaning. A technical post should otherwise use a typography-only header.
-- **Ambient figures**: Close crops of flowers, leaves, water, or sky, used sparingly to pace an unusually long piece rather than decorate routine sections.
+- **Post header images**: Not the default. Use one only when an original photograph or deliberately made illustration contributes editorial meaning. When used, it may be literal, metaphorical, technical, domestic, architectural, or natural; a technical post should otherwise use a typography-only header.
+- **Ambient figures**: Cropped objects, tools, plants, materials, figures, or environmental details used sparingly to pace an unusually long piece rather than decorate routine sections.
 - **Conceptual diagrams**: When a technical diagram is needed, lean into the hand-drawn layer — Virgil font for labels, sketchy borders, organic lines. The diagram should look like something scribbled in the margin of a paper, not exported from a drawing tool.
 
 ---
@@ -217,6 +257,39 @@ Accessibility is part of the manuscript's quality, not a separate visual mode.
 - Captions, labels, and annotations must remain legible at 200% zoom.
 - Never encode meaning through color, position, or motion alone.
 - Print output should preserve the article, citations, figures, and sidenotes while omitting navigation and decorative motion.
+
+---
+
+## AI Image Generation Guidelines
+
+### Prompting Strategy
+
+- Describe the physical materials and marks instead of relying on an artist's name: "layered opaque gouache, dry wax pastel, broken colored-pencil contours, and visible cream paper."
+- Always specify a **medium** (gouache, tempera, dry pastel, wax crayon, colored pencil, or watercolor on rough paper) rather than leaving the style open.
+- Include **environmental lighting** cues ("golden hour light," "overcast soft diffusion," "early morning blue shadows").
+- Reference broad traditions rather than particular artists: "mid-century editorial illustration," "an illustrated essay," or "a hand-painted picture-book vignette."
+- Keep the subject prompt independent from the art direction. Apply the same visual language to a server rack, kitchen table, mathematical metaphor, portrait, garden, city, or any other subject.
+- Avoid prompting for "AI art," "digital art," "concept art," or "futuristic" — these trigger default AI aesthetics.
+
+A useful base description is:
+
+> Hand-painted editorial illustration on warm cream paper, built from layered opaque gouache and dry wax pastel with loose, broken ink-navy colored-pencil contours. Simplified recognizable forms, slightly imperfect perspective, clear pigment color with a matte chalky surface, visible brush variation, selective detail, irregular painted edges, and generous unpainted paper. Choose a lively limited palette suited to the subject, using colors such as cerulean blue, vermilion, golden yellow, leaf green, and deep navy. Tactile, lively, thoughtful, and human; no text, glossy rendering, seamless gradients, or photorealism.
+
+### Curation
+
+- Generate at minimum 20 variations before selecting a candidate.
+- Treat generated image files as write-only artifacts unless the user explicitly requests inspection or curation. Generation alone does not authorize loading image pixels into the Codex conversation.
+- When inspection is explicitly requested, load only the minimum number and smallest practical previews needed. Never load a full candidate batch or multiple full-resolution outputs into context at once.
+- During authorized inspection, evaluate finalists closely enough to catch malformed details, accidental text, and texture artifacts. If details fall apart, reject.
+- The final image should pass the "could a person have painted this?" test when viewed at normal size.
+
+### Post-Production
+
+- Do not color-grade illustrations to match the site's interface palette. Adjust color only to make the illustration's own limited palette coherent and pigment-like.
+- Composite multiple generations if needed to get the right composition.
+- Paint over any artifacts, especially in areas of fine detail (foliage, architecture, water reflections).
+- Add subtle paper or canvas texture overlays to sell the "handmade" feel.
+- Export at high resolution (minimum 2x display size) to survive responsive scaling.
 
 ---
 

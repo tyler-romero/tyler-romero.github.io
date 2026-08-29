@@ -21,13 +21,14 @@
 
 /* Custom Properties */
 :root {
-  --link-color: #568259;
-  --brand-color: #6B7FA3;
-  --warm-accent: #B07A65;
-  --warm-glow: #C49A6C;
-  --bg-color: #FEF9ED;
+  --link-color: #527c55;
+  --brand-color: #5b6c8b;
+  --warm-accent: #946655;
+  --warm-glow: #c49a6c;
+  --bg-color: #fef9ed;
   --code-bg: #f3efe4;
   --text-color: #1a1a1a;
+  --muted-text-color: #6a6864;
 }
 
 /* ========================================================================
@@ -73,6 +74,29 @@ body {
   color: var(--text-color);
   max-width: 1400px;
   counter-reset: sidenote-counter;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1rem;
+  transform: translateY(-120%);
+  border: 2px solid currentColor;
+  border-top: 0;
+  background: var(--bg-color);
+  color: var(--link-color);
+  font-family: "Fraunces", Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid var(--text-color);
+  outline-offset: 2px;
 }
 
 h1 {
@@ -259,7 +283,7 @@ a:visited {
   text-decoration: underline;
   text-decoration-skip-ink: auto;
   text-underline-offset: 2px;
-  text-decoration-color: rgba(86, 130, 89, 0.35);
+  text-decoration-color: rgba(82, 124, 85, 0.4);
   transition: text-decoration-color 0.2s ease;
 }
 
@@ -612,7 +636,7 @@ nav a:visited {
 .colophon-note {
   font-family: "Virgil", cursive;
   font-size: 0.95rem;
-  color: rgba(26, 26, 26, 0.5);
+  color: var(--muted-text-color);
   margin-top: 0;
   margin-bottom: 0.4rem;
 }
@@ -620,7 +644,7 @@ nav a:visited {
 .colophon-copyright {
   font-family: "Newsreader", Georgia, serif;
   font-size: 0.95rem;
-  color: rgba(26, 26, 26, 0.4);
+  color: var(--muted-text-color);
   margin-top: 0;
 }
 
@@ -691,7 +715,7 @@ hr.section-divider {
 /* Code block styling */
 pre > code {
   background: var(--code-bg);
-  border-left: 3px solid rgba(176, 122, 101, 0.25);
+  border-left: 3px solid rgba(148, 102, 85, 0.25);
   border-radius: 0;
   padding: 1em 1.2em 1em 1.4em;
 }
@@ -715,7 +739,7 @@ code[class*="language-"] {
 /* Re-apply code block background over Prism's reset (higher specificity than code[class*]) */
 pre[class*="language-"] > code {
   background: var(--code-bg);
-  border-left: 3px solid rgba(176, 122, 101, 0.25);
+  border-left: 3px solid rgba(148, 102, 85, 0.25);
 }
 
 /* Prism.js token colors — warm manuscript palette */
@@ -723,7 +747,7 @@ pre[class*="language-"] > code {
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: #8b8477;
+  color: #716b60;
 }
 
 .token.punctuation {
@@ -737,7 +761,7 @@ pre[class*="language-"] > code {
 .token.constant,
 .token.symbol,
 .token.deleted {
-  color: #976243;
+  color: #925f41;
 }
 
 .token.selector,
@@ -746,7 +770,7 @@ pre[class*="language-"] > code {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: #5d7a4a;
+  color: #587346;
 }
 
 .token.operator,
@@ -754,7 +778,7 @@ pre[class*="language-"] > code {
 .token.url,
 .language-css .token.string,
 .style .token.string {
-  color: #7a6e5d;
+  color: #756a59;
   background: none;
 }
 
@@ -766,13 +790,13 @@ pre[class*="language-"] > code {
 
 .token.function,
 .token.class-name {
-  color: #a2665c;
+  color: #945d54;
 }
 
 .token.regex,
 .token.important,
 .token.variable {
-  color: #9a7640;
+  color: #856637;
 }
 
 /* Bibliography (citation-js output) */

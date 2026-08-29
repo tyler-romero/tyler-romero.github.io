@@ -25,3 +25,11 @@ __pycache__/
 *.pyzwz
 .venv/
 uv.lock
+
+# local generation artifacts
+imggen/pipeline_artifacts/
+
+# local design context
+.impeccable/
+DESIGN.md
+PRODUCT.md
