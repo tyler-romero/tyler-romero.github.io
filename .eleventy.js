@@ -51,7 +51,8 @@ export default function (eleventyConfig) {
   // Copy assets that are not handled by the image transform plugin.
   eleventyConfig.addPassthroughCopy({
     "src/assets/fonts": "assets/fonts",
-    "src/assets/et-book": "assets/et-book",
+    "node_modules/katex/dist/katex.min.css": "assets/katex/katex.min.css",
+    "node_modules/katex/dist/fonts": "assets/katex/fonts",
     "src/assets/img/favicon.ico": "assets/img/favicon.ico",
     "src/assets/img/badge_selection_order.webm":
       "assets/img/badge_selection_order.webm",
@@ -133,7 +134,7 @@ export default function (eleventyConfig) {
     sharpOptions: {
       animated: true, // Enable animated GIF and WebP support
     },
-    widths: [300, 600, 900, "auto"],
+    widths: [300, 450, 600, 750, 900, "auto"],
     defaultAttributes: {
       loading: "lazy",
       decoding: "async",

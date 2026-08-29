@@ -177,7 +177,7 @@ Sizes are expressed in `rem` so the site can scale its root size across viewport
 
 The Virgil font (a handwriting face) is the typographic voice of the annotation layer. It should appear only in the "notes" layer, never in body text or headings.
 
-- **Dates**: Set in Virgil with abbreviated months (e.g., "Jan 10, 2026").
+- **Dates**: Set in Virgil with abbreviated months (e.g., "Jan 10, 2026"). Use `0.95rem` by default and `1.2rem` on mobile for legibility.
 - **Diagram labels**: Virgil for labels on conceptual diagrams — like something scribbled in the margin.
 - **Decorative elements**: The margin-toggle icon on mobile is a Virgil asterisk (`*`) in superscript, rendered in the warm accent color.
 
@@ -213,13 +213,24 @@ White space is a first-class design element, not leftover. Use approximately `80
 
 ### Responsive Behavior
 
+- At `1600px` and above, the manuscript becomes a centered, bounded canvas no wider than `1500px`; padding stops growing with the viewport so the reading measure remains approximately `65–75ch`.
 - At `760px` and below, the main reading column expands to the available width and margin content moves into the reading flow.
-- Sidenotes become keyboard-accessible inline disclosures. The surrounding sentence must remain understandable while a note is collapsed.
-- Figures expand toward the content width; captions move below the figure rather than remaining in the margin.
-- Tables and code blocks may scroll horizontally inside their own containers. They must never cause the whole page to scroll sideways.
+- Mobile page padding respects device safe areas in portrait and landscape.
+- Sidenotes become keyboard-accessible inline disclosures with `44 × 44px` touch targets. The surrounding sentence must remain understandable while a note is collapsed.
+- Figures expand to the content width; captions move below the figure rather than remaining in the margin.
+- Tables, code blocks, and long mathematics scroll horizontally inside their own focused containers. They must never cause the whole page to scroll sideways.
+- Render mathematics during the site build so equation markup and accessible MathML exist before first paint; serve KaTeX styles and fonts locally.
+- Keep Fraunces, Newsreader, Gentium Book Plus, and JetBrains Mono on `font-display: swap` so the intended typography replaces temporary fallbacks as soon as it loads.
 - Preserve image aspect ratios. Do not crop technical figures in ways that remove labels, legends, or data.
 - Avoid hiding substantive content on mobile. Responsive changes may alter placement and interaction, not meaning.
 - Check long titles, equations, URLs, tables, code, and sidenotes at narrow widths; these are the most common sources of overflow.
+
+### Print Behavior
+
+- Use page margins rather than viewport-relative body padding.
+- Remove navigation, skip links, decorative hero art, and Rough Notation marks while preserving article headers, quotations, figures, citations, and numbered sidenotes.
+- Wrap code and long link destinations instead of clipping them at the page edge.
+- Keep headings with the content that follows, repeat table headers across pages, and avoid splitting figures, quotations, code blocks, and table rows where possible.
 
 ---
 

@@ -1,15 +1,5 @@
 @charset "UTF-8";
 
-/* ET Book old-style figures for dates and sidenote numbers */
-@font-face {
-  font-family: "et-book-roman-old-style";
-  src: url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff")
-    format("woff");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Virgil (Excalidraw) for headings — OFL-1.1 licensed */
 @font-face {
   font-family: "Virgil";
@@ -74,6 +64,16 @@ body {
   color: var(--text-color);
   max-width: 1400px;
   counter-reset: sidenote-counter;
+}
+
+@media screen and (min-width: 1600px) {
+  body {
+    box-sizing: border-box;
+    width: min(92vw, 1500px);
+    max-width: 1500px;
+    padding-left: clamp(4rem, 7vw, 8rem);
+    padding-right: clamp(2rem, 4vw, 5rem);
+  }
 }
 
 .skip-link {
@@ -152,10 +152,6 @@ p.subtitle {
   color: var(--text-color);
 }
 
-.numeral {
-  font-family: et-book-roman-old-style;
-}
-
 .danger {
   color: red;
 }
@@ -210,6 +206,9 @@ div.epigraph > blockquote > footer > cite {
 div.math {
   /* For KaTeX */
   width: 55%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 blockquote {
@@ -233,7 +232,8 @@ blockquote footer {
 
 section > p,
 section > footer,
-section > table {
+section > table,
+section > .table-wrapper {
   width: 55%;
 }
 
@@ -387,8 +387,25 @@ table.fullwidth {
 }
 
 div.table-wrapper {
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  contain: inline-size;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: rgba(148, 102, 85, 0.65) transparent;
+  scrollbar-width: thin;
   font-family: "Trebuchet MS", "Gill Sans", "Gill Sans MT", sans-serif;
+}
+
+div.table-wrapper table {
+  width: 100%;
+  margin: 0;
+}
+
+div.table-wrapper:focus-visible {
+  outline: 2px solid var(--link-color);
+  outline-offset: 4px;
 }
 
 .sans {
@@ -429,9 +446,18 @@ h3 > code {
 pre > code {
   font-size: 0.9rem;
   width: 55%;
+  max-width: 100%;
   box-sizing: border-box;
   overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: rgba(148, 102, 85, 0.65) transparent;
+  scrollbar-width: thin;
   display: block;
+}
+
+pre {
+  min-width: 0;
+  max-width: 100%;
 }
 
 pre.fullwidth > code {
@@ -799,6 +825,16 @@ pre[class*="language-"] > code {
   color: #856637;
 }
 
+.katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.35rem;
+  overscroll-behavior-inline: contain;
+  scrollbar-color: rgba(148, 102, 85, 0.65) transparent;
+  scrollbar-width: thin;
+}
+
 /* Bibliography (citation-js output) */
 .bibliography {
   width: 55%;
@@ -826,30 +862,55 @@ pre[class*="language-"] > code {
 
 @media (max-width: 760px) {
   body {
-    width: 84%;
-    padding-left: 8%;
-    padding-right: 8%;
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: max(6vw, env(safe-area-inset-left));
+    padding-right: max(6vw, env(safe-area-inset-right));
+  }
+
+  main,
+  article,
+  section {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  p,
+  li,
+  td,
+  th,
+  figcaption,
+  .sidenote,
+  .marginnote {
+    overflow-wrap: anywhere;
   }
 
   hr,
   section > p,
   section > footer,
-  section > table {
+  section > table,
+  section > .table-wrapper {
     width: 100%;
   }
 
   pre > code {
-    width: 97%;
+    width: 100%;
   }
 
   section > dl,
   section > ol,
   section > ul {
-    width: 90%;
+    box-sizing: border-box;
+    width: 100%;
+    padding-inline-start: 1.5rem;
   }
 
   figure {
-    max-width: 90%;
+    width: 100%;
+    max-width: 100%;
   }
 
   figcaption,
@@ -868,8 +929,27 @@ pre[class*="language-"] > code {
     width: 100%;
   }
 
+  label.margin-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    margin: -11px -14px;
+    box-sizing: border-box;
+    vertical-align: middle;
+  }
+
+  label.sidenote-number {
+    max-height: none;
+  }
+
   label.margin-toggle:not(.sidenote-number) {
-    display: inline;
+    display: inline-flex;
+  }
+
+  label.margin-toggle:not(.sidenote-number)::after {
+    position: static;
   }
 
   input.margin-toggle {
@@ -904,7 +984,7 @@ pre[class*="language-"] > code {
   .sidenote.mobile-visible {
     display: block;
     float: none;
-    width: 55%;
+    width: 100%;
     max-width: 280px;
     margin: 0 auto 1rem;
     position: relative;
@@ -919,10 +999,11 @@ pre[class*="language-"] > code {
   .margin-toggle:checked + .marginnote {
     display: block;
     float: left;
-    left: 1rem;
+    left: 0;
     clear: both;
-    width: 95%;
-    margin: 1rem 2.5%;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 1rem 0;
     vertical-align: baseline;
     position: relative;
   }
@@ -932,8 +1013,35 @@ pre[class*="language-"] > code {
   }
 
   div.table-wrapper,
-  table {
-    width: 85%;
+  section > table {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  div.table-wrapper table {
+    width: max-content;
+    min-width: 100%;
+    max-width: none;
+  }
+
+  p > .katex,
+  li > .katex {
+    display: inline-block;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    vertical-align: middle;
+    scrollbar-color: rgba(148, 102, 85, 0.65) transparent;
+    scrollbar-width: thin;
+  }
+
+  :not(pre) > code {
+    overflow-wrap: anywhere;
+  }
+
+  .bibliography a {
+    overflow-wrap: anywhere;
+    word-break: break-word;
   }
 
   img,
@@ -964,6 +1072,15 @@ pre[class*="language-"] > code {
     font-size: 1.2rem;
   }
 
+  nav a,
+  nav a:link,
+  nav a:visited {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+
   .hero-banner {
     width: 100%;
   }
@@ -973,7 +1090,9 @@ pre[class*="language-"] > code {
   }
 
   .post-hero {
+    width: 100%;
     height: 35vh;
+    margin-left: 0;
     margin-top: -6rem;
   }
 
@@ -1006,9 +1125,20 @@ pre[class*="language-"] > code {
    Print
    ======================================================================== */
 
+@page {
+  margin: 0.7in 0.65in 0.8in;
+}
+
 @media print {
+  html {
+    font-size: 10pt;
+    scroll-behavior: auto;
+  }
+
+  .skip-link,
   nav,
-  footer,
+  body > header,
+  body > footer,
   .post-hero,
   label.margin-toggle {
     display: none !important;
@@ -1022,24 +1152,35 @@ pre[class*="language-"] > code {
   body {
     background: white;
     color: black;
-    width: 100%;
-    max-width: 100%;
-    padding-left: 5%;
-    padding-right: 5%;
+    width: auto;
+    max-width: none;
+    padding: 0;
     margin: 0;
     box-sizing: border-box;
     /* Add CJK fonts so Chinese characters render in print/PDF */
-    font-family: "Newsreader", "Noto Serif CJK SC", "Songti SC",
-      "Source Han Serif SC", "SimSun", Georgia, "Times New Roman", serif;
+    font-family:
+      "Newsreader",
+      "Noto Serif CJK SC",
+      "Songti SC",
+      "Source Han Serif SC",
+      "SimSun",
+      Georgia,
+      "Times New Roman",
+      serif;
   }
 
   article {
     padding: 0;
   }
 
+  section {
+    padding: 0 0 1.25rem;
+  }
+
   section > p,
   section > footer,
   section > table,
+  section > .table-wrapper,
   section > dl,
   section > ol,
   section > ul,
@@ -1054,8 +1195,32 @@ pre[class*="language-"] > code {
     width: 100%;
   }
 
-  pre > code {
-    width: 95%;
+  pre > code,
+  pre[class*="language-"] > code[class*="language-"] {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    border-left-width: 1pt;
+  }
+
+  div.table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+  }
+
+  div.table-wrapper table,
+  table {
+    width: 100%;
+    max-width: 100%;
+    font-size: 8.5pt;
+  }
+
+  th,
+  td {
+    overflow-wrap: anywhere;
   }
 
   .sidenote,
@@ -1065,7 +1230,11 @@ pre[class*="language-"] > code {
     margin: 0.5em 0;
     width: 100%;
     font-size: 0.9rem;
-    color: #333;
+    color: var(--text-color);
+  }
+
+  .sidenote {
+    counter-increment: sidenote-counter;
   }
 
   .sidenote::before {
@@ -1080,14 +1249,53 @@ pre[class*="language-"] > code {
   a[href^="http"]::after {
     content: " (" attr(href) ")";
     font-size: 0.8em;
-    color: #555;
+    color: var(--muted-text-color);
+    word-break: break-all;
   }
 
   figure {
     max-width: 100%;
   }
 
+  figcaption {
+    float: none;
+    max-width: 100%;
+    margin-top: 0.5rem;
+  }
+
   .hero-banner {
     width: 100%;
+  }
+
+  h1,
+  h2,
+  h3,
+  figure,
+  blockquote,
+  pre,
+  tr {
+    break-inside: avoid-page;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid-page;
+  }
+
+  p,
+  li,
+  blockquote {
+    orphans: 3;
+    widows: 3;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  .katex-display {
+    overflow: visible;
+    max-width: 100%;
   }
 }
