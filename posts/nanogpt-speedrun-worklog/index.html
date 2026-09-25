@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
-<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
 <meta property="og:title" content="NanoGPT Speedrun Worklog">
 <meta property="og:description" content="Experiments in training GPT-2 to 3.28 validation loss on two RTX 4090 GPUs">
@@ -37,16 +36,8 @@
 <link rel="stylesheet" href="/assets/katex/katex.min.css">
 
 
-<!-- Prism.js Syntax Highlighting -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
-
-
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+<script defer="" src="/assets/js/rough-notation.iife.js"></script>
 
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
@@ -68,16 +59,16 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-03-08T08:00:00.000Z",
-            "dateModified": "2026-08-04T14:19:37-07:00",
+            "dateModified": "2026-09-25T11:33:19-07:00",
             "url": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
                 "@id": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/"
             },
             "image": "https://www.tylerromero.com/assets/img/golden-gardens-social.jpg",
-            "keywords": ["post","llm","gpt2","speedrun","nanogpt","worklog","muon"],
-            "wordCount": 3530,
-            "articleBody": "I saw some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. When I started this experiment on January 16, 2025, the record was 3.14 minutes (!). I had access to 2xRTX..."
+            "keywords": ["post","llm","gpt-2","speedrun","nanogpt","worklog","muon"],
+            "wordCount": 3661,
+            "articleBody": "I saw some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. When I started this experiment on January 16, 2025, the record was 3.14 minutes (!). I had access to 2× RTX..."
             }
         </script>
 
@@ -152,7 +143,7 @@
                 <section>
 <p>I saw <a href="https://x.com/kellerjordan0/status/1859331370268623321">some</a> <a href="https://x.com/kellerjordan0/status/1842300916864844014">really</a> <a href="https://x.com/kellerjordan0/status/1876048851158880624">awesome</a> <a href="https://x.com/hi_tysam/status/1879687807678959729">GPT-2</a> speedrun results from people like <a href="https://x.com/kellerjordan0">Keller Jordan</a>, <a href="https://x.com/hi_tysam">Fern</a>, <a href="https://x.com/KoszarskyB">Braden Koszarsky</a>, and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware.</p>
 <p>Technically, <a href="https://x.com/kellerjordan0/status/1798863559243513937">the NanoGPT speedrun</a> is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. <a href="https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history">Keller Jordan maintains a leaderboard here</a>. When I started this experiment on January 16, 2025, the record was 3.14 minutes (!).</p>
-<p>I had access to <strong>2xRTX 4090 GPUs</strong>, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from <strong>8.13 hours to 2.55 hours</strong>. This worklog records the changes that produced that result; the code and run logs are available in <a href="https://github.com/tyler-romero/nanogpt-speedrun">the project repository</a>.</p>
+<p>I had access to <strong>2× RTX 4090 GPUs</strong>, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from <strong>8.13 hours to 2.55 hours</strong>. This worklog records the changes that produced that result; the code and run logs are available in <a href="https://github.com/tyler-romero/nanogpt-speedrun">the project repository</a>.</p>
 </section>
 <section>
 <h2 id="results" tabindex="-1">Results</h2>
@@ -249,7 +240,7 @@
 </ol>
 <p>Additionally, I added <code>wandb</code> logging to make it easier to track the training runs.</p>
 <p>Commit with the initial setup is here: <a href="https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt"><code>b3c32f8</code></a>.</p>
-<p>The baseline run time on my 2xRTX 4090 setup was <strong>8.13 hours</strong>.</p>
+<p>The baseline run time on my 2× RTX 4090 setup was <strong>8.13 hours</strong>.</p>
 </section>
 <section>
 <h2 id="2.-implementing-major-improvements-from-the-8xh100-leaderboard" tabindex="-1">2. Implementing major improvements from the 8xH100 leaderboard</h2>
@@ -264,7 +255,7 @@
 <p>There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:</p>
 <ol>
 <li><a href="https://arxiv.org/abs/2104.09864">RoPE (Rotary Positional Embeddings)</a>. There are <a href="https://www.jitx.io/posts/rope-embeddings">many</a> <a href="https://blog.eleuther.ai/rotary-embeddings/">good</a> explanations of RoPE out there so I won't go into detail here.</li>
-<li><a href="https://arxiv.org/pdf/2109.08668">ReLU^2 Activation</a><label for="sn-relu2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-relu2" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">ReLU^2 activation function. <picture><source type="image/webp" srcset="/assets/img/Zn-fTGuzYQ-300.webp 300w, /assets/img/Zn-fTGuzYQ-450.webp 450w, /assets/img/Zn-fTGuzYQ-600.webp 600w, /assets/img/Zn-fTGuzYQ-750.webp 750w, /assets/img/Zn-fTGuzYQ-900.webp 900w, /assets/img/Zn-fTGuzYQ-1920.webp 1920w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/Zn-fTGuzYQ-300.png" alt="Relu Activation plot" width="1920" height="1440" srcset="/assets/img/Zn-fTGuzYQ-300.png 300w, /assets/img/Zn-fTGuzYQ-450.png 450w, /assets/img/Zn-fTGuzYQ-600.png 600w, /assets/img/Zn-fTGuzYQ-750.png 750w, /assets/img/Zn-fTGuzYQ-900.png 900w, /assets/img/Zn-fTGuzYQ-1920.png 1920w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>. Many activations that are better than GeLU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.</li>
+<li><a href="https://arxiv.org/pdf/2109.08668">ReLU^2 activation</a><label for="sn-relu2" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-relu2" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">ReLU^2 activation function. <picture><source type="image/webp" srcset="/assets/img/Zn-fTGuzYQ-300.webp 300w, /assets/img/Zn-fTGuzYQ-450.webp 450w, /assets/img/Zn-fTGuzYQ-600.webp 600w, /assets/img/Zn-fTGuzYQ-750.webp 750w, /assets/img/Zn-fTGuzYQ-900.webp 900w, /assets/img/Zn-fTGuzYQ-1920.webp 1920w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/Zn-fTGuzYQ-300.png" alt="ReLU^2 activation plot" width="1920" height="1440" srcset="/assets/img/Zn-fTGuzYQ-300.png 300w, /assets/img/Zn-fTGuzYQ-450.png 450w, /assets/img/Zn-fTGuzYQ-600.png 600w, /assets/img/Zn-fTGuzYQ-750.png 750w, /assets/img/Zn-fTGuzYQ-900.png 900w, /assets/img/Zn-fTGuzYQ-1920.png 1920w" sizes="(max-width: 900px) 100vw, 900px"></picture></span>. Many activations that are better than GELU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.</li>
 <li>No gradient clipping. Gradient clipping can help stabilize training, but it also slows down training. Since this was a speedrun, I removed it. This also eliminated a hyperparameter that needed to be tuned.</li>
 <li><a href="https://arxiv.org/abs/2405.18392">Trapezoidal learning rate schedule</a>. While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been shown to match the performance of cosine schedules.</li>
 </ol>
@@ -307,24 +298,25 @@
 <p>To address these issues, I made two key changes. First, I extended the sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, I eliminated the traditional batch dimension and effectively used a &quot;batch size&quot; of 1 containing multiple concatenated documents. Second, I added attention masking that prevented cross-document attention while retaining the computational efficiency of sparse attention patterns.</p>
 <p>Fortunately, <a href="https://pytorch.org/blog/flexattention/">FlexAttention</a> provides an elegant solution that maintains the performance benefits of <a href="https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention">FlashAttention</a> while enabling these improvements. One of FlexAttention's primary strengths is its ability to efficiently handle sparse, custom attention masks, making it ideal for our use case.</p>
 <p>To implement FlexAttention, I defined a mask that handled the specific requirements of the dataset:</p>
-<pre><code class="language-python">def make_attn_mask(idx, eot_token, window_size=1024):
-    # Create a causal mask (only attend to past tokens)
-    def causal_mask(b, h, q_idx, kv_idx):
-        return q_idx &gt;= kv_idx
+<pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">make_attn_mask</span><span class="token punctuation">(</span>idx<span class="token punctuation">,</span> eot_token<span class="token punctuation">,</span> window_size<span class="token operator">=</span><span class="token number">1024</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># Create a causal mask (only attend to past tokens)</span>
+    <span class="token keyword">def</span> <span class="token function">causal_mask</span><span class="token punctuation">(</span>b<span class="token punctuation">,</span> h<span class="token punctuation">,</span> q_idx<span class="token punctuation">,</span> kv_idx<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> q_idx <span class="token operator">>=</span> kv_idx
 
-    # Track document boundaries using end-of-text tokens
-    documents = (idx == eot_token).cumsum(dim=1)
+    <span class="token comment"># Track document boundaries using end-of-text tokens</span>
+    documents <span class="token operator">=</span> <span class="token punctuation">(</span>idx <span class="token operator">==</span> eot_token<span class="token punctuation">)</span><span class="token punctuation">.</span>cumsum<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
 
-    # Only allow attention within the same document
-    def document_mask(b, h, q_idx, kv_idx):
-        return documents[b, q_idx] == documents[b, kv_idx]
+    <span class="token comment"># Only allow attention within the same document</span>
+    <span class="token keyword">def</span> <span class="token function">document_mask</span><span class="token punctuation">(</span>b<span class="token punctuation">,</span> h<span class="token punctuation">,</span> q_idx<span class="token punctuation">,</span> kv_idx<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> documents<span class="token punctuation">[</span>b<span class="token punctuation">,</span> q_idx<span class="token punctuation">]</span> <span class="token operator">==</span> documents<span class="token punctuation">[</span>b<span class="token punctuation">,</span> kv_idx<span class="token punctuation">]</span>
 
-    # Limit attention to an N-token window for efficiency
-    def sliding_window_mask(b, h, q_idx, kv_idx):
-        return q_idx - kv_idx &lt;= window_size
+    <span class="token comment"># Limit attention to an N-token window for efficiency</span>
+    <span class="token keyword">def</span> <span class="token function">sliding_window_mask</span><span class="token punctuation">(</span>b<span class="token punctuation">,</span> h<span class="token punctuation">,</span> q_idx<span class="token punctuation">,</span> kv_idx<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">return</span> q_idx <span class="token operator">-</span> kv_idx <span class="token operator">&lt;=</span> window_size
 
-    return and_masks(document_mask, causal_mask, sliding_window_mask)
+    <span class="token keyword">return</span> and_masks<span class="token punctuation">(</span>document_mask<span class="token punctuation">,</span> causal_mask<span class="token punctuation">,</span> sliding_window_mask<span class="token punctuation">)</span>
 </code></pre>
+
 <p>Let's break down each mask:</p>
 <ol>
 <li>
@@ -377,7 +369,7 @@
             <span class="colophon-sep">/</span>
             <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Google Scholar</a>
             <span class="colophon-sep">/</span>
-            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <a href="https://x.com/tyleraromero">Twitter</a>
             <span class="colophon-sep">/</span>
             <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
             <span class="colophon-sep">/</span>

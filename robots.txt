@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /assets/
-Allow: /assets/img/favicon.ico
+Allow: /
 
 Sitemap: https://www.tylerromero.com/sitemap.xml

@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
-<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
 <meta property="og:title" content="Reducing VRAM Footprint in PPO and GRPO Using Selective Log-Softmax">
 <meta property="og:description" content="Slash VRAM usage by half when computing log probs by selectively applying log-softmax only to tokens of interest">
@@ -37,16 +36,8 @@
 <link rel="stylesheet" href="/assets/katex/katex.min.css">
 
 
-<!-- Prism.js Syntax Highlighting -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
-
-
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+<script defer="" src="/assets/js/rough-notation.iife.js"></script>
 
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
@@ -76,7 +67,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["post","grpo","ppo","logprobs","logits","log-softmax","log_softmax","logsumexp","log-probabilities"],
-            "wordCount": 2865,
+            "wordCount": 3740,
             "articleBody": "When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses log_softmax, which computes a log probability for every token in the vocabulary at every position in the sequence: def naive_selective_log_softmax(logits, index): logprobs = logits.log_softmax(dim=-1) # (batch_size, seq_len, vocab_size) return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1) For a vocabulary size of 32768, sequence length of..."
             }
         </script>
@@ -151,10 +142,11 @@
 
                 <section>
 <p>When training language models, we often need to convert logits (raw model outputs) into log probabilities. The standard approach uses <code>log_softmax</code>, which computes a log probability for every token in the vocabulary at every position in the sequence:</p>
-<pre><code class="language-python">def naive_selective_log_softmax(logits, index):
-    logprobs = logits.log_softmax(dim=-1)  # (batch_size, seq_len, vocab_size)
-    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+<pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">naive_selective_log_softmax</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    logprobs <span class="token operator">=</span> logits<span class="token punctuation">.</span>log_softmax<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>  <span class="token comment"># (batch_size, seq_len, vocab_size)</span>
+    <span class="token keyword">return</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>logprobs<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
 </code></pre>
+
 <p>For a vocabulary size of 32768, sequence length of 1024, and batch size of 16, the full <code>log_softmax</code> output consumes another <strong>2.1GB</strong> of VRAM<label for="sn-vram" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-vram" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">VRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.</span> on top of the 2.1GB already occupied by the logits.</p>
 <p>However, in many workloads, we only need the log probability of one token at each position. PPO and GRPO are good examples: they need the log probabilities of the tokens that were actually generated, not every possible token in the vocabulary. In typical implementations of these algorithms, materializing the full log-probability tensor can determine peak VRAM usage.</p>
 <p>Let's remind ourselves what <code>log_softmax</code> computes for each input logit (x_i):</p>
@@ -176,7 +168,7 @@
 <h3 id="a-dedicated-kernel" tabindex="-1">A Dedicated Kernel</h3>
 <p>I initially approached this as a PyTorch memory optimization. The same operation can also be implemented directly as a CUDA kernel. I wrote <a href="https://www.tylerromero.com/greyhound/kernels/selective_log_softmax/">one implementation using CuTe DSL</a> as part of Greyhound. It is useful here because it makes the reduction strategy and memory traffic explicit.</p>
 <p>The kernel flattens every leading dimension into rows and assigns one CUDA thread block to each row. In pseudocode:</p>
-<pre><code class="language-text"># One thread block per row
+<pre class="language-text"><code class="language-text"># One thread block per row
 row = block_id
 m, s = -infinity, 0.0
 
@@ -194,6 +186,7 @@ if thread_id == 0:
     logsumexp = m + log(s)
     out[row] = logits[row, index[row]] - logsumexp
 </code></pre>
+
 <p>The <code>block_reduce</code> step uses the online, numerically stable form of log-sum-exp.<label for="sn-online-softmax" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-online-softmax" class="margin-toggle" aria-label="Online softmax reference note"><span class="sidenote">This is the online softmax recurrence described by Milakov and Gimelshein in <a href="https://arxiv.org/abs/1805.02867"><em>Online normalizer calculation for softmax</em></a> (2018). Their elementwise update is the singleton case of the pairwise merge used here for parallel reduction.</span> Suppose one partial reduction has maximum <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span> and normalized exponential sum <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msup><mi>e</mi><mrow><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>m</mi></mrow></msup></mrow><annotation encoding="application/x-tex">s = \sum_i e^{x_i-m}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.071em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.162em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7713em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3281em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">m</span></span></span></span></span></span></span></span></span></span></span></span>, while another has state <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msup><mi>m</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo separator="true">,</mo><msup><mi>s</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(m&#x27;, s&#x27;)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0019em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">m</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.7519em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">′</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>. We can merge them using:</p>
 <p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><msub><mi>m</mi><mrow><mi>n</mi><mi>e</mi><mi>w</mi></mrow></msub><mo>=</mo><mi>max</mi><mo>⁡</mo><mo stretchy="false">(</mo><mi>m</mi><mo separator="true">,</mo><msup><mi>m</mi><mo mathvariant="normal" lspace="0em" rspace="0em">′</mo></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">
 m_{new} = \max(m, m&#x27;)
@@ -257,11 +250,12 @@ s_{new} = s e^{m-m_{new}} + s&#x27; e^{m&#x27;-m_{new}}
 <li><strong>Eager-only environments:</strong> the looped PyTorch workaround in the appendix reduces memory at the cost of additional kernel launches.</li>
 </ul>
 <p>For the training case, <code>torch.compile</code> can fuse the naive <code>log_softmax</code> and <code>gather</code> expression into a memory-efficient generated kernel:</p>
-<pre><code class="language-python">@torch.compile(dynamic=True)
-def compiled_selective_log_softmax(logits, index):
-    logprobs = logits.log_softmax(dim=-1)
-    return torch.gather(logprobs, dim=-1, index=index.unsqueeze(-1)).squeeze(-1)
+<pre class="language-python"><code class="language-python"><span class="token decorator annotation punctuation">@torch<span class="token punctuation">.</span>compile</span><span class="token punctuation">(</span>dynamic<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">compiled_selective_log_softmax</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    logprobs <span class="token operator">=</span> logits<span class="token punctuation">.</span>log_softmax<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>logprobs<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
 </code></pre>
+
 <p>The benchmarks above confirm that the compiled expression avoids the full log-probability allocation. It also supports autograd, while the dedicated kernel described above does not yet have a backward implementation. The <code>dynamic=True</code> flag allows sequence length to vary without specializing a new graph for every value, although changes to the vocabulary dimension can still require new generated code.</p>
 <h3 id="impact-in-ppo-and-grpo-training" tabindex="-1">Impact in PPO and GRPO Training</h3>
 <p>Before the dedicated kernel existed, I contributed the eager PyTorch workaround from the appendix to several popular open-source RLHF libraries, including <a href="https://github.com/huggingface/trl">huggingface/TRL</a> (<a href="https://github.com/huggingface/trl/pull/2773">PR 1</a>, <a href="https://github.com/huggingface/trl/pull/2799">PR 2</a>), <a href="https://github.com/OpenRLHF/OpenRLHF">OpenRLHF</a> (<a href="https://github.com/OpenRLHF/OpenRLHF/pull/718">PR 3</a>), <a href="https://github.com/volcengine/verl">Verl</a> (<a href="https://github.com/volcengine/verl/pull/220">PR 4</a>), and <a href="https://github.com/allenai/open-instruct">allenai/open-instruct</a> (<a href="https://github.com/allenai/open-instruct/pull/584">PR 5</a>). It was also incorporated into <a href="https://github.com/PrimeIntellect-ai/prime-rl/blob/a092a54029549d600d32d3b3f123ea3607498604/src/zeroband/training/loss.py#L47">PrimeIntellect-ai/prime-rl</a> for training the <a href="https://storage.googleapis.com/public-technical-paper/INTELLECT_2_Technical_Report.pdf">INTELLECT-2</a> model.</p>
@@ -274,85 +268,89 @@ def compiled_selective_log_softmax(logits, index):
 <p>The rest of this post preserves the thought process that led me to the kernel. These implementations are useful for understanding where the memory goes, but they are workarounds rather than ideal GPU programs.</p>
 <h3 id="take-1%3A-decompose-the-operation" tabindex="-1">Take 1: Decompose the Operation</h3>
 <p>The algebra suggests computing <code>logsumexp</code>, gathering the selected logits, and subtracting:</p>
-<pre><code class="language-python">def selective_log_softmax_take1(logits, index):
-    logsumexp_values = torch.logsumexp(logits, dim=-1)
-    token_logits = torch.gather(
-        logits, dim=-1, index=index.unsqueeze(-1)
-    ).squeeze(-1)
-    return token_logits - logsumexp_values
+<pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">selective_log_softmax_take1</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    logsumexp_values <span class="token operator">=</span> torch<span class="token punctuation">.</span>logsumexp<span class="token punctuation">(</span>logits<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+    token_logits <span class="token operator">=</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>
+        logits<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> token_logits <span class="token operator">-</span> logsumexp_values
 </code></pre>
+
 <p>On the surface, this looks like it should solve the problem because the output has shape <code>(batch_size, sequence_length)</code> instead of <code>(batch_size, sequence_length, vocab_size)</code>. However, eager <code>torch.logsumexp()</code> internally materializes a vocabulary-sized exponential tensor. Peak memory therefore remains essentially unchanged.</p>
 <h3 id="take-2%3A-limit-the-temporary-size" tabindex="-1">Take 2: Limit the Temporary Size</h3>
 <p>Well, we could compute <code>logsumexp</code> one batch row at a time. The largest temporary would then have shape <code>(sequence_length, vocab_size)</code> instead of <code>(batch_size, sequence_length, vocab_size)</code>:</p>
-<pre><code class="language-python">def selective_log_softmax_take2(logits, index):
-    logsumexp_values = torch.stack(
-        [torch.logsumexp(logits_row, dim=-1) for logits_row in logits]
-    )
-    token_logits = torch.gather(
-        logits, dim=-1, index=index.unsqueeze(-1)
-    ).squeeze(-1)
-    return token_logits - logsumexp_values
+<pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">selective_log_softmax_take2</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    logsumexp_values <span class="token operator">=</span> torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>
+        <span class="token punctuation">[</span>torch<span class="token punctuation">.</span>logsumexp<span class="token punctuation">(</span>logits_row<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">for</span> logits_row <span class="token keyword">in</span> logits<span class="token punctuation">]</span>
+    <span class="token punctuation">)</span>
+    token_logits <span class="token operator">=</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>
+        logits<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> token_logits <span class="token operator">-</span> logsumexp_values
 </code></pre>
+
 <p>For comparison, we can also loop over <code>log_softmax</code> itself:</p>
-<pre><code class="language-python">def selective_log_softmax_ablation(logits, index):
-    token_logprobs = []
-    for logits_row, index_row in zip(logits, index):
-        logprobs_row = logits_row.log_softmax(dim=-1)
-        token_logprobs_row = torch.gather(
-            logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
-        ).squeeze(-1)
-        token_logprobs.append(token_logprobs_row)
-    return torch.stack(token_logprobs)
+<pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">selective_log_softmax_ablation</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    token_logprobs <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token keyword">for</span> logits_row<span class="token punctuation">,</span> index_row <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        logprobs_row <span class="token operator">=</span> logits_row<span class="token punctuation">.</span>log_softmax<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        token_logprobs_row <span class="token operator">=</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>
+            logprobs_row<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index_row<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        token_logprobs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>token_logprobs_row<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>token_logprobs<span class="token punctuation">)</span>
 </code></pre>
+
 <p>Both approaches limit the large temporary to one batch row, but they require many separate kernel launches. That is the fundamental weakness of trying to express this operation as a Python loop over eager PyTorch primitives.</p>
 <h3 id="reproducing-the-eager-benchmark" tabindex="-1">Reproducing the Eager Benchmark</h3>
 <p>Here is the benchmark helper. The CUDA synchronizations are important because GPU operations are asynchronous:</p>
-<pre><code class="language-python">import time
-import torch
+<pre class="language-python"><code class="language-python"><span class="token keyword">import</span> time
+<span class="token keyword">import</span> torch
 
 
-def measure_memory_and_time(func, logits, index, n_runs=100):
-    # Warm up one-time CUDA work before measuring.
-    func(logits, index)
-    torch.cuda.synchronize()
+<span class="token keyword">def</span> <span class="token function">measure_memory_and_time</span><span class="token punctuation">(</span>func<span class="token punctuation">,</span> logits<span class="token punctuation">,</span> index<span class="token punctuation">,</span> n_runs<span class="token operator">=</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># Warm up one-time CUDA work before measuring.</span>
+    func<span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span>
+    torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>synchronize<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-    torch.cuda.reset_peak_memory_stats()
-    result = func(logits, index)
-    torch.cuda.synchronize()
-    mem_peak = torch.cuda.max_memory_allocated()
+    torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>reset_peak_memory_stats<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    result <span class="token operator">=</span> func<span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span>
+    torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>synchronize<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    mem_peak <span class="token operator">=</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>max_memory_allocated<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-    start_time = time.perf_counter()
-    for _ in range(n_runs):
-        func(logits, index)
-    torch.cuda.synchronize()
-    avg_time = (time.perf_counter() - start_time) / n_runs
-    return result, avg_time, mem_peak
+    start_time <span class="token operator">=</span> time<span class="token punctuation">.</span>perf_counter<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">for</span> _ <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span>n_runs<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        func<span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span>
+    torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>synchronize<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    avg_time <span class="token operator">=</span> <span class="token punctuation">(</span>time<span class="token punctuation">.</span>perf_counter<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">-</span> start_time<span class="token punctuation">)</span> <span class="token operator">/</span> n_runs
+    <span class="token keyword">return</span> result<span class="token punctuation">,</span> avg_time<span class="token punctuation">,</span> mem_peak
 
 
-torch.manual_seed(42)
-vocab_size = 32768
-seq_len = 1024
-batch_size = 16
+torch<span class="token punctuation">.</span>manual_seed<span class="token punctuation">(</span><span class="token number">42</span><span class="token punctuation">)</span>
+vocab_size <span class="token operator">=</span> <span class="token number">32768</span>
+seq_len <span class="token operator">=</span> <span class="token number">1024</span>
+batch_size <span class="token operator">=</span> <span class="token number">16</span>
 
-logits = torch.randn(
-    batch_size,
-    seq_len,
-    vocab_size,
-    device=&quot;cuda&quot;,
-    dtype=torch.float32,
-)
-index = torch.randint(0, vocab_size, (batch_size, seq_len), device=&quot;cuda&quot;)
+logits <span class="token operator">=</span> torch<span class="token punctuation">.</span>randn<span class="token punctuation">(</span>
+    batch_size<span class="token punctuation">,</span>
+    seq_len<span class="token punctuation">,</span>
+    vocab_size<span class="token punctuation">,</span>
+    device<span class="token operator">=</span><span class="token string">"cuda"</span><span class="token punctuation">,</span>
+    dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span>float32<span class="token punctuation">,</span>
+<span class="token punctuation">)</span>
+index <span class="token operator">=</span> torch<span class="token punctuation">.</span>randint<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> vocab_size<span class="token punctuation">,</span> <span class="token punctuation">(</span>batch_size<span class="token punctuation">,</span> seq_len<span class="token punctuation">)</span><span class="token punctuation">,</span> device<span class="token operator">=</span><span class="token string">"cuda"</span><span class="token punctuation">)</span>
 
-funcs = {
-    &quot;Naive&quot;: naive_selective_log_softmax,
-    &quot;Take1&quot;: selective_log_softmax_take1,
-    &quot;Take2&quot;: selective_log_softmax_take2,
-    &quot;Ablation&quot;: selective_log_softmax_ablation,
-}
-results = {name: measure_memory_and_time(fn, logits, index) for name, fn in funcs.items()}
+funcs <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"Naive"</span><span class="token punctuation">:</span> naive_selective_log_softmax<span class="token punctuation">,</span>
+    <span class="token string">"Take1"</span><span class="token punctuation">:</span> selective_log_softmax_take1<span class="token punctuation">,</span>
+    <span class="token string">"Take2"</span><span class="token punctuation">:</span> selective_log_softmax_take2<span class="token punctuation">,</span>
+    <span class="token string">"Ablation"</span><span class="token punctuation">:</span> selective_log_softmax_ablation<span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+results <span class="token operator">=</span> <span class="token punctuation">{</span>name<span class="token punctuation">:</span> measure_memory_and_time<span class="token punctuation">(</span>fn<span class="token punctuation">,</span> logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span> <span class="token keyword">for</span> name<span class="token punctuation">,</span> fn <span class="token keyword">in</span> funcs<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span>
 </code></pre>
+
 <p>Running this benchmark<label for="sn-benchmark" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-benchmark" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">These results were rerun on July 17, 2026, using an RTX 4090 and <code>torch==2.10.0+cu128</code>. The original version of this post did not synchronize CUDA before reading the timer, which understated execution time.</span> with <code>float32</code> logits gives:</p>
-<pre><code class="language-text">Logits Dtype: torch.float32
+<pre class="language-text"><code class="language-text">Logits Dtype: torch.float32
 Max abs diff (Naive vs Take1): 1.9073486328125e-06
 Max abs diff (Naive vs Take2): 1.9073486328125e-06
 Max abs diff (Naive vs Ablation): 0.0
@@ -362,10 +360,11 @@ Take1      time: 0.013805 sec, peak: 4295.43 MB
 Take2      time: 0.013911 sec, peak: 2282.16 MB
 Ablation   time: 0.004778 sec, peak: 2282.16 MB
 </code></pre>
+
 <p>Peak VRAM drops by 47%, from 4295MB to 2282MB, and almost all of the remaining memory is the 2147MB input. But the looped <code>logsumexp</code> implementation is about 3x slower than the naive operation. The looped <code>log_softmax</code> ablation reaches the same memory footprint and is much faster.</p>
 <h3 id="half-precision-numerical-behavior" tabindex="-1">Half-Precision Numerical Behavior</h3>
 <p>The decomposed <code>logsumexp</code> implementation also does not exactly match PyTorch's <code>log_softmax</code> result for <code>bfloat16</code> and <code>float16</code> inputs:</p>
-<pre><code class="language-text">Logits Dtype: torch.bfloat16
+<pre class="language-text"><code class="language-text">Logits Dtype: torch.bfloat16
 Max abs diff (Naive vs Take1): 0.0625
 Max abs diff (Naive vs Take2): 0.0625
 Max abs diff (Naive vs Ablation): 0.0
@@ -375,27 +374,29 @@ Take1      time: 0.006921 sec, peak: 2147.78 MB
 Take2      time: 0.005678 sec, peak: 1141.15 MB
 Ablation   time: 0.002429 sec, peak: 1141.15 MB
 </code></pre>
-<p>This is a rounding difference rather than the classic overflow problem that stable log-sum-exp avoids, but it matters when exact agreement with PyTorch is expected. The eager workaround therefore uses looped <code>logsumexp</code> for full-precision inputs and looped <code>log_softmax</code> for reduced-precision inputs:</p>
-<pre><code class="language-python">def selective_log_softmax(logits, index):
-    &quot;&quot;&quot;Compute log-softmax probabilities for selected tokens.&quot;&quot;&quot;
-    if logits.dtype in (torch.float32, torch.float64):
-        lse = torch.stack(
-            [torch.logsumexp(logits_row, dim=-1) for logits_row in logits]
-        )
-        selected = torch.gather(
-            logits, dim=-1, index=index.unsqueeze(-1)
-        ).squeeze(-1)
-        return selected - lse
 
-    token_logprobs = []
-    for logits_row, index_row in zip(logits, index):
-        logprobs_row = logits_row.log_softmax(dim=-1)
-        token_logprobs_row = torch.gather(
-            logprobs_row, dim=-1, index=index_row.unsqueeze(-1)
-        ).squeeze(-1)
-        token_logprobs.append(token_logprobs_row)
-    return torch.stack(token_logprobs)
+<p>This is a rounding difference rather than the classic overflow problem that stable log-sum-exp avoids, but it matters when exact agreement with PyTorch is expected. The eager workaround therefore uses looped <code>logsumexp</code> for full-precision inputs and looped <code>log_softmax</code> for reduced-precision inputs:</p>
+<pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">selective_log_softmax</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""Compute log-softmax probabilities for selected tokens."""</span>
+    <span class="token keyword">if</span> logits<span class="token punctuation">.</span>dtype <span class="token keyword">in</span> <span class="token punctuation">(</span>torch<span class="token punctuation">.</span>float32<span class="token punctuation">,</span> torch<span class="token punctuation">.</span>float64<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        lse <span class="token operator">=</span> torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>
+            <span class="token punctuation">[</span>torch<span class="token punctuation">.</span>logsumexp<span class="token punctuation">(</span>logits_row<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token keyword">for</span> logits_row <span class="token keyword">in</span> logits<span class="token punctuation">]</span>
+        <span class="token punctuation">)</span>
+        selected <span class="token operator">=</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>
+            logits<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span> selected <span class="token operator">-</span> lse
+
+    token_logprobs <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token keyword">for</span> logits_row<span class="token punctuation">,</span> index_row <span class="token keyword">in</span> <span class="token builtin">zip</span><span class="token punctuation">(</span>logits<span class="token punctuation">,</span> index<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        logprobs_row <span class="token operator">=</span> logits_row<span class="token punctuation">.</span>log_softmax<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        token_logprobs_row <span class="token operator">=</span> torch<span class="token punctuation">.</span>gather<span class="token punctuation">(</span>
+            logprobs_row<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span> index<span class="token operator">=</span>index_row<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        <span class="token punctuation">)</span><span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+        token_logprobs<span class="token punctuation">.</span>append<span class="token punctuation">(</span>token_logprobs_row<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> torch<span class="token punctuation">.</span>stack<span class="token punctuation">(</span>token_logprobs<span class="token punctuation">)</span>
 </code></pre>
+
 <p>This workaround is still useful when <code>torch.compile</code> and custom kernels are unavailable. But after following the operation all the way down, the right abstraction is clear: selective log-softmax wants to be a single streaming reduction kernel.</p>
 <hr class="section-divider">
 <p>Thanks to <a href="https://github.com/qgallouedec">Quentin Gallouédec</a> for providing the initial benchmarking script and suggesting that I pull <code>gather</code> out of the loop over <code>logsumexp</code> to improve performance.</p>
@@ -413,7 +414,7 @@ Ablation   time: 0.002429 sec, peak: 1141.15 MB
             <span class="colophon-sep">/</span>
             <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Google Scholar</a>
             <span class="colophon-sep">/</span>
-            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <a href="https://x.com/tyleraromero">Twitter</a>
             <span class="colophon-sep">/</span>
             <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
             <span class="colophon-sep">/</span>

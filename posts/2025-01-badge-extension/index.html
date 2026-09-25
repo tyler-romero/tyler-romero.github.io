@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;700&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap">
-<link rel="preload" as="font" type="font/woff2" crossorigin="" href="/assets/fonts/Virgil.woff2">
 <!-- Open Graph -->
 <meta property="og:title" content="An Extension to BADGE Active Learning for Variable-Sized Batches">
 <meta property="og:description" content="BADGE (like other greedy acquisition algorithms) can be trivially extended to provide an ordering over the pool of unlabeled data">
@@ -37,16 +36,8 @@
 <link rel="stylesheet" href="/assets/katex/katex.min.css">
 
 
-<!-- Prism.js Syntax Highlighting -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
-<script defer="" src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
-
-
 <!-- Rough Notation — hand-drawn annotations -->
-<script defer="" src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+<script defer="" src="/assets/js/rough-notation.iife.js"></script>
 
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css">
@@ -68,7 +59,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-02-26T11:40:11-08:00",
+            "dateModified": "2026-09-25T11:33:19-07:00",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -76,7 +67,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["post","machine-learning","active-learning","BADGE","batch-active-learning","k-means++","MNIST","multidimensional-scaling","uncertainty-sampling"],
-            "wordCount": 3804,
+            "wordCount": 4318,
             "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse,..."
             }
         </script>
@@ -164,13 +155,13 @@ In order to compute the gradients, we need to &quot;hallucinate&quot; labels for
 The expected label is then used to compute the gradient.</p>
 <p>BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network.</p>
 <p>Here is a reference implementation for computing the gradient embedding of a data point:</p>
-<pre><code class="language-python">from torch import Tensor
-from torch.nn import functional as F
+<pre class="language-python"><code class="language-python"><span class="token keyword">from</span> torch <span class="token keyword">import</span> Tensor
+<span class="token keyword">from</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">import</span> functional <span class="token keyword">as</span> F
 
 
-@torch.no_grad()
-def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&gt; Tensor:
-    &quot;&quot;&quot;
+<span class="token decorator annotation punctuation">@torch<span class="token punctuation">.</span>no_grad</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">compute_gradient_embedding</span><span class="token punctuation">(</span>model<span class="token punctuation">:</span> nn<span class="token punctuation">.</span>Module<span class="token punctuation">,</span> data_point<span class="token punctuation">:</span> Tensor<span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> Tensor<span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
     Compute gradient embedding by taking the gradient of cross-entropy loss
     with respect to the final layer weights, using a hallucinated label.
 
@@ -180,35 +171,36 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -&gt; Tenso
 
     Returns:
         Gradient embedding tensor of shape [hidden_dim * num_classes]
-    &quot;&quot;&quot;
-    model.eval()
-    x = data_point.unsqueeze(0)  # add batch dimension
+    """</span>
+    model<span class="token punctuation">.</span><span class="token builtin">eval</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    x <span class="token operator">=</span> data_point<span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>  <span class="token comment"># add batch dimension</span>
 
-    # Compute the output and final layer activations of the model
-    logits, final_acts = model(x)
-    probs = F.softmax(logits, dim=1)
+    <span class="token comment"># Compute the output and final layer activations of the model</span>
+    logits<span class="token punctuation">,</span> final_acts <span class="token operator">=</span> model<span class="token punctuation">(</span>x<span class="token punctuation">)</span>
+    probs <span class="token operator">=</span> F<span class="token punctuation">.</span>softmax<span class="token punctuation">(</span>logits<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
 
-    # Use predicted class to simulate what gradient would be if this were the true label
-    hallucinated_class = logits.argmax(dim=1)
-    y_hat = F.one_hot(hallucinated_class, num_classes=logits.shape[1]).float()
+    <span class="token comment"># Use predicted class to simulate what gradient would be if this were the true label</span>
+    hallucinated_class <span class="token operator">=</span> logits<span class="token punctuation">.</span>argmax<span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span>
+    y_hat <span class="token operator">=</span> F<span class="token punctuation">.</span>one_hot<span class="token punctuation">(</span>hallucinated_class<span class="token punctuation">,</span> num_classes<span class="token operator">=</span>logits<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token builtin">float</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-    # Compute gradient of cross entropy loss wrt final layer weights
-    # For cross entropy loss, this is simply (prediction - target)
-    loss_gradient = probs - y_hat  # [num_classes]
+    <span class="token comment"># Compute gradient of cross entropy loss wrt final layer weights</span>
+    <span class="token comment"># For cross entropy loss, this is simply (prediction - target)</span>
+    loss_gradient <span class="token operator">=</span> probs <span class="token operator">-</span> y_hat  <span class="token comment"># [num_classes]</span>
 
-    # Compute gradient embedding by outer product of:
-    # - final_acts: the last layer's activations (semantic information)
-    # - loss_gradient: the gradient of loss w.r.t. logits (uncertainty)
-    # This is equivalent to the gradient w.r.t the final layer weights
-    grad_embedding = torch.outer(
-        final_acts.squeeze(0),  # [hidden_size]
-        loss_gradient,  # [num_classes]
-    ).flatten()  # [hidden_size * num_classes]
+    <span class="token comment"># Compute gradient embedding by outer product of:</span>
+    <span class="token comment"># - final_acts: the last layer's activations (semantic information)</span>
+    <span class="token comment"># - loss_gradient: the gradient of loss w.r.t. logits (uncertainty)</span>
+    <span class="token comment"># This is equivalent to the gradient w.r.t the final layer weights</span>
+    grad_embedding <span class="token operator">=</span> torch<span class="token punctuation">.</span>outer<span class="token punctuation">(</span>
+        final_acts<span class="token punctuation">.</span>squeeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span>  <span class="token comment"># [hidden_size]</span>
+        loss_gradient<span class="token punctuation">,</span>  <span class="token comment"># [num_classes]</span>
+    <span class="token punctuation">)</span><span class="token punctuation">.</span>flatten<span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token comment"># [hidden_size * num_classes]</span>
 
-    return grad_embedding
+    <span class="token keyword">return</span> grad_embedding
 </code></pre>
+
 <h3 id="2.-select-diverse-and-informative-points" tabindex="-1">2. Select Diverse and Informative Points</h3>
-<p>Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using <a href="http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf">k-means++ initialization</a>, a greedy algorithm originally designed for seeding k-means clustering<label for="sn-dpp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dpp" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">It's worth noting the connection between k-means++ and <a href="https://en.wikipedia.org/wiki/Determinantal_point_process">Determinantal Point Processes (DPPs)</a>. DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.</span>. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.</p>
+<p>Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using <a href="https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf">k-means++ initialization</a>, a greedy algorithm originally designed for seeding k-means clustering<label for="sn-dpp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dpp" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">It's worth noting the connection between k-means++ and <a href="https://en.wikipedia.org/wiki/Determinantal_point_process">Determinantal Point Processes (DPPs)</a>. DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.</span>. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.</p>
 <p>The k-means++ algorithm proceeds as follows:</p>
 <ol>
 <li>Initialize the first point by selecting one uniformly at random from the unlabeled pool.</li>
@@ -298,49 +290,50 @@ and <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.or
 When we generate a complete ordering over the pool of unlabeled data points, we effectively run k-means++ <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> times, where <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span></span></span></span> is the size of the pool.
 This means that the overall time complexity is <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mn>2</mn></msup><mi>d</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(n^2d)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord mathnormal">d</span><span class="mclose">)</span></span></span></span>, which can be expensive for large datasets or high-dimensional data.</p>
 <p>However, we can optimize this process by leveraging a GPU to significantly speed up the distance computations:</p>
-<pre><code class="language-python">import torch
+<pre class="language-python"><code class="language-python"><span class="token keyword">import</span> torch
 
 
-@torch.no_grad()
-def kmeans_pp_pytorch(data: torch.Tensor, k: int = -1) -&gt; torch.Tensor:
-    &quot;&quot;&quot;
+<span class="token decorator annotation punctuation">@torch<span class="token punctuation">.</span>no_grad</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">def</span> <span class="token function">kmeans_pp_pytorch</span><span class="token punctuation">(</span>data<span class="token punctuation">:</span> torch<span class="token punctuation">.</span>Tensor<span class="token punctuation">,</span> k<span class="token punctuation">:</span> <span class="token builtin">int</span> <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">></span> torch<span class="token punctuation">.</span>Tensor<span class="token punctuation">:</span>
+    <span class="token triple-quoted-string string">"""
     K-means++ implementation.
     Leverages a GPU if available, which significantly speeds up computation.
-    &quot;&quot;&quot;
-    device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)
-    data = data.to(device)
-    n_samples = data.shape[0]
-    if k == -1:
-        k = n_samples
+    """</span>
+    device <span class="token operator">=</span> torch<span class="token punctuation">.</span>device<span class="token punctuation">(</span><span class="token string">"cuda"</span> <span class="token keyword">if</span> torch<span class="token punctuation">.</span>cuda<span class="token punctuation">.</span>is_available<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">else</span> <span class="token string">"cpu"</span><span class="token punctuation">)</span>
+    data <span class="token operator">=</span> data<span class="token punctuation">.</span>to<span class="token punctuation">(</span>device<span class="token punctuation">)</span>
+    n_samples <span class="token operator">=</span> data<span class="token punctuation">.</span>shape<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
+    <span class="token keyword">if</span> k <span class="token operator">==</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">:</span>
+        k <span class="token operator">=</span> n_samples
 
-    # Initialize output indices
-    selected_indices = torch.zeros(k, dtype=torch.long, device=device)
+    <span class="token comment"># Initialize output indices</span>
+    selected_indices <span class="token operator">=</span> torch<span class="token punctuation">.</span>zeros<span class="token punctuation">(</span>k<span class="token punctuation">,</span> dtype<span class="token operator">=</span>torch<span class="token punctuation">.</span><span class="token builtin">long</span><span class="token punctuation">,</span> device<span class="token operator">=</span>device<span class="token punctuation">)</span>
 
-    # Pick first point randomly
-    selected_indices[0] = torch.randint(n_samples, (1,), device=device)
-    selected_centers = data[selected_indices[0]].unsqueeze(0)
+    <span class="token comment"># Pick first point randomly</span>
+    selected_indices<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> torch<span class="token punctuation">.</span>randint<span class="token punctuation">(</span>n_samples<span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token punctuation">)</span><span class="token punctuation">,</span> device<span class="token operator">=</span>device<span class="token punctuation">)</span>
+    selected_centers <span class="token operator">=</span> data<span class="token punctuation">[</span>selected_indices<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span>
 
-    # Process remaining points
-    for i in range(1, k):
-        # Compute squared distances to all selected centers
-        squared_distances = torch.cdist(data, selected_centers, p=2).square()
+    <span class="token comment"># Process remaining points</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> k<span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># Compute squared distances to all selected centers</span>
+        squared_distances <span class="token operator">=</span> torch<span class="token punctuation">.</span>cdist<span class="token punctuation">(</span>data<span class="token punctuation">,</span> selected_centers<span class="token punctuation">,</span> p<span class="token operator">=</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">.</span>square<span class="token punctuation">(</span><span class="token punctuation">)</span>
 
-        # Get minimum distance to any center for each point
-        min_squared_distances = squared_distances.min(dim=1)[0]
+        <span class="token comment"># Get minimum distance to any center for each point</span>
+        min_squared_distances <span class="token operator">=</span> squared_distances<span class="token punctuation">.</span><span class="token builtin">min</span><span class="token punctuation">(</span>dim<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>
 
-        # Sample next center with probability proportional to squared distance
-        probs = min_squared_distances / min_squared_distances.sum()
-        cumprobs = torch.cumsum(probs, dim=0)
-        r = torch.rand(1, device=device)
-        selected_indices[i] = torch.searchsorted(cumprobs, r)
+        <span class="token comment"># Sample next center with probability proportional to squared distance</span>
+        probs <span class="token operator">=</span> min_squared_distances <span class="token operator">/</span> min_squared_distances<span class="token punctuation">.</span><span class="token builtin">sum</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+        cumprobs <span class="token operator">=</span> torch<span class="token punctuation">.</span>cumsum<span class="token punctuation">(</span>probs<span class="token punctuation">,</span> dim<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">)</span>
+        r <span class="token operator">=</span> torch<span class="token punctuation">.</span>rand<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> device<span class="token operator">=</span>device<span class="token punctuation">)</span>
+        selected_indices<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> torch<span class="token punctuation">.</span>searchsorted<span class="token punctuation">(</span>cumprobs<span class="token punctuation">,</span> r<span class="token punctuation">)</span>
 
-        # Add new center to selected centers
-        selected_centers = torch.cat(
-            [selected_centers, data[selected_indices[i]].unsqueeze(0)]
-        )
+        <span class="token comment"># Add new center to selected centers</span>
+        selected_centers <span class="token operator">=</span> torch<span class="token punctuation">.</span>cat<span class="token punctuation">(</span>
+            <span class="token punctuation">[</span>selected_centers<span class="token punctuation">,</span> data<span class="token punctuation">[</span>selected_indices<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">.</span>unsqueeze<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+        <span class="token punctuation">)</span>
 
-    return selected_indices
+    <span class="token keyword">return</span> selected_indices
 </code></pre>
+
 <p>This GPU-accelerated implementation significantly improves performance. For a dataset of 15,000 embeddings with 2,560 dimensions,
 it generates a complete ordering in just 20 seconds - compared to 15 minutes using scikit-learn's CPU implementation.</p>
 <p>Additionally, since data labeling is time-consuming, we can optimize further by <em>extracting points from the ordering one at a time</em> (and only as-needed)
@@ -394,7 +387,7 @@ meaningful priority ordering, since selecting points one at a time would break t
             <span class="colophon-sep">/</span>
             <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ">Google Scholar</a>
             <span class="colophon-sep">/</span>
-            <a href="https://twitter.com/tyleraromero">Twitter</a>
+            <a href="https://x.com/tyleraromero">Twitter</a>
             <span class="colophon-sep">/</span>
             <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
             <span class="colophon-sep">/</span>
