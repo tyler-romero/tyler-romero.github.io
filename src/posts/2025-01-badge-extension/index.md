@@ -80,7 +80,7 @@ def compute_gradient_embedding(model: nn.Module, data_point: Tensor) -> Tensor:
 ```
 
 ### 2. Select Diverse and Informative Points
-Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using [k-means++ initialization](http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf), a greedy algorithm originally designed for seeding k-means clustering[^dpp]. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.
+Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using [k-means++ initialization](https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf), a greedy algorithm originally designed for seeding k-means clustering[^dpp]. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.
 
 [^dpp]: It's worth noting the connection between k-means++ and [Determinantal Point Processes (DPPs)](https://en.wikipedia.org/wiki/Determinantal_point_process). DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.
 

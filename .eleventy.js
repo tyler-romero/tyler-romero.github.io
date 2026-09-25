@@ -106,9 +106,9 @@ export default function (eleventyConfig) {
   eleventyConfig.setLibrary("md", tufteMdWrapper);
   eleventyConfig.addFilter("markdown", tufteMdWrapper.render);
   eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline);
+  eleventyConfig.addFilter("plainText", markdownToPlainText);
 
   // Date stuff
-  eleventyConfig.addFilter("plainText", markdownToPlainText);
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`); // useful for copyright
   eleventyConfig.addFilter("postDate", (dateObj) => {
     if (typeof dateObj === "string") {
@@ -151,7 +151,8 @@ export default function (eleventyConfig) {
     metadata: {
       language: "en",
       title: "Tyler's Technical Blog",
-      subtitle: "Notes on Machine Learning and related topics.",
+      subtitle:
+        "Technical writing on language models, training systems, and machine learning research.",
       base: "https://tylerromero.com/",
       author: {
         name: "Tyler Romero",

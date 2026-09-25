@@ -2,7 +2,7 @@
 title: Direct Preference Optimization Explained In-depth
 subtitle: Simpler preference-tuning without reinforcement learning
 date: 2024-04-13T00:00:00-08:00
-blurb: Covering DPO, a recently-proposed alternative to RLHF for preference tuning.
+blurb: Covering DPO, an alternative to RLHF for preference tuning.
 tags: ["post", "machine-learning", "nlp", "language-models", "dpo", "rlhf", "ai-alignment"]
 math: true
 ---
@@ -268,7 +268,7 @@ And if you're interested in learning more about preference-tuning in general, he
       author={Wittawat Jitkrittum},
       title={Log-Sum-Exp Trick to Prevent Numerical Underflow},
       year={2013},
-      url={http://wittawat.com/posts/log-sum_exp_underflow.html}
+      url={https://web.archive.org/web/20210115164519/http://wittawat.com/posts/log-sum_exp_underflow.html}
 }
 @misc{geminiteam2025geminifamilyhighlycapable,
       title={Gemini: A Family of Highly Capable Multimodal Models},

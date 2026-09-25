@@ -3,7 +3,7 @@ title: NanoGPT Speedrun Worklog
 subtitle: Experiments in training GPT-2 to 3.28 validation loss on two RTX 4090 GPUs
 date: 2025-03-08T00:00:00-08:00
 blurb: A worklog of cutting GPT-2 training time from 8.13 hours to 2.55 hours on two RTX 4090 GPUs.
-tags: ["post", "llm", "gpt2", "speedrun", "nanogpt", "worklog", "muon"]
+tags: ["post", "llm", "gpt-2", "speedrun", "nanogpt", "worklog", "muon"]
 math: true
 code: true
 featured_image: /assets/img/golden-gardens-social.jpg
@@ -13,7 +13,7 @@ I saw [some](https://x.com/kellerjordan0/status/1859331370268623321) [really](ht
 
 Technically, [the NanoGPT speedrun](https://x.com/kellerjordan0/status/1798863559243513937) is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. [Keller Jordan maintains a leaderboard here](https://github.com/KellerJordan/modded-nanogpt?tab=readme-ov-file#world-record-history). When I started this experiment on January 16, 2025, the record was 3.14 minutes (!).
 
-I had access to **2xRTX 4090 GPUs**, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from **8.13 hours to 2.55 hours**. This worklog records the changes that produced that result; the code and run logs are available in [the project repository](https://github.com/tyler-romero/nanogpt-speedrun).
+I had access to **2× RTX 4090 GPUs**, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from **8.13 hours to 2.55 hours**. This worklog records the changes that produced that result; the code and run logs are available in [the project repository](https://github.com/tyler-romero/nanogpt-speedrun).
 
 ## Results
 | #                                                      | Description              | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
@@ -41,7 +41,7 @@ Additionally, I added `wandb` logging to make it easier to track the training ru
 
 Commit with the initial setup is here: [`b3c32f8`](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt).
 
-The baseline run time on my 2xRTX 4090 setup was **8.13 hours**.
+The baseline run time on my 2× RTX 4090 setup was **8.13 hours**.
 
 ## 2. Implementing major improvements from the 8xH100 leaderboard
 
@@ -54,11 +54,11 @@ Waiting 8 hours for a result was too slow for effective experimentation, so I be
 ### 2.1 Architectural changes and training tweaks
 There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:
 1. [RoPE (Rotary Positional Embeddings)](https://arxiv.org/abs/2104.09864). There are [many](https://www.jitx.io/posts/rope-embeddings) [good](https://blog.eleuther.ai/rotary-embeddings/) explanations of RoPE out there so I won't go into detail here.
-2. [ReLU^2 Activation](https://arxiv.org/pdf/2109.08668)[^relu2]. Many activations that are better than GeLU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.
+2. [ReLU^2 activation](https://arxiv.org/pdf/2109.08668)[^relu2]. Many activations that are better than GELU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.
 3. No gradient clipping. Gradient clipping can help stabilize training, but it also slows down training. Since this was a speedrun, I removed it. This also eliminated a hyperparameter that needed to be tuned.
 4. [Trapezoidal learning rate schedule](https://arxiv.org/abs/2405.18392). While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been shown to match the performance of cosine schedules.
 
-[^relu2]: ReLU^2 activation function. ![Relu Activation plot](/assets/img/relu2.png)
+[^relu2]: ReLU^2 activation function. ![ReLU^2 activation plot](/assets/img/relu2.png)
 
 In addition, I tuned the learning rate and batch size.
 
