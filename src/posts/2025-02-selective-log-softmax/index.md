@@ -18,9 +18,11 @@ def naive_selective_log_softmax(logits, index):
 
 For a vocabulary size of 32768, sequence length of 1024, and batch size of 16, the full `log_softmax` output consumes another **2.1GB** of VRAM[^vram] on top of the 2.1GB already occupied by the logits.
 
+![The naive approach runs log_softmax over the 2.1 GB (B, T, V) logits, materializing a second 2.1 GB log-probability tensor, then gathers one entry per position into a 64 KB (B, T) output. Peak memory is 4.2 GB.](/assets/img/log-softmax-memory-naive.png)
+
 [^vram]: VRAM is a GPU's fast, onboard memory. VRAM is the main bottleneck to training larger models on a fixed number of GPUs. It is also a bottleneck on batch size, which affects training throughput and stability.
 
-However, in many workloads, we only need the log probability of one token at each position. PPO and GRPO are good examples: they need the log probabilities of the tokens that were actually generated, not every possible token in the vocabulary. In typical implementations of these algorithms, materializing the full log-probability tensor can determine peak VRAM usage.
+However, in many workloads, only the highlighted entry in each row is ever used. PPO and GRPO are good examples: they need the log probabilities of the tokens that were actually generated, not every possible token in the vocabulary. In typical implementations of these algorithms, that mostly-discarded log-probability tensor can determine peak VRAM usage.
 
 Let's remind ourselves what `log_softmax` computes for each input logit (x_i):
 
@@ -41,6 +43,10 @@ This is an important shift in perspective. Selective log-softmax does not need t
 2. Compute a numerically stable log-sum-exp for each row.
 3. Load the selected logit.
 4. Write one scalar instead of a full vocabulary-sized row.
+
+An implementation that follows these steps never creates a vocabulary-sized tensor beyond the logits we already had, so peak memory drops by half:
+
+![Selective log-softmax reads the sampled token's logit and computes one logsumexp per row, streaming over the 2.1 GB logits and writing only a 64 KB (B, T) output. No vocabulary-sized temporary is created, so peak memory is 2.1 GB.](/assets/img/log-softmax-memory-selective.png)
 
 ### A Dedicated Kernel
 
@@ -68,7 +74,11 @@ if thread_id == 0:
     out[row] = logits[row, index[row]] - logsumexp
 ```
 
-The `block_reduce` step uses the online, numerically stable form of log-sum-exp.<label for="sn-online-softmax" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-online-softmax" class="margin-toggle" aria-label="Online softmax reference note" /><span class="sidenote">This is the online softmax recurrence described by Milakov and Gimelshein in <a href="https://arxiv.org/abs/1805.02867"><em>Online normalizer calculation for softmax</em></a> (2018). Their elementwise update is the singleton case of the pairwise merge used here for parallel reduction.</span> Suppose one partial reduction has maximum \(m\) and normalized exponential sum \(s = \sum_i e^{x_i-m}\), while another has state \((m', s')\). We can merge them using:
+Drawn out for one row, with four threads standing in for a full thread block:
+
+![The dedicated kernel assigns one thread block to each row of logits. Within the block, each thread reads a strided slice of the row and keeps a running (max, sum) pair. The block then merges those pairs pairwise into one (m, s) for the row. Thread 0 computes logsumexp = m + log(s), loads the single selected logit, and writes one scalar to the output.](/assets/img/selective-log-softmax-kernel.png)
+
+The merge tree in the diagram (`block_reduce` in the pseudocode) uses the online, numerically stable form of log-sum-exp.<label for="sn-online-softmax" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-online-softmax" class="margin-toggle" aria-label="Online softmax reference note" /><span class="sidenote">This is the online softmax recurrence described by Milakov and Gimelshein in <a href="https://arxiv.org/abs/1805.02867"><em>Online normalizer calculation for softmax</em></a> (2018). Their elementwise update is the singleton case of the pairwise merge used here for parallel reduction.</span> Suppose one partial reduction has maximum \(m\) and normalized exponential sum \(s = \sum_i e^{x_i-m}\), while another has state \((m', s')\). We can merge them using:
 
 \[
 m_{new} = \max(m, m')
