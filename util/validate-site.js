@@ -214,9 +214,7 @@ function validateAccessibilityBasics(file, html) {
 
 function validateConditionalAssets(file, html) {
   const hasAnnotations = html.includes("RoughNotation.annotate");
-  const hasRoughNotation = html.includes(
-    "rough-notation@0.5.1/lib/rough-notation.iife.js",
-  );
+  const hasRoughNotation = html.includes("/assets/js/rough-notation.iife.js");
   if (hasAnnotations !== hasRoughNotation) {
     fail(file, "Rough Notation script does not match page behavior");
   }

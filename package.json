@@ -22,7 +22,9 @@
     "katex": "0.16.10",
     "luxon": "^3.5.0",
     "markdown-it": "^14.0.0",
-    "markdown-it-anchor": "^9.0.0"
+    "markdown-it-anchor": "^9.0.0",
+    "prismjs": "^1.30.0",
+    "rough-notation": "^0.5.1"
   },
   "engines": {
     "node": ">=20"

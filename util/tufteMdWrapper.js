@@ -1,9 +1,24 @@
 import markdownIt from "markdown-it";
 import anchor from "markdown-it-anchor";
+import Prism from "prismjs";
+import loadLanguages from "prismjs/components/index.js";
 import katexPlugin from "./markdown-it-katex.js";
 import sidenotePlugin from "./markdown-it-tufte-sidenotes.js";
 
-const md = markdownIt({ html: true, typographer: false })
+loadLanguages(["python", "bash"]);
+
+// Highlight fenced code at build time so pages don't need client-side Prism.
+function highlight(code, lang, _attrs) {
+  if (!lang) return "";
+  const grammar = Prism.languages[lang];
+  const body = grammar
+    ? Prism.highlight(code, grammar, lang)
+    : md.utils.escapeHtml(code);
+  const langClass = `language-${md.utils.escapeHtml(lang)}`;
+  return `<pre class="${langClass}"><code class="${langClass}">${body}</code></pre>\n`;
+}
+
+const md = markdownIt({ html: true, typographer: false, highlight })
   .use(katexPlugin)
   .use(sidenotePlugin)
   .use(anchor);

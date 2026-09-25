@@ -768,7 +768,7 @@ pre > code {
   padding: 1em 1.2em 1em 1.4em;
 }
 
-/* Prism.js overrides — neutralize Prism's layout so tufte's pre > code rules control sizing */
+/* Code highlighted at build time with Prism; tufte's pre > code rules control sizing */
 pre[class*="language-"] {
   background: none;
   border: none;
@@ -776,6 +776,20 @@ pre[class*="language-"] {
   margin: 0;
   padding: 0;
   overflow: visible;
+}
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #000;
+  font-size: 1em;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  tab-size: 4;
+  hyphens: none;
 }
 
 code[class*="language-"] {
@@ -845,6 +859,19 @@ pre[class*="language-"] > code {
 .token.important,
 .token.variable {
   color: #856637;
+}
+
+.token.namespace {
+  opacity: 0.7;
+}
+
+.token.bold,
+.token.important {
+  font-weight: 700;
+}
+
+.token.italic {
+  font-style: italic;
 }
 
 .katex-display {

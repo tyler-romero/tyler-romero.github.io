@@ -83,6 +83,8 @@ export default function (eleventyConfig) {
     "src/assets/fonts": "assets/fonts",
     "node_modules/katex/dist/katex.min.css": "assets/katex/katex.min.css",
     "node_modules/katex/dist/fonts": "assets/katex/fonts",
+    "node_modules/rough-notation/lib/rough-notation.iife.js":
+      "assets/js/rough-notation.iife.js",
     "src/assets/img/favicon.ico": "assets/img/favicon.ico",
     "src/assets/img/badge_selection_order.webm":
       "assets/img/badge_selection_order.webm",

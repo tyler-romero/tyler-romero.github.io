@@ -20,11 +20,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400;1,700{% if code %}&family=JetBrains+Mono:wght@400;700{% endif %}&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&display=swap" />
-<link rel="preload"
-      as="font"
-      type="font/woff2"
-      crossorigin
-      href="/assets/fonts/Virgil.woff2" />
 <!-- Open Graph -->
 <meta property="og:title" content="{{ metaTitle | plainText }}" />
 <meta property="og:description" content="{{ metaDescription | plainText }}" />
@@ -44,23 +39,10 @@
 <link rel="stylesheet"
       href="/assets/katex/katex.min.css" />
 {% endif %}
-{% if code %}
-<!-- Prism.js Syntax Highlighting -->
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css" />
-<script defer
-        src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
-<script defer
-        src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-<script defer
-        src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
-<script defer
-        src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-css.min.js"></script>
-{% endif %}
 {% if roughAnnotations %}
 <!-- Rough Notation — hand-drawn annotations -->
 <script defer
-        src="https://unpkg.com/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+        src="/assets/js/rough-notation.iife.js"></script>
 {% endif %}
 <!-- Stylesheets -->
 <link rel="stylesheet" href="/assets/tufte.min.css" />
