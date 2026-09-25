@@ -1,10 +1,11 @@
-.PHONY: help serve build format
+.PHONY: help serve build format excalidraw
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  serve       to run the site locally (with auto-reload)"
 	@echo "  build       to build the site"
 	@echo "  format      to format html, css, js, and markdown files"
+	@echo "  excalidraw  to render src/assets/img/*.excalidraw to transparent PNGs"
 	@echo "  clean       to clean artifacts"
 
 serve:
@@ -18,6 +19,9 @@ format:
 	@npx prettier --write "util/tufteMdWrapper.js"
 	@npx prettier --write ".eleventy.js"
 	@find src -name "*.njk" -print0 | xargs -0 uvx djlint --reformat
+
+excalidraw:
+	@node util/render-excalidraw.mjs
 
 clean:
 	rm -rf _site/

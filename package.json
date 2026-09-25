@@ -30,6 +30,7 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "prettier": "^3.3.3"
+    "prettier": "^3.3.3",
+    "puppeteer-core": "^25.11.0"
   }
 }
