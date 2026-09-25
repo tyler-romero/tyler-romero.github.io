@@ -360,6 +360,17 @@ video {
   margin-inline: auto;
 }
 
+.marginnote-detail picture {
+  display: block;
+}
+
+.marginnote-detail img {
+  display: block;
+  width: 100%;
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
 .sidenote-number {
   counter-increment: sidenote-counter;
 }
@@ -1061,7 +1072,11 @@ pre[class*="language-"] > code {
   }
 
   .marginnote-compact img {
-    max-width: 100%;
+    max-width: min(18rem, 100%);
+  }
+
+  .marginnote-detail img {
+    max-width: min(36rem, 100%);
   }
 
   .item-list,
