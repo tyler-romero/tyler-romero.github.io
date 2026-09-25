@@ -5,7 +5,7 @@
             "@context": "https://schema.org",
             "@type": "BlogPosting",
             "headline": {{ title | jsonLd | safe }},
-            "description": {{ metaDescription | markdownInline | striptags | jsonLd | safe }},
+            "description": {{ metaDescription | plainText | jsonLd | safe }},
             "author": {
                 "@type": "Person",
                 "name": {{ site.authorName | jsonLd | safe }},

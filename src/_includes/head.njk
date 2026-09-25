@@ -5,10 +5,10 @@
 <meta charset="utf-8" />
 <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>{{ metaTitle | markdownInline | striptags }}</title>
+<title>{{ metaTitle | plainText }}</title>
 <meta name="author" content="{{ site.authorName }}" />
 <meta name="description"
-      content="{{ metaDescription | markdownInline | striptags }}" />
+      content="{{ metaDescription | plainText }}" />
 <link rel="manifest" href="/manifest.json">
 <link rel="icon" href="{{ site.favicon }}" type="image/ico" />
 <link rel="canonical" href="{{ site.url }}{{ page.url }}" />
@@ -26,16 +26,16 @@
       crossorigin
       href="/assets/fonts/Virgil.woff2" />
 <!-- Open Graph -->
-<meta property="og:title" content="{{ metaTitle | markdownInline | striptags }}" />
-<meta property="og:description" content="{{ metaDescription | markdownInline | striptags }}" />
+<meta property="og:title" content="{{ metaTitle | plainText }}" />
+<meta property="og:description" content="{{ metaDescription | plainText }}" />
 <meta property="og:url" content="{{ site.url }}{{ page.url }}" />
 <meta property="og:type" content="{% if layout == 'posts' or layout == 'translation' or layout == 'recipes' %}article{% else %}website{% endif %}" />
 <meta property="og:site_name" content="{{ site.title }}" />
 {% if socialImage %}<meta property="og:image" content="{{ site.url }}{{ socialImage }}" />{% endif %}
 <!-- Twitter Card -->
 <meta name="twitter:card" content="{% if featured_image or hero_image %}summary_large_image{% else %}summary{% endif %}" />
-<meta name="twitter:title" content="{{ metaTitle | markdownInline | striptags }}" />
-<meta name="twitter:description" content="{{ metaDescription | markdownInline | striptags }}" />
+<meta name="twitter:title" content="{{ metaTitle | plainText }}" />
+<meta name="twitter:description" content="{{ metaDescription | plainText }}" />
 {% if socialImage %}<meta name="twitter:image" content="{{ site.url }}{{ socialImage }}" />{% endif %}
 {% if attachments %}{{ attachments | linkToHead | safe }}{% endif %}
 {% if libraries %}{{ libraries | linkToHead | safe }}{% endif %}

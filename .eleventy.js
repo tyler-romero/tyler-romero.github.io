@@ -37,6 +37,36 @@ function getLastModifiedDate(filepath) {
   return modified;
 }
 
+const namedEntities = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: "\u00a0",
+};
+
+function decodeHtmlEntities(text) {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, entity) => {
+    if (entity[0] === "#") {
+      const codePoint =
+        entity[1].toLowerCase() === "x"
+          ? parseInt(entity.slice(2), 16)
+          : parseInt(entity.slice(1), 10);
+      return Number.isNaN(codePoint) ? match : String.fromCodePoint(codePoint);
+    }
+    return namedEntities[entity.toLowerCase()] ?? match;
+  });
+}
+
+// Render inline Markdown to unescaped plain text so templates escape it exactly once.
+function markdownToPlainText(text) {
+  const html = tufteMdWrapper.renderInline(text ?? "");
+  return decodeHtmlEntities(html.replace(/<[^>]*>/g, ""))
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function addStyledListRoles(content) {
   return content.replace(
     /(<ul class="(?:item-list|post-list)" role="list">)([\s\S]*?)(<\/ul>)/g,
@@ -76,6 +106,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("markdownInline", tufteMdWrapper.renderInline);
 
   // Date stuff
+  eleventyConfig.addFilter("plainText", markdownToPlainText);
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`); // useful for copyright
   eleventyConfig.addFilter("postDate", (dateObj) => {
     if (typeof dateObj === "string") {
