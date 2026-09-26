@@ -128,6 +128,8 @@ The data revealed that approximately 20% of documents exceeded the 1024-token se
 
 To address these issues, I made two key changes. First, I extended the sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, I eliminated the traditional batch dimension and effectively used a "batch size" of 1 containing multiple concatenated documents. Second, I added attention masking that prevented cross-document attention while retaining the computational efficiency of sparse attention patterns.
 
+![Before: a stream of documents A–F is cut into fixed 1024-token rows, so B and D are split across rows, later rows start mid-document with no context, and the causal mask lets tokens attend across document boundaries. After: the same documents are packed into one long sequence, none is cut, and a document mask keeps attention inside each document.](/assets/img/nanogpt-document-packing.png)
+
 Fortunately, [FlexAttention](https://pytorch.org/blog/flexattention/) provides an elegant solution that maintains the performance benefits of [FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) while enabling these improvements. One of FlexAttention's primary strengths is its ability to efficiently handle sparse, custom attention masks, making it ideal for our use case.
 
 To implement FlexAttention, I defined a mask that handled the specific requirements of the dataset:
