@@ -59,7 +59,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-03-08T08:00:00.000Z",
-            "dateModified": "2026-09-25T11:33:19-07:00",
+            "dateModified": "2026-09-25T19:06:50-07:00",
             "url": "https://www.tylerromero.com/posts/nanogpt-speedrun-worklog/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -67,7 +67,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/golden-gardens-social.jpg",
             "keywords": ["post","llm","gpt-2","speedrun","nanogpt","worklog","muon"],
-            "wordCount": 3661,
+            "wordCount": 3722,
             "articleBody": "I saw some really awesome GPT-2 speedrun results from people like Keller Jordan, Fern, Braden Koszarsky, and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware. Technically, the NanoGPT speedrun is to train a neural network to 3.28 validation loss on FineWeb as fast as possible on an 8xH100 node. Keller Jordan maintains a leaderboard here. When I started this experiment on January 16, 2025, the record was 3.14 minutes (!). I had access to 2× RTX..."
             }
         </script>
@@ -296,6 +296,7 @@
 <picture><source type="image/webp" srcset="/assets/img/XTDofjqWvO-300.webp 300w, /assets/img/XTDofjqWvO-450.webp 450w, /assets/img/XTDofjqWvO-600.webp 600w, /assets/img/XTDofjqWvO-750.webp 750w, /assets/img/XTDofjqWvO-900.webp 900w, /assets/img/XTDofjqWvO-2635.webp 2635w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/XTDofjqWvO-300.png" alt="Sequence Length CDF Plot" width="2635" height="1658" srcset="/assets/img/XTDofjqWvO-300.png 300w, /assets/img/XTDofjqWvO-450.png 450w, /assets/img/XTDofjqWvO-600.png 600w, /assets/img/XTDofjqWvO-750.png 750w, /assets/img/XTDofjqWvO-900.png 900w, /assets/img/XTDofjqWvO-2635.png 2635w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
 <p>The data revealed that approximately 20% of documents exceeded the 1024-token sequence length. Increasing the sequence length to &gt;=8192 tokens would accommodate virtually all documents in the dataset without truncation.</p>
 <p>To address these issues, I made two key changes. First, I extended the sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, I eliminated the traditional batch dimension and effectively used a &quot;batch size&quot; of 1 containing multiple concatenated documents. Second, I added attention masking that prevented cross-document attention while retaining the computational efficiency of sparse attention patterns.</p>
+<p><picture><source type="image/webp" srcset="/assets/img/VreC0vOf7A-300.webp 300w, /assets/img/VreC0vOf7A-450.webp 450w, /assets/img/VreC0vOf7A-600.webp 600w, /assets/img/VreC0vOf7A-750.webp 750w, /assets/img/VreC0vOf7A-900.webp 900w, /assets/img/VreC0vOf7A-1982.webp 1982w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/VreC0vOf7A-300.png" alt="Before: a stream of documents A–F is cut into fixed 1024-token rows, so B and D are split across rows, later rows start mid-document with no context, and the causal mask lets tokens attend across document boundaries. After: the same documents are packed into one long sequence, none is cut, and a document mask keeps attention inside each document." width="1982" height="1017" srcset="/assets/img/VreC0vOf7A-300.png 300w, /assets/img/VreC0vOf7A-450.png 450w, /assets/img/VreC0vOf7A-600.png 600w, /assets/img/VreC0vOf7A-750.png 750w, /assets/img/VreC0vOf7A-900.png 900w, /assets/img/VreC0vOf7A-1982.png 1982w" sizes="(max-width: 900px) 100vw, 900px"></picture></p>
 <p>Fortunately, <a href="https://pytorch.org/blog/flexattention/">FlexAttention</a> provides an elegant solution that maintains the performance benefits of <a href="https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention">FlashAttention</a> while enabling these improvements. One of FlexAttention's primary strengths is its ability to efficiently handle sparse, custom attention masks, making it ideal for our use case.</p>
 <p>To implement FlexAttention, I defined a mask that handled the specific requirements of the dataset:</p>
 <pre class="language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">make_attn_mask</span><span class="token punctuation">(</span>idx<span class="token punctuation">,</span> eot_token<span class="token punctuation">,</span> window_size<span class="token operator">=</span><span class="token number">1024</span><span class="token punctuation">)</span><span class="token punctuation">:</span>

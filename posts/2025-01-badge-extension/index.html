@@ -59,7 +59,7 @@
                 "url": "https://www.tylerromero.com"
             },
             "datePublished": "2025-01-05T08:00:00.000Z",
-            "dateModified": "2026-09-25T11:33:19-07:00",
+            "dateModified": "2026-09-25T19:06:50-07:00",
             "url": "https://www.tylerromero.com/posts/2025-01-badge-extension/",
             "mainEntityOfPage": {
                 "@type": "WebPage",
@@ -67,7 +67,7 @@
             },
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["post","machine-learning","active-learning","BADGE","batch-active-learning","k-means++","MNIST","multidimensional-scaling","uncertainty-sampling"],
-            "wordCount": 4318,
+            "wordCount": 4454,
             "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse,..."
             }
         </script>
@@ -153,7 +153,10 @@
 The first issue that arises is that - since our overall goal is to solicit labels for the most informative <em>unlabeled</em> data points - we don't have access to the true labels for these data points.
 In order to compute the gradients, we need to &quot;hallucinate&quot; labels for the unlabeled data points. This is typically done by using the current model to predict the expected label for each data point.<label for="sn-hallucinate" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hallucinate" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">This approach of using the model's predicted label provides a lower bound on the true gradient magnitude - since the model would view any other label as even more unexpected.</span>
 The expected label is then used to compute the gradient.</p>
-<p>BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network.</p>
+<p>BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network. For cross-entropy loss, that gradient is the outer product of the final-layer activations and the difference between the predicted probabilities and the hallucinated one-hot label:</p>
+<figure class="fullwidth">
+  <picture><source type="image/webp" srcset="/assets/img/E8cQ3cJB7d-300.webp 300w, /assets/img/E8cQ3cJB7d-450.webp 450w, /assets/img/E8cQ3cJB7d-600.webp 600w, /assets/img/E8cQ3cJB7d-750.webp 750w, /assets/img/E8cQ3cJB7d-900.webp 900w, /assets/img/E8cQ3cJB7d-2326.webp 2326w" sizes="(max-width: 760px) 100vw, 1400px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/E8cQ3cJB7d-300.png" alt="BADGE's gradient embedding for one unlabeled input. The model produces final-layer activations h and class probabilities p. The hallucinated label ŷ is the one-hot vector for the predicted class, and p − ŷ is the gradient of the loss with respect to the logits. Their outer product h ⊗ (p − ŷ), with rows indexed by h and columns by p − ŷ, is the gradient with respect to the final layer's weights. Flattening its rows end to end gives the embedding g(x). A confident prediction gives a small embedding; an unsure one gives a large embedding whose direction comes from h." width="2326" height="904" srcset="/assets/img/E8cQ3cJB7d-300.png 300w, /assets/img/E8cQ3cJB7d-450.png 450w, /assets/img/E8cQ3cJB7d-600.png 600w, /assets/img/E8cQ3cJB7d-750.png 750w, /assets/img/E8cQ3cJB7d-900.png 900w, /assets/img/E8cQ3cJB7d-2326.png 2326w" sizes="(max-width: 760px) 100vw, 1400px"></picture>
+</figure>
 <p>Here is a reference implementation for computing the gradient embedding of a data point:</p>
 <pre class="language-python"><code class="language-python"><span class="token keyword">from</span> torch <span class="token keyword">import</span> Tensor
 <span class="token keyword">from</span> torch<span class="token punctuation">.</span>nn <span class="token keyword">import</span> functional <span class="token keyword">as</span> F
