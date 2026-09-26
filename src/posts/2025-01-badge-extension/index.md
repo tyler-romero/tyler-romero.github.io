@@ -30,7 +30,11 @@ The expected label is then used to compute the gradient.
 
 [^hallucinate]: This approach of using the model's predicted label provides a lower bound on the true gradient magnitude - since the model would view any other label as even more unexpected.
 
-BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network.
+BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network. For cross-entropy loss, that gradient is the outer product of the final-layer activations and the difference between the predicted probabilities and the hallucinated one-hot label:
+
+<figure class="fullwidth">
+  <img src="/assets/img/badge-gradient-embedding.png" sizes="(max-width: 760px) 100vw, 1400px" alt="BADGE's gradient embedding for one unlabeled input. The model produces final-layer activations h and class probabilities p. The hallucinated label ŷ is the one-hot vector for the predicted class, and p − ŷ is the gradient of the loss with respect to the logits. Their outer product h ⊗ (p − ŷ), with rows indexed by h and columns by p − ŷ, is the gradient with respect to the final layer's weights. Flattening its rows end to end gives the embedding g(x). A confident prediction gives a small embedding; an unsure one gives a large embedding whose direction comes from h.">
+</figure>
 
 Here is a reference implementation for computing the gradient embedding of a data point:
 
