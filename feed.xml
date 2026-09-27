@@ -4,7 +4,7 @@
   <subtitle>Technical writing on language models, training systems, and machine learning research.</subtitle>
   <link href="https://tylerromero.com/feed.xml" rel="self" />
   <link href="https://tylerromero.com/" />
-  <updated>2026-09-25T07:00:00Z</updated>
+  <updated>2026-09-27T07:00:00Z</updated>
   <id>https://tylerromero.com/</id>
   <author>
     <name>Tyler Romero</name>
@@ -13,7 +13,7 @@
   <entry>
     <title>Policy Gradient for LLMs, Explained Visually</title>
     <link href="https://tylerromero.com/posts/2026-09-policy-gradient/" />
-    <updated>2026-09-25T07:00:00Z</updated>
+    <updated>2026-09-27T07:00:00Z</updated>
     <id>https://tylerromero.com/posts/2026-09-policy-gradient/</id>
     <content type="html">&lt;section&gt;
 &lt;p&gt;Most RL algorithms used to train language models, from PPO to GRPO, are elaborations of one idea: the policy gradient. This post derives it from scratch for an LLM solving a problem with a checkable answer. It follows one prompt, “What is 17 × 24?”, from next-token probabilities to the gradient that makes correct answers more likely.&lt;/p&gt;
