@@ -85,11 +85,13 @@ The workaround is a one-line identity, \(\nabla_\theta p_\theta = p_\theta \nabl
 \end{aligned}
 \]
 
-The quantity \(\nabla_\theta \log p_\theta(y)\) is called the **score**.[^score-name] It points in the direction in parameter space that most increases the log-probability of the completion \(y\). The final line is an expectation over completions sampled from the policy \(p_\theta\) itself,[^pg-theorem] so we can estimate it by sampling. Perform \(N\) _rollouts_ (that is, draw \(N\) completions from the policy), score each one, and average:
+This derivation is a special case of the _policy gradient theorem_ ([Sutton et al., 2000](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation)),[^pg-theorem] and the third line is its key step. In general RL, a policy's actions change which states it ends up in, so you might expect the gradient of the objective to include a term for how the distribution of visited states changes with \(\theta\). That term would be hard to compute, because it depends on the environment's dynamics. The point of the theorem is that it never appears: the gradient needs only the gradients of the policy's own probabilities, weighted by how much reward each choice leads to. For language models, this is easy to see. Appending a token always produces the same next prefix, so there are no environment dynamics, and the only way \(\theta\) affects which completions we get is through \(p_\theta\) itself.
+
+[^pg-theorem]: In general form, \(\nabla_\theta J \propto \sum_s d^\pi(s) \sum_a Q^\pi(s, a)\, \nabla_\theta \pi_\theta(a \mid s)\), where \(\pi_\theta\) is the usual RL notation for the policy \(p_\theta\), \(d^\pi(s)\) is how often it visits state \(s\), and \(Q^\pi(s, a)\) is the expected future reward after taking action \(a\) in state \(s\). (In episodic tasks, the two sides differ by a constant, which only rescales the step.) For a completion, the state is the prefix and the action is the next token. With only a final reward, \(Q^\pi\) is the expected reward of finishing from that prefix, and the sampled \(R\) is a one-sample estimate of it.
+
+The quantity \(\nabla_\theta \log p_\theta(y)\) is called the **score**.[^score-name] It points in the direction in parameter space that most increases the log-probability of the completion \(y\). The final line is an expectation over completions sampled from the policy \(p_\theta\) itself, so we can estimate it by sampling. Perform \(N\) _rollouts_ (that is, draw \(N\) completions from the policy), score each one, and average:
 
 [^score-name]: Don't read much into the word: it doesn't rate how good a completion is. The name comes from statistics, where \(\nabla_\theta \log p\) is the score function of [maximum-likelihood estimation](https://doi.org/10.1017/S0305004100009580). REINFORCE is sometimes called the score-function estimator for the same reason.
-
-[^pg-theorem]: This is the language-model case of the _policy gradient theorem_ ([Sutton et al., 2000](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation)). In general RL, it reads \(\nabla_\theta J = \mathbb{E}\big[\sum_t Q^\pi(s_t, a_t)\, \nabla_\theta \log \pi_\theta(a_t \mid s_t)\big]\) (\(\pi_\theta\) is the usual RL notation for the policy \(p_\theta\)), where \(Q^\pi(s_t, a_t)\) is the expected future reward after taking action \(a_t\) in state \(s_t\). For a completion, the state is the prefix and the action is the next token. With only a final reward, \(Q^\pi\) is the expected reward of finishing from that prefix, and the sampled \(R\) is a one-sample estimate of it.
 
 \[
 \nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} R(y_i) \, \nabla_\theta \log p_\theta(y_i), \qquad y_i \sim p_\theta
@@ -102,10 +104,10 @@ This is the REINFORCE estimator,[^reinforce] also known as the _Monte Carlo poli
 [^reinforce]: Introduced by Ronald Williams in [Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning](https://link.springer.com/article/10.1007/BF00992696) (1992). PPO, GRPO, DAPO, and most other RL algorithms used for LLMs today are elaborations of this estimator.
 
 <figure class="fullwidth">
-  <img src="/assets/img/policy-gradient-intuition.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Four rollouts for &quot;What is 17 × 24?&quot;: A and C reach 408 and earn reward 1, while B (an arithmetic slip) and D (an estimate) earn 0. A bar holding all the probability for this prompt shows A rising from 0.22 to 0.27 and C from 0.03 to 0.05 after one update, B and D barely changing, and unsampled completions shrinking.">
+  <img src="/assets/img/policy-gradient-intuition.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Four rollouts for &quot;What is 17 × 24?&quot;: A (an arithmetic slip) and D (an estimate) earn reward 0, while B and C reach 408 and earn 1. A bar holding all the probability for this prompt shows B rising from 0.22 to 0.27 and C from 0.03 to 0.05 after one update, A and D barely changing, and unsampled completions shrinking.">
 </figure>
 
-Because all completions share a total probability of 1, A's and C's gains come from elsewhere, here mostly from completions nobody sampled. B barely changes, because it shares everything up to "340 +" with A, so reinforcing A also lifts most of B's path. The numbers are only illustrative: A and C are pushed up, but how every other completion moves depends on how the model's parameters are shared.
+Because all completions share a total probability of 1, B's and C's gains come from elsewhere, here mostly from completions nobody sampled. A barely changes, because it shares everything up to "340 +" with B, so reinforcing B also lifts most of A's path. The numbers are only illustrative: B and C are pushed up, but how every other completion moves depends on how the model's parameters are shared.
 
 With the reward held fixed, \(R \, \nabla_\theta \log p_\theta(y)\) is exactly the gradient of \(R \log p_\theta(y)\): a log-likelihood on one of the model's own samples, weighted by its reward. So **policy gradient is supervised fine-tuning on your own samples, weighted by reward.** With \(+1/0\) rewards, as in the figure above, it is literally SFT on the correct completions, so incorrect completions are never pushed down directly; they only lose share.[^rft]
 
@@ -150,10 +152,10 @@ s_v = \sum_u \big(\mathbb{1}[u = v] - p_u\big) \, \nabla_\theta z_u
 As \(p_v \to 1\), every coefficient in this sum goes to zero, so the score does too. Across completions A and B from the figure above:
 
 <figure class="fullwidth">
-  <img src="/assets/img/policy-gradient-token-credit.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Completions A (reward 1) and B (reward 0) as rows of tokens, each labeled with its probability and its own-logit gradient, 1 − p, with an arrow of that length. In A, uncertain tokens like 17, 24, and 68 get large gradients and confident filler almost none. Zoom-ins show the full logit gradient summing to zero. In B, every score is multiplied by 0, so nothing updates.">
+  <img src="/assets/img/policy-gradient-token-credit.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Completions A (reward 0) and B (reward 1) as rows of tokens, each labeled with its probability and its own-logit gradient, 1 − p, with an arrow of that length. In A, every score is multiplied by 0, so nothing updates, not even the unlikely slip 58. In B, uncertain tokens like 17, 24, and 68 get large gradients and confident filler almost none. Zoom-ins below B show the full logit gradient summing to zero.">
 </figure>
 
-The reward only says whether the finished completion was right, so every position gets the same \(R\), whatever its token did:[^credit] B's correct opening steps get nothing, and A's filler tokens get the full reward. What differs from token to token is the score, which is tiny for tokens the model was already sure of.[^step-caveat]
+The reward only says whether the finished completion was right, so every position gets the same \(R\), whatever its token did:[^credit] A's correct opening steps get nothing, and B's filler tokens get the full reward. What differs from token to token is the score, which is tiny for tokens the model was already sure of.[^step-caveat]
 
 [^credit]: This is the _credit assignment_ problem. Methods that learn a value function, or use [process reward models](https://arxiv.org/abs/2305.20050) that grade intermediate steps, try to give individual tokens their own credit.
 
@@ -206,7 +208,7 @@ A_i = R_i - \frac{1}{G} \sum_{j=1}^{G} R_j
 
 Correct completions now get a positive advantage and are reinforced. Incorrect completions get a negative advantage and are suppressed. Prompts where every completion succeeds, or every completion fails, contribute nothing. For the four rollouts from earlier:
 
-![The same four rollouts with group-centered advantages. The group mean reward is 0.5, so A and C get advantage +0.5 and are pushed up, while B and D get −0.5 and are pushed down. Along the prefix A and B share, their pushes cancel.](/assets/img/policy-gradient-group-centered.png)
+![The same four rollouts with group-centered advantages. The group mean reward is 0.5, so B and C get advantage +0.5 and are pushed up, while A and D get −0.5 and are pushed down. Along the prefix A and B share, their pushes cancel.](/assets/img/policy-gradient-group-centered.png)
 
 REINFORCE with group-centered advantages fits in a few lines of PyTorch:
 
