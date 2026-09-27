@@ -18,7 +18,7 @@ function highlight(code, lang, _attrs) {
   return `<pre class="${langClass}"><code class="${langClass}">${body}</code></pre>\n`;
 }
 
-const md = markdownIt({ html: true, typographer: false, highlight })
+const md = markdownIt({ html: true, typographer: true, highlight })
   .use(katexPlugin)
   .use(sidenotePlugin)
   .use(anchor);
