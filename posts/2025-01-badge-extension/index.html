@@ -68,7 +68,7 @@
             "image": "https://www.tylerromero.com/assets/img/headshot_2.jpg",
             "keywords": ["post","machine-learning","active-learning","BADGE","batch-active-learning","k-means++","MNIST","multidimensional-scaling","uncertainty-sampling"],
             "wordCount": 4454,
-            "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse,..."
+            "articleBody": "Batch Active learning by Diverse Gradient Embeddings (BADGE) is a simple and effective batch-based active learning method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings. BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse,..."
             }
         </script>
 
@@ -142,18 +142,18 @@
 
                 <section>
 <p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p>
-<p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model's uncertainty (through gradient magnitude) and the data's semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sn-uncertainty" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-uncertainty" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model's uncertainty to select points for labeling. In a batch setting, this can degenerate into selecting points that are all very similar, leading to suboptimal performance. Take this example on MNIST, where uncertainty sampling selects eight similar-looking <code>1</code>s in a batch of nine: <picture><source type="image/webp" srcset="/assets/img/liBFvhav3n-300.webp 300w, /assets/img/liBFvhav3n-450.webp 450w, /assets/img/liBFvhav3n-600.webp 600w, /assets/img/liBFvhav3n-750.webp 750w, /assets/img/liBFvhav3n-900.webp 900w, /assets/img/liBFvhav3n-1131.webp 1131w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/liBFvhav3n-300.png" alt="Uncertainty sampling on MNIST" width="1131" height="1161" srcset="/assets/img/liBFvhav3n-300.png 300w, /assets/img/liBFvhav3n-450.png 450w, /assets/img/liBFvhav3n-600.png 600w, /assets/img/liBFvhav3n-750.png 750w, /assets/img/liBFvhav3n-900.png 900w, /assets/img/liBFvhav3n-1131.png 1131w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> This helps the model learn efficiently by focusing on challenging examples while maintaining good coverage of the dataset distribution.</p>
+<p>BADGE selects data points by examining their gradient embeddings - vectors that combine both the model’s uncertainty (through gradient magnitude) and the data’s semantic content (through gradient direction). By choosing points with diverse, high-magnitude gradients, BADGE identifies samples that are both informative (high uncertainty) and representative of different regions of the input space.<label for="sn-uncertainty" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-uncertainty" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote"><a href="https://lilianweng.github.io/posts/2022-02-20-active-learning/#uncertainty-sampling">Uncertainty sampling</a> is a common classical active learning strategy that only leverages the model’s uncertainty to select points for labeling. In a batch setting, this can degenerate into selecting points that are all very similar, leading to suboptimal performance. Take this example on MNIST, where uncertainty sampling selects eight similar-looking <code>1</code>s in a batch of nine: <picture><source type="image/webp" srcset="/assets/img/liBFvhav3n-300.webp 300w, /assets/img/liBFvhav3n-450.webp 450w, /assets/img/liBFvhav3n-600.webp 600w, /assets/img/liBFvhav3n-750.webp 750w, /assets/img/liBFvhav3n-900.webp 900w, /assets/img/liBFvhav3n-1131.webp 1131w" sizes="(max-width: 900px) 100vw, 900px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/liBFvhav3n-300.png" alt="Uncertainty sampling on MNIST" width="1131" height="1161" srcset="/assets/img/liBFvhav3n-300.png 300w, /assets/img/liBFvhav3n-450.png 450w, /assets/img/liBFvhav3n-600.png 600w, /assets/img/liBFvhav3n-750.png 750w, /assets/img/liBFvhav3n-900.png 900w, /assets/img/liBFvhav3n-1131.png 1131w" sizes="(max-width: 900px) 100vw, 900px"></picture></span> This helps the model learn efficiently by focusing on challenging examples while maintaining good coverage of the dataset distribution.</p>
 <p>One limitation of BADGE is that it requires the user to specify the batch size in advance. This can be a problem in practice, as the user may not know how many data points to label in each batch. In this post, I will show how BADGE can be extended to support variable-sized batches to enable applications where the next batch size is unknown a priori.</p>
 </section>
 <section>
 <h2 id="badge-overview" tabindex="-1">BADGE Overview</h2>
-<p>Before we dive into the extension, let's review how BADGE works. BADGE is a batch active learning method that selects a batch of data points that are diverse and high-magnitude in the gradients they may induce once labeled. The algorithm proceeds as follows:</p>
+<p>Before we dive into the extension, let’s review how BADGE works. BADGE is a batch active learning method that selects a batch of data points that are diverse and high-magnitude in the gradients they may induce once labeled. The algorithm proceeds as follows:</p>
 <h3 id="1.-compute-gradient-embeddings" tabindex="-1">1. Compute Gradient Embeddings</h3>
-<p>First, we compute the gradients of the loss with respect to the final layer of the neural network. These gradients capture both the model's uncertainty (magnitude) and the data's semantic content (direction).
-The first issue that arises is that - since our overall goal is to solicit labels for the most informative <em>unlabeled</em> data points - we don't have access to the true labels for these data points.
-In order to compute the gradients, we need to &quot;hallucinate&quot; labels for the unlabeled data points. This is typically done by using the current model to predict the expected label for each data point.<label for="sn-hallucinate" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hallucinate" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">This approach of using the model's predicted label provides a lower bound on the true gradient magnitude - since the model would view any other label as even more unexpected.</span>
+<p>First, we compute the gradients of the loss with respect to the final layer of the neural network. These gradients capture both the model’s uncertainty (magnitude) and the data’s semantic content (direction).
+The first issue that arises is that - since our overall goal is to solicit labels for the most informative <em>unlabeled</em> data points - we don’t have access to the true labels for these data points.
+In order to compute the gradients, we need to “hallucinate” labels for the unlabeled data points. This is typically done by using the current model to predict the expected label for each data point.<label for="sn-hallucinate" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-hallucinate" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">This approach of using the model’s predicted label provides a lower bound on the true gradient magnitude - since the model would view any other label as even more unexpected.</span>
 The expected label is then used to compute the gradient.</p>
-<p>BADGE uses the gradient of the final linear layer's weights, which can be computed efficiently without needing to backpropagate through the entire network. For cross-entropy loss, that gradient is the outer product of the final-layer activations and the difference between the predicted probabilities and the hallucinated one-hot label:</p>
+<p>BADGE uses the gradient of the final linear layer’s weights, which can be computed efficiently without needing to backpropagate through the entire network. For cross-entropy loss, that gradient is the outer product of the final-layer activations and the difference between the predicted probabilities and the hallucinated one-hot label:</p>
 <figure class="fullwidth">
   <picture><source type="image/webp" srcset="/assets/img/E8cQ3cJB7d-300.webp 300w, /assets/img/E8cQ3cJB7d-450.webp 450w, /assets/img/E8cQ3cJB7d-600.webp 600w, /assets/img/E8cQ3cJB7d-750.webp 750w, /assets/img/E8cQ3cJB7d-900.webp 900w, /assets/img/E8cQ3cJB7d-2326.webp 2326w" sizes="(max-width: 760px) 100vw, 1400px"><img loading="lazy" decoding="async" class="responsive-image" src="/assets/img/E8cQ3cJB7d-300.png" alt="BADGE's gradient embedding for one unlabeled input. The model produces final-layer activations h and class probabilities p. The hallucinated label ŷ is the one-hot vector for the predicted class, and p − ŷ is the gradient of the loss with respect to the logits. Their outer product h ⊗ (p − ŷ), with rows indexed by h and columns by p − ŷ, is the gradient with respect to the final layer's weights. Flattening its rows end to end gives the embedding g(x). A confident prediction gives a small embedding; an unsure one gives a large embedding whose direction comes from h." width="2326" height="904" srcset="/assets/img/E8cQ3cJB7d-300.png 300w, /assets/img/E8cQ3cJB7d-450.png 450w, /assets/img/E8cQ3cJB7d-600.png 600w, /assets/img/E8cQ3cJB7d-750.png 750w, /assets/img/E8cQ3cJB7d-900.png 900w, /assets/img/E8cQ3cJB7d-2326.png 2326w" sizes="(max-width: 760px) 100vw, 1400px"></picture>
 </figure>
@@ -203,7 +203,7 @@ The expected label is then used to compute the gradient.</p>
 </code></pre>
 
 <h3 id="2.-select-diverse-and-informative-points" tabindex="-1">2. Select Diverse and Informative Points</h3>
-<p>Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using <a href="https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf">k-means++ initialization</a>, a greedy algorithm originally designed for seeding k-means clustering<label for="sn-dpp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dpp" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">It's worth noting the connection between k-means++ and <a href="https://en.wikipedia.org/wiki/Determinantal_point_process">Determinantal Point Processes (DPPs)</a>. DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.</span>. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.</p>
+<p>Finally, BADGE selects the next batch of data points by choosing points that maximize the diversity of their gradient embeddings. This is achieved using <a href="https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf">k-means++ initialization</a>, a greedy algorithm originally designed for seeding k-means clustering<label for="sn-dpp" class="margin-toggle sidenote-number"></label><input type="checkbox" id="sn-dpp" class="margin-toggle" aria-label="Toggle sidenote"><span class="sidenote">It’s worth noting the connection between k-means++ and <a href="https://en.wikipedia.org/wiki/Determinantal_point_process">Determinantal Point Processes (DPPs)</a>. DPPs are probabilistic models that encourage the selection of diverse subsets of items. While finding the optimal diverse subset according to a DPP can be computationally expensive, k-means++ can be viewed as a computationally efficient, greedy approximation to sampling from a DPP where the similarity between items is inversely related to the distance between their gradient embeddings.</span>. The core idea of k-means++ is to iteratively select points that are far away from the points already chosen.</p>
 <p>The k-means++ algorithm proceeds as follows:</p>
 <ol>
 <li>Initialize the first point by selecting one uniformly at random from the unlabeled pool.</li>
@@ -234,13 +234,13 @@ To address this, we introduce the concept of a priority ordering over the entire
 Instead of selecting a fixed batch size upfront, this ordering tells us which points would be most valuable to label first,
 second, third, and so on - allowing us to be flexible about how many points we ultimately select.</p>
 <h3 id="when-are-variable-sized-batches-helpful%3F" tabindex="-1">When Are Variable-Sized Batches Helpful?</h3>
-<p>Variable-sized batches are particularly valuable in real-world machine learning workflows where labeling resources need to be managed efficiently. Let's explore a few practical scenarios:</p>
+<p>Variable-sized batches are particularly valuable in real-world machine learning workflows where labeling resources need to be managed efficiently. Let’s explore a few practical scenarios:</p>
 <h4 id="1.-optimizing-labeler-productivity" tabindex="-1">1. <strong>Optimizing Labeler Productivity</strong></h4>
 <p>Consider a team of full-time data labelers who need to maintain consistent productivity. In settings where model training and evaluation are relatively
 quick compared to labeling time, the number of examples needed before a model update can vary significantly—perhaps anywhere from 10 to 10,000 examples.
 Variable-sized batches allow us to keep labelers continuously engaged by adapting to these fluctuating requirements.</p>
 <h4 id="2.-dynamic-budget-management" tabindex="-1">2. <strong>Dynamic Budget Management</strong></h4>
-<p>Organizations frequently need to adapt to changing resource constraints throughout a project's lifecycle:</p>
+<p>Organizations frequently need to adapt to changing resource constraints throughout a project’s lifecycle:</p>
 <div class="table-wrapper" role="region" aria-label="Scrollable table" tabindex="0">
 <table>
 <thead>
@@ -277,7 +277,7 @@ and improved performance over time. More on this below.</p>
 <p>K-means++ provides an elegant way to generate this priority ordering, as it naturally selects diverse and informative points
 in a sequential manner before lumping them into a batch. By running k-means++ on the unlabeled pool and recording the order
 of selection, we obtain a ranked list where earlier points are both more informative and well-distributed across the feature space.
-We can then work through this priority queue of points, stopping whenever we've reached our desired batch size. This approach also lends itself well to online active learning scenarios, where new unlabeled data points may become available over time. The priority ordering allows us to continuously select the most valuable points for labeling as they appear.</p>
+We can then work through this priority queue of points, stopping whenever we’ve reached our desired batch size. This approach also lends itself well to online active learning scenarios, where new unlabeled data points may become available over time. The priority ordering allows us to continuously select the most valuable points for labeling as they appear.</p>
 <h3 id="demonstrating-on-mnist-(continued-from-above)" tabindex="-1">Demonstrating on MNIST (Continued from above)</h3>
 <p>To demonstrate this extension, we use the same setup as before, but this time we run k-means++ on the entire pool of unlabeled data points to generate an ordering. We then select the next data point to label by following this ordering.</p>
 <p>We visualize the ordering generated by k-means++ below:</p>
@@ -338,33 +338,33 @@ This means that the overall time complexity is <span class="katex"><span class="
 </code></pre>
 
 <p>This GPU-accelerated implementation significantly improves performance. For a dataset of 15,000 embeddings with 2,560 dimensions,
-it generates a complete ordering in just 20 seconds - compared to 15 minutes using scikit-learn's CPU implementation.</p>
+it generates a complete ordering in just 20 seconds - compared to 15 minutes using scikit-learn’s CPU implementation.</p>
 <p>Additionally, since data labeling is time-consuming, we can optimize further by <em>extracting points from the ordering one at a time</em> (and only as-needed)
-rather than computing the entire ordering upfront. This lazy evaluation approach allows us to stop once we've labeled our desired
+rather than computing the entire ordering upfront. This lazy evaluation approach allows us to stop once we’ve labeled our desired
 number of points, avoiding unnecessary computation. It also allows us to add new (and potentially useful) data points to the pool
 of unlabeled data on-the-fly as those points become available! See <a href="https://gist.github.com/tyler-romero/1aba44c529c64fb3c29026ec906bcd9c">this (longer) code snippet</a> for an example of how to lazily generate the ordering.</p>
 </section>
 <section>
 <h2 id="can-other-popular-batch-active-learning-methods-be-similarly-extended%3F" tabindex="-1">Can Other Popular Batch Active Learning Methods Be Similarly Extended?</h2>
 <p>Not all batch active learning methods can be extended to support variable-sized batches.
-Let's consider two categories of batch active learning methods and discuss their potential for extension:</p>
+Let’s consider two categories of batch active learning methods and discuss their potential for extension:</p>
 <h3 id="yes%3A-coreset-and-other-greedy-selection-algorithms" tabindex="-1">Yes: CORESET and other Greedy-Selection Algorithms</h3>
 <p><a href="https://arxiv.org/abs/1708.00489">CORESET</a> is a batch active learning method that selects diverse data points by maximizing the minimum distance to already selected points. Like BADGE, it can be extended to generate a priority ordering over the unlabeled pool.</p>
 <p>The extension is straightforward: instead of stopping after selecting k points, run the standard greedy
 CORESET selection until all unlabeled points are ordered. Starting with an initial point (chosen randomly or as the furthest from existing labeled data),
 each iteration selects the point with the maximum minimum distance to all previously selected points.</p>
 <p>This naturally prioritizes points that cover unexplored regions of the feature space - earlier points represent more crucial additions to the diverse subset.
-The ordering maintains CORESET's goal of representative sampling while enabling variable batch sizes.</p>
+The ordering maintains CORESET’s goal of representative sampling while enabling variable batch sizes.</p>
 <h3 id="no%3A-batchbald-and-other-methods-that-require-a-global-view" tabindex="-1">No: BatchBALD and Other Methods That Require a Global View</h3>
-<p>Unlike BADGE and CORESET, <a href="https://arxiv.org/abs/1906.08158">BatchBALD</a> doesn't lend itself well to variable-sized batches. BatchBALD works by selecting points that
+<p>Unlike BADGE and CORESET, <a href="https://arxiv.org/abs/1906.08158">BatchBALD</a> doesn’t lend itself well to variable-sized batches. BatchBALD works by selecting points that
 maximize mutual information between selected and remaining points, using predictive entropy across the entire unlabeled pool.</p>
-<p>The core issue is that BatchBALD's mutual information calculation is inherently global - it depends on the full set of unlabeled data. This makes it difficult to generate a
+<p>The core issue is that BatchBALD’s mutual information calculation is inherently global - it depends on the full set of unlabeled data. This makes it difficult to generate a
 meaningful priority ordering, since selecting points one at a time would break the mutual information maximization that makes BatchBALD effective.</p>
 <p>In short, greedy methods like BADGE naturally extend to variable batches, while global methods like BatchBALD would need major modifications to support this use case.</p>
 </section>
 <section>
 <h2 id="thanks-for-reading!" tabindex="-1">Thanks for Reading!</h2>
-<p>If you're building something interesting with these methods or want to dive deeper into active learning, I'd love to <a href="mailto:tyler.alexander.romero@gmail.com">hear from you</a>!</p>
+<p>If you’re building something interesting with these methods or want to dive deeper into active learning, I’d love to <a href="mailto:tyler.alexander.romero@gmail.com">hear from you</a>!</p>
 </section>
 <section>
 <h2 id="references" tabindex="-1">References</h2>
@@ -394,7 +394,7 @@ meaningful priority ordering, since selecting points one at a time would break t
             <span class="colophon-sep">/</span>
             <a href="mailto:tyler.alexander.romero+site@gmail.com">Email</a>
             <span class="colophon-sep">/</span>
-            <a href="/feed.xml">RSS feed</a>
+            <a href="/feed.xml">RSS</a>
         </p>
         <p class="colophon-note"><span style="font-family: 'Newsreader', Georgia, serif; font-style: italic;">Typeset in Fraunces, Newsreader, and Gentium Book Plus.</span> <span style="font-family: 'Virgil', cursive; color: var(--warm-accent);">Annotations in Virgil.</span></p>
         <p class="colophon-copyright">&copy; 2026 Tyler Romero</p>
