@@ -89,7 +89,7 @@ The quantity \(\nabla_\theta \log p_\theta(y)\) is called the **score**.[^score-
 
 [^score-name]: Don't read much into the word: it doesn't rate how good a completion is. The name comes from statistics, where \(\nabla_\theta \log p\) is the score function of [maximum-likelihood estimation](https://doi.org/10.1017/S0305004100009580). REINFORCE is sometimes called the score-function estimator for the same reason.
 
-[^pg-theorem]: This is the language-model case of the _policy gradient theorem_ ([Sutton et al., 2000](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation)). In general RL, it reads \(\nabla_\theta J = \mathbb{E}\big[\sum_t Q^\pi(s_t, a_t)\, \nabla_\theta \log \pi_\theta(a_t \mid s_t)\big]\), where \(Q^\pi(s_t, a_t)\) is the expected future reward after taking action \(a_t\) in state \(s_t\). For a completion, the state is the prefix and the action is the next token. With only a final reward, \(Q^\pi\) is the expected reward of finishing from that prefix, and the sampled \(R\) is a one-sample estimate of it.
+[^pg-theorem]: This is the language-model case of the _policy gradient theorem_ ([Sutton et al., 2000](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation)). In general RL, it reads \(\nabla_\theta J = \mathbb{E}\big[\sum_t Q^\pi(s_t, a_t)\, \nabla_\theta \log \pi_\theta(a_t \mid s_t)\big]\) (\(\pi_\theta\) is the usual RL notation for the policy \(p_\theta\)), where \(Q^\pi(s_t, a_t)\) is the expected future reward after taking action \(a_t\) in state \(s_t\). For a completion, the state is the prefix and the action is the next token. With only a final reward, \(Q^\pi\) is the expected reward of finishing from that prefix, and the sampled \(R\) is a one-sample estimate of it.
 
 \[
 \nabla_\theta J(\theta) \approx \frac{1}{N} \sum_{i=1}^{N} R(y_i) \, \nabla_\theta \log p_\theta(y_i), \qquad y_i \sim p_\theta
@@ -107,7 +107,7 @@ This is the REINFORCE estimator,[^reinforce] also known as the _Monte Carlo poli
 
 Because all completions share a total probability of 1, A's and C's gains come from elsewhere, here mostly from completions nobody sampled. B barely changes, because it shares everything up to "340 +" with A, so reinforcing A also lifts most of B's path. The numbers are only illustrative: A and C are pushed up, but how every other completion moves depends on how the model's parameters are shared.
 
-With the reward held fixed, \(R \, \nabla_\theta \log p_\theta(y)\) is exactly the gradient of \(R \log p_\theta(y)\): a log-likelihood on one of the model's own samples, weighted by its reward. So **policy gradient is supervised fine-tuning on your own samples, weighted by reward.** With \(+1/0\) rewards, as in the figure above, it is literally SFT on the correct completions.[^rft]
+With the reward held fixed, \(R \, \nabla_\theta \log p_\theta(y)\) is exactly the gradient of \(R \log p_\theta(y)\): a log-likelihood on one of the model's own samples, weighted by its reward. So **policy gradient is supervised fine-tuning on your own samples, weighted by reward.** With \(+1/0\) rewards, as in the figure above, it is literally SFT on the correct completions, so incorrect completions are never pushed down directly; they only lose share.[^rft]
 
 [^rft]: Training on your own correct samples is also used on its own, as rejection-sampling fine-tuning or [expert iteration](https://arxiv.org/abs/1705.08439). [STaR](https://arxiv.org/abs/2203.14465) is an early example for reasoning.
 
