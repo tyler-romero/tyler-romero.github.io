@@ -1,7 +1,7 @@
 ---
 title: "Policy Gradient for LLMs, Explained Visually"
 subtitle: A from-scratch derivation of REINFORCE for language models
-date: 2026-09-25T00:00:00-07:00
+date: 2026-09-27T00:00:00-07:00
 blurb: "How language models learn from rewarded samples: a visual, from-scratch derivation of REINFORCE and group-centered baselines."
 tags: ["post", "reinforcement-learning", "rl", "policy-gradient", "reinforce", "grpo", "rlvr"]
 math: true
