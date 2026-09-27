@@ -957,7 +957,8 @@ pre[class*="language-"] > code {
     padding-inline-start: 1.5rem;
   }
 
-  figure {
+  figure,
+  figure.fullwidth {
     width: 100%;
     max-width: 100%;
   }
