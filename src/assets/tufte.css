@@ -135,6 +135,17 @@ h3 {
   letter-spacing: 0.01em;
 }
 
+h4 {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.6rem;
+  margin-top: 1.8rem;
+  margin-bottom: 0.8rem;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
 hr {
   display: block;
   height: 1px;
@@ -277,8 +288,12 @@ figcaption {
   max-width: 40%;
 }
 
+/* Full-width figures have no margin, so the caption sits below, in the text column. */
 figure.fullwidth figcaption {
-  margin-right: 24%;
+  float: none;
+  clear: both;
+  max-width: 61%;
+  margin-top: 0.5rem;
 }
 
 /* Links */
@@ -441,6 +456,49 @@ div.table-wrapper {
 div.table-wrapper table {
   width: 100%;
   margin: 0;
+}
+
+/* Hand-drawn rules: a heavier stroke under the header and after the last row, light strokes between rows. */
+div.table-wrapper table {
+  border-collapse: collapse;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+div.table-wrapper th,
+div.table-wrapper td {
+  padding: 0.55rem 1.2rem 0.7rem 0;
+  vertical-align: top;
+}
+
+div.table-wrapper th {
+  font-family: "Fraunces", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1.1rem;
+  padding-bottom: 0.8rem;
+}
+
+div.table-wrapper thead tr,
+div.table-wrapper tbody tr:last-child {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='8' fill='none'%3E%3Cpath d='M1 4 C20 2.5, 40 5.5, 62 3.8 S100 2.4, 124 4.2 S162 5.6, 186 3.6 S222 2.8, 239 4' stroke='%23C49A6C' stroke-opacity='0.8' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 240px 8px;
+}
+
+div.table-wrapper tbody tr {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='6' fill='none'%3E%3Cpath d='M1 3 C25 2, 50 4.2, 80 3.1 S130 1.9, 160 3.3 S215 4.1, 239 2.9' stroke='%23C49A6C' stroke-opacity='0.5' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 240px 6px;
+}
+
+div.table-wrapper tbody tr:nth-child(even) {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='6' fill='none'%3E%3Cpath d='M1 3.2 C30 4.3, 60 1.8, 95 3 S150 4.2, 180 2.7 S225 2.2, 239 3.1' stroke='%23C49A6C' stroke-opacity='0.5' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 240px 6px;
+}
+
+div.table-wrapper tbody tr:last-child {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='8' fill='none'%3E%3Cpath d='M1 4 C20 2.5, 40 5.5, 62 3.8 S100 2.4, 124 4.2 S162 5.6, 186 3.6 S222 2.8, 239 4' stroke='%23C49A6C' stroke-opacity='0.8' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 240px 8px;
+}
+
+div.table-wrapper tbody td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 div.table-wrapper:focus-visible {
@@ -949,6 +1007,7 @@ pre[class*="language-"] > code {
   h1,
   h2,
   h3,
+  h4,
   p,
   li,
   td,
@@ -1356,6 +1415,7 @@ pre[class*="language-"] > code {
   h1,
   h2,
   h3,
+  h4,
   figure,
   blockquote,
   pre,
@@ -1365,7 +1425,8 @@ pre[class*="language-"] > code {
 
   h1,
   h2,
-  h3 {
+  h3,
+  h4 {
     break-after: avoid-page;
   }
 
