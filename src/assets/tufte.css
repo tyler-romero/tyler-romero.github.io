@@ -845,6 +845,127 @@ nav a:visited {
   margin-top: 0;
 }
 
+/* Contents in the left margin — only where the margin is wide enough to hold it */
+article h2[id],
+article h3[id] {
+  scroll-margin-top: 5rem;
+}
+
+/* Following an anchor focuses its heading (tabindex="-1"); the heading isn't a control, so no ring. */
+article [tabindex="-1"]:focus {
+  outline: none;
+}
+
+.post-toc {
+  display: none;
+}
+
+@media screen and (min-width: 1880px) {
+  .post-toc:not([hidden]) {
+    display: block;
+    position: fixed;
+    top: 8.5rem;
+    /* Text starts 8rem inside the centered 1500px manuscript; keep 3rem clear of it. */
+    left: calc(50vw - 750px - 11.5rem);
+    width: 16.5rem;
+    max-height: calc(100vh - 12rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: rgba(148, 102, 85, 0.65) transparent;
+    scrollbar-width: thin;
+    font-family: "Gentium Book Plus", Georgia, serif;
+  }
+}
+
+.post-toc-inner {
+  position: relative;
+  padding-left: 1.6rem;
+}
+
+.post-toc ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-toc li {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.post-toc a,
+.post-toc a:link,
+.post-toc a:visited {
+  display: block;
+  margin: 0;
+  padding: 0.3rem 0;
+  font-family: "Gentium Book Plus", Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-transform: none;
+  vertical-align: baseline;
+  color: var(--muted-text-color);
+  text-decoration: none;
+  text-wrap: pretty;
+  transition: color 0.2s ease;
+}
+
+.post-toc a:hover {
+  color: var(--text-color);
+  text-decoration: underline;
+  text-decoration-color: var(--warm-accent);
+  text-underline-offset: 2px;
+}
+
+.post-toc a[aria-current] {
+  color: var(--text-color);
+}
+
+.post-toc li > ol {
+  display: none;
+  margin: 0.1rem 0 0.4rem;
+  padding-left: 1rem;
+}
+
+.post-toc li.is-open > ol {
+  display: block;
+}
+
+.post-toc li > ol a,
+.post-toc li > ol a:link,
+.post-toc li > ol a:visited {
+  font-size: 1rem;
+}
+
+.post-toc-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.25rem;
+  height: 8px;
+  opacity: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8' fill='none' stroke='%23946655' stroke-opacity='0.85' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 4.6 C3.5 2.6, 6 6, 8.5 4.1 S13 3.2, 16 4'/%3E%3Cpath d='M13.1 1.5 L16.2 4 L13.3 6.6'/%3E%3C/svg%3E")
+    no-repeat center / contain;
+  transition:
+    transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.2s ease;
+}
+
+.post-toc.has-active .post-toc-marker {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-toc-marker,
+  .post-toc a {
+    transition: none;
+  }
+}
+
 /* Section dividers — hand-drawn wavy line */
 hr.section-divider {
   width: 20%;

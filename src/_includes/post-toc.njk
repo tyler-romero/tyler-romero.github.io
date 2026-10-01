@@ -1,0 +1,98 @@
+            <nav class="post-toc" aria-label="On this page" hidden>
+                <div class="post-toc-inner">
+                    <span class="post-toc-marker" aria-hidden="true"></span>
+                    <ol class="post-toc-list"></ol>
+                </div>
+            </nav>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var nav = document.querySelector('.post-toc');
+                    if (!nav) return;
+                    var headings = Array.prototype.filter.call(
+                        document.querySelectorAll('article h2[id], article h3[id]'),
+                        function(h) { return !h.closest('.post-header'); }
+                    );
+                    if (headings.filter(function(h) { return h.tagName === 'H2'; }).length < 3) {
+                        nav.remove();
+                        return;
+                    }
+
+                    var inner = nav.querySelector('.post-toc-inner');
+                    var list = nav.querySelector('.post-toc-list');
+                    var marker = nav.querySelector('.post-toc-marker');
+                    var entries = [];
+                    var currentItem = null;
+                    var currentSublist = null;
+
+                    // Copy the heading's rendered content (keeps inline math) without links or notes.
+                    function labelFor(h) {
+                        var clone = h.cloneNode(true);
+                        clone.querySelectorAll('.margin-toggle, .sidenote, .marginnote, label, sup').forEach(function(el) { el.remove(); });
+                        clone.querySelectorAll('a').forEach(function(a) { a.replaceWith.apply(a, a.childNodes); });
+                        return clone.innerHTML;
+                    }
+
+                    headings.forEach(function(h) {
+                        var li = document.createElement('li');
+                        var a = document.createElement('a');
+                        a.href = '#' + h.id;
+                        a.innerHTML = labelFor(h);
+                        li.appendChild(a);
+                        if (h.tagName === 'H2' || !currentItem) {
+                            list.appendChild(li);
+                            currentItem = li;
+                            currentSublist = null;
+                            entries.push({ heading: h, link: a, top: li });
+                        } else {
+                            if (!currentSublist) {
+                                currentSublist = document.createElement('ol');
+                                currentItem.appendChild(currentSublist);
+                            }
+                            currentSublist.appendChild(li);
+                            entries.push({ heading: h, link: a, top: currentItem });
+                        }
+                    });
+                    nav.hidden = false;
+
+                    var active = null;
+                    function update(force) {
+                        var line = window.innerHeight * 0.25;
+                        var next = null;
+                        for (var i = 0; i < entries.length; i++) {
+                            if (entries[i].heading.getBoundingClientRect().top <= line) next = entries[i];
+                            else break;
+                        }
+                        if (next === active && !force) return;
+                        if (active) {
+                            active.link.removeAttribute('aria-current');
+                            active.top.classList.remove('is-open');
+                        }
+                        active = next;
+                        nav.classList.toggle('has-active', !!active);
+                        if (!active) return;
+                        active.link.setAttribute('aria-current', 'location');
+                        active.top.classList.add('is-open');
+
+                        var linkBox = active.link.getBoundingClientRect();
+                        var innerBox = inner.getBoundingClientRect();
+                        var lineHeight = parseFloat(getComputedStyle(active.link).lineHeight);
+                        var paddingTop = parseFloat(getComputedStyle(active.link).paddingTop);
+                        marker.style.transform = 'translateY(' + (linkBox.top - innerBox.top + paddingTop + lineHeight / 2 - 4) + 'px)';
+
+                        var navBox = nav.getBoundingClientRect();
+                        if (linkBox.top < navBox.top || linkBox.bottom > navBox.bottom) {
+                            nav.scrollTop += linkBox.top - navBox.top - navBox.height / 3;
+                        }
+                    }
+
+                    var pending = false;
+                    function schedule() {
+                        if (pending) return;
+                        pending = true;
+                        requestAnimationFrame(function() { pending = false; update(); });
+                    }
+                    window.addEventListener('scroll', schedule, { passive: true });
+                    window.addEventListener('resize', function() { update(true); });
+                    update(true);
+                });
+            </script>
