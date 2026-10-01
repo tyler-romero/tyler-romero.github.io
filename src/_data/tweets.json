@@ -1,0 +1,38 @@
+{
+  "2101580038546362759": {
+    "name": "You Jiacheng",
+    "handle": "YouJiacheng",
+    "date": "Sep 20, 2026",
+    "text": "Actually this argument is not limited to linear policy.\nConsider the gradient w.r.t. logits.\ns = ∇_z log p(a) = e_a - p\n\\bar{s} = E_{a~q}[e_a - p] = (q - p)\ncentered score s - \\bar{s} = e_a - q\nThus, score centering is a STE: z_p + sg(z_q - z_p).",
+    "url": "https://x.com/YouJiacheng/status/2101580038546362759",
+    "media": []
+  },
+  "2101413762351710451": {
+    "name": "Nan Jiang",
+    "handle": "nanjiang_cs",
+    "date": "Sep 19, 2026",
+    "text": "@YouJiacheng consider linear softmax policy. the proposed correction does nothing and simply calculate the gradient under the sampling distribution.",
+    "url": "https://x.com/nanjiang_cs/status/2101413762351710451",
+    "media": []
+  },
+  "2101941461935870074": {
+    "name": "Yingru Li",
+    "handle": "RichardYRLi",
+    "date": "Sep 21, 2026",
+    "text": "Consider a trainer-tangent family whose base point is the sampler: i.e., apply the trainer’s probability change under a small update, then renormalize:@@MATH0@@@@MATH1@@Differentiating this trainer-tangent family with respect to small update δ here at the base point directly yields the centering argument.",
+    "url": "https://x.com/RichardYRLi/status/2101941461935870074",
+    "media": [],
+    "math": [
+      "\\nu_\\delta(a \\mid h) \\propto q(a \\mid h) \\, \\frac{p_{\\theta+\\delta}(a \\mid h)}{p_\\theta(a \\mid h)}",
+      "\\nu_0 = q"
+    ]
+  },
+  "2103450635827875955": {
+    "name": "Juliette Decugis",
+    "handle": "DecugisJuliette",
+    "date": "Sep 25, 2026",
+    "text": "Cool paper! We can view score centering as:\nREINFORCE+R*KL(q||p) since grad_p KL = -E_q\nso RL went from KL reg -> no KL -> KL bonus!\n\nFunny enough I tried w/ @TacoCohen to revive KL reg by smoothing pi_ref. Realized now we don't know where to push p, only what to avoid: q's bias.",
+    "url": "https://x.com/DecugisJuliette/status/2103450635827875955",
+    "media": []
+  }
+}

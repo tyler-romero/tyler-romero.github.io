@@ -113,6 +113,38 @@ export default function (eleventyConfig) {
 
   // Date stuff
   eleventyConfig.addShortcode("year", () => `${new Date().getFullYear()}`); // useful for copyright
+
+  // Static tweet card for margin notes. Inline-only markup on one line, since margin notes are spans inside
+  // paragraphs; markdown and KaTeX characters are escaped so the tweet text renders verbatim.
+  eleventyConfig.addShortcode("tweet", function (id) {
+    const tweet = (this.ctx?.tweets ?? this.ctx?.environments?.tweets ?? {})[id];
+    if (!tweet) throw new Error(`tweet shortcode: no data for ${id} in src/_data/tweets.json`);
+    const esc = (s) =>
+      String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/[\\*_`[\]$|~^]/g, (c) => `&#${c.charCodeAt(0)};`);
+    const media = (tweet.media ?? [])
+      .map((src) => `<img class="tweet-media" src="${src}" alt="Image attached to the post">`)
+      .join("");
+    // Math that the post showed as an image is re-typeset with KaTeX; left unescaped on purpose.
+    // "@@MATH0@@" in the text places math[0] inline where the image appeared; unplaced math goes at the end.
+    const mathSpans = (tweet.math ?? []).map((m) => `<span class="tweet-math">\\(\\displaystyle ${m}\\)</span>`);
+    const placed = new Set();
+    const text = esc(tweet.text)
+      .replace(/\n/g, "<br>")
+      .replace(/@@MATH(\d+)@@/g, (_, i) => (placed.add(Number(i)), mathSpans[Number(i)] ?? ""));
+    const math = mathSpans.filter((_, i) => !placed.has(i)).join("");
+    return (
+      `<a class="tweet-card" href="${tweet.url}">` +
+      `<span class="tweet-author"><span class="tweet-name">${esc(tweet.name)}</span> ` +
+      `<span class="tweet-handle">@${esc(tweet.handle)}</span></span>` +
+      `<span class="tweet-text">${text}</span>${math}${media}` +
+      `<span class="tweet-date">${esc(tweet.date)} ↗</span></a>`
+    );
+  });
   eleventyConfig.addFilter("postDate", (dateObj) => {
     if (typeof dateObj === "string") {
       dateObj = DateTime.fromISO(dateObj);
