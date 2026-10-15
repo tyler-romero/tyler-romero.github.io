@@ -356,7 +356,7 @@ video {
 .marginnote-compact img {
   display: block;
   width: 100%;
-  max-width: 18rem;
+  max-width: 14rem;
   margin-inline: auto;
 }
 
@@ -369,6 +369,24 @@ video {
   width: 100%;
   max-width: 36rem;
   margin-inline: auto;
+}
+
+/* Tall margin figures: stretch the note to the entry's height and scale the image to fit inside it. */
+@media (min-width: 761px) {
+  .marginnote-wide.marginnote-fit {
+    bottom: 2rem;
+  }
+
+  .marginnote-wide.marginnote-fit picture {
+    height: 100%;
+  }
+
+  .marginnote-wide.marginnote-fit img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: top center;
+  }
 }
 
 .sidenote-number {
@@ -1352,4 +1370,14 @@ pre[class*="language-"] > code {
     overflow: visible;
     max-width: 100%;
   }
+}
+
+/* Interactive figures embedded in the margin; height is set from the widget's own report. */
+iframe.margin-widget {
+  display: block;
+  width: 100%;
+  height: 28rem;
+  border: 0;
+  background: transparent;
+  color-scheme: normal;
 }

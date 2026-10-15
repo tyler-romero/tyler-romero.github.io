@@ -225,7 +225,11 @@ if (!fs.existsSync(outputDir)) {
   process.exit(1);
 }
 
-const htmlFiles = walk(outputDir).filter((file) => file.endsWith(".html"));
+// Widgets are iframe fragments embedded in pages, not standalone pages.
+const widgetDir = path.join(outputDir, "assets", "widgets") + path.sep;
+const htmlFiles = walk(outputDir).filter(
+  (file) => file.endsWith(".html") && !file.startsWith(widgetDir),
+);
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, "utf8");
   const title = html.match(/<title>([\s\S]*?)<\/title>/i)?.[1].trim();

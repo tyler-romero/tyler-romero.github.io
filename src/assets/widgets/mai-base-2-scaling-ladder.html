@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAI-Base-2 Scaling Ladder</title>
+<!-- Source: Figure 2 of https://microsoft.ai/news/frontier-pre-training-at-microsoft-ai/ -->
+</head>
+<body>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data: blob: https://microsoft.ai/wp-content/uploads/; font-src data: https://microsoft.ai 'self'; media-src data: blob: https://microsoft.ai/wp-content/uploads/;"><style>
+@font-face{font-family:"Bradford LL";font-weight:450;font-style:normal;font-display:swap;src:url("https://microsoft.ai/wp-content/themes/wp-base-theme/dist/assets/BradfordLLWeb-Regular-C6SjiFc8.woff2") format("woff2");}@font-face{font-family:"Bradford LL";font-weight:450;font-style:italic;font-display:swap;src:url("https://microsoft.ai/wp-content/themes/wp-base-theme/dist/assets/BradfordLLWeb-Italic-CA7el69X.woff2") format("woff2");}@font-face{font-family:"Bradford LL";font-weight:600;font-style:normal;font-display:swap;src:url("https://microsoft.ai/wp-content/themes/wp-base-theme/dist/assets/BradfordLLWeb-Bold-BJqvqpMA.woff2") format("woff2");}@font-face{font-family:"Bradford LL";font-weight:600;font-style:italic;font-display:swap;src:url("https://microsoft.ai/wp-content/themes/wp-base-theme/dist/assets/BradfordLLWeb-BoldItalic-B6a2GBYT.woff2") format("woff2");}@font-face{font-family:"Red Hat Mono";font-weight:400;font-style:normal;font-display:swap;src:url("https://microsoft.ai/wp-content/themes/wp-base-theme/dist/assets/RedHatMono-Regular-CEF4ave-.woff2") format("woff2");}@font-face{font-family:"Red Hat Mono";font-weight:500;font-style:normal;font-display:swap;src:url("https://microsoft.ai/wp-content/themes/wp-base-theme/dist/assets/RedHatMono-Medium-BxJECwMl.woff2") format("woff2");}
+.enll, .enll *, .enll *::before, .enll *::after { box-sizing:border-box; }
+body { margin:0; -webkit-font-smoothing:antialiased; }
+
+.enll { display:block; position:relative; color:#5D524B; background:#FEF9ED; border-radius:3px;
+        padding:24px 28px 20px;
+        font-family:"Red Hat Mono",ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace; font-weight:500; }
+.enll svg { display:block; width:100%; height:auto; overflow:visible; touch-action:pan-y; }
+.enll text { fill:#5D524B; font-family:"Red Hat Mono",ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+             font-weight:500; font-variant-numeric:tabular-nums; }
+
+.enll h3 { margin:0 0 14px; font-family:"Bradford LL","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+           font-weight:450; font-size:28px; line-height:1.15; letter-spacing:-0.01em; }
+.enll .tick { font-size:14px; opacity:.55; }
+.enll .ttl  { font-size:15px; }
+.enll .rl   { font-size:15px; fill:#628C8C; }
+.enll .grid { stroke:#C4BBAD; stroke-opacity:.4; stroke-width:1; }
+.enll .axy  { stroke:#72716E; stroke-width:1.25; }
+.enll .axx  { stroke:#BFB8AE; stroke-width:1.25; }
+
+/* layers */
+.enll .traj  { fill:none; stroke:#628C8C; stroke-opacity:.4; stroke-width:1.5; stroke-linejoin:round; }
+.enll .fit   { fill:none; stroke:#72675B; stroke-width:2; }
+.enll .ext   { fill:none; stroke:#72675B; stroke-width:2; stroke-dasharray:7 6; }
+.enll .bigln { fill:none; stroke:#C45A30; stroke-width:2.25; stroke-linejoin:round; }
+.enll .dot   { fill:#628C8C; }
+.enll .star  { fill:#72675B; }
+.enll .act   { fill:none; stroke:#C45A30; stroke-width:2.25; }
+.enll .layer { transition:opacity .35s cubic-bezier(0.43,0.195,0.02,1); }
+.enll .layer.dim { opacity:.12; }
+.enll .pop { opacity:1; transition:opacity .45s cubic-bezier(0.43,0.195,0.02,1); }
+.enll.anim .pop { opacity:0; }
+.enll.anim .pop.on { opacity:1; }
+
+/* point readout */
+.enll .hit { fill:transparent; cursor:pointer; outline:none; }
+.enll .hit:focus-visible { stroke:#5D524B; stroke-width:1.5; }
+.enll .ring { fill:none; stroke:#5D524B; stroke-width:1.25; opacity:0; transition:opacity .2s; }
+.enll .ring.on, .enll .tip.on { opacity:1; }
+.enll .tip { opacity:0; transition:opacity .2s; pointer-events:none; }
+.enll .tip rect { fill:#FEF9ED; stroke:#C4BBAD; stroke-width:1; }
+.enll .tip text { font-size:13.5px; }
+.enll .tip .k { opacity:.6; }
+
+/* legend: inside the plot on desktop (as in the source), above it on phones */
+.enll .lgin rect { fill:#FEF9ED; stroke:#C4BBAD; stroke-width:1; }
+.enll .lgt { font-size:15px; }
+.enll .leg { display:flex; flex-wrap:wrap; gap:8px 24px; margin:0 0 16px; padding:0; list-style:none; }
+.enll .leg li { display:flex; align-items:center; gap:10px; margin:0; font-size:13px; line-height:1.3; }
+.enll .leg svg { width:30px; height:14px; flex:0 0 auto; }
+
+.enll .leg { display:none; }
+.enll .wide { display:block; }
+.enll .narrow { display:none; }
+
+/* figure caption, as written in the blog */
+.enll .fcap { margin:16px 0 0; font-family:"Red Hat Mono",ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace; font-weight:500;
+  font-size:13px; line-height:1.55; color:#75695F; }
+.enll .fcap sub { font-size:.72em; line-height:0; }
+@media (max-width:600px) {
+  .enll .fcap { font-size:11.5px; margin-top:12px; }
+  .enll { padding:18px 14px 14px; }
+  .enll .wide { display:none; }
+  .enll .narrow { display:block; }
+  .enll h3 { font-size:22px; margin-bottom:10px; }
+  .enll .tick { font-size:11px; }
+  .enll .ttl { font-size:12px; }
+  .enll .rl { font-size:11px; }
+  .enll .tip text { font-size:11.5px; }
+  .enll .bigln { stroke-width:1.75; }
+  .enll .fit, .enll .ext { stroke-width:1.5; }
+  .enll .ext { stroke-dasharray:5 4; }
+  .enll .traj { stroke-width:1.1; }
+  .enll .act { stroke-width:1.75; }
+  .enll .leg { display:flex; gap:6px 16px; margin-bottom:10px; }
+  .enll .leg li { font-size:11.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .enll .layer, .enll .pop, .enll .ring, .enll .tip { transition:none; }
+}
+.enll .sr { position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+            overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
+</style>
+
+<div class="enll" id="enll">
+  <h3 id="enll-title"></h3>
+  <ul class="leg" id="enll-leg"></ul>
+  <div class="wide" id="enll-wide"></div>
+  <div class="narrow" id="enll-narrow"></div>
+  <p class="fcap">Figure 2: Our scaling ladder accurately forecast MAI-Base-2&rsquo;s performance.</p>
+  <div class="sr" id="enll-sr"></div>
+</div>
+
+<script>
+(function () {
+  // From the eval scaling-law handoff (figure_data.json and the three CSVs).
+  // FLOPs are stored as log10. rungs: [name, log10 FLOPs, NLL, step].
+  // traj: each rung's eval trajectory. big: MAI-Base-2 trajectory.
+  // The fitted curve is recomputed here from E, A, alpha, C0.
+  var D = {"fit":{"E":0.6957273397886643,"A":0.4280822035243607,"alpha":0.17723343945052844,"C0":1e+22,"solid_up_to_flops":1.8243954371798855e+23,"curve_flops_range":[1.331309031263853e+21,2.768326884566865e+25]},"rungs":[["L18",21.27918,1.26992,40737],["L24",21.99585,1.13248,67943],["L30",22.44745,1.05021,90373],["L36",22.83177,1.00058,145621],["L42",23.26112,0.95183,121684]],"traj":[[[20.7661,1.4508],[21.10853,1.33725],[21.27918,1.26992]],[[21.51589,1.26891],[21.99585,1.13248]],[[20.88936,1.4801],[21.19038,1.35091],[21.36647,1.29968],[21.49141,1.267],[21.58832,1.24532],[21.6675,1.22995],[21.73445,1.21854],[21.74909,1.21567],[21.76325,1.21262],[21.77697,1.2123],[21.79244,1.20706],[21.80104,1.20672],[21.8436,1.19857],[21.86616,1.19596],[21.87702,1.19373],[21.88935,1.19309],[21.89965,1.18685],[21.93074,1.18392],[21.96853,1.17616],[22.00329,1.16876],[22.03548,1.1634],[22.06544,1.15852],[22.09347,1.14894],[22.1198,1.14392],[22.14462,1.13773],[22.16811,1.13172],[22.19038,1.12633],[22.21157,1.12008],[22.23177,1.11578],[22.25108,1.10886],[22.26956,1.10137],[22.28729,1.09498],[22.30097,1.09206],[22.30433,1.08947],[22.30832,1.08631],[22.31096,1.08666],[22.31489,1.08502],[22.32072,1.08489],[22.33651,1.07783],[22.35175,1.07363],[22.35533,1.0726],[22.3577,1.0708],[22.36006,1.0706],[22.36357,1.06901],[22.36647,1.06715],[22.38071,1.06306],[22.3945,1.0606],[22.40787,1.05671],[22.42083,1.05417],[22.43342,1.05161],[22.43441,1.0508],[22.43737,1.05106],[22.43934,1.05186],[22.44129,1.05216],[22.4442,1.05065],[22.44745,1.05021]],[[21.06649,1.46216],[21.36752,1.33246],[21.54361,1.2723],[21.66855,1.2361],[21.76546,1.21439],[21.84464,1.19872],[21.91159,1.18584],[21.96958,1.17131],[22.02073,1.16171],[22.06649,1.15532],[22.10788,1.14879],[22.14567,1.14565],[22.18043,1.13977],[22.21262,1.13631],[22.24258,1.1307],[22.27061,1.12618],[22.29694,1.12208],[22.32176,1.11953],[22.34524,1.11237],[22.36752,1.11006],[22.38871,1.10937],[22.40812,1.10556],[22.43866,1.09969],[22.45388,1.09287],[22.48146,1.08982],[22.49785,1.08652],[22.51365,1.08201],[22.52889,1.07854],[22.58024,1.06724],[22.60001,1.05959],[22.61056,1.05705],[22.62664,1.05534],[22.63563,1.0499],[22.64627,1.04843],[22.65755,1.04621],[22.66855,1.03955],[22.68433,1.03642],[22.69139,1.03402],[22.70157,1.03083],[22.70994,1.02834],[22.71699,1.02572],[22.72736,1.02495],[22.73674,1.02009],[22.74373,1.01872],[22.7542,1.01403],[22.76302,1.01275],[22.7703,1.01093],[22.7761,1.01068],[22.78249,1.00892],[22.79142,1.00884],[22.79792,1.00622],[22.80527,1.00668],[22.81125,1.00447],[22.81715,1.00271],[22.82297,1.00241],[22.83177,1.00058]],[[21.57382,1.35075],[21.87486,1.2292],[22.05095,1.17215],[22.17589,1.144],[22.23279,1.13124],[22.24035,1.13288],[22.26931,1.1254],[22.29974,1.12176],[22.35198,1.11221],[22.37454,1.1074],[22.396,1.10364],[22.41644,1.10036],[22.43357,1.09611],[22.52807,1.08229],[22.61522,1.06861],[22.68777,1.06257],[22.74992,1.05264],[22.80427,1.04731],[22.85258,1.04125],[22.89605,1.03293],[22.92562,1.02715],[22.95404,1.02119],[22.9888,1.01572],[23.02098,1.00606],[23.03622,1.00285],[23.0521,1.00093],[23.13013,0.97807],[23.19707,0.9586],[23.23658,0.95299],[23.26112,0.95183]]],"big":[[24.67094,0.87187],[24.70256,0.86988],[24.73204,0.86711],[24.75965,0.86772],[24.77282,0.86743],[24.78579,0.86453],[24.81027,0.86552],[24.8221,0.86366],[24.83353,0.86481],[24.85552,0.86262],[24.87646,0.86116],[24.88787,0.86149],[24.89906,0.85973],[24.916,0.85897],[24.93159,0.85934],[24.94454,0.85781],[24.95456,0.85553],[24.96387,0.85653],[24.96442,0.85776],[24.97447,0.85486],[24.98138,0.85334],[24.98795,0.85394],[24.99408,0.85354],[25.00259,0.85443],[25.0147,0.85097],[25.01977,0.85114],[25.02473,0.8497],[25.02984,0.84871],[25.03489,0.84693],[25.04132,0.84915],[25.04679,0.84864],[25.05468,0.84638],[25.05912,0.84703],[25.06005,0.84947],[25.0665,0.84632],[25.07172,0.84561],[25.0795,0.8454],[25.08567,0.84447],[25.09094,0.84559],[25.13727,0.8394],[25.14385,0.83833],[25.15037,0.83533],[25.15679,0.83838],[25.16316,0.83571],[25.1694,0.83335],[25.17555,0.83378],[25.18165,0.83116],[25.18763,0.83129],[25.19201,0.83282],[25.19636,0.83086],[25.20052,0.83024],[25.20463,0.82814],[25.21017,0.82908],[25.21697,0.82893],[25.22262,0.82695],[25.22932,0.82631],[25.23452,0.82592],[25.23866,0.82424],[25.24403,0.82295],[25.24668,0.82389],[25.24947,0.82315],[25.25284,0.82379],[25.25845,0.82105],[25.26092,0.82038],[25.26545,0.82085],[25.268,0.81894],[25.27135,0.81996],[25.27479,0.8182],[25.27808,0.81841],[25.28147,0.81805],[25.28501,0.81779],[25.28858,0.81766],[25.292,0.8175],[25.29699,0.81667],[25.29916,0.81528],[25.30189,0.81324],[25.30643,0.8141],[25.30872,0.81291],[25.31551,0.8125],[25.3191,0.81225],[25.32557,0.81176],[25.32874,0.81114],[25.33215,0.80921],[25.3354,0.80956],[25.33863,0.80877],[25.3423,0.80867],[25.34858,0.80781],[25.35443,0.80849],[25.35752,0.80702],[25.36147,0.808],[25.36753,0.80632],[25.36967,0.80553],[25.37374,0.80627],[25.37896,0.80636],[25.38152,0.80583]],"pred":[25.38152,0.80343],"actual":[25.38152,0.80583,372530],"weights":"code 0.450  finance 0.013  general 0.090  law 0.013  math 0.158  medical 0.013  multilingual 0.045  socialScience 0.013  stem 0.158  vlm 0.050"};
+
+  var TITLE = 'MAI-Base-2 Scaling Ladder';
+  var X_TITLE = 'Training compute (FLOPs)';
+  var LADDER = 'MAI-Base-2 Pre-training ladder', BIG = 'MAI-Base-2 Pre-training';
+
+  var TEAL = '#628C8C', FITC = '#72675B', ORANGE = '#C45A30';
+  var X_MIN = 20.92, X_MAX = 25.66;                  // log10 FLOPs
+  var Y_MIN = 0.782, Y_MAX = 1.34;                  // NLL, log scale
+  var Y_TICKS = [0.803, 0.870, 0.937, 1.003, 1.070, 1.137, 1.203, 1.270];   // as in the source figure
+  var X_TICKS = [21, 22, 23, 24, 25];
+
+  var LAYOUTS = {
+    wide:   { w:1240, h:610, pl:78, pr:1228, pt:12, pb:546, xTickY:574, xTitleY:606,
+              dotR:7, starR:11, actR:9, labDy:-15, tipW:296, tipH:96, tipLh:24, tipPad:14 },
+    narrow: { w:360,  h:222, pl:46, pr:352,  pt:10, pb:168, xTickY:188, xTitleY:216,
+              dotR:4.5, starR:7.5, actR:6, labDy:-10, tipW:226, tipH:76, tipLh:19, tipPad:10 }
+  };
+
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function lg(v) { return Math.log(v) / Math.LN10; }
+  function fitAt(lc) { var f = D.fit; return f.E + f.A * Math.pow(Math.pow(10, lc) / f.C0, -f.alpha); }
+  // 2.80×10²² with the exponent as a superscript tspan
+  function flopsSvg(lc, sup, dy) {
+    var e = Math.floor(lc), m = Math.pow(10, lc - e);
+    return m.toFixed(2) + '×10<tspan dy="' + dy + '" font-size="' + sup + '">' + e + '</tspan>';
+  }
+  function flopsTxt(lc) {
+    var e = Math.floor(lc), m = Math.pow(10, lc - e);
+    return m.toFixed(2) + ' × 10^' + e;
+  }
+
+  function star(cx, cy, r) {
+    var p = [];
+    for (var i = 0; i < 10; i++) {
+      var rr = i % 2 ? r * 0.45 : r, a = (-90 + i * 36) * Math.PI / 180;
+      p.push((cx + Math.cos(a) * rr).toFixed(2) + ',' + (cy + Math.sin(a) * rr).toFixed(2));
+    }
+    return p.join(' ');
+  }
+
+  function build(key) {
+    var L = LAYOUTS[key];
+    function X(lc) { return L.pl + (lc - X_MIN) / (X_MAX - X_MIN) * (L.pr - L.pl); }
+    function Y(v) { return L.pb - (lg(v) - lg(Y_MIN)) / (lg(Y_MAX) - lg(Y_MIN)) * (L.pb - L.pt); }
+    function path(pts) { return pts.map(function (p, i) { return (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1); }).join(''); }
+    var cid = 'enll-rv-' + key, sup = key === 'wide' ? 10 : 8, supDy = key === 'wide' ? -7 : -5;
+
+    var s = ['<svg viewBox="0 0 ' + L.w + ' ' + L.h + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' +
+             esc(TITLE + ', by training compute') + '">'];
+    s.push('<defs><clipPath id="' + cid + '"><rect class="reveal" x="' + L.pl + '" y="0" width="0" height="' + L.h + '"/></clipPath></defs>');
+
+    Y_TICKS.forEach(function (v) {
+      var y = Y(v).toFixed(2);
+      s.push('<line class="grid" x1="' + L.pl + '" x2="' + L.pr + '" y1="' + y + '" y2="' + y + '"/>');
+      s.push('<text class="tick" x="' + (L.pl - (key === 'wide' ? 12 : 6)) + '" y="' + (+y + 5) + '" text-anchor="end">' + v.toFixed(3) + '</text>');
+    });
+    X_TICKS.forEach(function (e) {
+      var x = X(e).toFixed(2);
+      s.push('<line class="grid" x1="' + x + '" x2="' + x + '" y1="' + L.pt + '" y2="' + L.pb + '"/>');
+      s.push('<text class="tick" x="' + x + '" y="' + L.xTickY + '" text-anchor="middle">10<tspan dy="' + supDy +
+             '" font-size="' + sup + '">' + e + '</tspan></text>');
+    });
+    s.push('<line class="axy" x1="' + L.pl + '" x2="' + L.pl + '" y1="' + L.pt + '" y2="' + L.pb + '"/>');
+    s.push('<line class="axx" x1="' + L.pl + '" x2="' + L.pr + '" y1="' + L.pb + '" y2="' + L.pb + '"/>');
+    s.push('<text class="ttl" x="' + ((L.pl + L.pr) / 2) + '" y="' + L.xTitleY + '" text-anchor="middle">' + esc(X_TITLE) + '</text>');
+
+    // fitted power law: solid over the ladder, dashed where it extrapolates
+    var f = D.fit, c0 = lg(f.curve_flops_range[0]), c1 = lg(f.curve_flops_range[1]), cs = lg(f.solid_up_to_flops);
+    var solid = [], dash = [];
+    for (var i = 0; i <= 200; i++) {
+      var lc = c0 + (c1 - c0) * i / 200, pt = [lc, fitAt(lc)];
+      if (lc <= cs) solid.push(pt); else { if (!dash.length) dash.push([cs, fitAt(cs)]); dash.push(pt); }
+    }
+    s.push('<g clip-path="url(#' + cid + ')">');
+    s.push('<g class="layer" data-l="fit"><path class="fit" d="' + path(solid) + '"/></g>');
+    s.push('<g class="layer" data-l="ext"><path class="ext" d="' + path(dash) + '"/></g>');
+    s.push('</g>');
+
+    // rung dots and labels
+    s.push('<g class="layer" data-l="dots">');
+    D.rungs.forEach(function (r) {
+      var x = X(r[1]), y = Y(r[2]);
+      s.push('<g class="pop" data-x="' + x.toFixed(1) + '"><circle class="dot" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) +
+             '" r="' + L.dotR + '"/><text class="rl" x="' + x.toFixed(1) + '" y="' + (y + L.labDy).toFixed(1) +
+             '" text-anchor="middle">' + r[0] + '</text></g>');
+    });
+    s.push('</g>');
+
+    // predicted (star) and actual (open circle) at the large run's final compute
+    var px = X(D.pred[0]), py = Y(D.pred[1]), ax = X(D.actual[0]), ay = Y(D.actual[1]);
+    s.push('<g class="layer" data-l="pred"><polygon class="star pop" data-x="' + px.toFixed(1) + '" points="' + star(px, py, L.starR) + '"/></g>');
+    s.push('<g class="layer" data-l="act"><circle class="act pop" data-x="' + ax.toFixed(1) + '" cx="' + ax.toFixed(1) + '" cy="' + ay.toFixed(1) +
+           '" r="' + L.actR + '"/></g>');
+
+    // readout
+    s.push('<circle class="ring" r="' + (L.dotR + 5) + '"/>');
+    s.push('<g class="tip"><rect rx="3" width="' + L.tipW + '" height="' + L.tipH + '"/>' +
+           '<text class="r0"></text><text class="k r1"></text><text class="v1" text-anchor="end"></text>' +
+           '<text class="k r2"></text><text class="v2" text-anchor="end"></text></g>');
+    var hr = L.dotR + (key === 'wide' ? 10 : 9);
+    D.rungs.forEach(function (r, i) {
+      s.push('<circle class="hit" data-p="r' + i + '" cx="' + X(r[1]).toFixed(1) + '" cy="' + Y(r[2]).toFixed(1) + '" r="' + hr +
+             '" tabindex="0" role="button" aria-label="' + esc(r[0] + ' final checkpoint: eval NLL ' + r[2].toFixed(4) +
+             ' at ' + flopsTxt(r[1]) + ' FLOPs') + '"/>');
+    });
+    s.push('<circle class="hit" data-p="final" cx="' + ax.toFixed(1) + '" cy="' + ay.toFixed(1) + '" r="' + (hr + 2) +
+           '" tabindex="0" role="button" aria-label="' + esc(BIG + ' final: actual ' + D.actual[1].toFixed(4) +
+           ', predicted ' + D.pred[1].toFixed(4)) + '"/>');
+    if (key === 'wide') {
+      var rows = [
+        ['<circle cx="15" cy="0" r="6.5" fill="' + TEAL + '"/>', LADDER + ', final checkpoint'],
+        ['<line x1="2" x2="28" y1="0" y2="0" stroke="' + FITC + '" stroke-width="2"/>', 'Ladder fit (L18–L42)'],
+        ['<line x1="2" x2="28" y1="0" y2="0" stroke="' + FITC + '" stroke-width="2" stroke-dasharray="6 5"/>', 'Extrapolation'],
+        ['<polygon fill="' + FITC + '" points="' + star(15, 0, 9) + '"/>', 'Predicted final'],
+        ['<circle cx="15" cy="0" r="7" fill="none" stroke="' + ORANGE + '" stroke-width="2.25"/>', BIG + ' actual final']
+      ];
+      var lx = L.pl + 16, rh = 31, bh = rows.length * rh + 18, by = L.pb - 16 - bh;
+      s.push('<g class="lgin"><rect x="' + lx + '" y="' + by + '" width="500" height="' + bh + '" rx="4"/>');
+      rows.forEach(function (r, i) {
+        var y = by + 9 + rh * (i + 0.5);
+        s.push('<g transform="translate(' + (lx + 14) + ',' + y.toFixed(1) + ')">' + r[0] +
+               '<text class="lgt" x="44" y="5">' + esc(r[1]) + '</text></g>');
+      });
+      s.push('</g>');
+    }
+    s.push('</svg>');
+    return { html:s.join(''), L:L, X:X, Y:Y };
+  }
+
+  var root = document.getElementById('enll');
+  var views = { wide:build('wide'), narrow:build('narrow') };
+  document.getElementById('enll-title').textContent = TITLE;
+  document.getElementById('enll-wide').innerHTML = views.wide.html;
+  document.getElementById('enll-narrow').innerHTML = views.narrow.html;
+
+  // legend, in the source's order (ladder and run eval trajectories removed per Paul)
+  var LEG = [
+    { l:'dots', label:'Ladder runs', sw:'<circle cx="15" cy="7" r="5.5" fill="' + TEAL + '"/>' },
+    { l:'fit',  label:'Ladder fit (L18–L42)', sw:'<line x1="1" x2="29" y1="7" y2="7" stroke="' + FITC + '" stroke-width="2"/>' },
+    { l:'ext',  label:'Extrapolation', sw:'<line x1="1" x2="29" y1="7" y2="7" stroke="' + FITC + '" stroke-width="2" stroke-dasharray="5 4"/>' },
+    { l:'pred', label:'Predicted final', sw:'<polygon fill="' + FITC + '" points="' + star(15, 7, 7) + '"/>' },
+    { l:'act',  label:'Actual final', sw:'<circle cx="15" cy="7" r="5" fill="none" stroke="' + ORANGE + '" stroke-width="2"/>' }
+  ];
+  document.getElementById('enll-leg').innerHTML = LEG.map(function (e) {
+    return '<li><svg viewBox="0 0 30 14" aria-hidden="true">' + e.sw + '</svg><span>' + esc(e.label) + '</span></li>';
+  }).join('');
+
+  var gap = (D.actual[1] / D.pred[1] - 1) * 100;
+  document.getElementById('enll-sr').innerHTML =
+    '<p>Log-log plot of weighted eval NLL against training compute. Lower is better. A power law is fitted to the final ' +
+    'checkpoints of five ladder runs: ' + D.rungs.map(function (r) { return r[0] + ' ' + r[2].toFixed(4); }).join(', ') +
+    '. Extrapolated to the large run’s final compute, the fit predicts ' + D.pred[1].toFixed(4) + '. ' + BIG +
+    ' finished at ' + D.actual[1].toFixed(4) + ', ' + (gap >= 0 ? '+' : '') + gap.toFixed(1) + '% from the prediction.</p>';
+
+  // ---- point readout -------------------------------------------------------
+  function show(key, id) {
+    var v = views[key], L = v.L, svg = root.querySelector('#enll-' + key + ' svg');
+    var x, y, rows;
+    if (id === 'final') {
+      x = v.X(D.actual[0]); y = v.Y(D.actual[1]);
+      rows = [BIG + ' final', 'Actual', D.actual[1].toFixed(4), 'Predicted', D.pred[1].toFixed(4) +
+              ' (' + (gap >= 0 ? '+' : '') + gap.toFixed(1) + '%)'];
+    } else {
+      var r = D.rungs[+id.slice(1)];
+      x = v.X(r[1]); y = v.Y(r[2]);
+      rows = [r[0] + ' final checkpoint', 'Eval NLL', r[2].toFixed(4), 'Compute', null, r[1]];
+    }
+    var ring = svg.querySelector('.ring');
+    ring.setAttribute('cx', x); ring.setAttribute('cy', y); ring.classList.add('on');
+    var tip = svg.querySelector('.tip'), pad = L.tipPad, lh = L.tipLh;
+    var tx = x + 16 + L.tipW > L.pr ? x - 16 - L.tipW : x + 16;
+    var ty = y - L.tipH - 14 < L.pt ? y + 16 : y - L.tipH - 14;
+    tx = Math.max(L.pl + 4, Math.min(tx, L.pr - L.tipW));
+    tip.setAttribute('transform', 'translate(' + tx.toFixed(1) + ',' + ty.toFixed(1) + ')');
+    function set(sel, html, xx, yy) { var t = tip.querySelector(sel); t.innerHTML = html; t.setAttribute('x', xx); t.setAttribute('y', yy); }
+    set('.r0', esc(rows[0]), pad, pad + 12);
+    set('.r1', esc(rows[1]), pad, pad + 12 + lh); set('.v1', esc(rows[2]), L.tipW - pad, pad + 12 + lh);
+    set('.r2', esc(rows[3]), pad, pad + 12 + lh * 2);
+    set('.v2', rows[4] !== null ? esc(rows[4]) : flopsSvg(rows[5], key === 'wide' ? 10 : 8.5, key === 'wide' ? -6 : -5),
+        L.tipW - pad, pad + 12 + lh * 2);
+    tip.classList.add('on');
+  }
+  function hide(key) {
+    var svg = root.querySelector('#enll-' + key + ' svg');
+    svg.querySelector('.ring').classList.remove('on');
+    svg.querySelector('.tip').classList.remove('on');
+  }
+  ['wide', 'narrow'].forEach(function (key) {
+    var pinned = null, hits = root.querySelectorAll('#enll-' + key + ' .hit');
+    for (var h = 0; h < hits.length; h++) (function (el) {
+      var id = el.getAttribute('data-p');
+      el.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse' && pinned === null) show(key, id); });
+      el.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse' && pinned === null) hide(key); });
+      el.addEventListener('focus', function () { if (pinned === null) show(key, id); });
+      el.addEventListener('blur', function () { if (pinned === null) hide(key); });
+      el.addEventListener('click', function () {
+        if (pinned === id) { pinned = null; hide(key); } else { pinned = id; show(key, id); }
+      });
+      el.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ' || ev.key === 'Spacebar') { ev.preventDefault(); el.dispatchEvent(new MouseEvent('click', { bubbles:true })); }
+      });
+    })(hits[h]);
+    document.addEventListener('pointerdown', function (e) {
+      if (pinned !== null && !e.target.closest('#enll-' + key + ' .hit')) { pinned = null; hide(key); }
+    });
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { hide('wide'); hide('narrow'); }
+  });
+
+  // ---- entrance: everything draws left to right; marks land as the edge passes
+  function finish() {
+    ['wide', 'narrow'].forEach(function (key) {
+      var L = views[key].L;
+      root.querySelector('#enll-' + key + ' .reveal').setAttribute('width', L.pr - L.pl + 10);
+    });
+    var ps = root.querySelectorAll('.pop');
+    for (var i = 0; i < ps.length; i++) ps[i].classList.add('on');
+  }
+  function play() {
+    var t0 = null, DUR = 2000;
+    function frame(ts) {
+      if (t0 === null) t0 = ts;
+      var k = Math.min(1, (ts - t0) / DUR), e = 1 - Math.pow(1 - k, 3);
+      ['wide', 'narrow'].forEach(function (key) {
+        var L = views[key].L, w = (L.pr - L.pl + 10) * e, edge = L.pl + w;
+        root.querySelector('#enll-' + key + ' .reveal').setAttribute('width', w.toFixed(1));
+        var ps = root.querySelectorAll('#enll-' + key + ' .pop');
+        for (var i = 0; i < ps.length; i++) if (+ps[i].getAttribute('data-x') <= edge) ps[i].classList.add('on');
+      });
+      if (k < 1) requestAnimationFrame(frame); else finish();
+    }
+    requestAnimationFrame(frame);
+  }
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window) || !window.requestAnimationFrame) {
+    finish();
+  } else {
+    root.classList.add('anim');
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { io.disconnect(); play(); } });
+    }, { threshold:0.2 });
+    io.observe(root);
+  }
+})();
+</script>
+
+<!-- STATIC (no hover, click or keyboard interaction), per Paul: hover effects removed -->
+<style>.enll, .enll * { pointer-events:none !important; cursor:default !important; }</style>
+<script>
+(function () {
+  var r = document.querySelector('.enll');
+  if (!r) return;
+  var f = r.querySelectorAll('[tabindex], button');
+  for (var i = 0; i < f.length; i++) f[i].setAttribute('tabindex', '-1');
+})();
+</script>
+<style>
+/* Embedded in tylerromero.com's margin: blend into the page and drop the blog caption. */
+html, body { background: transparent !important; margin: 0; overflow: hidden; }
+.enll { background: transparent !important; padding: 0 !important; }
+.enll .fcap, .enll h3 { display: none !important; }
+/* Scale the HTML legend with the iframe width, like the SVG plot below it (designed at 360px). */
+.enll .leg { gap: 1.1vw 3.9vw !important; margin-bottom: 2.2vw !important; }
+.enll .leg li { font-size: 3.2vw !important; gap: 2.8vw !important; }
+.enll .leg svg { width: 6.1vw !important; height: 3.9vw !important; }
+.enll .lgin rect { fill: transparent !important; }
+</style>
+</body>
+</html>

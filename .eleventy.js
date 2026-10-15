@@ -81,6 +81,8 @@ export default function (eleventyConfig) {
   // Copy assets that are not handled by the image transform plugin.
   eleventyConfig.addPassthroughCopy({
     "src/assets/fonts": "assets/fonts",
+    // Self-contained interactive figures embedded via iframe.
+    "src/assets/widgets": "assets/widgets",
     "node_modules/katex/dist/katex.min.css": "assets/katex/katex.min.css",
     "node_modules/katex/dist/fonts": "assets/katex/fonts",
     "node_modules/rough-notation/lib/rough-notation.iife.js":
@@ -95,6 +97,7 @@ export default function (eleventyConfig) {
   });
 
   // Copy some more files to `_site`
+  eleventyConfig.ignores.add("src/assets/widgets/**");
   eleventyConfig.addPassthroughCopy("src/CNAME");
   eleventyConfig.addPassthroughCopy("src/robots.txt");
   eleventyConfig.addPassthroughCopy("src/manifest.json");

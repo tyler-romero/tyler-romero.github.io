@@ -47,6 +47,32 @@ tags: ["ML", "Research", "Blog", "LLMs"]
     <h2 id="publications">Publications & Preprints</h2>
     <ul class="post-list" role="list">
         <li>
+            <span class="post-date">Oct 2026</span>
+            <div class="post-info">
+                <a href="https://microsoft.ai/pdf/Frontier-Pre-training-at-Microsoft-AI.pdf?v=2"><strong>Frontier Pre-training at Microsoft AI</strong></a>
+                <label for="mn-mai-base-2-ladder" class="margin-toggle">&#8853;</label>
+                <input type="checkbox" id="mn-mai-base-2-ladder" class="margin-toggle" aria-label="MAI-Base-2 scaling ladder forecast" checked />
+                <span class="marginnote marginnote-wide marginnote-detail"><iframe class="margin-widget" src="/assets/widgets/mai-base-2-scaling-ladder.html" title="MAI-Base-2 scaling ladder: a fit to ladder runs L18 through L42 extrapolates to a predicted final loss that matches the actual MAI-Base-2 result" scrolling="no"></iframe></span>
+                <small>— The Microsoft AI Team.<br/><em>Microsoft AI technical report</em>.</small>
+                <p class="item-description">
+                    <small>We describe pre-training MAI-Base-2, an MoE foundation model with 80B active and 2.8T total parameters, trained on 16k GB200 GPUs. MAI-Base-2 achieves lower held-out bits-per-byte than every open-weight model we tested and is 4–12× more pre-training FLOPs-efficient than DeepSeek-V4-Pro-Base (depending on eval domain). Key ingredients include scaling ladders with source scaling for repeated data, which accurately forecast the final model's performance, along with model-infrastructure co-design and expanded data pipelines.</small>
+                </p>
+            </div>
+        </li>
+        <li>
+            <span class="post-date">Oct 2026</span>
+            <div class="post-info">
+                <a href="https://allenai.org/papers/olmocore3"><strong>Supercharging Olmo-core for Efficient and Scalable MoE Training</strong></a>
+                <label for="mn-olmocore3-moe-block" class="margin-toggle">&#8853;</label>
+                <input type="checkbox" id="mn-olmocore3-moe-block" class="margin-toggle" aria-label="Olmo-core MoE block diagram" checked />
+                <span class="marginnote marginnote-wide marginnote-detail marginnote-fit"><img src="/assets/img/olmocore3-moe-block.png" alt="MoE transformer block: a router dispatches each token to 2 of 4 routed experts plus an always-active shared expert, whose outputs are combined" sizes="(max-width: 409px) 88vw, (max-width: 760px) 360px, (max-width: 1600px) 25vw, 360px" /></span>
+                <small>— Tianhua Tao*, Akshita Bhagia, Dirk Groeneveld, Pete Walsh, Tyler Romero, Yashas Samaga, Jacob Morrison, Iz Beltagy, Taira Anderson, Noah A. Smith, Hannaneh Hajishirzi.<br/><em>Allen Institute for AI technical report</em>.</small>
+                <p class="item-description">
+                    <small>MoE training costs scale with total parameter capacity, not just active compute, so infrastructure built for dense models loses throughput as experts are added. We redesign the Olmo-core training stack around DDP with expert and pipeline parallelism, adding NVSHMEM-based rowwise expert parallelism, synchronization-free routing with device-scheduled grouped GEMMs, and integrated MXFP8. On B300 nodes, the stack trains models from 12.9B to 1.2T total parameters on up to 512 GPUs, reaching 858 TFLOP/s/GPU at 1.2T. We also identify <em>Token Gerrymandering</em>, where the MoE router learns to hack the load-balancing loss.</small>
+                </p>
+            </div>
+        </li>
+        <li>
             <span class="post-date">Jun 2026</span>
             <div class="post-info">
                 <a href="https://microsoft.ai/wp-content/uploads/2026/06/main_20260602_2.pdf"><strong>MAI-Thinking-1</strong></a>
@@ -62,13 +88,13 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         <li>
             <span class="post-date">Mar 2026</span>
             <div class="post-info">
-                <a href="https://arxiv.org/abs/2604.03444"><strong>Olmo Hybrid</strong></a>
+                <a href="https://openreview.net/forum?id=LGhKvHMtVK"><strong>Olmo Hybrid</strong></a>
                         <label for="mn-olmo-hybrid-fig3" class="margin-toggle">&#8853;</label>
                         <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" aria-label="Olmo Hybrid expressivity diagram" checked />
                         <span class="marginnote marginnote-wide marginnote-detail"><img src="/assets/img/olmo-hybrid-fig3.png" alt="Olmo Hybrid expressivity Venn diagram" sizes="(max-width: 409px) 88vw, (max-width: 760px) 360px, (max-width: 1600px) 25vw, 360px" /></span>
-                <small>— William Merrill*, Yanhong Li*, Tyler Romero*, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.<br/><em>arXiv preprint arXiv:2604.03444</em>.</small>
+                <small>— William Merrill*, Yanhong Li*, Tyler Romero*, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.<br/><em>Conference on Language Modeling (COLM) 2026</em>.</small>
                 <p class="item-description">
-                    <small>We provide evidence for the advantages of hybrid models (mixing attention and linear RNN layers) over pure transformers on several fronts: theoretically, we show that hybrid models can express tasks beyond both transformers and linear RNNs individually; empirically, we find that hybrids scale more efficiently. We train Olmo Hybrid, a 7B model with sliding window layers replaced by Gated DeltaNet layers, and show it outperforms Olmo 3 across standard pretraining and long context evaluations.</small>
+                    <small>We provide evidence that hybrid models, which mix attention and linear RNN layers, improve on pure transformers on several fronts. Theoretically, hybrids can express tasks beyond both transformers and linear RNNs individually; empirically, they scale more efficiently. We train Olmo Hybrid, a 7B model that replaces sliding-window layers with Gated DeltaNet layers, and show it outperforms Olmo 3 on standard pretraining and long-context evaluations.</small>
                 </p>
             </div>
         </li>
@@ -200,3 +226,18 @@ tags: ["ML", "Research", "Blog", "LLMs"]
         </li>
     </ul>
 </section>
+<script>
+    // Size margin widgets (same-origin iframes) to their content.
+    for (const f of document.querySelectorAll("iframe.margin-widget")) {
+        const fit = () => {
+            const el = f.contentDocument?.querySelector("body > div");
+            if (!el) return;
+            f.style.height = `${Math.ceil(el.getBoundingClientRect().height)}px`;
+            new f.contentWindow.ResizeObserver(() => {
+                f.style.height = `${Math.ceil(el.getBoundingClientRect().height)}px`;
+            }).observe(el);
+        };
+        f.addEventListener("load", fit);
+        if (f.contentDocument?.readyState === "complete") fit();
+    }
+</script>
