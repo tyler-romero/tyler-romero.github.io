@@ -902,6 +902,10 @@ pre[class*="language-"] > code {
   scrollbar-width: thin;
 }
 
+.katex-display > .katex {
+  min-width: max-content;
+}
+
 /* Bibliography (citation-js output) */
 .bibliography {
   width: 55%;
@@ -1103,6 +1107,10 @@ pre[class*="language-"] > code {
     scrollbar-width: thin;
   }
 
+  .katex-display {
+    font-size: 0.9em;
+  }
+
   :not(pre) > code {
     overflow-wrap: anywhere;
   }
@@ -1190,6 +1198,12 @@ pre[class*="language-"] > code {
 
   .colophon {
     width: 100%;
+  }
+}
+
+@media (max-width: 340px) {
+  .katex-display {
+    font-size: 0.8em;
   }
 }
 
