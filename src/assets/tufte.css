@@ -416,6 +416,10 @@ a.tweet-card:hover {
   overflow-wrap: anywhere;
 }
 
+.tweet-card .tweet-text .tweet-math {
+  margin-bottom: 0.4rem;
+}
+
 .tweet-card .tweet-math {
   display: block;
   white-space: nowrap;
@@ -515,6 +519,7 @@ table.fullwidth {
 }
 
 div.table-wrapper {
+  position: relative;
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
@@ -1016,7 +1021,8 @@ hr.section-divider {
 
 .post-date {
   flex-shrink: 0;
-  width: 7em;
+  width: 7.5em;
+  white-space: nowrap;
   padding-top: 0.15em;
 }
 
@@ -1145,6 +1151,7 @@ pre[class*="language-"] > code {
 }
 
 .katex-display {
+  position: relative;
   max-width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -1233,6 +1240,7 @@ pre[class*="language-"] > code {
   }
 
   figure,
+  .fullwidth,
   figure.fullwidth {
     width: 100%;
     max-width: 100%;
