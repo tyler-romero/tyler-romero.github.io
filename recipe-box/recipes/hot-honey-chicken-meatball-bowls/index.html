@@ -52,7 +52,7 @@
                 "name": "Tyler Romero",
                 "url": "https://www.tylerromero.com"
             },
-            "datePublished": "2026-10-25T17:29:03.062Z",
+            "datePublished": "2026-10-26T06:56:52.876Z",
             "dateModified": "2026-02-25T15:30:32-08:00",
             "url": "https://www.tylerromero.com/recipe-box/recipes/hot-honey-chicken-meatball-bowls/",
             "mainEntityOfPage": {
@@ -136,6 +136,34 @@
                     header.style.transform = 'translateY(' + offset + 'px)';
                     lastY = y;
                 }, { passive: true });
+            })();
+            // Smooth scrolls to in-page anchors can stop short while lazy images load
+            // along the way. Once scrolling goes idle, finish the jump if it fell short.
+            (function() {
+                document.addEventListener('click', function(e) {
+                    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    var a = e.target.closest('a[href^="#"]');
+                    if (!a || a.hash.length < 2) return;
+                    var target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+                    if (!target) return;
+                    var idle, giveUp;
+                    function finish() {
+                        window.removeEventListener('scroll', onScroll);
+                        clearTimeout(idle);
+                        clearTimeout(giveUp);
+                        var margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+                        if (Math.abs(target.getBoundingClientRect().top - margin) > 2) {
+                            target.scrollIntoView({ behavior: 'instant', block: 'start' });
+                        }
+                    }
+                    function onScroll() {
+                        clearTimeout(idle);
+                        idle = setTimeout(finish, 200);
+                    }
+                    window.addEventListener('scroll', onScroll, { passive: true });
+                    idle = setTimeout(finish, 400);
+                    giveUp = setTimeout(finish, 4000);
+                });
             })();
         </script>
     </body>

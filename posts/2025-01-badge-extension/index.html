@@ -139,6 +139,105 @@
                 });
             </script>
 
+            <nav class="post-toc" aria-label="On this page" hidden="">
+                <div class="post-toc-inner">
+                    <span class="post-toc-marker" aria-hidden="true"></span>
+                    <ol class="post-toc-list"></ol>
+                </div>
+            </nav>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var nav = document.querySelector('.post-toc');
+                    if (!nav) return;
+                    var headings = Array.prototype.filter.call(
+                        document.querySelectorAll('article h2[id], article h3[id]'),
+                        function(h) { return !h.closest('.post-header'); }
+                    );
+                    if (headings.filter(function(h) { return h.tagName === 'H2'; }).length < 3) {
+                        nav.remove();
+                        return;
+                    }
+
+                    var inner = nav.querySelector('.post-toc-inner');
+                    var list = nav.querySelector('.post-toc-list');
+                    var marker = nav.querySelector('.post-toc-marker');
+                    var entries = [];
+                    var currentItem = null;
+                    var currentSublist = null;
+
+                    // Copy the heading's rendered content (keeps inline math) without links or notes.
+                    function labelFor(h) {
+                        var clone = h.cloneNode(true);
+                        clone.querySelectorAll('.margin-toggle, .sidenote, .marginnote, label, sup').forEach(function(el) { el.remove(); });
+                        clone.querySelectorAll('a').forEach(function(a) { a.replaceWith.apply(a, a.childNodes); });
+                        return clone.innerHTML;
+                    }
+
+                    headings.forEach(function(h) {
+                        var li = document.createElement('li');
+                        var a = document.createElement('a');
+                        a.href = '#' + h.id;
+                        a.innerHTML = labelFor(h);
+                        li.appendChild(a);
+                        if (h.tagName === 'H2' || !currentItem) {
+                            list.appendChild(li);
+                            currentItem = li;
+                            currentSublist = null;
+                            entries.push({ heading: h, link: a, top: li });
+                        } else {
+                            if (!currentSublist) {
+                                currentSublist = document.createElement('ol');
+                                currentItem.appendChild(currentSublist);
+                            }
+                            currentSublist.appendChild(li);
+                            entries.push({ heading: h, link: a, top: currentItem });
+                        }
+                    });
+                    nav.hidden = false;
+
+                    var active = null;
+                    function update(force) {
+                        var line = window.innerHeight * 0.25;
+                        var next = null;
+                        for (var i = 0; i < entries.length; i++) {
+                            if (entries[i].heading.getBoundingClientRect().top <= line) next = entries[i];
+                            else break;
+                        }
+                        if (next === active && !force) return;
+                        if (active) {
+                            active.link.removeAttribute('aria-current');
+                            active.top.classList.remove('is-open');
+                        }
+                        active = next;
+                        nav.classList.toggle('has-active', !!active);
+                        if (!active) return;
+                        active.link.setAttribute('aria-current', 'location');
+                        active.top.classList.add('is-open');
+
+                        var linkBox = active.link.getBoundingClientRect();
+                        var innerBox = inner.getBoundingClientRect();
+                        var lineHeight = parseFloat(getComputedStyle(active.link).lineHeight);
+                        var paddingTop = parseFloat(getComputedStyle(active.link).paddingTop);
+                        marker.style.transform = 'translateY(' + (linkBox.top - innerBox.top + paddingTop + lineHeight / 2 - 4) + 'px)';
+
+                        var navBox = nav.getBoundingClientRect();
+                        if (linkBox.top < navBox.top || linkBox.bottom > navBox.bottom) {
+                            nav.scrollTop += linkBox.top - navBox.top - navBox.height / 3;
+                        }
+                    }
+
+                    var pending = false;
+                    function schedule() {
+                        if (pending) return;
+                        pending = true;
+                        requestAnimationFrame(function() { pending = false; update(); });
+                    }
+                    window.addEventListener('scroll', schedule, { passive: true });
+                    window.addEventListener('resize', function() { update(true); });
+                    update(true);
+                });
+            </script>
+
 
                 <section>
 <p><a href="https://arxiv.org/abs/1906.03671">Batch Active learning by Diverse Gradient Embeddings (BADGE)</a> is a simple and effective batch-based <a href="https://en.wikipedia.org/wiki/Active_learning_(machine_learning)">active learning</a> method for neural networks that has been empirically shown to outperform other active learning approaches in a variety of settings.</p>
@@ -415,6 +514,34 @@ meaningful priority ordering, since selecting points one at a time would break t
                     header.style.transform = 'translateY(' + offset + 'px)';
                     lastY = y;
                 }, { passive: true });
+            })();
+            // Smooth scrolls to in-page anchors can stop short while lazy images load
+            // along the way. Once scrolling goes idle, finish the jump if it fell short.
+            (function() {
+                document.addEventListener('click', function(e) {
+                    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    var a = e.target.closest('a[href^="#"]');
+                    if (!a || a.hash.length < 2) return;
+                    var target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+                    if (!target) return;
+                    var idle, giveUp;
+                    function finish() {
+                        window.removeEventListener('scroll', onScroll);
+                        clearTimeout(idle);
+                        clearTimeout(giveUp);
+                        var margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+                        if (Math.abs(target.getBoundingClientRect().top - margin) > 2) {
+                            target.scrollIntoView({ behavior: 'instant', block: 'start' });
+                        }
+                    }
+                    function onScroll() {
+                        clearTimeout(idle);
+                        idle = setTimeout(finish, 200);
+                    }
+                    window.addEventListener('scroll', onScroll, { passive: true });
+                    idle = setTimeout(finish, 400);
+                    giveUp = setTimeout(finish, 4000);
+                });
             })();
         </script>
     </body>

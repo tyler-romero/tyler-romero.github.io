@@ -264,6 +264,34 @@ M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist
                     lastY = y;
                 }, { passive: true });
             })();
+            // Smooth scrolls to in-page anchors can stop short while lazy images load
+            // along the way. Once scrolling goes idle, finish the jump if it fell short.
+            (function() {
+                document.addEventListener('click', function(e) {
+                    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+                    var a = e.target.closest('a[href^="#"]');
+                    if (!a || a.hash.length < 2) return;
+                    var target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
+                    if (!target) return;
+                    var idle, giveUp;
+                    function finish() {
+                        window.removeEventListener('scroll', onScroll);
+                        clearTimeout(idle);
+                        clearTimeout(giveUp);
+                        var margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+                        if (Math.abs(target.getBoundingClientRect().top - margin) > 2) {
+                            target.scrollIntoView({ behavior: 'instant', block: 'start' });
+                        }
+                    }
+                    function onScroll() {
+                        clearTimeout(idle);
+                        idle = setTimeout(finish, 200);
+                    }
+                    window.addEventListener('scroll', onScroll, { passive: true });
+                    idle = setTimeout(finish, 400);
+                    giveUp = setTimeout(finish, 4000);
+                });
+            })();
         </script>
     </body>
 </html>

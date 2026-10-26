@@ -145,7 +145,7 @@
     
         <url>
         <loc>https://www.tylerromero.com/posts/2026-09-policy-gradient/</loc>
-        <lastmod>2026-09-27T11:28:50-07:00</lastmod>
+        <lastmod>2026-10-25T23:55:20-07:00</lastmod>
         </url>
     
 
@@ -167,6 +167,13 @@
         <url>
         <loc>https://www.tylerromero.com/translations/scientific-spaces/continuous-softmax-attention/</loc>
         <lastmod>2026-10-19T14:03:43-07:00</lastmod>
+        </url>
+    
+
+    
+        <url>
+        <loc>https://www.tylerromero.com/posts/2026-10-off-policy-rl/</loc>
+        <lastmod>2026-10-25T23:55:20-07:00</lastmod>
         </url>
     
 
