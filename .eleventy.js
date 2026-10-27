@@ -197,22 +197,122 @@ export default function (eleventyConfig) {
   });
 
   // Image Shortcode And Optimizations
+  // When src/assets/img/<name>-mobile.<ext> exists alongside src/assets/img/<name>.<ext>,
+  // emit <source media="(max-width: 760px)"> entries inside the same <picture>.
+  eleventyConfig.htmlTransformer.addPosthtmlPlugin(
+    "html",
+    () => (tree) => {
+      function injectMobileImgs(node) {
+        const children = Array.isArray(node) ? node : node?.content;
+        if (!Array.isArray(children)) return;
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i];
+          if (child && typeof child === "object") {
+            const src = child.attrs?.src;
+            const match =
+              child.tag === "img" &&
+              !child.attrs?.["data-mobile-art"] &&
+              src?.match(/^\/assets\/img\/([^/]+?)(\.[a-z0-9]+)$/i);
+            if (match && !match[1].endsWith("-mobile")) {
+              const mobileRel = `/assets/img/${match[1]}-mobile${match[2]}`;
+              if (fs.existsSync(`src${mobileRel}`)) {
+                children.splice(i, 0, {
+                  tag: "img",
+                  attrs: {
+                    src: mobileRel,
+                    alt: "",
+                    sizes: "150vw",
+                    "data-mobile-art": "true",
+                  },
+                });
+                i++;
+              }
+            }
+            injectMobileImgs(child);
+          }
+        }
+      }
+      injectMobileImgs(tree);
+      return tree;
+    },
+    { priority: 0 },
+  );
+
   eleventyConfig.addPlugin(eleventyImageTransformPlugin, {
     extensions: "html",
     formats: ["webp", "auto"], // "auto" means use the original format
     sharpOptions: {
       animated: true, // Enable animated GIF and WebP support
     },
-    widths: [300, 450, 600, 750, 900, "auto"],
+    widths: [300, 450, 600, 750, 900, 1200, "auto"],
     defaultAttributes: {
       loading: "lazy",
       decoding: "async",
-      sizes: "(max-width: 900px) 100vw, 900px",
+      sizes: "(max-width: 760px) 150vw, (max-width: 900px) 100vw, 900px",
       class: "responsive-image",
     },
     urlPath: "/assets/img/",
     outputDir: "_site/assets/img/",
   });
+
+  eleventyConfig.htmlTransformer.addPosthtmlPlugin(
+    "html",
+    () => (tree) => {
+      function mergeMobilePictures(node) {
+        const children = Array.isArray(node) ? node : node?.content;
+        if (!Array.isArray(children)) return;
+        for (let i = 0; i < children.length; i++) {
+          const child = children[i];
+          if (child && typeof child === "object") {
+            const next = children[i + 1];
+            const isMobilePic =
+              child.tag === "picture" &&
+              Array.isArray(child.content) &&
+              child.content.some(
+                (c) => c?.tag === "img" && c.attrs?.["data-mobile-art"] === "true",
+              );
+            if (isMobilePic && next?.tag === "picture" && Array.isArray(next.content)) {
+              const mobileImg = child.content.find((c) => c?.tag === "img");
+              const mobileSources = [];
+              for (const c of child.content) {
+                if (c?.tag === "source") {
+                  mobileSources.push({
+                    tag: "source",
+                    attrs: {
+                      media: "(max-width: 760px)",
+                      ...c.attrs,
+                      width: mobileImg?.attrs?.width,
+                      height: mobileImg?.attrs?.height,
+                    },
+                  });
+                }
+              }
+              if (mobileImg?.attrs) {
+                mobileSources.push({
+                  tag: "source",
+                  attrs: {
+                    media: "(max-width: 760px)",
+                    srcset: mobileImg.attrs.srcset || mobileImg.attrs.src,
+                    sizes: mobileImg.attrs.sizes || "150vw",
+                    width: mobileImg.attrs.width,
+                    height: mobileImg.attrs.height,
+                  },
+                });
+              }
+              next.content.unshift(...mobileSources);
+              children.splice(i, 1);
+              i--;
+              continue;
+            }
+            mergeMobilePictures(child);
+          }
+        }
+      }
+      mergeMobilePictures(tree);
+      return tree;
+    },
+    { priority: -2 },
+  );
 
   // Plugins
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);

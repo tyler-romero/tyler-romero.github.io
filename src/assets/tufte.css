@@ -1239,17 +1239,27 @@ pre[class*="language-"] > code {
     padding-inline-start: 1.5rem;
   }
 
-  figure,
-  .fullwidth,
-  figure.fullwidth {
+  .fullwidth {
     width: 100%;
     max-width: 100%;
+  }
+
+  figure,
+  figure.fullwidth,
+  p > picture:only-child {
+    display: block;
+    margin-left: -3vw;
+    margin-right: -3vw;
+    width: calc(100% + 6vw);
+    max-width: calc(100% + 6vw);
   }
 
   figcaption,
   figure.fullwidth figcaption {
     margin-right: 0%;
     max-width: none;
+    padding-inline: 3vw;
+    box-sizing: border-box;
   }
 
   blockquote {
@@ -1331,7 +1341,7 @@ pre[class*="language-"] > code {
   .margin-toggle:checked + .sidenote,
   .margin-toggle:checked + .marginnote {
     display: block;
-    float: left;
+    float: none;
     left: 0;
     clear: both;
     box-sizing: border-box;

@@ -5,9 +5,13 @@
  *   Inline reference: [^ref-id]
  *   Definition:       [^ref-id]: Sidenote content here
  *   Margin note:      [^ref-id]: {-} Margin note content here
+ *   Default-open:     [^ref-id]: {+} Sidenote shown by default on mobile
+ *                     [^ref-id]: {-+} Margin note shown by default on mobile
  *
  * Sidenotes render as numbered notes in the margin (CSS counter via .sidenote-number).
  * Margin notes (prefixed with {-}) render unnumbered with a ⊕ toggle.
+ * Notes prefixed with {+} (or {-+}) render with their toggle checkbox checked so
+ * they are expanded by default on mobile while remaining collapsible.
  */
 export default function sidenotePlugin(md) {
   // Block rule: collect [^id]: definitions and suppress their output.
@@ -107,25 +111,32 @@ function sidenoteRefRule(state, silent) {
   if (silent) return true;
 
   let content = defs[id];
-  const isMarginNote = content.startsWith("{-}");
-  if (isMarginNote) {
-    content = content.slice(3).trim();
+  let isMarginNote = false;
+  let defaultOpen = false;
+
+  let prefixMatch;
+  while ((prefixMatch = content.match(/^\{([-+]+)\}\s*/))) {
+    const flags = prefixMatch[1];
+    if (flags.includes("-")) isMarginNote = true;
+    if (flags.includes("+")) defaultOpen = true;
+    content = content.slice(prefixMatch[0].length);
   }
 
   const rendered = state.md.renderInline(content);
   const prefix = isMarginNote ? "mn" : "sn";
   const noteId = `${prefix}-${id}`;
+  const checkedAttr = defaultOpen ? " checked" : "";
 
   const token = state.push("html_inline", "", 0);
   if (isMarginNote) {
     token.content =
       `<label for="${noteId}" class="margin-toggle">&#8853;</label>` +
-      `<input type="checkbox" id="${noteId}" class="margin-toggle" aria-label="Toggle margin note" />` +
+      `<input type="checkbox" id="${noteId}" class="margin-toggle" aria-label="Toggle margin note"${checkedAttr} />` +
       `<span class="marginnote">${rendered}</span>`;
   } else {
     token.content =
       `<label for="${noteId}" class="margin-toggle sidenote-number"></label>` +
-      `<input type="checkbox" id="${noteId}" class="margin-toggle" aria-label="Toggle sidenote" />` +
+      `<input type="checkbox" id="${noteId}" class="margin-toggle" aria-label="Toggle sidenote"${checkedAttr} />` +
       `<span class="sidenote">${rendered}</span>`;
   }
 
