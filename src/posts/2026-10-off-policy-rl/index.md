@@ -58,8 +58,8 @@ To keep GPUs busy, large-scale RL runs inference and training [asynchronously](h
 
 Even with fresh weights and a single gradient step, the sampler and trainer rarely compute the exact same probabilities. They are usually different programs: after the sampler generates a rollout, the trainer runs its own forward pass over those tokens to compute log-probabilities for the [policy gradient loss](/posts/2026-09-policy-gradient/#baselines-and-group-centering). Even on identical weights, the two forward passes can disagree for two reasons:
 
-- **Different precisions and codebases.** The two engines may run at different precisions, such as an fp8 or int8 sampler paired with a bf16 trainer, or a quantized KV cache.[^precision] They may also come from independent codebases, each with its own [hard-to-detect bugs](https://richardli.xyz/rl-collapse).
-- **Same kernels, different shapes.** Even with identical, correct kernels, the sampler decodes one token at a time while the trainer [scores the whole completion in one forward pass](/posts/2024-04-dpo/#the-probability-of-a-completion). Different input shapes can change the order of floating-point reductions, and floating-point addition isn't associative.[^fp4] [Batch-invariant kernels](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/) remove the dependence on shape, but they take real engineering effort and cost GPU utilization. [Running both engines in fp16](https://arxiv.org/abs/2510.26788) instead of bf16 greatly reduces the mismatch, but doesn't eliminate it.
+- **Different precisions or kernels.** The two engines may run at different precisions, such as an fp8 or int8 sampler paired with a bf16 trainer, or a quantized KV cache.[^precision] They may also come from independent codebases, each with its own [hard-to-detect bugs](https://richardli.xyz/rl-collapse).
+- **Different input shapes.** Even with identical, correct kernels, the sampler decodes one token at a time while the trainer [scores the whole completion in one forward pass](/posts/2024-04-dpo/#the-probability-of-a-completion). Different input shapes can change the order of floating-point reductions, and floating-point addition isn't associative.[^fp4] [Batch-invariant kernels](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/) remove the dependence on shape, but they take real engineering effort and cost GPU utilization. [Running both engines in fp16](https://arxiv.org/abs/2510.26788) instead of bf16 greatly reduces the mismatch, but doesn't eliminate it.
 
 [^precision]: A floating-point format can store only a fixed number of values between consecutive powers of two, and every weight and activation is rounded to the nearest one. bf16 has 128 values between 1 and 2, spaced \(1/128\) apart, while fp8's e4m3 format has only 8, spaced \(1/8\) apart. So the same weight, 1.3, is stored as 1.296875 in bf16 but 1.25 in fp8. ![A number line from 1.25 to 1.375. In bf16, the representable values are 1/128 apart, and 1.3 rounds to the nearby 1.296875. In fp8 e4m3, the only representable values in this range are 1.25 and 1.375, and 1.3 rounds to 1.25.](/assets/img/off-policy-rl-precision-rounding.png)
 
@@ -75,13 +75,13 @@ Small as they are, these differences can [build up over training](https://arxiv.
 
 All three sources of mismatch come from deliberate throughput tradeoffs. Multiple updates per batch, asynchronous rollouts, and fast inference kernels make RL practical at scale, and giving them up would make training much slower. So the practical question is how to train well on off-policy data.
 
-### Sampling from a better model
+### Sampling from a teacher
 
 In all three cases above, the sampler is meant to be a copy of the trainer, so any gap between them is error. Other times, the data comes from a different source on purpose, because it can show the trainer something it wouldn't produce on its own:
 
 - **A stronger model.** Rollouts from a larger or better model can show the trainer solutions it would rarely find on its own. [LUFFY](https://arxiv.org/abs/2504.14945), for example, mixes reasoning traces from a stronger model into on-policy RL.
-- **A teacher with extra context.** Even the same model can act as a teacher if its prompt includes the reference solution or other privileged information; the student then learns from those completions without seeing the hint. [STaR](https://arxiv.org/abs/2203.14465)'s rationalization step works this way, giving the correct answer as a hint. Instead of generating completions, the teacher can also [score the student's rollouts](https://arxiv.org/abs/2609.25623).
-- **People.** Hand-written demonstrations are the oldest kind of off-policy data, and SFT trains on them with no correction at all.
+- **The same model with extra context.** Even the model being trained can act as a teacher if its prompt includes the reference solution or other privileged information; the student then learns from those completions without seeing the hint. [STaR](https://arxiv.org/abs/2203.14465)'s rationalization step works this way, giving the correct answer as a hint. Instead of generating completions, the teacher can also [score the student's rollouts](https://arxiv.org/abs/2609.25623).
+- **Human demonstrations.** Hand-written examples are off-policy too, and SFT trains on them with no correction at all.
 
 Here the gap between sampler and trainer carries useful signal rather than error, and the question is how much of it the trainer should absorb. The gap can also be large, which weakens corrections that assume a small mismatch. The rest of this post focuses on unwanted mismatch.
 
@@ -98,7 +98,7 @@ The policy gradient is an expectation over completions from the policy being tra
 
 To see what goes wrong, look at a single token position under a constant reward.
 
-### A thought experiment: constant reward
+### A constant-reward thought experiment
 
 Suppose every completion earns the same reward, \(R = 1\), no matter what it says.[^anim-const] There is nothing to learn, and on-policy the expected update is exactly zero. At each position, the sampled token's score averages to \(\mathbb{E}_p[s_{y_t}] = 0\), so \(\mathbb{E}_p[R \, s_{y_t}] = R \cdot 0\).
 
@@ -143,7 +143,7 @@ At scale, [Modal](https://modal.com/blog/toward-rl-on-mixed-precision-mixed-acce
 
 [^persistent]: We don't yet know whether real numerical bias persists across steps. The trainer–sampler gap has been seen to [grow during training](https://arxiv.org/abs/2602.01103), but kernel errors also look like [symmetric noise](https://arxiv.org/abs/2605.14220), which would partly cancel.
 
-### Evidence: frozen vs synced samplers
+### Frozen vs. synced samplers
 
 This feedback loop makes a testable prediction. With a frozen sampler, training with \(+1/0\) rewards is ordinary SFT on the correct completions, which is stable even on text from a completely different model. With a synced sampler, the same rewards should become unstable, because the sampler is a biased copy of the trainer that keeps getting refreshed.
 
@@ -153,14 +153,13 @@ This feedback loop makes a testable prediction. With a frozen sampler, training 
 
 [^evidence-source]: {-} Redrawn from [Marek and Ryabinin (2026)](https://arxiv.org/abs/2609.20807), Figure 2. Each curve is the mean of three seeds.
 
-- **With a frozen sampler**, only \(+1/0\) is stable, since it reduces to SFT on the correct completions. The two schemes with negative rewards collapse within 20 steps for a different reason: pushing down the probability of fixed bad completions has no floor, as \(\log p\) can fall to \(-\infty\).
-- **With a synced sampler**, the ordering flips. \(+1/0\), the SFT-like setting, collapses first, \(+1/{-}1\) lasts longer, and group-centered rewards stay stable.
+With a frozen sampler, only \(+1/0\) is stable, since it reduces to SFT on the correct completions. The two schemes with negative rewards collapse within 20 steps for a different reason: pushing down the probability of fixed bad completions has no floor, as \(\log p\) can fall to \(-\infty\). With a synced sampler, the ordering flips. \(+1/0\) collapses first, \(+1/{-}1\) lasts longer, and group-centered rewards stay stable.
 
-The drift term explains the ordering with a synced sampler. Its size is set by the average reward \(\mathbb{E}[R]\), and at the same accuracy, the three schemes give very different averages:
+The drift term explains why. Its size is set by the average reward \(\mathbb{E}[R]\), and at the same accuracy, the three schemes give very different averages:
 
-- With \(+1/0\) rewards, \(\mathbb{E}[R]\) equals the accuracy, about 0.5 to 0.6 in these runs, so the drift is large from the first step. This run collapses first.
-- With \(+1/{-}1\) rewards, \(\mathbb{E}[R] = 2 \cdot \text{accuracy} - 1\). At the starting accuracy of about 45%, that's close to zero, and it reaches only about 0.4 once the model improves. The drift is smaller, and this run lasts longer before collapsing.
-- With group-centered rewards, \(\mathbb{E}[R]\) is zero at the prompt by construction, whatever the accuracy.[^token-agg] This run stays stable.
+- With \(+1/0\) rewards, \(\mathbb{E}[R]\) equals the accuracy, about 0.5 to 0.6 in these runs, so the drift is large from the first step.
+- With \(+1/{-}1\) rewards, \(\mathbb{E}[R] = 2 \cdot \text{accuracy} - 1\). At the starting accuracy of about 45%, that's close to zero, and it reaches only about 0.4 once the model improves, so the drift stays smaller.
+- With group-centered rewards, \(\mathbb{E}[R]\) is zero at the prompt by construction, whatever the accuracy.[^token-agg]
 
 [^token-agg]: This holds when every completion counts equally, as in the [original GRPO loss](https://arxiv.org/abs/2402.03300), which averages over each completion's tokens. Variants like [DAPO](https://arxiv.org/abs/2503.14476) and [Dr. GRPO](https://arxiv.org/abs/2503.20783) weight every token equally instead, so longer completions count more. The drift shared by every token then scales with a length-weighted average advantage, \(\sum_i A_i L_i / \sum_i L_i\) for completions of length \(L_i\), which is zero only if right and wrong completions are equally long.
 
@@ -252,13 +251,13 @@ Compared with the exact sequence ratio, this keeps one factor of the product and
 
 So the drift term vanishes at every prefix, and only the signal is left.
 
-**The prefix and continuation in that term are not corrected.** Both still come from the sampler, which decides what prefixes the token is trained on (like "340 +") and how the completion finishes from there to earn its reward. Correcting for those would require multiplying in the ratios of every other token, which is the product that explodes. So token-level importance sampling is an approximation. It works well when the sampler and trainer are close, since they then reach similar prefixes and finish them in similar ways.
+**The prefix and continuation are not corrected.** Both still come from the sampler, which decides what prefixes the token is trained on (like "340 +") and how the completion finishes from there to earn its reward. Correcting for those would require multiplying in the ratios of every other token, which is the product that explodes. So token-level importance sampling is an approximation. It works well when the sampler and trainer are close, since they then reach similar prefixes and finish them in similar ways.
 
 Token ratios are much better behaved than their product, but they are still unbounded. The largest ones come from tokens that the trainer finds much more likely than the sampler did. A token with \(q = 0.001\) and \(p = 0.01\) gets a weight of 10. Any one such token is rare, but a batch has millions of tokens, so some appear in every batch. A handful of heavily weighted tokens can then dominate the gradient. The weight never divides by zero, since the sampler produced each token and so gave it \(q > 0\), but it has no ceiling.
 
 A gradient dominated by a few tokens causes three problems. It points wherever their scores point, so it swings from batch to batch depending on which rare tokens happened to be drawn. The two engines also disagree most on those tokens, often because of numerical error, so the gradient leans hardest on its least reliable parts. And a single huge weight inflates the gradient's norm. If gradients are clipped by norm, as they usually are, the whole update shrinks, and every other token's contribution with it.
 
-### Bounding the ratio: TIS, MIS, and PPO
+### Capping, masking, and clipping the ratio
 
 So practical methods bound the ratio. They differ in what they do with a token whose ratio falls outside the bounds:
 
@@ -332,11 +331,7 @@ L = -R \, \Big( \underbrace{\log p_{y_t}}_{\text{sampled token}} - \underbrace{\
 
 The first term alone gives plain REINFORCE, whose negative gradient is \(R \, s_{y_t}\). The second term's gradient is \(\bar{s} = \sum_v q_v \nabla_\theta \log p_v\), so the full loss has negative gradient \(R \, \tilde{s}_{y_t}\). The average runs over the whole vocabulary, which [takes some care to compute](#computing-the-expected-score).
 
-A few properties follow directly from the centered score:
-
-- **The correction depends only on the prefix.** Each position gets its own \(\bar{s}\), computed from the sampler's next-token distribution there. But at a given position it doesn't depend on which token was sampled.
-- **It does nothing on-policy.** When \(q = p\), \(\bar{s} = 0\).[^baselines]
-- **It has no thresholds to tune.** Unlike TIS, MIS, or PPO, there are no bounds or bands to choose.
+Notice that the subtracted term \(\bar{s}\) depends only on the prefix, not on which token was actually sampled there. On-policy, when \(q = p\), \(\bar{s}\) is already zero, so the correction vanishes.[^baselines] And unlike TIS, MIS, or PPO, it has no clipping bounds or thresholds to tune.
 
 [^baselines]: Reward baselines and score-function [control variates](https://jmlr.org/papers/v21/19-346.html) also subtract something with zero mean from the policy gradient, relying on the same identity \(\mathbb{E}_p[s] = 0\). But those reduce variance, changing the variance of an on-policy update and leaving its mean alone. Score centering corrects bias, changing the mean of an off-policy update.
 
@@ -473,9 +468,9 @@ The sampler-gradient reading assumed a fixed bias. In general, the centered scor
 
 The two extra terms cancel whenever the offset's gradient is the same for every token, and in particular whenever the offset doesn't move with the weights at all. Exactness depends on how the offset changes with the weights rather than on its size, and the three common kinds of mismatch fall into different cases:
 
-- **Sampling masks are exact.** Top-\(k\), top-\(p\), and grammar constraints set the logits of disallowed tokens to \(-\infty\) and leave the rest alone. A small change to the weights doesn't change which tokens are allowed, so the offset stays fixed and centering is exact. If the mask is the only difference between the engines, score centering gives the same update as [applying the sampler's mask in the trainer](#reweighting-the-samples), because the masked trainer's distribution is already \(q\).
-- **Quantization is approximate.** A quantized sampler rounds the weights, so the offset is the rounding error in the logits, and it changes whenever the weights do. The quantized sampler's exact gradient wouldn't help anyway, since rounding is flat almost everywhere. Score centering treats the offset as fixed, the straight-through approximation from above, so here it approximates the sampler's gradient rather than matching it.
-- **Staleness isn't covered.** A stale sampler runs older weights, so its offset, \(\delta = z(\theta_{\text{old}}) - z(\theta)\), moves exactly opposite to the trainer's logits and cancels any change to the current weights. The stale sampler doesn't respond to the current weights at all, so it has no gradient for centering to match, and the sampler-gradient reading doesn't apply.
+- **Sampling masks (exact).** Top-\(k\), top-\(p\), and grammar constraints set the logits of disallowed tokens to \(-\infty\) and leave the rest alone. A small change to the weights doesn't change which tokens are allowed, so the offset stays fixed and centering is exact. If the mask is the only difference between the engines, score centering gives the same update as [applying the sampler's mask in the trainer](#reweighting-the-samples), because the masked trainer's distribution is already \(q\).
+- **Quantization (straight-through approximation).** A quantized sampler rounds the weights, so the offset is the rounding error in the logits, and it changes whenever the weights do. The quantized sampler's exact gradient wouldn't help anyway, since rounding is flat almost everywhere. Score centering treats the offset as fixed, the straight-through approximation from above, so here it approximates the sampler's gradient rather than matching it.
+- **Staleness (does not apply).** A stale sampler runs older weights, so its offset, \(\delta = z(\theta_{\text{old}}) - z(\theta)\), moves exactly opposite to the trainer's logits and cancels any change to the current weights. The stale sampler doesn't respond to the current weights at all, so it has no gradient for centering to match, and the sampler-gradient reading doesn't apply.
 
 ### Computing the expected score
 
@@ -542,7 +537,7 @@ def score_centering_loss(train_logp, samp_topk_logp, topk_ids, sampled_ids, adva
 
 Without the `centering` term, this is the ordinary policy gradient loss. The [reference implementation](https://github.com/martin-marek/score-centering), in JAX and PyTorch, also supports composing with TIS and MIS.
 
-### When it helps
+### Quantized vs. stale samplers
 
 The previous sections make two predictions. If the mismatch acts like a fixed bias, as a quantized sampler's might, most of the damage is drift, so removing it should be enough. If the sampler is stale, centering still leaves a gap between \(\mathrm{Cov}_q\) and \(\mathrm{Cov}_p\), so it may need [importance weights alongside it](#centered-importance-sampling). Two sets of experiments bear out both. [Marek and Ryabinin](https://arxiv.org/abs/2609.20807) test each kind of mismatch on its own and make it severe on purpose, so that the methods separate within a few hundred steps. [Modal](https://modal.com/blog/toward-rl-on-mixed-precision-mixed-accelerator-samplers) trains a larger model on a realistic mix of both.
 
@@ -558,20 +553,20 @@ In Marek and Ryabinin's experiments:
 
 [^quant-throughput]: {-} Quantizing the sampler is attractive in the first place because generating rollouts is usually the most expensive part of RL for LLMs. Lower-precision weights and KV cache make each decoding step faster and let the same GPUs hold more rollouts at once.
 
-Modal's run points the same way. They trained [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) on agentic coding, fully asynchronously, with samplers on six kinds of accelerators at NVFP4, FP8, and BF16, so the mismatch mixed numerical error with staleness. Score centering alone and [MIS](#bounding-the-ratio%3A-tis%2C-mis%2C-and-ppo) alone each delayed the collapse but didn't prevent it, and score centering's run collapsed after its sampler–trainer KL had grown about threefold. Only the two combined trained stably to the end, centering the masked weights the way [the next section](#centered-importance-sampling) centers capped ones.
+Modal's run points the same way. They trained [Qwen3.6-35B-A3B](https://huggingface.co/Qwen/Qwen3.6-35B-A3B) on agentic coding, fully asynchronously, with samplers on six kinds of accelerators at NVFP4, FP8, and BF16, so the mismatch mixed numerical error with staleness. Score centering alone and [MIS](#capping%2C-masking%2C-and-clipping-the-ratio) alone each delayed the collapse but didn't prevent it, and score centering's run collapsed after its sampler–trainer KL had grown about threefold. Only the two combined trained stably to the end, centering the masked weights the way [the next section](#centered-importance-sampling) centers capped ones.
 
 It isn't settled why score centering alone oscillates with a stale sampler, but its [logit gradient](#at-the-logits) suggests a mechanism.[^anim-stale-sc] Centering's push on each logit is set entirely by the sampler, and a stale sampler doesn't know the trainer has moved. At "340 +", if only 68 leads to a correct answer, a trainer that has already reached \(p_{68} = 0.95\) would get an on-policy push of \(p_{68}(1 - p_{68}) \approx 0.05\) on its logit. A sampler still at \(q_{68} = 0.80\) makes centering push by \(q_{68}(1 - q_{68}) = 0.16\), more than three times as hard. Between syncs, the trainer takes 64 steps computed for where it used to be, which acts much like one step 64 times as large. A step that large may overshoot the optimum, and the next sync may swing the trainer back past it, though as far as we know that hasn't been tested.
 
 [^anim-stale-sc]: {-+} ![The cartoon with a stale sampler that has no bias, synced from the trainer every six steps, and score centering alone. Between syncs, every step's signal is measured at the stale sampler, so the trainer keeps moving in the same direction. It overshoots the star, and after the next sync it is pushed back past it the other way. It bounces across the star for the rest of training, and both reward lines rise and then oscillate.](/assets/img/off-policy-rl-drift-anim-stale-sc.gif) A stale sampler with score centering alone: the trainer overshoots the peak and bounces across it.
 
-Centering also removes vanilla policy gradient's accidental KL term, which pulls the trainer toward the sampler on prefixes with positive expected reward and pushes it away on prefixes with negative expected reward. With a biased sampler, that pull is toward the bias. With a stale sampler, it is toward the trainer's own recent weights, acting like PPO's KL trust region. StableReinforce keeps centering but puts a small pull back on purpose, a [KL term toward the sampler](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) with a fixed weight of 0.01, in place of vanilla's \(V_q\). When the sampler is a [stronger model or a teacher](#sampling-from-a-better-model), that pull is how the trainer imitates it, so centering removes the imitation along with the drift and learns only from the rewards.
+Centering also removes vanilla policy gradient's accidental KL term, which pulls the trainer toward the sampler on prefixes with positive expected reward and pushes it away on prefixes with negative expected reward. With a biased sampler, that pull is toward the bias. With a stale sampler, it is toward the trainer's own recent weights, acting like PPO's KL trust region. StableReinforce keeps centering but puts a small pull back on purpose, a [KL term toward the sampler](https://tinker-docs.thinkingmachines.ai/tinker/losses/stable-reinforce/) with a fixed weight of 0.01, in place of vanilla's \(V_q\). When the sampler is a [stronger model or a teacher](#sampling-from-a-teacher), that pull is how the trainer imitates it, so centering removes the imitation along with the drift and learns only from the rewards.
 
 ## Centered importance sampling
 
 Score centering and importance sampling fix different parts of the update, so they can be used together. Recall the split into [drift and signal](#drift-and-signal):
 
-- **Importance weights change the signal.** They change how much each draw counts. With exact weights, the next token is weighted by the trainer's probabilities instead of the sampler's, although the prefix and the rest of the completion still come from the sampler. Bounding the weights spoils this slightly, and also lets some drift back in.
-- **Centering changes only the drift.** It subtracts one fixed vector per prefix, the same for every draw. That makes the weighted score average to zero at every prefix, and leaves the signal untouched, since subtracting a constant doesn't change a covariance.
+- **Bounded importance weights reweight the signal, but leave some drift.** Exact weights reweight the next token by the trainer's probabilities instead of the sampler's, although the prefix and the rest of the completion still come from the sampler. Bounding the weights spoils this slightly, and also lets some drift back in.
+- **Centering removes the leftover drift without touching the signal.** It subtracts one fixed vector per prefix, the same for every draw. That makes the weighted score average to zero at every prefix, and leaves the signal untouched, since subtracting a constant doesn't change a covariance.
 
 So stacking them keeps the importance-weighted signal and gets centering's zero drift.[^anim-sctis]
 
@@ -601,7 +596,7 @@ The same holds for whole rollouts. With exact, unclipped [sequence-level importa
 
 ### Fixing a stale sampler
 
-In the [stale-sampler experiment](#when-it-helps), centering alone oscillated, while combining it with TIS did best.[^anim-stale-sctis] Centering alone pushes each logit by \(R \, (\mathbf{1}_{y_t} - q)\), which is set entirely by the stale sampler. Importance weights put the trainer's probabilities back into the update. For tokens whose ratio stays below the cap, the weight \(p_a / q_a\) undoes how often the sampler picks them, turning centering's expected logit gradient \(\sum_a q_a \, Q_q(a) \, (\mathbf{1}_a - q)\) into the on-policy form \(\sum_a p_a \, Q_q(a) \, (\mathbf{1}_a - p)\). It isn't the full on-policy gradient, since the rest of each completion still comes from the stale sampler. But like the on-policy push, it fades as the trainer learns a token, even while the sampler stays where it was at the last sync. That may be why the combination is stable where centering alone is not.
+In the [stale-sampler experiment](#quantized-vs.-stale-samplers), centering alone oscillated, while combining it with TIS did best.[^anim-stale-sctis] Centering alone pushes each logit by \(R \, (\mathbf{1}_{y_t} - q)\), which is set entirely by the stale sampler. Importance weights put the trainer's probabilities back into the update. For tokens whose ratio stays below the cap, the weight \(p_a / q_a\) undoes how often the sampler picks them, turning centering's expected logit gradient \(\sum_a q_a \, Q_q(a) \, (\mathbf{1}_a - q)\) into the on-policy form \(\sum_a p_a \, Q_q(a) \, (\mathbf{1}_a - p)\). It isn't the full on-policy gradient, since the rest of each completion still comes from the stale sampler. But like the on-policy push, it fades as the trainer learns a token, even while the sampler stays where it was at the last sync. That may be why the combination is stable where centering alone is not.
 
 [^anim-stale-sctis]: {-+} ![The same stale sampler with centered truncated importance sampling. The capped weights move where the signal is measured partway back toward the trainer, so the push shrinks as the trainer nears the star. The trainer settles at the star, and both reward lines rise to about 1 and stay there.](/assets/img/off-policy-rl-drift-anim-stale-sctis.gif) With importance weights, the push depends on where the trainer is again, so it slows down near the peak and settles.
 
