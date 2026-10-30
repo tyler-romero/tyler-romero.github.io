@@ -7,6 +7,8 @@ tags: ["post", "llm", "gpt-2", "speedrun", "nanogpt", "worklog", "muon"]
 math: true
 code: true
 featured_image: /assets/img/golden-gardens-social.jpg
+margin_image: /assets/img/2p3_loss_plot.png
+margin_image_alt: "NanoGPT speedrun loss plot"
 ---
 
 I saw [some](https://x.com/kellerjordan0/status/1859331370268623321) [really](https://x.com/kellerjordan0/status/1842300916864844014) [awesome](https://x.com/kellerjordan0/status/1876048851158880624) [GPT-2](https://x.com/hi_tysam/status/1879687807678959729) speedrun results from people like [Keller Jordan](https://x.com/kellerjordan0), [Fern](https://x.com/hi_tysam), [Braden Koszarsky](https://x.com/KoszarskyB), and others. I got a little inspired and decided to see how fast I could train GPT-2 on my own hardware.

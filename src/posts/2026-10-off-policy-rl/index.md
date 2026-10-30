@@ -6,6 +6,8 @@ blurb: "Why mismatches between the sampler and trainer break the policy gradient
 tags: ["post", "reinforcement-learning", "rl", "policy-gradient", "off-policy", "importance-sampling", "ppo", "grpo", "rlvr", "training-inference-mismatch", "score-centering"]
 math: true
 code: true
+margin_image: /assets/img/off-policy-rl-loop.png
+margin_image_alt: "Off-policy RL training loop: a sampler generates rollouts while a trainer updates on minibatches"
 ---
 
 [Part 1](/posts/2026-09-policy-gradient/) derived the policy gradient for language models.[^anim-on] It ended by describing the [on-policy assumption](/posts/2026-09-policy-gradient/#the-on-policy-assumption), which says that the model generating the completions is the exact one we differentiate during training. That assumption rarely holds in practice. This post covers what happens when training goes off-policy and the two main ways to correct for it, importance sampling and [score centering](https://arxiv.org/abs/2609.20807).

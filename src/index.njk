@@ -19,6 +19,15 @@ tags: ["ML", "Research", "Blog", "LLMs"]
     <p>
         Before that, I led ML at <a href="https://www.groundlight.ai/">Groundlight</a> and built large-scale recommender systems at Twitter, some of which is <a href="https://github.com/twitter/the-algorithm-ml/tree/main/projects/home/recap">now open source</a>. I studied CS and ML at Stanford and computer engineering at Texas A&#x26;M.
     </p>
+    <p class="colophon-links">
+        <a href="https://scholar.google.com/citations?user=Hmrl0FAAAAAJ" data-goatcounter-click="social-scholar">Google Scholar</a>
+        <span class="colophon-sep">/</span>
+        <a href="https://github.com/tyler-romero" data-goatcounter-click="social-github">GitHub</a>
+        <span class="colophon-sep">/</span>
+        <a href="https://x.com/tyleraromero" data-goatcounter-click="social-x">Twitter</a>
+        <span class="colophon-sep">/</span>
+        <a href="mailto:tyler.alexander.romero+site@gmail.com" data-goatcounter-click="social-email">Email</a>
+    </p>
 </section>
 <hr class="section-divider" />
 <section>
@@ -29,10 +38,11 @@ tags: ["ML", "Research", "Blog", "LLMs"]
                 <span class="post-date">{{ p.data.date | postDate }}</span>
                 <div class="post-info">
                     <a href="{{ p.url }}">{{ p.data.title }}</a>
-                    {% if p.url == "/posts/nanogpt-speedrun-worklog/" %}
-                        <label for="sn-nanogpt-loss" class="margin-toggle sidenote-number"></label>
-                        <input type="checkbox" id="sn-nanogpt-loss" class="margin-toggle" aria-label="NanoGPT loss plot" checked />
-                        <span class="sidenote marginnote-wide"><img src="/assets/img/2p3_loss_plot.png" alt="NanoGPT speedrun loss plot" sizes="(max-width: 760px) 88vw, (max-width: 1600px) 25vw, 360px" /></span>
+                    {% if p.data.margin_image %}
+                        {% set mn_id = "mn-" ~ p.fileSlug %}
+                        <label for="{{ mn_id }}" class="margin-toggle">&#8853;</label>
+                        <input type="checkbox" id="{{ mn_id }}" class="margin-toggle" aria-label="{{ p.data.margin_image_alt }}" />
+                        <span class="marginnote marginnote-wide marginnote-detail"><img src="{{ p.data.margin_image }}" alt="{{ p.data.margin_image_alt }}" sizes="(max-width: 409px) 88vw, (max-width: 760px) 360px, (max-width: 1600px) 25vw, 360px" /></span>
                     {% endif %}
                     <p class="item-description">
                         <small>{{ p.data.blurb }}</small>
@@ -51,9 +61,9 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://microsoft.ai/pdf/Frontier-Pre-training-at-Microsoft-AI.pdf?v=2" data-goatcounter-click="paper-mai-frontier-pretraining" data-goatcounter-title="Frontier Pre-training at Microsoft AI"><strong>Frontier Pre-training at Microsoft AI</strong></a>
                 <label for="mn-mai-base-2-ladder" class="margin-toggle">&#8853;</label>
-                <input type="checkbox" id="mn-mai-base-2-ladder" class="margin-toggle" aria-label="MAI-Base-2 scaling ladder forecast" checked />
+                <input type="checkbox" id="mn-mai-base-2-ladder" class="margin-toggle" aria-label="MAI-Base-2 scaling ladder forecast" />
                 <span class="marginnote marginnote-wide marginnote-detail"><iframe class="margin-widget" src="/assets/widgets/mai-base-2-scaling-ladder.html" title="MAI-Base-2 scaling ladder: a fit to ladder runs L18 through L42 extrapolates to a predicted final loss that matches the actual MAI-Base-2 result" scrolling="no"></iframe></span>
-                <small>— The Microsoft AI Team.<br/><em>Microsoft AI technical report</em>.</small>
+                <small class="pub-meta">— The Microsoft AI Team.<br/><em>Microsoft AI technical report</em>.</small>
                 <p class="item-description">
                     <small>We describe pre-training MAI-Base-2, an MoE foundation model with 80B active and 2.8T total parameters, trained on 16k GB200 GPUs. MAI-Base-2 achieves lower held-out bits-per-byte than every open-weight model we tested and is 4–12× more pre-training FLOPs-efficient than DeepSeek-V4-Pro-Base (depending on eval domain). Key ingredients include scaling ladders with source scaling for repeated data, which accurately forecast the final model's performance, along with model-infrastructure co-design and expanded data pipelines.</small>
                 </p>
@@ -64,9 +74,9 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://allenai.org/papers/olmocore3" data-goatcounter-click="paper-olmocore3" data-goatcounter-title="Supercharging Olmo-core for Efficient and Scalable MoE Training"><strong>Supercharging Olmo-core for Efficient and Scalable MoE Training</strong></a>
                 <label for="mn-olmocore3-moe-block" class="margin-toggle">&#8853;</label>
-                <input type="checkbox" id="mn-olmocore3-moe-block" class="margin-toggle" aria-label="Olmo-core MoE block diagram" checked />
+                <input type="checkbox" id="mn-olmocore3-moe-block" class="margin-toggle" aria-label="Olmo-core MoE block diagram" />
                 <span class="marginnote marginnote-wide marginnote-detail marginnote-fit"><img src="/assets/img/olmocore3-moe-block.png" alt="MoE transformer block: a router dispatches each token to 2 of 4 routed experts plus an always-active shared expert, whose outputs are combined" sizes="(max-width: 409px) 88vw, (max-width: 760px) 360px, (max-width: 1600px) 25vw, 360px" /></span>
-                <small>— Tianhua Tao*, Akshita Bhagia, Dirk Groeneveld, Pete Walsh, Tyler Romero, Yashas Samaga, Jacob Morrison, Iz Beltagy, Taira Anderson, Noah A. Smith, Hannaneh Hajishirzi.<br/><em>Allen Institute for AI technical report</em>.</small>
+                <small class="pub-meta">— <span class="pub-authors">Tianhua Tao*, Akshita Bhagia, Dirk Groeneveld, Pete Walsh, <strong class="pub-author-self">Tyler Romero</strong>, Yashas Samaga, Jacob Morrison, Iz Beltagy, Taira Anderson, Noah A. Smith, Hannaneh Hajishirzi.</span><br/><em>Allen Institute for AI technical report</em>.</small>
                 <p class="item-description">
                     <small>MoE training costs scale with total parameter capacity, not just active compute, so infrastructure built for dense models loses throughput as experts are added. We redesign the Olmo-core training stack around DDP with expert and pipeline parallelism, adding NVSHMEM-based rowwise expert parallelism, synchronization-free routing with device-scheduled grouped GEMMs, and integrated MXFP8. On B300 nodes, the stack trains models from 12.9B to 1.2T total parameters on up to 512 GPUs, reaching 858 TFLOP/s/GPU at 1.2T. We also identify <em>Token Gerrymandering</em>, where the MoE router learns to hack the load-balancing loss.</small>
                 </p>
@@ -77,9 +87,9 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://microsoft.ai/wp-content/uploads/2026/06/main_20260602_2.pdf" data-goatcounter-click="paper-mai-thinking-1" data-goatcounter-title="MAI-Thinking-1"><strong>MAI-Thinking-1</strong></a>
                 <label for="mn-mai-thinking-1" class="margin-toggle">&#8853;</label>
-                <input type="checkbox" id="mn-mai-thinking-1" class="margin-toggle" aria-label="MAI-Thinking-1 illustration" checked />
+                <input type="checkbox" id="mn-mai-thinking-1" class="margin-toggle" aria-label="MAI-Thinking-1 illustration" />
                 <span class="marginnote marginnote-wide marginnote-compact"><img src="/assets/img/mai-thinking-1.png" alt="Watercolor circles arranged as a thought bubble for MAI-Thinking-1" sizes="(max-width: 760px) 180px, 252px" /></span>
-                <small>— The Microsoft AI Team.<br/><em>Microsoft AI technical report</em>.</small>
+                <small class="pub-meta">— The Microsoft AI Team.<br/><em>Microsoft AI technical report</em>.</small>
                 <p class="item-description">
                     <small>MAI-Thinking-1 is a 35B active / 1T total parameter MoE reasoning model trained from scratch (without distillation from third-party models). We present a scaling-focused pre-training framework paired with a robust RL recipe and infrastructure that sustains long, log-linear improvement. It is competitive with frontier models of similar size on STEM reasoning and coding.</small>
                 </p>
@@ -90,9 +100,9 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://openreview.net/forum?id=LGhKvHMtVK" data-goatcounter-click="paper-olmo-hybrid" data-goatcounter-title="Olmo Hybrid"><strong>Olmo Hybrid</strong></a>
                         <label for="mn-olmo-hybrid-fig3" class="margin-toggle">&#8853;</label>
-                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" aria-label="Olmo Hybrid expressivity diagram" checked />
+                        <input type="checkbox" id="mn-olmo-hybrid-fig3" class="margin-toggle" aria-label="Olmo Hybrid expressivity diagram" />
                         <span class="marginnote marginnote-wide marginnote-detail"><img src="/assets/img/olmo-hybrid-fig3.png" alt="Olmo Hybrid expressivity Venn diagram" sizes="(max-width: 409px) 88vw, (max-width: 760px) 360px, (max-width: 1600px) 25vw, 360px" /></span>
-                <small>— William Merrill*, Yanhong Li*, Tyler Romero*, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.<br/><em>Conference on Language Modeling (COLM) 2026</em>.</small>
+                <small class="pub-meta">— <span class="pub-authors">William Merrill*, Yanhong Li*, <strong class="pub-author-self">Tyler Romero*</strong>, Anej Svete*, Caia Costello*, Pradeep Dasigi, Dirk Groeneveld, David Heineman, Bailey Kuehl, Nathan Lambert, Chuan Li, Kyle Lo, Saumya Malik, DJ Matusz, Benjamin Minixhofer, Jacob Morrison, Luca Soldaini, Finbarr Timbers, Pete Walsh, Noah A. Smith, Hannaneh Hajishirzi, Ashish Sabharwal*.</span><br/><em>Conference on Language Modeling (COLM) 2026</em>.</small>
                 <p class="item-description">
                     <small>We provide evidence that hybrid models, which mix attention and linear RNN layers, improve on pure transformers on several fronts. Theoretically, hybrids can express tasks beyond both transformers and linear RNNs individually; empirically, they scale more efficiently. We train Olmo Hybrid, a 7B model that replaces sliding-window layers with Gated DeltaNet layers, and show it outperforms Olmo 3 on standard pretraining and long-context evaluations.</small>
                 </p>
@@ -103,9 +113,9 @@ tags: ["ML", "Research", "Blog", "LLMs"]
             <div class="post-info">
                 <a href="https://arxiv.org/abs/2512.13961" data-goatcounter-click="paper-olmo3" data-goatcounter-title="Olmo 3"><strong>Olmo 3</strong></a>
                         <label for="mn-olmo3-loss" class="margin-toggle">&#8853;</label>
-                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" aria-label="Olmo 3 training loss curve" checked />
+                        <input type="checkbox" id="mn-olmo3-loss" class="margin-toggle" aria-label="Olmo 3 training loss curve" />
                         <span class="marginnote marginnote-wide marginnote-detail"><img src="/assets/img/olmo3-32b-loss-curve.png" alt="Olmo 3 32B training loss curve" sizes="(max-width: 409px) 88vw, (max-width: 760px) 360px, (max-width: 1600px) 25vw, 360px" /></span>
-                <small>— Team Olmo (incl. Tyler Romero, core contributor).<br/><em>arXiv preprint arXiv:2512.13961</em>.</small>
+                <small class="pub-meta">— Team Olmo (incl. <strong class="pub-author-self">Tyler Romero</strong>, core contributor).<br/><em>arXiv preprint arXiv:2512.13961</em>.</small>
                 <p class="item-description">
                     <small>We introduce Olmo 3, a family of state-of-the-art, fully-open language models at the 7B and 32B parameter scales.
                         Olmo 3 model construction targets long-context reasoning, function calling, coding, instruction following, general chat, and knowledge recall. This release includes the entire model flow, i.e., the full lifecycle of the family of models, including every stage, checkpoint, data point, and dependency used to build it. Our flagship model,

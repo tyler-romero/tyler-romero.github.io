@@ -785,7 +785,7 @@ nav a:visited {
   display: inline-block;
   margin-top: 0;
   margin-bottom: 0;
-  padding-right: 2rem;
+  padding-right: clamp(1rem, 1.8vw, 2rem);
   vertical-align: baseline;
   font-weight: 400;
 }
@@ -795,6 +795,10 @@ nav a:visited {
 .nav-brand:visited {
   color: var(--brand-color);
   margin-right: 3%;
+}
+
+.desktop-only a:last-child {
+  padding-right: 0;
 }
 
 .item-description {
@@ -1029,6 +1033,24 @@ hr.section-divider {
 .post-info {
   flex: 1;
   min-width: 0;
+}
+
+.post-info:has(.pub-meta) {
+  line-height: 1.5;
+}
+
+.pub-meta {
+  font-size: max(11.2px, 0.98rem);
+  line-height: 1.38;
+  color: var(--muted-text-color);
+}
+
+.pub-author-self {
+  color: var(--text-color);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(148, 102, 85, 0.55);
+  text-underline-offset: 2px;
 }
 
 .post-info .item-description {
