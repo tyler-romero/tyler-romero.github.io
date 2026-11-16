@@ -40,9 +40,17 @@ function wrapInSections(html) {
     .join("");
 }
 
+function renderFigcaptions(html) {
+  return html.replace(
+    /<figcaption(\b[^>]*)>([\s\S]*?)<\/figcaption>/gi,
+    (_match, attrs, inner) =>
+      `<figcaption${attrs}>${md.renderInline(inner.trim())}</figcaption>`,
+  );
+}
+
 export const tufteMdWrapper = {
   render: function (text, wrap = true) {
-    let html = md.render(text);
+    let html = renderFigcaptions(md.render(text));
     html = wrapInSections(html);
     if (wrap && !html.includes("<section>")) {
       html = `<section>\n${html}</section>\n`;
