@@ -18,14 +18,14 @@ Technically, [the NanoGPT speedrun](https://x.com/kellerjordan0/status/179886355
 I had access to **2× RTX 4090 GPUs**, so I followed the same rules on my own hardware. Over six iterations, I reduced the training time from **8.13 hours to 2.55 hours**. This worklog records the changes that produced that result; the code and run logs are available in [the project repository](https://github.com/tyler-romero/nanogpt-speedrun).
 
 ## Results
-| #                                                      | Description              | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
-| :----------------------------------------------------- | :----------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| [1](#1-initial-setup-and-baseline)                     | Initial baseline         | 8.13 hours  | 6.44B           | 221k          | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
-| [2.1](#21-architectural-changes-and-training-tweaks)   | Architectural changes    | 7.51 hours  | 5.07B           | 188k          | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
-| [2.2](#22-muon-optimizer)                              | Muon optimizer           | 4.53 hours  | 3.04B           | 187k          | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
-| [2.3](#23-dataloading-tweaks)                          | Dataloading tweaks       | 4.26 hours  | 3.31B           | 216k          | 2025/02/18 | [d59944d](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/08047f73-cb01-4f47-a901-de901b2a6b6e.txt) |
-| [2.4](#24-logit-soft-capping)                          | Logit Soft-capping at 30 | 4.01 hours  | 3.15B           | 218k          | 2025/02/23 | [12eab44](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/2dbf7fa6-561c-49bc-8aae-665fefdd9a44.txt) |
-| [3](#3-longer-training-and-evaluation-sequence-length) | Longer Sequence Length   | 2.55 hours  | 1.88B           | 205k          | 2025/03/03 | [d982ed5](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/cf1ef5f9-9f79-4798-9360-2b174d8eb25f.txt) |
+| #                                                        | Description              | Record time | Training Tokens | Tokens/Second | Date       | Commit                                                                                                      | Log                                                                                                              |
+| :------------------------------------------------------- | :----------------------- | :---------- | :-------------- | :------------ | :--------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| [1](#1.-initial-setup-and-baseline)                      | Initial baseline         | 8.13 hours  | 6.44B           | 221k          | 2025/01/16 | [b3c32f8](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt) |
+| [2.1](#2.1-architectural-changes-and-training-tweaks)    | Architectural changes    | 7.51 hours  | 5.07B           | 188k          | 2025/01/18 | [b7bb93f](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/14fcdb07-443d-4d1c-b307-061bc4bd2cd6.txt) |
+| [2.2](#2.2-muon-optimizer)                               | Muon optimizer           | 4.53 hours  | 3.04B           | 187k          | 2025/01/23 | [b91c2c0](https://github.com/tyler-romero/nanogpt-speedrun/commit/b91c2c00673b125944abde277dd5ef3dc141284d) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/59951c17-fbe5-4577-a1bc-6dc0c1802d2e.txt) |
+| [2.3](#2.3-dataloading-tweaks)                           | Dataloading tweaks       | 4.26 hours  | 3.31B           | 216k          | 2025/02/18 | [d59944d](https://github.com/tyler-romero/nanogpt-speedrun/commit/d59944dbe8535fea8ea107d9a6fb133de5346de5) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/08047f73-cb01-4f47-a901-de901b2a6b6e.txt) |
+| [2.4](#2.4-logit-soft-capping)                           | Logit Soft-capping at 30 | 4.01 hours  | 3.15B           | 218k          | 2025/02/23 | [12eab44](https://github.com/tyler-romero/nanogpt-speedrun/commit/12eab44ca1bce8783a3b4d43bfef357eff1a652e) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/2dbf7fa6-561c-49bc-8aae-665fefdd9a44.txt) |
+| [3](#3.-longer-training-and-evaluation-sequence-length)  | Longer Sequence Length   | 2.55 hours  | 1.88B           | 205k          | 2025/03/03 | [d982ed5](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) | [here](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/cf1ef5f9-9f79-4798-9360-2b174d8eb25f.txt) |
 
 ## 1. Initial setup and baseline
 
@@ -33,7 +33,7 @@ Part of the goal of this project was to learn as I went, so I started at the beg
 
 I upstreamed some QOL improvements and basic tweaks to the training script from Keller's fork, but did not change any of the core training or modeling logic. Specifically:
 1. Implemented gradient accumulation so that my 2x24GB GPUs simulate the training experience of an 8xH100 machine.
-2. Increased learning rate to 0.0015 and halved the batch size (total batch size is 262144 - that is bs of `32/device * 2 devices * 1024 sequence length * 4 gradient accum steps`).
+2. Increased learning rate to 0.0015 and halved the batch size (total batch size is 262144—that is, bs of `32/device * 2 devices * 1024 sequence length * 4 gradient accum steps`).
 3. Improved learning rate schedule (linear warmup then linear decay).
 4. Removed all affine scale/bias parameters and switched to RMSNorm.
 5. Padded the vocab size from 50257 to 50304 to make it a multiple of 128 (for better tensor core utilization).
@@ -41,7 +41,7 @@ I upstreamed some QOL improvements and basic tweaks to the training script from 
 
 Additionally, I added `wandb` logging to make it easier to track the training runs.
 
-Commit with the initial setup is here: [`b3c32f8`](https://github.com/tyler-romero/nanogpt-speedrun/blob/main/logs/4c627c0d-029c-4f8a-bd18-40f99b43b22e.txt).
+Commit with the initial setup is here: [`b3c32f8`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b3c32f8937c1f4655c5eb9607970e03e351a6c08).
 
 The baseline run time on my 2× RTX 4090 setup was **8.13 hours**.
 
@@ -54,8 +54,8 @@ Waiting 8 hours for a result was too slow for effective experimentation, so I be
 4. Logit Softcapping
 
 ### 2.1 Architectural changes and training tweaks
-There are some basic architectural changes and modernizations that can be made to the model that will speed up training. These changes are general improvements to the transformer decoder architecture that have been generally adopted since the original GPT-2 paper. The changes are:
-1. [RoPE (Rotary Positional Embeddings)](https://arxiv.org/abs/2104.09864). There are [many](https://www.jitx.io/posts/rope-embeddings) [good](https://blog.eleuther.ai/rotary-embeddings/) explanations of RoPE out there so I won't go into detail here.
+There are some basic architectural changes and modernizations we can make to the model to speed up training. These changes are general improvements to the transformer decoder architecture that have been widely adopted since the original GPT-2 paper. The changes are:
+1. [RoPE (Rotary Positional Embeddings)](https://arxiv.org/abs/2104.09864). There are [many](https://web.archive.org/web/20240626212131/https://www.jitx.io/posts/rope-embeddings) [good](https://blog.eleuther.ai/rotary-embeddings/) explanations of RoPE out there so I won't go into detail here.
 2. [ReLU^2 activation](https://arxiv.org/pdf/2109.08668)[^relu2]. Many activations that are better than GELU have been proposed since GPT-2. ReLU^2 is a simple one that has been shown to be effective in decreasing training time required to reach a certain validation loss.
 3. No gradient clipping. Gradient clipping can help stabilize training, but it also slows down training. Since this was a speedrun, I removed it. This also eliminated a hyperparameter that needed to be tuned.
 4. [Trapezoidal learning rate schedule](https://arxiv.org/abs/2405.18392). While cosine learning rate schedules are the de-facto standard, they can be difficult to work with since changing the number of training steps changes the entire schedule. Trapezoidal learning rate schedules are often easier to reason about / tune around, and they have been shown to match the performance of cosine schedules.
@@ -66,7 +66,7 @@ In addition, I tuned the learning rate and batch size.
 
 Once again, many of these changes were [downstreamed](https://en.wikipedia.org/wiki/Downstream_(software_development)) from the [modded-nanogpt](https://github.com/KellerJordan/modded-nanogpt) repository / 8xH100 speedrun. It wasn't efficient to reinvent the wheel, and I wanted to reduce training time quickly before doing more targeted experiments.
 
-After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340)), the new run time was **7.51 hours**. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second decreased, likely due to the larger batch size (more gradient accumulation steps tends to translate to lower throughput) and architectural changes such as the inclusion of RoPE. The shorter run time made further experimentation more practical.
+After implementing these changes (commit [`b7bb93f`](https://github.com/tyler-romero/nanogpt-speedrun/commit/b7bb93fd988d73a55184c553f0020feec1454340)), the new run time was **7.51 hours**. This run was more data-efficient than the baseline, requiring only 5.07B tokens. However, the tokens/second decreased, likely due to the larger batch size (more gradient accumulation steps tend to translate to lower throughput) and architectural changes such as the inclusion of RoPE. The shorter run time made further experimentation more practical.
 
 ![Section 2.1 loss plot](/assets/img/2p1_loss_plot.png)
 
@@ -75,7 +75,7 @@ The [Muon Optimizer](https://kellerjordan.github.io/posts/muon/) was developed w
 
 [^steepest]: But are these approximate second-order methods actually second-order? [New research](https://arxiv.org/abs/2409.20325v1) suggests that methods like Shampoo and Adam can be viewed as variants of steepest descent under specific norms, and thus are actually first-order methods.
 
-I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put together [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/102924_Optimizers). For those interested in a more step-by-step walkthrough of Muon, check out [this excellent post](https://jeremybernste.in/writing/deriving-muon) by Jeremy Bernstein.
+I highly recommend reading the original [Muon blog post](https://kellerjordan.github.io/posts/muon/) for more details, as well as checking out the optimizer comparison for GPT-2 speedrunning that Keller Jordan put together [here](https://github.com/KellerJordan/modded-nanogpt/tree/master/records/track_1_short/2024-10-29_Optimizers). For those interested in a more step-by-step walkthrough of Muon, check out [this excellent post](https://jeremybernste.in/writing/deriving-muon) by Jeremy Bernstein.
 
 Muon is designed to work on *Linear* layers, so it is not quite a drop-in replacement for AdamW (e.g. it isn't meant to optimize Embedding layers). However, it can be used to optimize all of the hidden layers of our GPT-2 model. The output `lm_head` layer and token embeddings were still optimized with AdamW.
 
@@ -103,7 +103,7 @@ Logit soft-capping is a technique popularized by [Gemma 2](https://storage.googl
 
 Soft-capping is essentially a smooth and differentiable version of clipping[^softcap]:
 \[
-\text{softcap(x, cap)} = \text{cap} \cdot \tanh\left(\frac{\text{x}}{\text{cap}}\right)
+\operatorname{softcap}(x, \text{cap}) = \text{cap} \cdot \tanh\!\left(\frac{x}{\text{cap}}\right)
 \]
 
 [^softcap]: {-} Soft-capping vs Clipping at ±5: ![Soft-capping](/assets/img/softcap.png)
@@ -123,18 +123,18 @@ Cutting off documents in the middle is an especially large issue. See this plot 
 
 Notice how the first twenty-five or so positions have a much higher average loss than later positions. At the beginning of a sequence, the model has much less context with which to predict the next token. Avoiding needless sequence restarts offered a way to reduce this loss penalty.
 
-A natural question to ask at this point is: how long are sequences in our dataset, on average?
+A natural question to ask at this point is: how long are the documents in our dataset?
 ![Sequence Length CDF Plot](/assets/img/sequence_length_cdf.png)
 
-The data revealed that approximately 20% of documents exceeded the 1024-token sequence length. Increasing the sequence length to >=8192 tokens would accommodate virtually all documents in the dataset without truncation.
+Roughly 20% of the documents in our dataset are longer than 1024 tokens, whereas bumping the sequence length up to >=8192 tokens fits almost all of them without cutting them off.
 
-To address these issues, I made two key changes. First, I extended the sequence length to minimize document splitting across sequence boundaries. Taking this approach to its logical conclusion, I eliminated the traditional batch dimension and effectively used a "batch size" of 1 containing multiple concatenated documents. Second, I added attention masking that prevented cross-document attention while retaining the computational efficiency of sparse attention patterns.
+To fix this, I made two changes. First, I increased the sequence length so documents rarely get split across sequence boundaries—and taking that idea all the way, I dropped the traditional batch dimension and just packed documents back-to-back into one long sequence (effectively a "batch size" of 1). Second, I added an attention mask to stop tokens from attending across different documents, plus a sliding window to keep attention fast on long sequences.
 
 ![Before: a stream of documents A–F is cut into fixed 1024-token rows, so B and D are split across rows, later rows start mid-document with no context, and the causal mask lets tokens attend across document boundaries. After: the same documents are packed into one long sequence, none is cut, and a document mask keeps attention inside each document.](/assets/img/nanogpt-document-packing.png)
 
-Fortunately, [FlexAttention](https://pytorch.org/blog/flexattention/) provides an elegant solution that maintains the performance benefits of [FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) while enabling these improvements. One of FlexAttention's primary strengths is its ability to efficiently handle sparse, custom attention masks, making it ideal for our use case.
+Thankfully, PyTorch's [FlexAttention](https://pytorch.org/blog/flexattention/) made this pretty easy to implement. It compiles custom, sparse attention masks into fused kernels so you still get near-[FlashAttention](https://huggingface.co/docs/text-generation-inference/en/conceptual/flash_attention) speeds.
 
-To implement FlexAttention, I defined a mask that handled the specific requirements of the dataset:
+Here's the mask I used with FlexAttention:
 ```python
 def make_attn_mask(idx, eot_token, window_size=1024):
     # Create a causal mask (only attend to past tokens)
@@ -157,18 +157,18 @@ def make_attn_mask(idx, eot_token, window_size=1024):
 
 Let's break down each mask:
 
-1. **Causal Mask**: Standard in autoregressive language modeling. Ensures that tokens can only attend to previous tokens in the sequence, preventing information leakage from future tokens.
+1. **Causal Mask**: The usual autoregressive mask—tokens can only attend to themselves and earlier tokens in the sequence, not future ones.
 
-2. **Document Mask**: This restricts attention to tokens within the same document. By tracking document boundaries using end-of-text tokens, we prevent tokens from attending across different documents, which helps the model maintain coherent context within a single document.
+2. **Document Mask**: Keeps attention inside the same document. Taking a cumulative sum over the end-of-text tokens gives each token a document ID, so tokens from different documents can't attend to each other.
 
-3. **Sliding Window Mask**: This limits attention to a fixed window of tokens before the current position. This approach balances efficiency with context retention with a clear tradeoff: smaller windows are more efficient but may miss long-range dependencies, while larger windows capture more context at the expense of resources.
+3. **Sliding Window Mask**: Limits each token to attending at most `window_size` (1024) tokens back. Smaller windows are faster on long sequences, while larger windows keep more long-range context at the cost of extra compute.
 
 The individual component masks are visualized below:
 ![Causal, Document, Sliding Window Attention Masks](/assets/img/attention_masks.svg)
 
-When combined with the `and_masks` function, these three masks[^redundant] work together to create an efficient attention pattern that respects document boundaries, maintains causality, and limits computational overhead for long sequences.
+Combining all three with `and_masks`[^window] keeps attention causal and within each document, while keeping compute reasonable on long packed sequences.
 
-[^redundant]: Note that the causal mask is actually redundant to the sliding window mask, as the sliding window mask already ensures that tokens can only attend to previous tokens in the sequence. The causal mask is included here for clarity.
+[^window]: Note that while the sliding-window plot above already masks out future tokens, `sliding_window_mask` in the code only checks `q_idx - kv_idx <= window_size` (which is also true when `kv_idx > q_idx`), so we still need `causal_mask` here.
 
 After incorporating FlexAttention with these masks and increasing the sequence length to 32768 tokens, I observed another massive speedup[^hack]. The final run time was **2.55 hours**, requiring only 1.88B tokens—a large data-efficiency improvement. Throughput dropped slightly to ~205k tokens/second. See commit [`d982ed5`](https://github.com/tyler-romero/nanogpt-speedrun/commit/d982ed5900922e43a266c5d671b88f36efe72aaf) for the full details.
 
@@ -186,7 +186,7 @@ This post records the completed 2025 round of experiments, with 2.55 hours as th
 <textarea id="bibtex_input" style="display:none;">
 @misc{modded_nanogpt_2024,
   author       = {Keller Jordan and Jeremy Bernstein and Brendan Rappazzo and
-                  @fernbear.bsky.social and Boza Vlado and You Jiacheng and
+                  @fernbear.bsky.social and Vlado Boza and Jiacheng You and
                   Franz Cesista and Braden Koszarsky and @Grad62304977},
   title        = {modded-nanogpt: Speedrunning the NanoGPT baseline},
   year         = {2024},
@@ -222,7 +222,7 @@ This post records the completed 2025 round of experiments, with 2.55 hours as th
 }
 @misc{hagele2024scalinglawscomputeoptimaltraining,
       title={Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations},
-      author={Alexander Hägele and Elie Bakouch and Atli Kosson and Loubna Ben Allal and Leandro Von Werra and Martin Jaggi},
+      author={Alexander Hägele and Elie Bakouch and Atli Kosson and {Ben Allal}, Loubna and von Werra, Leandro and Martin Jaggi},
       year={2024},
       eprint={2405.18392},
       archivePrefix={arXiv},
@@ -265,7 +265,7 @@ This post records the completed 2025 round of experiments, with 2.55 hours as th
 }
 @misc{gemmateam2024gemma2improvingopen,
       title={Gemma 2: Improving Open Language Models at a Practical Size},
-      author={Gemma Team and Morgane Riviere and Shreya Pathak and Pier Giuseppe Sessa and Cassidy Hardin and Surya Bhupatiraju and Léonard Hussenot and Thomas Mesnard and Bobak Shahriari and Alexandre Ramé and Johan Ferret and Peter Liu and Pouya Tafti and Abe Friesen and Michelle Casbon and Sabela Ramos and Ravin Kumar and Charline Le Lan and Sammy Jerome and Anton Tsitsulin and Nino Vieillard and Piotr Stanczyk and Sertan Girgin and Nikola Momchev and Matt Hoffman and Shantanu Thakoor and Jean-Bastien Grill and Behnam Neyshabur and Olivier Bachem and Alanna Walton and Aliaksei Severyn and Alicia Parrish and Aliya Ahmad and Allen Hutchison and Alvin Abdagic and Amanda Carl and Amy Shen and Andy Brock and Andy Coenen and Anthony Laforge and Antonia Paterson and Ben Bastian and Bilal Piot and Bo Wu and Brandon Royal and Charlie Chen and Chintu Kumar and Chris Perry and Chris Welty and Christopher A. Choquette-Choo and Danila Sinopalnikov and David Weinberger and Dimple Vijaykumar and Dominika Rogozińska and Dustin Herbison and Elisa Bandy and Emma Wang and Eric Noland and Erica Moreira and Evan Senter and Evgenii Eltyshev and Francesco Visin and Gabriel Rasskin and Gary Wei and Glenn Cameron and Gus Martins and Hadi Hashemi and Hanna Klimczak-Plucińska and Harleen Batra and Harsh Dhand and Ivan Nardini and Jacinda Mein and Jack Zhou and James Svensson and Jeff Stanway and Jetha Chan and Jin Peng Zhou and Joana Carrasqueira and Joana Iljazi and Jocelyn Becker and Joe Fernandez and Joost van Amersfoort and Josh Gordon and Josh Lipschultz and Josh Newlan and Ju-yeong Ji and Kareem Mohamed and Kartikeya Badola and Kat Black and Katie Millican and Keelin McDonell and Kelvin Nguyen and Kiranbir Sodhia and Kish Greene and Lars Lowe Sjoesund and Lauren Usui and Laurent Sifre and Lena Heuermann and Leticia Lago and Lilly McNealus and Livio Baldini Soares and Logan Kilpatrick and Lucas Dixon and Luciano Martins and Machel Reid and Manvinder Singh and Mark Iverson and Martin Görner and Mat Velloso and Mateo Wirth and Matt Davidow and Matt Miller and Matthew Rahtz and Matthew Watson and Meg Risdal and Mehran Kazemi and Michael Moynihan and Ming Zhang and Minsuk Kahng and Minwoo Park and Mofi Rahman and Mohit Khatwani and Natalie Dao and Nenshad Bardoliwalla and Nesh Devanathan and Neta Dumai and Nilay Chauhan and Oscar Wahltinez and Pankil Botarda and Parker Barnes and Paul Barham and Paul Michel and Pengchong Jin and Petko Georgiev and Phil Culliton and Pradeep Kuppala and Ramona Comanescu and Ramona Merhej and Reena Jana and Reza Ardeshir Rokni and Rishabh Agarwal and Ryan Mullins and Samaneh Saadat and Sara Mc Carthy and Sarah Cogan and Sarah Perrin and Sébastien M. R. Arnold and Sebastian Krause and Shengyang Dai and Shruti Garg and Shruti Sheth and Sue Ronstrom and Susan Chan and Timothy Jordan and Ting Yu and Tom Eccles and Tom Hennigan and Tomas Kocisky and Tulsee Doshi and Vihan Jain and Vikas Yadav and Vilobh Meshram and Vishal Dharmadhikari and Warren Barkley and Wei Wei and Wenming Ye and Woohyun Han and Woosuk Kwon and Xiang Xu and Zhe Shen and Zhitao Gong and Zichuan Wei and Victor Cotruta and Phoebe Kirk and Anand Rao and Minh Giang and Ludovic Peran and Tris Warkentin and Eli Collins and Joelle Barral and Zoubin Ghahramani and Raia Hadsell and D. Sculley and Jeanine Banks and Anca Dragan and Slav Petrov and Oriol Vinyals and Jeff Dean and Demis Hassabis and Koray Kavukcuoglu and Clement Farabet and Elena Buchatskaya and Sebastian Borgeaud and Noah Fiedel and Armand Joulin and Kathleen Kenealy and Robert Dadashi and Alek Andreev},
+      author={ {Gemma Team} and Morgane Riviere and Shreya Pathak and Pier Giuseppe Sessa and Cassidy Hardin and Surya Bhupatiraju and Léonard Hussenot and Thomas Mesnard and Bobak Shahriari and Alexandre Ramé and Johan Ferret and Peter Liu and Pouya Tafti and Abe Friesen and Michelle Casbon and Sabela Ramos and Ravin Kumar and {Le Lan}, Charline and Sammy Jerome and Anton Tsitsulin and Nino Vieillard and Piotr Stanczyk and Sertan Girgin and Nikola Momchev and Matt Hoffman and Shantanu Thakoor and Jean-Bastien Grill and Behnam Neyshabur and Olivier Bachem and Alanna Walton and Aliaksei Severyn and Alicia Parrish and Aliya Ahmad and Allen Hutchison and Alvin Abdagic and Amanda Carl and Amy Shen and Andy Brock and Andy Coenen and Anthony Laforge and Antonia Paterson and Ben Bastian and Bilal Piot and Bo Wu and Brandon Royal and Charlie Chen and Chintu Kumar and Chris Perry and Chris Welty and Christopher A. Choquette-Choo and Danila Sinopalnikov and David Weinberger and Dimple Vijaykumar and Dominika Rogozińska and Dustin Herbison and Elisa Bandy and Emma Wang and Eric Noland and Erica Moreira and Evan Senter and Evgenii Eltyshev and Francesco Visin and Gabriel Rasskin and Gary Wei and Glenn Cameron and Gus Martins and Hadi Hashemi and Hanna Klimczak-Plucińska and Harleen Batra and Harsh Dhand and Ivan Nardini and Jacinda Mein and Jack Zhou and James Svensson and Jeff Stanway and Jetha Chan and Jin Peng Zhou and Joana Carrasqueira and Joana Iljazi and Jocelyn Becker and Joe Fernandez and Joost van Amersfoort and Josh Gordon and Josh Lipschultz and Josh Newlan and Ju-yeong Ji and Kareem Mohamed and Kartikeya Badola and Kat Black and Katie Millican and Keelin McDonell and Kelvin Nguyen and Kiranbir Sodhia and Kish Greene and Lars Lowe Sjoesund and Lauren Usui and Laurent Sifre and Lena Heuermann and Leticia Lago and Lilly McNealus and Livio Baldini Soares and Logan Kilpatrick and Lucas Dixon and Luciano Martins and Machel Reid and Manvinder Singh and Mark Iverson and Martin Görner and Mat Velloso and Mateo Wirth and Matt Davidow and Matt Miller and Matthew Rahtz and Matthew Watson and Meg Risdal and Mehran Kazemi and Michael Moynihan and Ming Zhang and Minsuk Kahng and Minwoo Park and Mofi Rahman and Mohit Khatwani and Natalie Dao and Nenshad Bardoliwalla and Nesh Devanathan and Neta Dumai and Nilay Chauhan and Oscar Wahltinez and Pankil Botarda and Parker Barnes and Paul Barham and Paul Michel and Pengchong Jin and Petko Georgiev and Phil Culliton and Pradeep Kuppala and Ramona Comanescu and Ramona Merhej and Reena Jana and Reza Ardeshir Rokni and Rishabh Agarwal and Ryan Mullins and Samaneh Saadat and Sara Mc Carthy and Sarah Cogan and Sarah Perrin and Sébastien M. R. Arnold and Sebastian Krause and Shengyang Dai and Shruti Garg and Shruti Sheth and Sue Ronstrom and Susan Chan and Timothy Jordan and Ting Yu and Tom Eccles and Tom Hennigan and Tomas Kocisky and Tulsee Doshi and Vihan Jain and Vikas Yadav and Vilobh Meshram and Vishal Dharmadhikari and Warren Barkley and Wei Wei and Wenming Ye and Woohyun Han and Woosuk Kwon and Xiang Xu and Zhe Shen and Zhitao Gong and Zichuan Wei and Victor Cotruta and Phoebe Kirk and Anand Rao and Minh Giang and Ludovic Peran and Tris Warkentin and Eli Collins and Joelle Barral and Zoubin Ghahramani and Raia Hadsell and D. Sculley and Jeanine Banks and Anca Dragan and Slav Petrov and Oriol Vinyals and Jeff Dean and Demis Hassabis and Koray Kavukcuoglu and Clement Farabet and Elena Buchatskaya and Sebastian Borgeaud and Noah Fiedel and Armand Joulin and Kathleen Kenealy and Robert Dadashi and Alek Andreev},
       year={2024},
       eprint={2408.00118},
       archivePrefix={arXiv},
