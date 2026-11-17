@@ -171,6 +171,48 @@ Sizes are expressed in `rem` so the site can scale its root size across viewport
 | Figure captions            | Newsreader          | `1.1rem / 1.6`     | Describe the visual's subject or takeaway concisely  |
 | Code blocks                | JetBrains Mono      | `0.9rem / 1.42`    | Allow horizontal scrolling rather than wrapping code |
 
+### Print and PDF
+
+Native browser printing (Ctrl-P or Cmd-P) uses a separate manuscript layout.
+Screen typography, navigation, note toggles, and article markup stay unchanged.
+During printing, a hidden-on-screen article copy places numbered text notes at the
+end of their own sections or subsections, moves illustrated margin notes after
+their paragraphs, and expands details. Note numbers continue across sections.
+Keep hyperlinks active in exported PDFs without adding a Links appendix, numbered
+link markers, or automatic inline URL expansions. Preserve authored citations and
+bibliographies. The copy is removed when the print dialog closes.
+
+- Use white paper, dark ink, 18mm top/side margins, and a 20mm bottom margin.
+  Honor the paper size selected in the print dialog; support A4 and US Letter.
+- Body text is Newsreader at 11pt with 1.5 line spacing. Fraunces headings use
+  24pt, 17pt, 13pt, and 11pt. Notes, captions, code listings, and tables use 9pt.
+- Keep headings with following content, figures with captions, and table rows
+  together. Keep clear figure introductions (a trailing colon or an explicit
+  below/following reference) with the next image where possible. Do not bind
+  unrelated paragraphs or automatically attach illustrated margin notes to body text.
+  Use soft page-break preferences so long introductions and oversized figures can
+  still split rather than forcing an entire group onto one page.
+  Keep code lead-in paragraphs with their listings, and keep code
+  blocks intact when they fit on a full page, moving them to the next page when
+  needed. Oversized listings may split between lines, keeping at least three
+  lines in each fragment. Quotations may continue across pages.
+- Wrap code and URLs, repeat table headers, and fit display equations to the
+  printable width. Preserve readable artwork without requiring background graphics.
+- Include the author and canonical URL below the article's title and date.
+  Translations retain their original-author attribution and identify the hosting
+  site rather than labeling its owner as the author.
+  Page numbers use CSS page-margin boxes where the browser supports them;
+  disable browser-provided headers and footers to avoid duplicate page numbers.
+- Animations keep their original alt text and authored captions. Add a compact
+  still-image notice linking to the online animation instead of repeating its alt
+  text as another printed caption. Media notices remain valid inside paragraphs.
+  Videos and interactive embeds link back to the online article, with a poster
+  when supplied.
+  Ctrl-P and Cmd-P wait for print-only image copies and fonts before opening the
+  native dialog. Failed figures produce a printed description and a console error.
+  Browser-menu printing still uses synchronous `beforeprint`; let figures finish
+  loading before saving from that path.
+
 **Rules**: No all-caps except for small UI labels (tags like "research," "announcements"). Monospaced fonts are reserved for code blocks only — never in editorial or decorative contexts. Generous whitespace between sections. Let every element breathe.
 
 ### Hand-Drawn Layer

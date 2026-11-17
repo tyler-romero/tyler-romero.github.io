@@ -1,0 +1,220 @@
+        <script>
+            (function() {
+                var source = document.querySelector('main > article');
+                var printedArticle = null;
+                var preparingPrint = false;
+                if (!source) return;
+
+                function appendSection(container, title, list, className, headingTag) {
+                    if (!list.children.length) return;
+                    var section = document.createElement('section');
+                    section.className = className;
+                    var heading = document.createElement(headingTag || 'h2');
+                    heading.textContent = title;
+                    section.append(heading, list);
+                    container.appendChild(section);
+                    return section;
+                }
+
+                function fitMath() {
+                    if (!printedArticle) return;
+                    printedArticle.querySelectorAll('.katex-display').forEach(function(display) {
+                        var formula = display.querySelector('.katex-html');
+                        if (!formula || !display.clientWidth) return;
+                        display.style.fontSize = '';
+                        var tag = formula.querySelector('.tag');
+                        var available = display.clientWidth - (tag ? 2 * (tag.getBoundingClientRect().width + 8) : 0);
+                        var width = formula.getBoundingClientRect().width;
+                        if (width > available) {
+                            display.style.fontSize = (parseFloat(getComputedStyle(display).fontSize) * available / width * 0.99) + 'px';
+                        }
+                    });
+                }
+
+                function preparePrint() {
+                    if (printedArticle) {
+                        fitMath();
+                        return;
+                    }
+                    var article = source.cloneNode(true);
+                    article.classList.add('print-article');
+                    // The copy stays hidden on screen, even while the print dialog is open.
+                    article.hidden = true;
+                    article.querySelectorAll('script, nav, .post-hero, svg.rough-annotation').forEach(function(element) {
+                        element.remove();
+                    });
+
+                    var canonical = document.querySelector('link[rel="canonical"]').href;
+                    var header = article.querySelector('.post-header');
+                    if (header) {
+                        var metadata = document.createElement('div');
+                        metadata.className = 'print-metadata';
+                        var author = document.createElement('p');
+                        {% if layout == 'translation' %}
+                        author.textContent = 'Translation hosted at ' + new URL(canonical).hostname;
+                        {% else %}
+                        author.textContent = 'By ' + document.querySelector('meta[name="author"]').content;
+                        {% endif %}
+                        var address = document.createElement('a');
+                        address.href = canonical;
+                        address.textContent = canonical;
+                        metadata.append(author, address);
+                        header.appendChild(metadata);
+                    }
+
+                    var noteNumber = 0;
+                    var figureTails = new WeakMap();
+                    article.querySelectorAll('.sidenote, .marginnote').forEach(function(note) {
+                        if (note.querySelector('img, picture, video, iframe, svg')) {
+                            var paragraph = note.closest('p, li, blockquote') || note.parentElement;
+                            var figure = document.createElement('aside');
+                            figure.className = 'print-margin-figure';
+                            figure.append.apply(figure, note.childNodes);
+                            (figureTails.get(paragraph) || paragraph).after(figure);
+                            figureTails.set(paragraph, figure);
+                            note.remove();
+                        } else {
+                            var number = ++noteNumber;
+                            var section = note.closest('section') || article;
+                            var block = note;
+                            while (block.parentElement !== section) block = block.parentElement;
+                            // Subheadings share their parent's section in the source.
+                            var boundary = block.nextElementSibling;
+                            while (boundary && !boundary.matches('h1, h2, h3, h4, h5, h6, section')) {
+                                boundary = boundary.nextElementSibling;
+                            }
+                            var group = boundary && boundary.classList.contains('print-notes') ? boundary : null;
+                            var notes = group ? group.querySelector('ol') : document.createElement('ol');
+                            if (!group) notes.start = number;
+                            var item = document.createElement('li');
+                            item.id = 'article-note-' + number;
+                            item.value = number;
+                            item.append.apply(item, note.childNodes);
+                            notes.appendChild(item);
+                            if (!group) {
+                                var heading = block;
+                                while (heading && !/^H[1-6]$/.test(heading.tagName)) {
+                                    heading = heading.previousElementSibling;
+                                }
+                                var level = heading ? Math.min(Number(heading.tagName.slice(1)) + 1, 6) : 2;
+                                group = appendSection(section, 'Notes', notes, 'print-notes', 'h' + level);
+                                if (boundary) boundary.before(group);
+                            }
+                            var reference = document.createElement('sup');
+                            reference.className = 'print-note-reference';
+                            var link = document.createElement('a');
+                            link.href = '#' + item.id;
+                            link.textContent = number;
+                            reference.appendChild(link);
+                            note.replaceWith(reference);
+                        }
+                    });
+                    article.querySelectorAll('.margin-toggle').forEach(function(toggle) { toggle.remove(); });
+
+                    article.querySelectorAll('details').forEach(function(details) { details.open = true; });
+                    article.querySelectorAll('img').forEach(function(image) {
+                        image.loading = 'eager';
+                        image.decoding = 'sync';
+                        image.sizes = '1200px';
+                        if (/\.gif(?:$|\?)/i.test(image.src) && image.alt) {
+                            var description = document.createElement('span');
+                            description.className = 'print-media-description';
+                            var animation = document.createElement('a');
+                            animation.href = new URL(image.getAttribute('src'), canonical).href;
+                            animation.textContent = 'View animation online.';
+                            description.append('Animation shown as a still. ', animation);
+                            (image.closest('picture') || image).after(description);
+                        }
+                    });
+                    article.querySelectorAll('picture source[media]').forEach(function(source) {
+                        if (source.media.startsWith('(')) source.media = 'not all';
+                    });
+                    article.querySelectorAll('picture source[sizes]').forEach(function(source) {
+                        source.sizes = '1200px';
+                    });
+                    article.querySelectorAll('video, iframe').forEach(function(media) {
+                        var fallback = document.createElement('span');
+                        fallback.className = 'print-media-description';
+                        var link = document.createElement('a');
+                        link.href = canonical;
+                        link.textContent = (media.title || (media.tagName === 'VIDEO' ? 'Video' : 'Interactive figure')) + ': view in the online article.';
+                        fallback.appendChild(link);
+                        if (media.poster) {
+                            var poster = document.createElement('img');
+                            poster.src = media.poster;
+                            poster.alt = media.title || 'Video still';
+                            fallback.prepend(poster);
+                        }
+                        var wrapper = media.closest('.iframe-wrapper') || media;
+                        wrapper.replaceWith(fallback);
+                    });
+
+                    article.querySelectorAll('figure, .print-margin-figure, p:has(picture, img)').forEach(function(figure) {
+                        var lead = figure.previousElementSibling;
+                        if (!lead || lead.tagName !== 'P' || lead.querySelector('picture, img, video, iframe')) return;
+                        var text = lead.cloneNode(true);
+                        text.querySelectorAll('.print-note-reference').forEach(function(reference) { reference.remove(); });
+                        if (/[:\uFF1A]$|\b(?:figure|diagram|image|plot|chart)s?\s+below\b|\b(?:shown|plotted|illustrated)\s+below\b|\bfollowing\s+(?:figure|diagram|image|plot|chart)s?\b/i.test(text.textContent.trim())) {
+                            lead.classList.add('print-figure-lead');
+                        }
+                    });
+
+                    article.querySelectorAll('a[href]').forEach(function(link) {
+                        var href = link.getAttribute('href');
+                        if (!href || href.startsWith('#')) return;
+                        var url = new URL(href, canonical);
+                        if (/^https?:$/.test(url.protocol)) link.href = url.href;
+                    });
+
+                    var ids = new Map();
+                    article.querySelectorAll('[id]').forEach(function(element) {
+                        if (element.closest('svg')) return;
+                        ids.set(element.id, 'print-' + element.id);
+                        element.id = ids.get(element.id);
+                    });
+                    article.querySelectorAll('a[href^="#"]').forEach(function(link) {
+                        var id = link.getAttribute('href').slice(1);
+                        if (!ids.has(id)) id = decodeURIComponent(id);
+                        if (ids.has(id)) link.setAttribute('href', '#' + ids.get(id));
+                    });
+                    printedArticle = article;
+                    source.after(article);
+                    fitMath();
+                }
+
+                window.addEventListener('beforeprint', preparePrint);
+                window.addEventListener('afterprint', function() {
+                    if (printedArticle) printedArticle.remove();
+                    printedArticle = null;
+                });
+                window.matchMedia('print').addEventListener('change', function(event) {
+                    if (event.matches) preparePrint();
+                });
+                document.addEventListener('keydown', async function(event) {
+                    if (event.defaultPrevented || event.altKey || event.shiftKey ||
+                        !(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'p') return;
+                    event.preventDefault();
+                    if (preparingPrint) return;
+                    preparingPrint = true;
+                    try {
+                        preparePrint();
+                        // beforeprint is synchronous; wait here so native preview sees every figure.
+                        var images = Array.from(printedArticle.querySelectorAll('img'));
+                        var results = await Promise.allSettled(images.map(function(image) { return image.decode(); }));
+                        results.forEach(function(result, index) {
+                            if (result.status !== 'rejected') return;
+                            var image = images[index];
+                            console.error('Unable to load a figure for printing:', image.currentSrc || image.src, result.reason);
+                            var description = document.createElement('span');
+                            description.className = 'print-media-description';
+                            description.textContent = 'Figure unavailable: ' + (image.alt || 'See the online article.');
+                            (image.closest('picture') || image).replaceWith(description);
+                        });
+                        await document.fonts.ready;
+                        window.print();
+                    } finally {
+                        preparingPrint = false;
+                    }
+                });
+            })();
+        </script>
