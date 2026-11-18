@@ -24,7 +24,7 @@ The probability of the full completion is the [product of the per-token probabil
 p_\theta(y \mid x) = \prod_{t=1}^{T} p_\theta(y_t \mid x, y_{<t})
 \]
 
-Generating a completion traces one path through a tree of possible continuations.[^tree-cond] The slot from the previous figure is one branch point: 68 leads to the correct answer, and the 58 slip to a wrong one. Once the model emits a stop token, a reward function grades the finished completion.
+Generating a completion traces one path through a tree of possible continuations.[^tree-cond] The slot from the previous figure is one branch point: 68 leads to the correct answer, and the slip 58 leads to a wrong one. Once the model emits a stop token, a reward function grades the finished completion.
 
 [^tree-cond]: {-} Each \(p(\cdot)\) in the tree is conditioned on the prompt and on every token before it on the path, so \(p(24)\) means \(p(24 \mid x, 17, \times)\).
 
@@ -64,7 +64,7 @@ J(\theta) = \sum_y p_\theta(y) \, R(y)
 
 The usual fix for an expectation we can't enumerate is to estimate it by sampling: generate \(N\) completions, compute their rewards, and average them. That gives a fine estimate of \(J\), but not one we can differentiate. The completions are discrete token sequences,[^sampling] and their rewards come from a verifier, a unit test, or a person, none of which we can backpropagate through. There is no path for autograd to follow from the reward back to \(\theta\).
 
-Compare supervised fine-tuning, where the completion \(y\) is fixed training data and \(\theta\) appears directly in the loss \(-\log p_\theta(y)\). Here, \(\theta\) decides _which_ completions we get, not how any one of them is graded. What we need is a way to rewrite \(\nabla_\theta J\) as an average, over sampled completions, of something we _can_ differentiate.
+Compare supervised fine-tuning, where the completion \(y\) is fixed training data and \(\theta\) appears directly in the loss \(-\log p_\theta(y)\). Here, \(\theta\) decides _which_ completions we get, not how any one of them is graded. What we need is a way to rewrite \(\nabla_\theta J\) as an average over sampled completions of something that we _can_ differentiate.
 
 [^sampling]: At each step, the model's probabilities define a categorical distribution over the vocabulary, and we draw one token from it. The result is an integer token ID: a small change to \(\theta\) either leaves it unchanged or flips it, so there is no smooth gradient. (Sampling often reshapes the distribution with a temperature or top-p cutoff. The derivations here assume we sample from the model's probabilities as-is.)
 
@@ -107,7 +107,7 @@ This is the REINFORCE estimator,[^reinforce] also known as the _Monte Carlo poli
   <img src="/assets/img/policy-gradient-intuition.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Four rollouts for &quot;What is 17 × 24?&quot;: A (an arithmetic slip) and D (an estimate) earn reward 0, while B and C reach 408 and earn 1. A bar holding all the probability for this prompt shows B rising from 0.22 to 0.27 and C from 0.03 to 0.05 after one update, A and D barely changing, and unsampled completions shrinking.">
 </figure>
 
-Because all completions share a total probability of 1, B's and C's gains come from elsewhere, here mostly from completions nobody sampled. A barely changes, because it shares everything up to "340 +" with B, so reinforcing B also lifts most of A's path. The numbers are only illustrative: B and C are pushed up, but how every other completion moves depends on how the model's parameters are shared.
+Because all completions share a total probability of 1, the gains on B and C come from elsewhere, here mostly from completions that nobody sampled. A barely changes, because it shares everything up to "340 +" with B, so reinforcing B also lifts most of A's path. The numbers are only illustrative: B and C are pushed up, but how every other completion moves depends on how the model's parameters are shared.
 
 With the reward held fixed, \(R \, \nabla_\theta \log p_\theta(y)\) is exactly the gradient of \(R \log p_\theta(y)\): a log-likelihood on one of the model's own samples, weighted by its reward. So **policy gradient is supervised fine-tuning on your own samples, weighted by reward.** With \(+1/0\) rewards, as in the figure above, it is literally SFT on the correct completions, so incorrect completions are never pushed down directly; they only lose share.[^rft]
 
@@ -152,7 +152,7 @@ s_v = \sum_u \big(\mathbb{1}[u = v] - p_u\big) \, \nabla_\theta z_u
 As \(p_v \to 1\), every coefficient in this sum goes to zero, so the score does too. Across completions A and B from the figure above:
 
 <figure class="fullwidth">
-  <img src="/assets/img/policy-gradient-token-credit.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Completions A (reward 0) and B (reward 1) as rows of tokens, each labeled with its probability and its own-logit gradient, 1 − p, with an arrow of that length. In A, every score is multiplied by 0, so nothing updates, not even the unlikely slip 58. In B, uncertain tokens like 17, 24, and 68 get large gradients and confident filler almost none. Zoom-ins below B show the full logit gradient summing to zero.">
+  <img src="/assets/img/policy-gradient-token-credit.png" sizes="(max-width: 760px) 100vw, 1400px" alt="Completions A (reward 0) and B (reward 1) as rows of tokens, each labeled with its probability and its own-logit gradient, 1 − p, with an arrow of that length. In A, every score is multiplied by 0, so nothing updates, not even the unlikely slip 58. In B, uncertain tokens like 17, 24, and 68 get large gradients, while confident filler tokens get almost none. Zoom-ins below B show the full logit gradient summing to zero.">
 </figure>
 
 The reward only says whether the finished completion was right, so every position gets the same \(R\), whatever its token did:[^credit] A's correct opening steps get nothing, and B's filler tokens get the full reward. What differs from token to token is the score, which is tiny for tokens the model was already sure of.[^step-caveat]
@@ -202,13 +202,13 @@ GRPO[^grpo] popularized a simple, critic-free[^critic] baseline for LLMs: sample
 A_i = R_i - \frac{1}{G} \sum_{j=1}^{G} R_j
 \]
 
-[^critic]: A _critic_ is a second network trained to predict the expected reward, the value \(V(x)\), to use as the baseline. PPO usually trains one alongside the policy. GRPO replaces it with the group's mean reward, which saves a model of similar size to the policy.
+[^critic]: A _critic_ is a second network trained to predict the expected reward, the value \(V(x)\), to use as the baseline. PPO usually trains one alongside the policy. GRPO replaces it with the group's mean reward, which avoids training a second model of similar size to the policy.
 
 [^grpo]: Introduced in [DeepSeekMath](https://arxiv.org/abs/2402.03300). GRPO also divides by the group's reward standard deviation. [Dr. GRPO](https://arxiv.org/abs/2503.20783) argues that this normalization introduces a bias toward easy and hard prompts. Here I use mean-centering only. Because the group mean includes the completion's own reward, the expected gradient is scaled by \(1 - 1/G\). When every prompt uses the same \(G\), that is just a slightly smaller step size. A leave-one-out baseline, as in [RLOO](https://arxiv.org/abs/2402.14740), removes the factor.
 
 Correct completions now get a positive advantage and are reinforced. Incorrect completions get a negative advantage and are suppressed. Prompts where every completion succeeds, or every completion fails, contribute nothing. For the four rollouts from earlier:
 
-![The same four rollouts with group-centered advantages. The group mean reward is 0.5, so B and C get advantage +0.5 and are pushed up, while A and D get −0.5 and are pushed down. Along the prefix A and B share, their pushes cancel.](/assets/img/policy-gradient-group-centered.png)
+![The same four rollouts with group-centered advantages. The group mean reward is 0.5, so B and C get advantage +0.5 and are pushed up, while A and D get −0.5 and are pushed down. Along the prefix that A and B share, their pushes cancel.](/assets/img/policy-gradient-group-centered.png)
 
 REINFORCE with group-centered advantages fits in a few lines of PyTorch:
 
@@ -271,7 +271,7 @@ In practice, this assumption rarely holds exactly. In the `reinforce_loss` above
 }
 @misc{yu2025dapo,
       title={DAPO: An Open-Source LLM Reinforcement Learning System at Scale},
-      author={Qiying Yu and others},
+      author={Qiying Yu and Zheng Zhang and Ruofei Zhu and Yufeng Yuan and Xiaochen Zuo and Yu Yue and Weinan Dai and Tiantian Fan and Gaohong Liu and Lingjun Liu and Xin Liu and Haibin Lin and Zhiqi Lin and Bole Ma and Guangming Sheng and Yuxuan Tong and Chi Zhang and Mofan Zhang and Wang Zhang and Hang Zhu and Jinhua Zhu and Jiaze Chen and Jiangjie Chen and Chengyi Wang and Hongli Yu and Yuxuan Song and Xiangpeng Wei and Hao Zhou and Jingjing Liu and Wei-Ying Ma and Ya-Qin Zhang and Lin Yan and Mu Qiao and Yonghui Wu and Mingxuan Wang},
       year={2025},
       eprint={2503.14476},
       archivePrefix={arXiv},
@@ -288,7 +288,7 @@ In practice, this assumption rarely holds exactly. In the `reinforce_loss` above
 }
 @misc{lambert2024tulu3,
       title={Tulu 3: Pushing Frontiers in Open Language Model Post-Training},
-      author={Nathan Lambert and others},
+      author={Nathan Lambert and Jacob Morrison and Valentina Pyatkin and Shengyi Huang and Hamish Ivison and Faeze Brahman and Lester James V. Miranda and Alisa Liu and Nouha Dziri and Shane Lyu and Yuling Gu and Saumya Malik and Victoria Graf and Jena D. Hwang and Jiangjiang Yang and {Le Bras}, Ronan and Oyvind Tafjord and Chris Wilhelm and Luca Soldaini and Noah A. Smith and Yizhong Wang and Pradeep Dasigi and Hannaneh Hajishirzi},
       year={2024},
       eprint={2411.15124},
       archivePrefix={arXiv},
