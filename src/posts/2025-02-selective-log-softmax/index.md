@@ -24,14 +24,14 @@ For a vocabulary size of 32768, sequence length of 1024, and batch size of 16, t
 
 However, in many workloads, only the highlighted entry in each row is ever used. PPO and GRPO are good examples: they need the log probabilities of the tokens that were actually generated, not every possible token in the vocabulary. In typical implementations of these algorithms, that mostly-discarded log-probability tensor can determine peak VRAM usage.
 
-Let's remind ourselves what `log_softmax` computes for each input logit (x_i):
+Let's remind ourselves what `log_softmax` computes for each input logit \(x_i\):
 
 \[
 \log \text{softmax}(x_i) = \log\left(\frac{e^{x_i}}{\sum_{j=1}^n e^{x_j}}\right) \\
 = x_i - \log \sum_{j=1}^n e^{x_j}
 \]
 
-If we only care about one selected token (i), then the operation we actually want is:
+If we only care about one selected token \(i\), then the operation we actually want is:
 
 \[
 \text{output} = x_i - \text{logsumexp}(x)
@@ -90,7 +90,7 @@ s_{new} = s e^{m-m_{new}} + s' e^{m'-m_{new}}
 
 This implementation performs the accumulation in FP32 even when the input is `float16` or `bfloat16`. It supports contiguous `float16`, `bfloat16`, and `float32` logits with `int32` or `int64` indices. Because it writes only the selected result, it does not materialize the full log-probability tensor or an intermediate exponential tensor.
 
-`torch.compile` can eliminate the full log-probability allocation, but it does not currently recover this exact reduction strategy. In the PyTorch 2.10 generated kernel I inspected, Inductor disabled its online-softmax path after splitting the reduction: the emitted Triton kernel made one pass to find the row maximum and a second pass to compute the exponential sum. The dedicated kernel instead maintains `(max, sum)` together in one streaming pass. This is a limitation of the current lowering, not something fundamentally impossible for a compiler to generate.
+`torch.compile` can eliminate the full log-probability allocation, but it does not currently recover this exact reduction strategy. When I inspected the kernel that PyTorch 2.10 generated, Inductor had disabled its online-softmax path after splitting the reduction: the emitted Triton kernel made one pass to find the row maximum and a second pass to compute the exponential sum. The dedicated kernel instead maintains `(max, sum)` together in one streaming pass. This is a limitation of the current lowering, not something fundamentally impossible for a compiler to generate.
 
 ### Benchmarks
 
