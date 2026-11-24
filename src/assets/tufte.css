@@ -360,7 +360,7 @@ video {
   left: 110%;
   top: 0;
   transform: none;
-  width: 50%;
+  width: 40%;
   margin: 0;
 }
 
@@ -465,8 +465,17 @@ a.tweet-card:hover {
 
 /* Tall margin figures: stretch the note to the entry's height and scale the image to fit inside it. */
 @media (min-width: 761px) {
+  .post-list li:has(.margin-widget) {
+    min-height: calc(var(--margin-widget-height, 0px) + 1.5rem);
+  }
+
+  .marginnote-wide.marginnote-compact img {
+    max-width: 11rem;
+  }
+
   .marginnote-wide.marginnote-fit {
     bottom: 2rem;
+    max-height: 17rem;
   }
 
   .marginnote-wide.marginnote-fit picture {
